@@ -14,3 +14,5 @@ m1 = [
 	]
 
 conv2(m1, core, 'same')
+m = m1*2
+m3 = 2*m1

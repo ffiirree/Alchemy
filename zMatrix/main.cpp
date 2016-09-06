@@ -18,18 +18,24 @@ Matrix test()
 	};
 	cout << "m1 = " << endl << m1;
 
-	Matrix core(5, 5);
-	core = {
-		1,1,1,1,1,
-		1,1,1,1,1,
-		1,1,-1,1,1,
-		1,1,1,1,1,
-		1,1,1,1,1
-	};
-	cout << "core = " << endl << core;
+	cout << m1 + 2;
+	cout << 2 + m1;
+
+	//cout << 2 * m1;
+	//cout << m1 * 2;
+
+	//Matrix core(5, 5);
+	//core = {
+	//	1,1,1,1,1,
+	//	1,1,1,1,1,
+	//	1,1,-1,1,1,
+	//	1,1,1,1,1,
+	//	1,1,1,1,1
+	//};
+	//cout << "core = " << endl << core;
 
 
-	cout << "conv = " << endl << m1.conv(core);
+	//cout << "conv = " << endl << m1.conv(core);
 
 	return m1;
 }

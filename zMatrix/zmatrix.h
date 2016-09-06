@@ -97,7 +97,15 @@ bool operator==(const Matrix &m1, const Matrix &m2);
 bool operator!=(const Matrix &m1, const Matrix &m2);
 
 Matrix operator*(Matrix &m1, Matrix &m2);
+Matrix operator*(Matrix &m, double delta);
+Matrix operator*(double delta, Matrix &m);
+
 Matrix operator+(Matrix &m1, Matrix &m2);
+Matrix operator+(Matrix &m, double delta);
+Matrix operator+(double delta, Matrix &m);
+
 Matrix operator-(Matrix &m1, Matrix &m2);
+Matrix operator-(Matrix &m, double delta);
+Matrix operator-(double delta, Matrix &m);
 
 #endif  // !_ZMATRIX_H
