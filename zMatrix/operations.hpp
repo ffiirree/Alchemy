@@ -1,11 +1,13 @@
-#include "zmatrix.h"
+#ifndef _OPERATION_HPP
+#define _OPERATION_HPP
 
-using namespace std;
+#ifdef __cplusplus
 
 /**
- * @berif 将矩阵初始化为空矩阵
- */
-void Matrix::initEmpty()
+* @berif 将矩阵初始化为空矩阵
+*/
+template <class _type>
+void _Matrix<_type>::initEmpty()
 {
 	rows = cols = _size = 0;
 	data = nullptr;
@@ -13,12 +15,13 @@ void Matrix::initEmpty()
 }
 
 /**
- * @berif 真正的创建矩阵，分配内存
- * @attention 所有矩阵数据的分配都应该通过调用该函数实现（调用该函数一般意味着重新创建函数）
- * @param[in] _rows，行数
- * @param[in] _cols，列数
- */
-void Matrix::create(int _rows, int _cols)
+* @berif 真正的创建矩阵，分配内存
+* @attention 所有矩阵数据的分配都应该通过调用该函数实现（调用该函数一般意味着重新创建函数）
+* @param[in] _rows，行数
+* @param[in] _cols，列数
+*/
+template <class _type>
+void _Matrix<_type>::create(int _rows, int _cols)
 {
 	_log_("Matrix create.");
 
@@ -30,14 +33,15 @@ void Matrix::create(int _rows, int _cols)
 	release();
 
 	// 分配
-	data = new double[_rows * _cols];
+	data = new _type[_rows * _cols];
 	refcount = new int(1);
 }
 
 /**
- * @berif 控制引用计数的值
- */
-int Matrix::refAdd(int *addr, int delta)
+* @berif 控制引用计数的值
+*/
+template <class _type>
+int _Matrix<_type>::refAdd(int *addr, int delta)
 {
 	int temp = *addr;
 	*addr += delta;
@@ -45,10 +49,11 @@ int Matrix::refAdd(int *addr, int delta)
 }
 
 /**
- * @berif 释放资源
- * @attention 矩阵的资源由该函数控制并释放
- */
-void Matrix::release()
+* @berif 释放资源
+* @attention 矩阵的资源由该函数控制并释放
+*/
+template <class _type>
+void _Matrix<_type>::release()
 {
 	if (refcount && refAdd(refcount, -1) == 1) {
 		delete[] data;
@@ -60,31 +65,31 @@ void Matrix::release()
 }
 
 /**
- * @berif 无参构造函数
- */
-Matrix::Matrix()
+* @berif 无参构造函数
+*/
+template <class _type> _Matrix<_type>::_Matrix()
 {
 	_log_("Matrix construct without params.");
 	initEmpty();
 }
 
 /**
- * @berif 构造函数
- * @param[in] _rows，行数
- * @param[in] _cols，列数
- */
-Matrix::Matrix(int _rows, int _cols)
+* @berif 构造函数
+* @param[in] _rows，行数
+* @param[in] _cols，列数
+*/
+template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols)
 {
 	_log_("Matrix construct with params.");
 	initEmpty();
 	create(_rows, _cols);
 }
 /**
- * @berif 拷贝函数
- * @attention 这是一个浅复制
- */
-Matrix::Matrix(const Matrix& m)
-	:rows(m.rows),cols(m.cols),data(m.data),refcount(m.refcount)
+* @berif 拷贝函数
+* @attention 这是一个浅复制
+*/
+template <class _type> _Matrix<_type>::_Matrix(const _Matrix<_type>& m)
+	:rows(m.rows), cols(m.cols), data(m.data), refcount(m.refcount)
 {
 	_log_("Matrix copying function.");
 	if (refcount)
@@ -92,9 +97,10 @@ Matrix::Matrix(const Matrix& m)
 }
 
 /**
- * @berif 将矩阵初始化为0
- */
-void Matrix::zeros()
+* @berif 将矩阵初始化为0
+*/
+template <class _type>
+void _Matrix<_type>::zeros()
 {
 	for (size_t i = 0; i < _size; ++i) {
 		data[i] = 0;
@@ -102,9 +108,10 @@ void Matrix::zeros()
 }
 
 /**
- * @berif 重新分配内存并初始化为0
- */
-void Matrix::zeros(int _rows, int _cols)
+* @berif 重新分配内存并初始化为0
+*/
+template <class _type>
+void _Matrix<_type>::zeros(int _rows, int _cols)
 {
 	create(_rows, _cols);
 
@@ -114,9 +121,10 @@ void Matrix::zeros(int _rows, int _cols)
 }
 
 /**
- * @berif 将矩阵初始化为1
- */
-void Matrix::ones()
+* @berif 将矩阵初始化为1
+*/
+template <class _type>
+void _Matrix<_type>::ones()
 {
 	for (size_t i = 0; i < _size; ++i) {
 		data[i] = 1;
@@ -124,9 +132,10 @@ void Matrix::ones()
 }
 
 /**
- * @berif 重新分配内存并初始化为1
- */
-void Matrix::ones(int _rows, int _cols)
+* @berif 重新分配内存并初始化为1
+*/
+template <class _type>
+void _Matrix<_type>::ones(int _rows, int _cols)
 {
 	create(_rows, _cols);
 
@@ -137,9 +146,10 @@ void Matrix::ones(int _rows, int _cols)
 
 
 /**
- * @berif 将矩阵初始化为单位矩阵
- */
-void Matrix::eye()
+* @berif 将矩阵初始化为单位矩阵
+*/
+template <class _type>
+void _Matrix<_type>::eye()
 {
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
@@ -152,15 +162,16 @@ void Matrix::eye()
 }
 
 /**
- * @berif 重新分配内存并初始化为单位矩阵
- */
-void Matrix::eye(int _rows, int _cols)
+* @berif 重新分配内存并初始化为单位矩阵
+*/
+template <class _type>
+void _Matrix<_type>::eye(int _rows, int _cols)
 {
 	create(_rows, _cols);
 
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
-			if(i  == j)
+			if (i == j)
 				data[i * cols + j] = 1;
 			else
 				data[i * cols + j] = 0;
@@ -169,31 +180,34 @@ void Matrix::eye(int _rows, int _cols)
 }
 
 /**
- * @berif 深度复制函数
- * @param[out] outputMatrix，复制的目的矩阵，会被重新分配内存并复制数据
- */
-void Matrix::copyTo(Matrix & outputMatrix) const
+* @berif 深度复制函数
+* @param[out] outputMatrix，复制的目的矩阵，会被重新分配内存并复制数据
+*/
+template <class _type>
+void _Matrix<_type>::copyTo(_Matrix<_type> & outputMatrix) const
 {
 	outputMatrix.create(rows, cols);
-	memcpy(outputMatrix.data, data, _size*sizeof(double));
+	memcpy(outputMatrix.data, data, _size * sizeof(_type));
 }
 
 /**
- * @berif 深度复制函数
- * @ret 返回临时矩阵的拷贝
- */
-Matrix Matrix::clone() const
+* @berif 深度复制函数
+* @ret 返回临时矩阵的拷贝
+*/
+template <class _type>
+_Matrix<_type> _Matrix<_type>::clone() const
 {
-	Matrix m;
+	_Matrix<_type> m;
 	copyTo(m);
 	return m;
 }
 
 
 /**
- * @berif 析构函数
- */
-Matrix::~Matrix()
+* @berif 析构函数
+*/
+template <class _type>
+_Matrix<_type>::~_Matrix()
 {
 	release();
 }
@@ -202,7 +216,8 @@ Matrix::~Matrix()
 * @berif 赋值函数
 * @attention 这是一个浅复制
 */
-Matrix& Matrix::operator=(const Matrix &m)
+template <class _type>
+_Matrix<_type>& _Matrix<_type>::operator=(const _Matrix<_type> &m)
 {
 	_log_("Matrix assignment function.");
 	// 防止出现自己给自己复制时候的问题
@@ -225,9 +240,10 @@ Matrix& Matrix::operator=(const Matrix &m)
 
 
 /**
- * @berif 形如mat = {1, 2, 3}的赋值方式
- */
-Matrix& Matrix::operator = (std::initializer_list<double> li)
+* @berif 形如mat = {1, 2, 3}的赋值方式
+*/
+template <class _type>
+_Matrix<_type>& _Matrix<_type>::operator = (std::initializer_list<_type> li)
 {
 	if (rows != 0 && cols != 0) {
 		create(rows, cols);
@@ -235,7 +251,7 @@ Matrix& Matrix::operator = (std::initializer_list<double> li)
 	else {
 		create(1, li.size());
 	}
-	
+
 	auto index = li.begin();
 	auto end = li.end();
 	for (size_t i = 0; i < _size; ++i, ++index) {
@@ -243,13 +259,14 @@ Matrix& Matrix::operator = (std::initializer_list<double> li)
 			data[i] = *index;
 		}
 		else {
-			data[i] = 0.0f;
+			data[i] = (_type)0;
 		}
 	}
 	return *this;
 }
 
-Matrix& Matrix::operator()(double * InputArray, size_t _size)
+template <class _type>
+_Matrix<_type>& _Matrix<_type>::operator()(_type * InputArray, size_t _size)
 {
 	create(1, _size);
 	for (size_t i = 0; i < _size; ++i)
@@ -258,7 +275,8 @@ Matrix& Matrix::operator()(double * InputArray, size_t _size)
 	return *this;
 }
 
-Matrix& Matrix::operator()(double * InputArray, int _rows, int _cols)
+template <class _type>
+_Matrix<_type>& _Matrix<_type>::operator()(_type * InputArray, int _rows, int _cols)
 {
 	create(_rows, _cols);
 	for (size_t i = 0; i < _size; ++i)
@@ -274,18 +292,20 @@ Matrix& Matrix::operator()(double * InputArray, int _rows, int _cols)
 
 
 /**
- * @berif 求矩阵的秩
- * m x n矩阵中min(m, n)矩阵的秩
- */
-double Matrix::rank()
+* @berif 求矩阵的秩
+* m x n矩阵中min(m, n)矩阵的秩
+*/
+template <class _type>
+_type _Matrix<_type>::rank()
 {
-	double temp = 0.0f;
+	_type temp = (_type)0;
 	return temp;
 }
 
-double Matrix::tr()
+template <class _type>
+_type _Matrix<_type>::tr()
 {
-	double temp = 0.0f;
+	_type temp = (_type)0;
 	int min_m_n = rows < cols ? rows : cols;
 	for (int i = 0; i < min_m_n; ++i) {
 		for (int j = 0; j < min_m_n; ++j) {
@@ -298,18 +318,22 @@ double Matrix::tr()
 }
 
 /**
- * @berif 重载输出运算符
- */
-ostream &operator<<(ostream & os, const Matrix &item)
+* @berif 重载输出运算符
+*/
+template <class _type>
+std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item)
 {
 	os << '[';
 	for (int i = 0; i < item.rows; ++i) {
 		for (int j = 0; j < item.cols; ++j) {
-			os << item.data[i*item.cols + j];
+			if(sizeof(_type) == 1)
+				os << (int)item.data[i*item.cols + j];
+			else
+				os << item.data[i*item.cols + j];
 			if (item.cols != j + 1)
 				os << ',';
 		}
-		if (item.rows != i + 1) 
+		if (item.rows != i + 1)
 			os << ';' << endl << ' ';
 		else
 			os << ']' << endl;
@@ -318,9 +342,10 @@ ostream &operator<<(ostream & os, const Matrix &item)
 }
 
 /**
- * @berif 比较两个矩阵是否相等
- */
-bool operator==(const Matrix &m1, const Matrix &m2)
+* @berif 比较两个矩阵是否相等
+*/
+template <class _type>
+bool operator==(const _Matrix<_type> &m1, const _Matrix<_type> &m2)
 {
 	// 1、没有分配内存的矩阵比较，没有经过create()
 	if (m1.data == nullptr && m1.data == m2.data) {
@@ -347,25 +372,26 @@ bool operator==(const Matrix &m1, const Matrix &m2)
 	return false;
 }
 
-bool operator!=(const Matrix &m1, const Matrix &m2)
+template <class _type>
+bool operator!=(const _Matrix<_type> &m1, const _Matrix<_type> &m2)
 {
 	return !(m1 == m2);
 }
 
-
-Matrix operator*(Matrix &m1, Matrix &m2)
+template <class _type>
+_Matrix<_type> operator*(_Matrix<_type> &m1, _Matrix<_type> &m2)
 {
 	try {
 		if (m1.cols != m2.rows) {
 			throw;
 		}
 	}
-	catch (exception){
+	catch (exception) {
 		_log_("矩阵1的列不等于矩阵2的行数");
-		return Matrix();
+		return _Matrix();
 	}
 
-	Matrix m(m1.rows, m2.cols);
+	_Matrix<_type> m(m1.rows, m2.cols);
 	m.zeros();
 
 	for (int i = 0; i < m.rows; ++i) {
@@ -379,7 +405,8 @@ Matrix operator*(Matrix &m1, Matrix &m2)
 	return m;
 }
 
-Matrix operator+(Matrix &m1, Matrix &m2)
+template <class _type>
+_Matrix<_type> operator+(_Matrix<_type> &m1, _Matrix<_type> &m2)
 {
 	try {
 		if (m1.cols != m2.cols || m1.rows != m2.rows) {
@@ -388,10 +415,10 @@ Matrix operator+(Matrix &m1, Matrix &m2)
 	}
 	catch (exception) {
 		_log_("m1.cols != m2.cols || m1.rows != m2.rows");
-		return Matrix();
+		return _Matrix();
 	}
 
-	Matrix temp(m1.rows, m1.cols);
+	_Matrix<_type> temp(m1.rows, m1.cols);
 
 	for (int i = 0; i < temp.rows; ++i) {
 		for (int j = 0; j < temp.cols; ++j) {
@@ -401,7 +428,8 @@ Matrix operator+(Matrix &m1, Matrix &m2)
 	return temp;
 }
 
-Matrix operator-(Matrix &m1, Matrix &m2)
+template <class _type>
+_Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_type> &m2)
 {
 	try {
 		if (m1.cols != m2.cols || m1.rows != m2.rows) {
@@ -410,10 +438,10 @@ Matrix operator-(Matrix &m1, Matrix &m2)
 	}
 	catch (exception) {
 		_log_("m1.cols != m2.cols || m1.rows != m2.rows");
-		return Matrix();
+		return _Matrix();
 	}
 
-	Matrix temp(m1.rows, m1.cols);
+	_Matrix<_type> temp(m1.rows, m1.cols);
 
 	for (int i = 0; i < temp.rows; ++i) {
 		for (int j = 0; j < temp.cols; ++j) {
@@ -424,20 +452,22 @@ Matrix operator-(Matrix &m1, Matrix &m2)
 }
 
 /**
- * @berif 逆
- */
-Matrix Matrix::inv()
+* @berif 逆
+*/
+template <class _type>
+_Matrix<_type> _Matrix<_type>::inv()
 {
-	Matrix m(cols,rows);
-	
+	_Matrix<_type> m(cols, rows);
+
 	return m;
 }
 
 
 /**
- * @berif 转置
- */
-Matrix  Matrix::t()
+* @berif 转置
+*/
+template <class _type>
+_Matrix<_type>  _Matrix<_type>::t()
 {
 	try {
 		if (rows != cols) {
@@ -446,10 +476,10 @@ Matrix  Matrix::t()
 	}
 	catch (exception) {
 		_log_("rows != cols");
-		return Matrix();
+		return _Matrix();
 	}
 
-	Matrix m(cols, rows);
+	_Matrix<_type> m(cols, rows);
 	for (int i = 0; i < m.rows; ++i) {
 		for (int j = 0; j < m.cols; ++j) {
 			m[i][j] = (*this)[j][i];
@@ -459,9 +489,10 @@ Matrix  Matrix::t()
 }
 
 /**
- * @berif 点乘
- */
-Matrix Matrix::dot(Matrix &m)
+* @berif 点乘
+*/
+template <class _type>
+_Matrix<_type> _Matrix<_type>::dot(_Matrix<_type> &m)
 {
 	try {
 		if (rows != m.rows || cols != m.cols) {
@@ -470,10 +501,10 @@ Matrix Matrix::dot(Matrix &m)
 	}
 	catch (exception) {
 		_log_("矩阵不符合运算规范");
-		return Matrix();
+		return _Matrix();
 	}
 
-	Matrix temp(m.rows, m.cols);
+	_Matrix<_type> temp(m.rows, m.cols);
 
 	for (size_t i = 0; i < _size; ++i) {
 		temp.data[i] = data[i] * m.data[i];
@@ -483,12 +514,13 @@ Matrix Matrix::dot(Matrix &m)
 }
 
 /**
- * @berif 叉乘
- * @attention C = cross(A,B) returns the cross product of the vectors
-    A and B.  That is, C = A x B.  A and B must be 3 element
-    vectors.
- */
-Matrix Matrix::cross(Matrix &m)
+* @berif 叉乘
+* @attention C = cross(A,B) returns the cross product of the vectors
+A and B.  That is, C = A x B.  A and B must be 3 element
+vectors.
+*/
+template <class _type>
+_Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
 {
 	try {
 		if (rows != 1 || cols != 3 || m.rows != 1 || m.cols != 3) {
@@ -497,10 +529,10 @@ Matrix Matrix::cross(Matrix &m)
 	}
 	catch (exception) {
 		_log_("矩阵不符合运算规范");
-		return Matrix();
+		return _Matrix();
 	}
 
-	Matrix temp(1, 3);
+	_Matrix<_type> temp(1, 3);
 
 	temp[0][0] = data[1] * m.data[2] - data[2] * m.data[1];
 	temp[0][1] = data[2] * m.data[0] - data[0] * m.data[2];
@@ -510,9 +542,10 @@ Matrix Matrix::cross(Matrix &m)
 }
 
 /**
- * @berif 卷积，暂时只限于卷积核为3*3
- */
-Matrix Matrix::conv(Matrix &m)
+* @berif 卷积，暂时只限于卷积核为3*3
+*/
+template <class _type>
+_Matrix<_type> _Matrix<_type>::conv(_Matrix<_type> &m)
 {
 	try {
 		// 卷积核需要为方阵，且行列数为奇数
@@ -522,10 +555,10 @@ Matrix Matrix::conv(Matrix &m)
 	}
 	catch (exception) {
 		_log_("矩阵不符合运算规范");
-		return Matrix();
+		return _Matrix();
 	}
 
-	Matrix temp(rows, cols);
+	_Matrix<_type> temp(rows, cols);
 	temp.zeros();
 	int depth = m.rows / 2;
 
@@ -534,7 +567,7 @@ Matrix Matrix::conv(Matrix &m)
 			// 
 			for (int ii = 0; ii < m.rows; ++ii) {
 				for (int jj = 0; jj < m.cols; ++jj) {
-					temp[i][j] += (*this).at(i - m.rows/2 + ii, j - m.cols/2 + jj) * m[ii][jj];
+					temp[i][j] += (*this).at(i - m.rows / 2 + ii, j - m.cols / 2 + jj) * m[ii][jj];
 				}
 			}
 		}
@@ -544,9 +577,10 @@ Matrix Matrix::conv(Matrix &m)
 }
 
 /**
- * @berif 带有越界检查
- */
-inline double Matrix::at(int _rows, int _cols)
+* @berif 带有越界检查
+*/
+template <class _type>
+inline _type _Matrix<_type>::at(int _rows, int _cols)
 {
 	if (_rows < 0 || _cols < 0 || _rows >= rows || _cols >= cols) {
 		return 0.0;
@@ -556,9 +590,10 @@ inline double Matrix::at(int _rows, int _cols)
 	}
 }
 
-Matrix operator*(Matrix &m, double delta)
+template <class _type>
+_Matrix<_type> operator*(_Matrix<_type> &m, _type delta)
 {
-	Matrix temp(m.rows, m.cols);
+	_Matrix<_type> temp(m.rows, m.cols);
 
 	for (size_t i = 0; i < m.size(); ++i) {
 		temp.data[i] = m.data[i] * delta;
@@ -567,15 +602,16 @@ Matrix operator*(Matrix &m, double delta)
 	return temp;
 }
 
-
-Matrix operator*(double delta, Matrix &m)
+template <class _type>
+_Matrix<_type> operator*(_type delta, _Matrix<_type> &m)
 {
 	return m*delta;
 }
 
-Matrix operator+(Matrix &m, double delta)
+template <class _type>
+_Matrix<_type> operator+(_Matrix<_type> &m, _type delta)
 {
-	Matrix temp(m.rows, m.cols);
+	_Matrix<_type> temp(m.rows, m.cols);
 
 	for (size_t i = 0; i < m.size(); ++i) {
 		temp.data[i] = m.data[i] + delta;
@@ -583,19 +619,23 @@ Matrix operator+(Matrix &m, double delta)
 
 	return temp;
 }
-
-Matrix operator+(double delta, Matrix &m)
+template <class _type>
+_Matrix<_type> operator+(_type delta, _Matrix<_type> &m)
 {
 	return m + delta;
 }
-
-Matrix operator-(Matrix &m, double delta)
+template <class _type>
+_Matrix<_type> operator-(_Matrix<_type> &m, _type delta)
 {
 	return m + (-delta);
 }
 
-
-Matrix operator-(double delta, Matrix &m)
+template <class _type>
+_Matrix<_type> operator-(_type delta, _Matrix<_type> &m)
 {
-	return m * (-1) + delta ;
+	return m * (-1) + delta;
 }
+
+#endif // ! __cplusplus
+
+#endif

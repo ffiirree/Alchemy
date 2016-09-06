@@ -1,7 +1,7 @@
 #ifndef _CONFIG_DEFAULT_H
 #define _CONFIG_DEFAULT_H
 
-//#define DEBUG
+#define DEBUG
 
 #if defined(DEBUG)
 #define _log_(str) do{\
