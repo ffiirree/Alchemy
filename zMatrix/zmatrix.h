@@ -62,7 +62,7 @@ public:
 
 	// 求秩
 	double rank();
-
+	double tr();
 	
 	Matrix dot(Matrix &m);           // 点乘
 	Matrix cross(Matrix &m);         // 叉积
@@ -86,6 +86,7 @@ private:
 
 inline bool Matrix::empty() const { return data == nullptr; }
 inline size_t Matrix::size() const { return rows*cols; }
+
 // 无越界检查
 inline double* Matrix::operator[](size_t n) { return &data[n * cols]; }
 inline const double* Matrix::operator[](size_t n) const { return &data[n * cols]; }

@@ -18,8 +18,10 @@ Matrix test()
 	};
 	cout << "m1 = " << endl << m1;
 
-	cout << m1 + 2;
-	cout << 2 + m1;
+	cout << m1.tr();
+
+	//cout << m1 + 2;
+	//cout << 2 + m1;
 
 	//cout << 2 * m1;
 	//cout << m1 * 2;
