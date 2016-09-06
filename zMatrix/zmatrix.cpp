@@ -277,7 +277,13 @@ Matrix& Matrix::operator()(double * InputArray, int _rows, int _cols)
  * @berif 求矩阵的秩
  * m x n矩阵中min(m, n)矩阵的秩
  */
-double	Matrix::rank()
+double Matrix::rank()
+{
+	double temp = 0.0f;
+	return temp;
+}
+
+double Matrix::tr()
 {
 	double temp = 0.0f;
 	int min_m_n = rows < cols ? rows : cols;
@@ -290,7 +296,6 @@ double	Matrix::rank()
 	}
 	return temp;
 }
-
 
 /**
  * @berif 重载输出运算符
@@ -458,7 +463,22 @@ Matrix  Matrix::t()
  */
 Matrix Matrix::dot(Matrix &m)
 {
-	Matrix temp(3, 3);
+	try {
+		if (rows != m.rows || cols != m.cols) {
+			throw;
+		}
+	}
+	catch (exception) {
+		_log_("矩阵不符合运算规范");
+		return Matrix();
+	}
+
+	Matrix temp(m.rows, m.cols);
+
+	for (size_t i = 0; i < _size; ++i) {
+		temp.data[i] = data[i] * m.data[i];
+	}
+
 	return temp;
 }
 
