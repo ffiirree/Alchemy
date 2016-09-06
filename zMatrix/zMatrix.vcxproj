@@ -116,7 +116,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="zmatrix.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />

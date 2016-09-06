@@ -4,7 +4,7 @@
 #ifdef __cplusplus
 
 /**
-* @berif ½«¾ØÕó³õÊ¼»¯Îª¿Õ¾ØÕó
+* @berif å°†çŸ©é˜µåˆå§‹åŒ–ä¸ºç©ºçŸ©é˜µ
 */
 template <class _type>
 void _Matrix<_type>::initEmpty()
@@ -15,10 +15,10 @@ void _Matrix<_type>::initEmpty()
 }
 
 /**
-* @berif ÕæÕıµÄ´´½¨¾ØÕó£¬·ÖÅäÄÚ´æ
-* @attention ËùÓĞ¾ØÕóÊı¾İµÄ·ÖÅä¶¼Ó¦¸ÃÍ¨¹ıµ÷ÓÃ¸Ãº¯ÊıÊµÏÖ£¨µ÷ÓÃ¸Ãº¯ÊıÒ»°ãÒâÎ¶×ÅÖØĞÂ´´½¨º¯Êı£©
-* @param[in] _rows£¬ĞĞÊı
-* @param[in] _cols£¬ÁĞÊı
+* @berif çœŸæ­£çš„åˆ›å»ºçŸ©é˜µï¼Œåˆ†é…å†…å­˜
+* @attention æ‰€æœ‰çŸ©é˜µæ•°æ®çš„åˆ†é…éƒ½åº”è¯¥é€šè¿‡è°ƒç”¨è¯¥å‡½æ•°å®ç°ï¼ˆè°ƒç”¨è¯¥å‡½æ•°ä¸€èˆ¬æ„å‘³ç€é‡æ–°åˆ›å»ºå‡½æ•°ï¼‰
+* @param[in] _rowsï¼Œè¡Œæ•°
+* @param[in] _colsï¼Œåˆ—æ•°
 */
 template <class _type>
 void _Matrix<_type>::create(int _rows, int _cols)
@@ -32,13 +32,13 @@ void _Matrix<_type>::create(int _rows, int _cols)
 	// 
 	release();
 
-	// ·ÖÅä
+	// åˆ†é…
 	data = new _type[_rows * _cols];
 	refcount = new int(1);
 }
 
 /**
-* @berif ¿ØÖÆÒıÓÃ¼ÆÊıµÄÖµ
+* @berif æ§åˆ¶å¼•ç”¨è®¡æ•°çš„å€¼
 */
 template <class _type>
 int _Matrix<_type>::refAdd(int *addr, int delta)
@@ -49,8 +49,8 @@ int _Matrix<_type>::refAdd(int *addr, int delta)
 }
 
 /**
-* @berif ÊÍ·Å×ÊÔ´
-* @attention ¾ØÕóµÄ×ÊÔ´ÓÉ¸Ãº¯Êı¿ØÖÆ²¢ÊÍ·Å
+* @berif é‡Šæ”¾èµ„æº
+* @attention çŸ©é˜µçš„èµ„æºç”±è¯¥å‡½æ•°æ§åˆ¶å¹¶é‡Šæ”¾
 */
 template <class _type>
 void _Matrix<_type>::release()
@@ -65,7 +65,7 @@ void _Matrix<_type>::release()
 }
 
 /**
-* @berif ÎŞ²Î¹¹Ôìº¯Êı
+* @berif æ— å‚æ„é€ å‡½æ•°
 */
 template <class _type> _Matrix<_type>::_Matrix()
 {
@@ -74,9 +74,9 @@ template <class _type> _Matrix<_type>::_Matrix()
 }
 
 /**
-* @berif ¹¹Ôìº¯Êı
-* @param[in] _rows£¬ĞĞÊı
-* @param[in] _cols£¬ÁĞÊı
+* @berif æ„é€ å‡½æ•°
+* @param[in] _rowsï¼Œè¡Œæ•°
+* @param[in] _colsï¼Œåˆ—æ•°
 */
 template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols)
 {
@@ -85,8 +85,8 @@ template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols)
 	create(_rows, _cols);
 }
 /**
-* @berif ¿½±´º¯Êı
-* @attention ÕâÊÇÒ»¸öÇ³¸´ÖÆ
+* @berif æ‹·è´å‡½æ•°
+* @attention è¿™æ˜¯ä¸€ä¸ªæµ…å¤åˆ¶
 */
 template <class _type> _Matrix<_type>::_Matrix(const _Matrix<_type>& m)
 	:rows(m.rows), cols(m.cols), data(m.data), refcount(m.refcount)
@@ -97,7 +97,7 @@ template <class _type> _Matrix<_type>::_Matrix(const _Matrix<_type>& m)
 }
 
 /**
-* @berif ½«¾ØÕó³õÊ¼»¯Îª0
+* @berif å°†çŸ©é˜µåˆå§‹åŒ–ä¸º0
 */
 template <class _type>
 void _Matrix<_type>::zeros()
@@ -108,7 +108,7 @@ void _Matrix<_type>::zeros()
 }
 
 /**
-* @berif ÖØĞÂ·ÖÅäÄÚ´æ²¢³õÊ¼»¯Îª0
+* @berif é‡æ–°åˆ†é…å†…å­˜å¹¶åˆå§‹åŒ–ä¸º0
 */
 template <class _type>
 void _Matrix<_type>::zeros(int _rows, int _cols)
@@ -121,7 +121,7 @@ void _Matrix<_type>::zeros(int _rows, int _cols)
 }
 
 /**
-* @berif ½«¾ØÕó³õÊ¼»¯Îª1
+* @berif å°†çŸ©é˜µåˆå§‹åŒ–ä¸º1
 */
 template <class _type>
 void _Matrix<_type>::ones()
@@ -132,7 +132,7 @@ void _Matrix<_type>::ones()
 }
 
 /**
-* @berif ÖØĞÂ·ÖÅäÄÚ´æ²¢³õÊ¼»¯Îª1
+* @berif é‡æ–°åˆ†é…å†…å­˜å¹¶åˆå§‹åŒ–ä¸º1
 */
 template <class _type>
 void _Matrix<_type>::ones(int _rows, int _cols)
@@ -146,7 +146,7 @@ void _Matrix<_type>::ones(int _rows, int _cols)
 
 
 /**
-* @berif ½«¾ØÕó³õÊ¼»¯Îªµ¥Î»¾ØÕó
+* @berif å°†çŸ©é˜µåˆå§‹åŒ–ä¸ºå•ä½çŸ©é˜µ
 */
 template <class _type>
 void _Matrix<_type>::eye()
@@ -162,7 +162,7 @@ void _Matrix<_type>::eye()
 }
 
 /**
-* @berif ÖØĞÂ·ÖÅäÄÚ´æ²¢³õÊ¼»¯Îªµ¥Î»¾ØÕó
+* @berif é‡æ–°åˆ†é…å†…å­˜å¹¶åˆå§‹åŒ–ä¸ºå•ä½çŸ©é˜µ
 */
 template <class _type>
 void _Matrix<_type>::eye(int _rows, int _cols)
@@ -180,8 +180,8 @@ void _Matrix<_type>::eye(int _rows, int _cols)
 }
 
 /**
-* @berif Éî¶È¸´ÖÆº¯Êı
-* @param[out] outputMatrix£¬¸´ÖÆµÄÄ¿µÄ¾ØÕó£¬»á±»ÖØĞÂ·ÖÅäÄÚ´æ²¢¸´ÖÆÊı¾İ
+* @berif æ·±åº¦å¤åˆ¶å‡½æ•°
+* @param[out] outputMatrixï¼Œå¤åˆ¶çš„ç›®çš„çŸ©é˜µï¼Œä¼šè¢«é‡æ–°åˆ†é…å†…å­˜å¹¶å¤åˆ¶æ•°æ®
 */
 template <class _type>
 void _Matrix<_type>::copyTo(_Matrix<_type> & outputMatrix) const
@@ -191,8 +191,8 @@ void _Matrix<_type>::copyTo(_Matrix<_type> & outputMatrix) const
 }
 
 /**
-* @berif Éî¶È¸´ÖÆº¯Êı
-* @ret ·µ»ØÁÙÊ±¾ØÕóµÄ¿½±´
+* @berif æ·±åº¦å¤åˆ¶å‡½æ•°
+* @ret è¿”å›ä¸´æ—¶çŸ©é˜µçš„æ‹·è´
 */
 template <class _type>
 _Matrix<_type> _Matrix<_type>::clone() const
@@ -204,7 +204,7 @@ _Matrix<_type> _Matrix<_type>::clone() const
 
 
 /**
-* @berif Îö¹¹º¯Êı
+* @berif ææ„å‡½æ•°
 */
 template <class _type>
 _Matrix<_type>::~_Matrix()
@@ -213,22 +213,22 @@ _Matrix<_type>::~_Matrix()
 }
 
 /**
-* @berif ¸³Öµº¯Êı
-* @attention ÕâÊÇÒ»¸öÇ³¸´ÖÆ
+* @berif èµ‹å€¼å‡½æ•°
+* @attention è¿™æ˜¯ä¸€ä¸ªæµ…å¤åˆ¶
 */
 template <class _type>
 _Matrix<_type>& _Matrix<_type>::operator=(const _Matrix<_type> &m)
 {
 	_log_("Matrix assignment function.");
-	// ·ÀÖ¹³öÏÖ×Ô¼º¸ø×Ô¼º¸´ÖÆÊ±ºòµÄÎÊÌâ
+	// é˜²æ­¢å‡ºç°è‡ªå·±ç»™è‡ªå·±å¤åˆ¶æ—¶å€™çš„é—®é¢˜
 	if (this != &m) {
 		if (m.refcount)
 			refAdd(m.refcount, 1);
 
-		// ÊÍ·Åµô×óÖµµÄÄÚÈİ
+		// é‡Šæ”¾æ‰å·¦å€¼çš„å†…å®¹
 		release();
 
-		// ¸³Öµ
+		// èµ‹å€¼
 		data = m.data;
 		refcount = m.refcount;
 		rows = m.rows;
@@ -240,7 +240,7 @@ _Matrix<_type>& _Matrix<_type>::operator=(const _Matrix<_type> &m)
 
 
 /**
-* @berif ĞÎÈçmat = {1, 2, 3}µÄ¸³Öµ·½Ê½
+* @berif å½¢å¦‚mat = {1, 2, 3}çš„èµ‹å€¼æ–¹å¼
 */
 template <class _type>
 _Matrix<_type>& _Matrix<_type>::operator = (std::initializer_list<_type> li)
@@ -292,8 +292,8 @@ _Matrix<_type>& _Matrix<_type>::operator()(_type * InputArray, int _rows, int _c
 
 
 /**
-* @berif Çó¾ØÕóµÄÖÈ
-* m x n¾ØÕóÖĞmin(m, n)¾ØÕóµÄÖÈ
+* @berif æ±‚çŸ©é˜µçš„ç§©
+* m x nçŸ©é˜µä¸­min(m, n)çŸ©é˜µçš„ç§©
 */
 template <class _type>
 _type _Matrix<_type>::rank()
@@ -318,7 +318,7 @@ _type _Matrix<_type>::tr()
 }
 
 /**
-* @berif ÖØÔØÊä³öÔËËã·û
+* @berif é‡è½½è¾“å‡ºè¿ç®—ç¬¦
 */
 template <class _type>
 std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item)
@@ -342,21 +342,21 @@ std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item)
 }
 
 /**
-* @berif ±È½ÏÁ½¸ö¾ØÕóÊÇ·ñÏàµÈ
+* @berif æ¯”è¾ƒä¸¤ä¸ªçŸ©é˜µæ˜¯å¦ç›¸ç­‰
 */
 template <class _type>
 bool operator==(const _Matrix<_type> &m1, const _Matrix<_type> &m2)
 {
-	// 1¡¢Ã»ÓĞ·ÖÅäÄÚ´æµÄ¾ØÕó±È½Ï£¬Ã»ÓĞ¾­¹ıcreate()
+	// 1ã€æ²¡æœ‰åˆ†é…å†…å­˜çš„çŸ©é˜µæ¯”è¾ƒï¼Œæ²¡æœ‰ç»è¿‡create()
 	if (m1.data == nullptr && m1.data == m2.data) {
 		return true;
 	}
-	// 2¡¢·ÖÅäÄÚ´æ
+	// 2ã€åˆ†é…å†…å­˜
 	else if (m1.data != nullptr) {
-		// ÄÚ´æµØÖ·ÏàµÈ£¬ÒıÓÃ£¬ÏàµÈ
+		// å†…å­˜åœ°å€ç›¸ç­‰ï¼Œå¼•ç”¨ï¼Œç›¸ç­‰
 		if (m1.data == m2.data)
 			return true;
-		// µØÖ·²»ÏàµÈ, ĞĞÁĞÏàµÈµÄÇ°ÌáÏÂ£¬ÔªËØÏàµÈ
+		// åœ°å€ä¸ç›¸ç­‰, è¡Œåˆ—ç›¸ç­‰çš„å‰æä¸‹ï¼Œå…ƒç´ ç›¸ç­‰
 		else {
 			if (m1.cols == m2.cols && m1.rows == m2.rows) {
 				int i = 0;
@@ -387,7 +387,7 @@ _Matrix<_type> operator*(_Matrix<_type> &m1, _Matrix<_type> &m2)
 		}
 	}
 	catch (exception) {
-		_log_("¾ØÕó1µÄÁĞ²»µÈÓÚ¾ØÕó2µÄĞĞÊı");
+		_log_("çŸ©é˜µ1çš„åˆ—ä¸ç­‰äºçŸ©é˜µ2çš„è¡Œæ•°");
 		return _Matrix();
 	}
 
@@ -452,7 +452,7 @@ _Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_type> &m2)
 }
 
 /**
-* @berif Äæ
+* @berif é€†
 */
 template <class _type>
 _Matrix<_type> _Matrix<_type>::inv()
@@ -464,7 +464,7 @@ _Matrix<_type> _Matrix<_type>::inv()
 
 
 /**
-* @berif ×ªÖÃ
+* @berif è½¬ç½®
 */
 template <class _type>
 _Matrix<_type>  _Matrix<_type>::t()
@@ -489,7 +489,7 @@ _Matrix<_type>  _Matrix<_type>::t()
 }
 
 /**
-* @berif µã³Ë
+* @berif ç‚¹ä¹˜
 */
 template <class _type>
 _Matrix<_type> _Matrix<_type>::dot(_Matrix<_type> &m)
@@ -500,7 +500,7 @@ _Matrix<_type> _Matrix<_type>::dot(_Matrix<_type> &m)
 		}
 	}
 	catch (exception) {
-		_log_("¾ØÕó²»·ûºÏÔËËã¹æ·¶");
+		_log_("çŸ©é˜µä¸ç¬¦åˆè¿ç®—è§„èŒƒ");
 		return _Matrix();
 	}
 
@@ -514,7 +514,7 @@ _Matrix<_type> _Matrix<_type>::dot(_Matrix<_type> &m)
 }
 
 /**
-* @berif ²æ³Ë
+* @berif å‰ä¹˜
 * @attention C = cross(A,B) returns the cross product of the vectors
 A and B.  That is, C = A x B.  A and B must be 3 element
 vectors.
@@ -528,7 +528,7 @@ _Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
 		}
 	}
 	catch (exception) {
-		_log_("¾ØÕó²»·ûºÏÔËËã¹æ·¶");
+		_log_("çŸ©é˜µä¸ç¬¦åˆè¿ç®—è§„èŒƒ");
 		return _Matrix();
 	}
 
@@ -542,19 +542,19 @@ _Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
 }
 
 /**
-* @berif ¾í»ı£¬ÔİÊ±Ö»ÏŞÓÚ¾í»ıºËÎª3*3
+* @berif å·ç§¯ï¼Œæš‚æ—¶åªé™äºå·ç§¯æ ¸ä¸º3*3
 */
 template <class _type>
 _Matrix<_type> _Matrix<_type>::conv(_Matrix<_type> &m)
 {
 	try {
-		// ¾í»ıºËĞèÒªÎª·½Õó£¬ÇÒĞĞÁĞÊıÎªÆæÊı
+		// å·ç§¯æ ¸éœ€è¦ä¸ºæ–¹é˜µï¼Œä¸”è¡Œåˆ—æ•°ä¸ºå¥‡æ•°
 		if (m.rows != m.cols || m.rows % 2 == 0) {
 			throw;
 		}
 	}
 	catch (exception) {
-		_log_("¾ØÕó²»·ûºÏÔËËã¹æ·¶");
+		_log_("çŸ©é˜µä¸ç¬¦åˆè¿ç®—è§„èŒƒ");
 		return _Matrix();
 	}
 
@@ -577,7 +577,7 @@ _Matrix<_type> _Matrix<_type>::conv(_Matrix<_type> &m)
 }
 
 /**
-* @berif ´øÓĞÔ½½ç¼ì²é
+* @berif å¸¦æœ‰è¶Šç•Œæ£€æŸ¥
 */
 template <class _type>
 inline _type _Matrix<_type>::at(int _rows, int _cols)
