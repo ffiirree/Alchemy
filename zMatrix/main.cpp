@@ -16,28 +16,8 @@ Matrix test()
 		5,4,9,56,3,
 		5,1,5,7,61
 	};
-	cout << "m1 = " << endl << m1;
 
-	cout << m1.tr();
-
-	//cout << m1 + 2;
-	//cout << 2 + m1;
-
-	//cout << 2 * m1;
-	//cout << m1 * 2;
-
-	//Matrix core(5, 5);
-	//core = {
-	//	1,1,1,1,1,
-	//	1,1,1,1,1,
-	//	1,1,-1,1,1,
-	//	1,1,1,1,1,
-	//	1,1,1,1,1
-	//};
-	//cout << "core = " << endl << core;
-
-
-	//cout << "conv = " << endl << m1.conv(core);
+	cout << m1;
 
 	return m1;
 }
