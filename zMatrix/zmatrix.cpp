@@ -96,7 +96,7 @@ Matrix::Matrix(const Matrix& m)
  */
 void Matrix::zeros()
 {
-	for (int i = 0; i < _size; ++i) {
+	for (size_t i = 0; i < _size; ++i) {
 		data[i] = 0;
 	}
 }
@@ -108,7 +108,7 @@ void Matrix::zeros(int _rows, int _cols)
 {
 	create(_rows, _cols);
 
-	for (int i = 0; i < _size; ++i) {
+	for (size_t i = 0; i < _size; ++i) {
 		data[i] = 0;
 	}
 }
@@ -118,7 +118,7 @@ void Matrix::zeros(int _rows, int _cols)
  */
 void Matrix::ones()
 {
-	for (int i = 0; i < _size; ++i) {
+	for (size_t i = 0; i < _size; ++i) {
 		data[i] = 1;
 	}
 }
@@ -130,7 +130,7 @@ void Matrix::ones(int _rows, int _cols)
 {
 	create(_rows, _cols);
 
-	for (int i = 0; i < _size; ++i) {
+	for (size_t i = 0; i < _size; ++i) {
 		data[i] = 1;
 	}
 }
@@ -238,7 +238,7 @@ Matrix& Matrix::operator = (std::initializer_list<double> li)
 	
 	auto index = li.begin();
 	auto end = li.end();
-	for (int i = 0; i < _size; ++i, ++index) {
+	for (size_t i = 0; i < _size; ++i, ++index) {
 		if (index < end) {
 			data[i] = *index;
 		}
@@ -252,7 +252,7 @@ Matrix& Matrix::operator = (std::initializer_list<double> li)
 Matrix& Matrix::operator()(double * InputArray, size_t _size)
 {
 	create(1, _size);
-	for (int i = 0; i < _size; ++i)
+	for (size_t i = 0; i < _size; ++i)
 		data[i] = InputArray[i];
 
 	return *this;
@@ -261,7 +261,7 @@ Matrix& Matrix::operator()(double * InputArray, size_t _size)
 Matrix& Matrix::operator()(double * InputArray, int _rows, int _cols)
 {
 	create(_rows, _cols);
-	for (int i = 0; i < _size; ++i)
+	for (size_t i = 0; i < _size; ++i)
 		data[i] = InputArray[i];
 
 	return *this;
@@ -495,6 +495,7 @@ Matrix Matrix::cross(Matrix &m)
 Matrix Matrix::conv(Matrix &m)
 {
 	try {
+		// 卷积核需要为方阵，且行列数为奇数
 		if (m.rows != m.cols || m.rows % 2 == 0) {
 			throw;
 		}
@@ -505,13 +506,17 @@ Matrix Matrix::conv(Matrix &m)
 	}
 
 	Matrix temp(rows, cols);
+	temp.zeros();
 	int depth = m.rows / 2;
 
 	for (int i = 0; i < temp.rows; ++i) {
 		for (int j = 0; j < temp.cols; ++j) {
-			temp[i][j] = (*this).at(i - 1, j - 1) * m[0][0] + (*this).at(i - 1, j) * m[0][1] + (*this).at(i - 1, j + 1) * m[0][2]
-				+ (*this).at(i, j - 1) * m[1][0] + (*this).at(i, j) * m[1][1] + (*this).at(i, j + 1) * m[1][2]
-				+ (*this).at(i + 1, j - 1) * m[2][0] + (*this).at(i + 1, j) * m[2][1] + (*this).at(i + 1, j + 1) * m[2][2];
+			// 
+			for (int ii = 0; ii < m.rows; ++ii) {
+				for (int jj = 0; jj < m.cols; ++jj) {
+					temp[i][j] += (*this).at(i - m.rows/2 + ii, j - m.cols/2 + jj) * m[ii][jj];
+				}
+			}
 		}
 	}
 
@@ -521,7 +526,7 @@ Matrix Matrix::conv(Matrix &m)
 /**
  * @berif 带有越界检查
  */
-double Matrix::at(int _rows, int _cols)
+inline double Matrix::at(int _rows, int _cols)
 {
 	if (_rows < 0 || _cols < 0 || _rows >= rows || _cols >= cols) {
 		return 0.0;
