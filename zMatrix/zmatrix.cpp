@@ -535,3 +535,47 @@ inline double Matrix::at(int _rows, int _cols)
 		return (*this)[_rows][_cols];
 	}
 }
+
+Matrix operator*(Matrix &m, double delta)
+{
+	Matrix temp(m.rows, m.cols);
+
+	for (size_t i = 0; i < m.size(); ++i) {
+		temp.data[i] = m.data[i] * delta;
+	}
+
+	return temp;
+}
+
+
+Matrix operator*(double delta, Matrix &m)
+{
+	return m*delta;
+}
+
+Matrix operator+(Matrix &m, double delta)
+{
+	Matrix temp(m.rows, m.cols);
+
+	for (size_t i = 0; i < m.size(); ++i) {
+		temp.data[i] = m.data[i] + delta;
+	}
+
+	return temp;
+}
+
+Matrix operator+(double delta, Matrix &m)
+{
+	return m + delta;
+}
+
+Matrix operator-(Matrix &m, double delta)
+{
+	return m + (-delta);
+}
+
+
+Matrix operator-(double delta, Matrix &m)
+{
+	return m * (-1) + delta ;
+}
