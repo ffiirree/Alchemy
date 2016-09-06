@@ -18,11 +18,13 @@ Matrix test()
 	};
 	cout << "m1 = " << endl << m1;
 
-	Matrix core(3, 3);
+	Matrix core(5, 5);
 	core = {
-		1,1,1,
-		1,-1,1,
-		1,1,1
+		1,1,1,1,1,
+		1,1,1,1,1,
+		1,1,-1,1,1,
+		1,1,1,1,1,
+		1,1,1,1,1
 	};
 	cout << "core = " << endl << core;
 
