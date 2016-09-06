@@ -17,6 +17,8 @@ Matrix16s test()
 		5,1,5,7,61
 	};
 
+	cout << "m1.tr() =" << m1.tr() << endl;
+
 	Matrix16s core(5, 5);
 	core = {
 		1,1,1,1,1,
@@ -25,6 +27,8 @@ Matrix16s test()
 		1,1,1,1,1,
 		1,1,1,1,1
 	};
+
+	cout << "core.tr() =" << core.tr() << endl;
 
 	cout << m1.conv(core);
 

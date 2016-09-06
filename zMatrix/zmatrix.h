@@ -1,3 +1,16 @@
+/**
+ ******************************************************************************
+ * @file    zmatrix.h
+ * @author  zlq
+ * @version V1.0
+ * @date    2016.9.7
+ * @brief   模板类_Matrix的定义
+ ******************************************************************************
+ * @attention
+ *
+ *
+ ******************************************************************************
+ */
 #ifndef _ZMATRIX_H
 #define _ZMATRIX_H
 
@@ -11,13 +24,9 @@ template <class _type> class _Matrix;
 
 template <class _type> class _Matrix {
 public:
-	// default constructor
 	_Matrix();
 	_Matrix(int rows, int cols);
-
-	// 复制构造函数
 	_Matrix(const _Matrix<_type>& m);
-
 	~_Matrix();
 
 	_Matrix<_type>& operator = (const _Matrix<_type>& m);
@@ -77,7 +86,6 @@ public:
 	_type *data;
 
 private:
-	// Size of the Matrix
 	size_t _size;
 
 	//! pointer to the reference counter;
@@ -87,51 +95,34 @@ private:
 	void initEmpty();
 };
 
-// 重载运算符
-template <class _type>
-std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item);
+template <class _type> std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item);
 
-template <class _type>
-bool operator==(const _Matrix<_type> &m1, const _Matrix<_type> &m2);
-template <class _type>
-bool operator!=(const _Matrix<_type> &m1, const _Matrix<_type> &m2);
+template <class _type> bool operator==(const _Matrix<_type> &m1, const _Matrix<_type> &m2);
+template <class _type> bool operator!=(const _Matrix<_type> &m1, const _Matrix<_type> &m2);
 
-template <class _type>
-_Matrix<_type> operator*(_Matrix<_type> &m1, _Matrix<_type> &m2);
-template <class _type>
-_Matrix<_type> operator*(_Matrix<_type> &m, _type delta);
-template <class _type>
-_Matrix<_type> operator*(_type delta, _Matrix<_type> &m);
+template <class _type> _Matrix<_type> operator*(_Matrix<_type> &m1, _Matrix<_type> &m2);
+template <class _type> _Matrix<_type> operator*(_Matrix<_type> &m, _type delta);
+template <class _type> _Matrix<_type> operator*(_type delta, _Matrix<_type> &m);
 
-template <class _type>
-_Matrix<_type> operator+(_Matrix<_type> &m1, _Matrix<_type> &m2);
-template <class _type>
-_Matrix<_type> operator+(_Matrix<_type> &m, _type delta);
-template <class _type>
-_Matrix<_type> operator+(_type delta, _Matrix<_type> &m);
+template <class _type> _Matrix<_type> operator+(_Matrix<_type> &m1, _Matrix<_type> &m2);
+template <class _type> _Matrix<_type> operator+(_Matrix<_type> &m, _type delta);
+template <class _type> _Matrix<_type> operator+(_type delta, _Matrix<_type> &m);
 
-template <class _type>
-_Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_type> &m2);
-template <class _type>
-_Matrix<_type> operator-(_Matrix<_type> &m, _type delta);
-template <class _type>
-_Matrix<_type> operator-(_type delta, _Matrix<_type> &m);
+template <class _type> _Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_type> &m2);
+template <class _type> _Matrix<_type> operator-(_Matrix<_type> &m, _type delta);
+template <class _type> _Matrix<_type> operator-(_type delta, _Matrix<_type> &m);
 
 
 
-typedef _Matrix<double> Matrix;
-
-typedef _Matrix<double> Matrix64f;
-typedef _Matrix<float> Matrix32f;
-
-typedef _Matrix<signed int> Matrix32s;
-typedef _Matrix<unsigned int> Matrix32u;
-
-typedef _Matrix<signed short> Matrix16s;
-typedef _Matrix<unsigned short> Matrix16u;
-
-typedef _Matrix<signed char> Matrix8s;
-typedef _Matrix<unsigned char> Matrix8u;
+typedef _Matrix<double>             Matrix;
+typedef _Matrix<double>             Matrix64f;
+typedef _Matrix<float>              Matrix32f;
+typedef _Matrix<signed int>         Matrix32s;
+typedef _Matrix<unsigned int>       Matrix32u;
+typedef _Matrix<signed short>       Matrix16s;
+typedef _Matrix<unsigned short>     Matrix16u;
+typedef _Matrix<signed char>        Matrix8s;
+typedef _Matrix<unsigned char>      Matrix8u;
 
 
 #endif // !__cplusplus
