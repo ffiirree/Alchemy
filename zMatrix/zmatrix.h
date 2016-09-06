@@ -19,11 +19,15 @@ public:
 	Matrix& operator = (const Matrix& m);
 	Matrix& operator = (std::initializer_list<double>);
 	Matrix& operator += (const Matrix& m);
+
+	// 检查这两个函数是否达到了想要的目的
 	double* operator[](size_t n);
 	const double* operator[](size_t n) const;
+
 	Matrix& operator()(double * InputArray, size_t size);
 	Matrix& operator()(double * InputArray, int rows, int cols);
 
+	// 这个函数是否需要两个，const
 	double at(int rows, int cols);
 
 	Matrix inv();                        // 逆

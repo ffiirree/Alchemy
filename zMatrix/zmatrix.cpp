@@ -490,7 +490,7 @@ Matrix Matrix::cross(Matrix &m)
 }
 
 /**
- * @berif 卷积
+ * @berif 卷积，暂时只限于卷积核为3*3
  */
 Matrix Matrix::conv(Matrix &m)
 {
