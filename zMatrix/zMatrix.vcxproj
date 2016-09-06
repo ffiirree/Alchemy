@@ -112,10 +112,13 @@
   <ItemGroup>
     <ClInclude Include="config_default.h" />
     <ClInclude Include="zmatrix.h" />
+    <ClInclude Include="operations.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="zmatrix.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

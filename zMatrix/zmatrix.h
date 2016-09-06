@@ -1,3 +1,16 @@
+/**
+ ******************************************************************************
+ * @file    zmatrix.h
+ * @author  zlq
+ * @version V1.0
+ * @date    2016.9.7
+ * @brief   æ¨¡æ¿ç±»_Matrixçš„å®šä¹‰
+ ******************************************************************************
+ * @attention
+ *
+ *
+ ******************************************************************************
+ */
 #ifndef _ZMATRIX_H
 #define _ZMATRIX_H
 
@@ -5,37 +18,41 @@
 #include <iostream>
 #include "config_default.h"
 
-class Matrix {
+#ifdef __cplusplus
+
+template <class _type> class _Matrix;
+
+template <class _type> class _Matrix {
 public:
-	// default constructor
-	Matrix();
-	Matrix(int rows, int cols);
+	_Matrix();
+	_Matrix(int rows, int cols);
+	_Matrix(const _Matrix<_type>& m);
+	~_Matrix();
 
-	// ¸´ÖÆ¹¹Ôìº¯Êı
-	Matrix(const Matrix& m);
+	_Matrix<_type>& operator = (const _Matrix<_type>& m);
+	_Matrix<_type>& operator = (std::initializer_list<_type>);
+	_Matrix<_type>& operator += (const _Matrix<_type>& m);
 
-	~Matrix();
+	// æ£€æŸ¥è¿™ä¸¤ä¸ªå‡½æ•°æ˜¯å¦è¾¾åˆ°äº†æƒ³è¦çš„ç›®çš„
+	inline _type* operator[](size_t n) { return &data[n * cols]; }
+	inline const _type* operator[](size_t n) const { return &data[n * cols]; }
 
-	Matrix& operator = (const Matrix& m);
-	Matrix& operator = (std::initializer_list<double>);
-	Matrix& operator += (const Matrix& m);
-	double* operator[](size_t n);
-	const double* operator[](size_t n) const;
-	Matrix& operator()(double * InputArray, size_t size);
-	Matrix& operator()(double * InputArray, int rows, int cols);
+	_Matrix<_type>& operator()(_type * InputArray, size_t size);
+	_Matrix<_type>& operator()(_type * InputArray, int rows, int cols);
 
-	double at(int rows, int cols);
+	// è¿™ä¸ªå‡½æ•°æ˜¯å¦éœ€è¦ä¸¤ä¸ªï¼Œconst
+	_type at(int rows, int cols);
 
-	Matrix inv();                        // Äæ
-	Matrix t();                          // ×ªÖÃ
+	_Matrix<_type> inv();                        // é€†
+	_Matrix<_type> t();                          // è½¬ç½®
 
 
 	//! returns deep copy of the matrix, i.e. the data is copied
-	Matrix clone() const;
+	_Matrix<_type> clone() const;
 
 	//! copies the matrix content to "m".
 	// It calls m.create(this->size(), this->type()).
-	void copyTo(Matrix & outputMatrix) const;
+	void copyTo(_Matrix<_type> & outputMatrix) const;
 
 	//! Matlab-style matrix initialization
 	void zeros();
@@ -50,26 +67,25 @@ public:
 	void create(int rows, int cols);
 
 	//! returns true if matrix data is NULL
-	bool empty() const;
-	size_t size() const;
+	inline bool empty() const { return data == nullptr; }
+	inline size_t size() const { return _size; }
 
 	void release();
 	int refAdd(int *addr, int delta);
 
-	// ÇóÖÈ
-	double rank();
-
+	// æ±‚ç§©
+	_type rank();
+	_type tr();
 	
-	Matrix dot(Matrix &m);           // µã³Ë
-	Matrix cross(Matrix &m);         // ²æ»ı
-	Matrix conv(Matrix &m);          // ¾í»ı
+	_Matrix<_type> dot(_Matrix<_type> &m);           // ç‚¹ä¹˜
+	_Matrix<_type> cross(_Matrix<_type> &m);         // å‰ç§¯
+	_Matrix<_type> conv(_Matrix<_type> &m);          // å·ç§¯
 
 
-	int rows, cols; // ĞĞÊıºÍÁĞÊı
-	double *data;
+	int rows, cols; // è¡Œæ•°å’Œåˆ—æ•°
+	_type *data;
 
 private:
-	// Size of the Matrix
 	size_t _size;
 
 	//! pointer to the reference counter;
@@ -79,21 +95,38 @@ private:
 	void initEmpty();
 };
 
+template <class _type> std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item);
 
-inline bool Matrix::empty() const { return data == nullptr; }
-inline size_t Matrix::size() const { return rows*cols; }
-// ÎŞÔ½½ç¼ì²é
-inline double* Matrix::operator[](size_t n) { return &data[n * cols]; }
-inline const double* Matrix::operator[](size_t n) const { return &data[n * cols]; }
+template <class _type> bool operator==(const _Matrix<_type> &m1, const _Matrix<_type> &m2);
+template <class _type> bool operator!=(const _Matrix<_type> &m1, const _Matrix<_type> &m2);
 
-// ÖØÔØÔËËã·û
-std::ostream &operator<<(std::ostream & os, const Matrix &item);
+template <class _type> _Matrix<_type> operator*(_Matrix<_type> &m1, _Matrix<_type> &m2);
+template <class _type> _Matrix<_type> operator*(_Matrix<_type> &m, _type delta);
+template <class _type> _Matrix<_type> operator*(_type delta, _Matrix<_type> &m);
 
-bool operator==(const Matrix &m1, const Matrix &m2);
-bool operator!=(const Matrix &m1, const Matrix &m2);
+template <class _type> _Matrix<_type> operator+(_Matrix<_type> &m1, _Matrix<_type> &m2);
+template <class _type> _Matrix<_type> operator+(_Matrix<_type> &m, _type delta);
+template <class _type> _Matrix<_type> operator+(_type delta, _Matrix<_type> &m);
 
-Matrix operator*(Matrix &m1, Matrix &m2);
-Matrix operator+(Matrix &m1, Matrix &m2);
-Matrix operator-(Matrix &m1, Matrix &m2);
+template <class _type> _Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_type> &m2);
+template <class _type> _Matrix<_type> operator-(_Matrix<_type> &m, _type delta);
+template <class _type> _Matrix<_type> operator-(_type delta, _Matrix<_type> &m);
+
+
+
+typedef _Matrix<double>             Matrix;
+typedef _Matrix<double>             Matrix64f;
+typedef _Matrix<float>              Matrix32f;
+typedef _Matrix<signed int>         Matrix32s;
+typedef _Matrix<unsigned int>       Matrix32u;
+typedef _Matrix<signed short>       Matrix16s;
+typedef _Matrix<unsigned short>     Matrix16u;
+typedef _Matrix<signed char>        Matrix8s;
+typedef _Matrix<unsigned char>      Matrix8u;
+
+
+#endif // !__cplusplus
+
+#include "operations.hpp"
 
 #endif  // !_ZMATRIX_H

@@ -21,13 +21,18 @@
     <ClInclude Include="zmatrix.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="operations.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="zmatrix.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Filter>头文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
