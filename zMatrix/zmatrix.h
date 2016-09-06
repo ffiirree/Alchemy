@@ -15,7 +15,7 @@ public:
 	_Matrix();
 	_Matrix(int rows, int cols);
 
-	// ¸´ÖÆ¹¹Ôìº¯Êı
+	// å¤åˆ¶æ„é€ å‡½æ•°
 	_Matrix(const _Matrix<_type>& m);
 
 	~_Matrix();
@@ -24,18 +24,18 @@ public:
 	_Matrix<_type>& operator = (std::initializer_list<_type>);
 	_Matrix<_type>& operator += (const _Matrix<_type>& m);
 
-	// ¼ì²éÕâÁ½¸öº¯ÊıÊÇ·ñ´ïµ½ÁËÏëÒªµÄÄ¿µÄ
+	// æ£€æŸ¥è¿™ä¸¤ä¸ªå‡½æ•°æ˜¯å¦è¾¾åˆ°äº†æƒ³è¦çš„ç›®çš„
 	inline _type* operator[](size_t n) { return &data[n * cols]; }
 	inline const _type* operator[](size_t n) const { return &data[n * cols]; }
 
 	_Matrix<_type>& operator()(_type * InputArray, size_t size);
 	_Matrix<_type>& operator()(_type * InputArray, int rows, int cols);
 
-	// Õâ¸öº¯ÊıÊÇ·ñĞèÒªÁ½¸ö£¬const
+	// è¿™ä¸ªå‡½æ•°æ˜¯å¦éœ€è¦ä¸¤ä¸ªï¼Œconst
 	_type at(int rows, int cols);
 
-	_Matrix<_type> inv();                        // Äæ
-	_Matrix<_type> t();                          // ×ªÖÃ
+	_Matrix<_type> inv();                        // é€†
+	_Matrix<_type> t();                          // è½¬ç½®
 
 
 	//! returns deep copy of the matrix, i.e. the data is copied
@@ -64,16 +64,16 @@ public:
 	void release();
 	int refAdd(int *addr, int delta);
 
-	// ÇóÖÈ
+	// æ±‚ç§©
 	_type rank();
 	_type tr();
 	
-	_Matrix<_type> dot(_Matrix<_type> &m);           // µã³Ë
-	_Matrix<_type> cross(_Matrix<_type> &m);         // ²æ»ı
-	_Matrix<_type> conv(_Matrix<_type> &m);          // ¾í»ı
+	_Matrix<_type> dot(_Matrix<_type> &m);           // ç‚¹ä¹˜
+	_Matrix<_type> cross(_Matrix<_type> &m);         // å‰ç§¯
+	_Matrix<_type> conv(_Matrix<_type> &m);          // å·ç§¯
 
 
-	int rows, cols; // ĞĞÊıºÍÁĞÊı
+	int rows, cols; // è¡Œæ•°å’Œåˆ—æ•°
 	_type *data;
 
 private:
@@ -87,7 +87,7 @@ private:
 	void initEmpty();
 };
 
-// ÖØÔØÔËËã·û
+// é‡è½½è¿ç®—ç¬¦
 template <class _type>
 std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item);
 

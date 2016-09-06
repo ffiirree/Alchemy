@@ -5,10 +5,10 @@
 
 using namespace std;
 
-Matrix test()
+Matrix16s test()
 {
-	// ¾í»ı²âÊÔ
-	Matrix m1(5, 5);
+	// å·ç§¯æµ‹è¯•
+	Matrix16s m1(5, 5);
 	m1 = { 
 		5,7,9,1,5,
 		3,6,7,1,98,
@@ -17,14 +17,23 @@ Matrix test()
 		5,1,5,7,61
 	};
 
-	cout << m1;
+	Matrix16s core(5, 5);
+	core = {
+		1,1,1,1,1,
+		1,1,1,1,1,
+		1,1,-1,1,1,
+		1,1,1,1,1,
+		1,1,1,1,1
+	};
+
+	cout << m1.conv(core);
 
 	return m1;
 }
 
 int main(int argc, char *argv[])
 {
-	Matrix mat = test();
+	Matrix16s mat = test();
 
 	system("pause");
 	return 0;
