@@ -76,7 +76,7 @@ template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols)
  * @attention 这是一个浅复制
  */
 template <class _type> _Matrix<_type>::_Matrix(const _Matrix<_type>& m)
-	:rows(m.rows), cols(m.cols), data(m.data), refcount(m.refcount)
+	:rows(m.rows), cols(m.cols), data(m.data), refcount(m.refcount),_size(m._size)
 {
 	_log_("Matrix copying function.");
 	if (refcount)
@@ -141,6 +141,15 @@ _Matrix<_type>& _Matrix<_type>::operator = (std::initializer_list<_type> li)
 		}
 	}
 	return *this;
+}
+
+template <class _type>
+_Matrix<_type>& _Matrix<_type>::operator += (const _Matrix<_type>& m)
+{
+	for (int i = 0; i < _size; ++i) {
+		data[i] += m.data[i];
+	}
+	return (*this);
 }
 
 
@@ -298,7 +307,19 @@ _Matrix<_type>& _Matrix<_type>::operator()(_type * InputArray, int _rows, int _c
 	return *this;
 }
 
+#if defined(OPENCV)
+template <class _type>
+_Matrix<_type>::operator cv::Mat() const
+{
+	Mat temp(rows, cols, CV_8UC1);
 
+	for (size_t i = 0; i < _size; i++) {
+		temp.data[i] = data[i];
+	}
+
+	return temp;
+}
+#endif
 /**
  * @berif 带有越界检查
  */
@@ -306,7 +327,7 @@ template <class _type>
 inline _type _Matrix<_type>::at(int _rows, int _cols)
 {
 	if (_rows < 0 || _cols < 0 || _rows >= rows || _cols >= cols) {
-		return 0.0;
+		return 0;
 	}
 	else {
 		return (*this)[_rows][_cols];
@@ -418,7 +439,7 @@ _Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
  * @attention 卷积核为方阵，且行列数为奇数
  */
 template <class _type>
-_Matrix<_type> _Matrix<_type>::conv(_Matrix<_type> &m)
+_Matrix<_type> _Matrix<_type>::conv(Matrix64f &m)
 {
 	if (m.rows != m.cols || m.rows % 2 == 0)
 		throw runtime_error("m.rows != m.cols || m.rows % 2 == 0");
@@ -427,20 +448,26 @@ _Matrix<_type> _Matrix<_type>::conv(_Matrix<_type> &m)
 	temp.zeros();
 	int depth = m.rows / 2;
 
+	
 	for (int i = 0; i < temp.rows; ++i) {
 		for (int j = 0; j < temp.cols; ++j) {
 			// 
+			double tempValue = 0;
 			for (int ii = 0; ii < m.rows; ++ii) {
 				for (int jj = 0; jj < m.cols; ++jj) {
-					temp[i][j] += (*this).at(i - m.rows / 2 + ii, j - m.cols / 2 + jj) * m[ii][jj];
+					tempValue += (*this).at(i - 1 + ii, j - 1 + jj) * m[ii][jj];
 				}
 			}
+			temp[i][j] = (_type)tempValue;
 		}
 	}
 
 	return temp;
 }
-
+template <class _type> _Matrix<_type> conv(_Matrix<_type> &m, Matrix &core)
+{
+	return m.conv(core);
+}
 /**
  * @berif 重载输出运算符
  */

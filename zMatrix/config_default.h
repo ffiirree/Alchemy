@@ -24,5 +24,12 @@
 #define _log_(str)
 #endif
 
+
+
+// !是否使用了openCV
+#ifndef OPENCV
+#define OPENCV
+#endif
+
 #endif //!_CONFIG_DEFAULT_H
 
