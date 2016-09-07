@@ -24,7 +24,10 @@
 
 #ifdef __cplusplus
 
+namespace z{
+
 template <class _type> class _Matrix;
+template<class _Tp> class _Size;
 
 typedef _Matrix<double>             Matrix;
 typedef _Matrix<double>             Matrix64f;
@@ -40,6 +43,7 @@ template <class _type> class _Matrix {
 public:
 	_Matrix();
 	_Matrix(int rows, int cols);
+	_Matrix(_Size<int> size);
 	_Matrix(const _Matrix<_type>& m);
 	~_Matrix();
 
@@ -81,6 +85,7 @@ public:
 	void zeros(int rows, int cols);
 	void ones(int rows, int cols);
 	void eye(int rows, int cols);
+	void init(_type _v);
 
 	//! returns true if matrix data is NULL
 	inline bool empty() const { return data == nullptr; }
@@ -90,11 +95,12 @@ public:
 	_Matrix<_type> t();                              // 转置
 
 	_type rank();                                    // 求秩
-	_type tr();                                      // 迹
+	double tr();                                     // 迹
 	
 	_Matrix<_type> dot(_Matrix<_type> &m);           // 点乘
 	_Matrix<_type> cross(_Matrix<_type> &m);         // 叉积
-	_Matrix<_type> conv(Matrix64f &m);              // 卷积
+	_Matrix<_type> conv(Matrix &m);                  // 卷积
+	_Matrix<_type> conv(Matrix &m, int delta);
 
 
 	int rows, cols;
@@ -130,9 +136,11 @@ template <class _type> _Matrix<_type> operator-(_type delta, _Matrix<_type> &m);
 
 
 template <class _type> _Matrix<_type> conv(_Matrix<_type> &m, Matrix &core);
+template <class _type> _Matrix<_type> conv(_Matrix<_type> &m, Matrix &core, int delta);
 
 #endif // !__cplusplus
 
+}
 #include "operations.hpp"
 
 #endif  // !_ZMATRIX_H

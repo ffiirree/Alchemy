@@ -16,6 +16,8 @@
 
 #ifdef __cplusplus
 
+namespace z{
+
 /**
  * @berif 将矩阵初始化为空矩阵
  */
@@ -58,6 +60,13 @@ template <class _type> _Matrix<_type>::_Matrix()
 {
 	_log_("Matrix construct without params.");
 	initEmpty();
+}
+
+template <class _type> _Matrix<_type>::_Matrix(_Size<int> size)
+{
+	_log_("Matrix construct with params.");
+	initEmpty();
+	create(size.width, size.height);
 }
 
 /**
@@ -236,6 +245,14 @@ void _Matrix<_type>::eye(int _rows, int _cols)
 	}
 }
 
+
+template <class _type>
+void _Matrix<_type>::init(_type _v)
+{
+	for (size_t i = 0; i < _size; ++i)
+		data[i] = _v;
+}
+
 /**
  * @berif 深度复制函数
  * @param[out] outputMatrix，复制的目的矩阵，会被重新分配内存并复制数据
@@ -348,11 +365,12 @@ _type _Matrix<_type>::rank()
 
 /**
  * @berif 求矩阵的迹，即对角线元素之和
- * @attention 矩阵必须是方阵
+ * @attention 1、矩阵必须是方阵
+ *            2、由于迹是对角线元素之和，所以对于char、short等可能会发生溢出，所以同一改为double
  * m x n矩阵中min(m, n)矩阵的秩
  */
 template <class _type>
-_type _Matrix<_type>::tr()
+double _Matrix<_type>::tr()
 {
 	if (rows != cols)
 		throw runtime_error("rows != cols");
@@ -439,7 +457,7 @@ _Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
  * @attention 卷积核为方阵，且行列数为奇数
  */
 template <class _type>
-_Matrix<_type> _Matrix<_type>::conv(Matrix64f &m)
+_Matrix<_type> _Matrix<_type>::conv(Matrix &m)
 {
 	if (m.rows != m.cols || m.rows % 2 == 0)
 		throw runtime_error("m.rows != m.cols || m.rows % 2 == 0");
@@ -464,9 +482,39 @@ _Matrix<_type> _Matrix<_type>::conv(Matrix64f &m)
 
 	return temp;
 }
+template <class _type> _Matrix<_type> _Matrix<_type>::conv(Matrix &m, int delta)
+{
+	if (m.rows != m.cols || m.rows % 2 == 0)
+		throw runtime_error("m.rows != m.cols || m.rows % 2 == 0");
+
+	_Matrix<_type> temp(rows, cols);
+	temp.zeros();
+	int depth = m.rows / 2;
+
+
+	for (int i = 0; i < temp.rows; ++i) {
+		for (int j = 0; j < temp.cols; ++j) {
+			// 
+			double tempValue = 0;
+			for (int ii = 0; ii < m.rows; ++ii) {
+				for (int jj = 0; jj < m.cols; ++jj) {
+					tempValue += (*this).at(i - 1 + ii, j - 1 + jj) * m[ii][jj];
+				}
+			}
+			temp[i][j] = (_type)(tempValue / delta);
+		}
+	}
+
+	return temp;
+}
+
 template <class _type> _Matrix<_type> conv(_Matrix<_type> &m, Matrix &core)
 {
 	return m.conv(core);
+}
+template <class _type> _Matrix<_type> conv(_Matrix<_type> &m, Matrix &core, int delta)
+{
+	return m.conv(core, delta);
 }
 /**
  * @berif 重载输出运算符
@@ -647,6 +695,8 @@ template <class _type>
 _Matrix<_type> operator-(_type delta, _Matrix<_type> &m)
 {
 	return m * (-1) + delta;
+}
+
 }
 
 #endif // ! __cplusplus

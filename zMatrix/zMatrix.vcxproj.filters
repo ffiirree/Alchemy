@@ -27,6 +27,9 @@
     <ClInclude Include="zimgproc.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="zimgproc.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -35,10 +38,5 @@
     <ClCompile Include="zimgproc.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\README.md">
-      <Filter>头文件</Filter>
-    </None>
   </ItemGroup>
 </Project>

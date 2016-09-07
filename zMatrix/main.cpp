@@ -9,39 +9,23 @@
 
 using namespace std;
 using namespace cv;
+using namespace z;
 
 int main(int argc, char *argv[])
 {
 	Mat gray, display, src = imread("test.jpeg");
 	cvtColor(src, gray, CV_BGR2GRAY);
 
-
 	imshow("src", src);
 	imshow("gray", gray);
 
 	Matrix8u m = Mat2Matrix8u(gray);
+	display = z::blur(m, z::Size(3, 3));
 
-	// 卷积核
-	Matrix64f core(3, 3);
-	// 均值滤波
-	core = {
-		 0.0, 0.2, 0.0,
-		 0.2, 0.0, 0.2,
-		 0.0, 0.2, 0.0
-	};
-	m = m.conv(core);               // 或者:display = conv(m, core);
+	imshow("filter3", display);
 
-	imshow("filter", display);
-
-	// 测试边缘检测
-	core = {
-		-0.1, -0.1, -0.1,
-		-0.1,  0.8, -0.1,
-		-0.1, -0.1, -0.1
-	};
-	display = conv(m, core);		// 或者:display = m.conv(core);
-
-	imshow("edge", display);
+	display = z::blur(m, z::Size(5, 5));
+	imshow("filter5", display);
 
 	waitKey(0);
 	return 0;
