@@ -43,13 +43,15 @@ template <class _type> class _Matrix {
 public:
 	_Matrix();
 	_Matrix(int rows, int cols);
+	_Matrix(int rows, int cols,  int channelsNum);
 	_Matrix(_Size<int> size);
+	_Matrix(_Size<int> size, int channelsNum);
 	_Matrix(const _Matrix<_type>& m);
 	~_Matrix();
 
 	//! allocates new matrix data unless the matrix already has specified size and type.
 	// previous data is unreferenced if needed.
-	void create(int rows, int cols);
+	void create(int rows, int cols, int step);
 
 	void release();
 	int refAdd(int *addr, int delta);
@@ -61,10 +63,11 @@ public:
 
 	// 这个函数是否需要两个，const
 	_type at(int rows, int cols);
+	_type at(int rows, int cols, int channel);
 
 	// 检查这两个函数是否达到了想要的目的
-	inline _type* operator[](size_t n) { return &data[n * cols]; }
-	inline const _type* operator[](size_t n) const { return &data[n * cols]; }
+	inline _type* operator[](size_t n) { return &data[n * cols * step]; }
+	inline const _type* operator[](size_t n) const { return &data[n * cols * step]; }
 
 	_Matrix<_type>& operator()(_type * InputArray, size_t size);
 	_Matrix<_type>& operator()(_type * InputArray, int rows, int cols);
@@ -102,9 +105,12 @@ public:
 	_Matrix<_type> conv(Matrix &m);                  // 卷积
 	_Matrix<_type> conv(Matrix &m, int delta);
 
+	inline int channels() { return step; }
 
+	int step;
 	int rows, cols;
 	_type *data;
+	_type *datastart, *dataend;
 
 private:
 	size_t _size;

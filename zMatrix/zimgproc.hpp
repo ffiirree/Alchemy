@@ -66,15 +66,15 @@ namespace z {
 		for (int i = 0; i < src.rows; ++i) {
 			for (int j = 0; j < src.cols; ++j) {
 
-
-				for (int k = 0; k < kernel.rows; ++k) {
-					for (int l = 0; l < kernel.cols; ++l) {
-						kernel[k][l] = src.at(i - kernel.rows/ 2 + k, j - kernel.cols/2 + l);
+				for (int z = 0; z < src.step; ++z) {
+					for (int k = 0; k < kernel.rows; ++k) {
+						for (int l = 0; l < kernel.cols; ++l) {
+							kernel[k][l] = src.at(i - kernel.rows / 2 + k, j - kernel.cols / 2 + l, z);
+						}
 					}
+					sort(kernel.data, kernel.data + kernel.size() - 1);
+					temp[i][j * temp.step + z] = kernel[kernel.rows / 2 + 1][kernel.cols / 2 + 1];
 				}
-				sort(kernel.data, kernel.data + kernel.size()-1);
-				temp[i][j] = kernel[kernel.rows / 2 + 1][kernel.cols / 2 + 1];
-
 			}
 		}
 

@@ -7,6 +7,7 @@
 
 #if defined(OPENCV)
 #include <opencv2\core.hpp>
+#include <opencv2\highgui\highgui.hpp>
 #endif
 
 namespace z{
@@ -38,10 +39,10 @@ template<class _Tp> inline _Size<_Tp>::_Size(const _Size& sz) : width(sz.width),
 template<class _Tp> inline _Tp _Size<_Tp>::area() const { return width * height; }
 
 
-typedef _Size<int> Size2i;
-typedef _Size<double> Size2d;
-typedef _Size<float> Sizef;
-typedef _Size<int> Size;
+typedef _Size<int>      Size2i;
+typedef _Size<double>   Size2d;
+typedef _Size<float>    Sizef;
+typedef _Size<int>      Size;
 
 Matrix8u Mat2Matrix8u(cv::Mat & mat);
 
