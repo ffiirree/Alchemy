@@ -473,7 +473,7 @@ _Matrix<_type> _Matrix<_type>::conv(Matrix &m)
 			double tempValue = 0;
 			for (int ii = 0; ii < m.rows; ++ii) {
 				for (int jj = 0; jj < m.cols; ++jj) {
-					tempValue += (*this).at(i - 1 + ii, j - 1 + jj) * m[ii][jj];
+					tempValue += (*this).at(i - m.rows/2 + ii, j - m.cols/2 + jj) * m[ii][jj];
 				}
 			}
 			temp[i][j] = (_type)tempValue;

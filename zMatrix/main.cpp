@@ -16,16 +16,24 @@ int main(int argc, char *argv[])
 	Mat gray, display, src = imread("test.jpeg");
 	cvtColor(src, gray, CV_BGR2GRAY);
 
-	imshow("src", src);
+	//imshow("src", src);
 	imshow("gray", gray);
 
 	Matrix8u m = Mat2Matrix8u(gray);
-	display = z::blur(m, z::Size(3, 3));
 
-	imshow("filter3", display);
+	Mat mida = gray.clone();
 
-	display = z::blur(m, z::Size(5, 5));
-	imshow("filter5", display);
+	cv::medianBlur(gray, mida, (7, 7));
+	imshow("mida", mida);
+
+	//display = z::blur(m, z::Size(3, 3));
+	//imshow("filter3", display);
+
+	//display = z::blur(m, z::Size(5, 5));
+	//imshow("filter5", display);
+
+	display = medianFilter(m, z::Size(7, 7));
+	imshow("emboss", display);
 
 	waitKey(0);
 	return 0;

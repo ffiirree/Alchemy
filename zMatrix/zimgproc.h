@@ -45,9 +45,16 @@ typedef _Size<int> Size;
 
 Matrix8u Mat2Matrix8u(cv::Mat & mat);
 
-//
-
+// 线性滤波
 template <class _type> _Matrix<_type> blur(_Matrix<_type> src, Size size);
+template <class _type> _Matrix<_type> boxFilter(_Matrix<_type> src, Size size, bool normalize);
+template <class _type> _Matrix<_type> GaussianBlur(_Matrix<_type> src, Size size);
+template <class _type> _Matrix<_type> embossingFilter(_Matrix<_type> src, Size size, float ang);
+template <class _type> _Matrix<_type> edgeDetection(_Matrix<_type> src, Size size, float ang);
+template <class _type> _Matrix<_type> motionBlur(_Matrix<_type> src, Size size, float ang);
+
+// 非线性滤波
+template <class _type> _Matrix<_type> medianFilter(_Matrix<_type> src, Size size);
 }
 
 #include "zimgproc.hpp"

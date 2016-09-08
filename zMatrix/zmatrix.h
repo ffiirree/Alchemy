@@ -133,8 +133,6 @@ template <class _type> _Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_typ
 template <class _type> _Matrix<_type> operator-(_Matrix<_type> &m, _type delta);
 template <class _type> _Matrix<_type> operator-(_type delta, _Matrix<_type> &m);
 
-
-
 template <class _type> _Matrix<_type> conv(_Matrix<_type> &m, Matrix &core);
 template <class _type> _Matrix<_type> conv(_Matrix<_type> &m, Matrix &core, int delta);
 
