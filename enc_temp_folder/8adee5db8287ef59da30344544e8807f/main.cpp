@@ -32,6 +32,17 @@ int main(int argc, char *argv[])
 	cv::GaussianBlur(src, display, cv::Size(7, 7), 0);
 	timestamp.runtime();
 	imshow("cv", display);
+	// openCV
+	//timestamp.start();
+	//cv::blur(src, display, cv::Size(5, 5));
+	//timestamp.runtime();
+	//imshow("cv", display);
+
+	//// zMatrix
+	//timestamp.start();
+	//z::blur(m, mdis, z::Size(5, 5));
+	//timestamp.runtime();
+	//imshow("z", Mat(mdis));
 
 	waitKey(0);
 	return 0;

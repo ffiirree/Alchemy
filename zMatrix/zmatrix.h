@@ -102,7 +102,7 @@ public:
 	
 	_Matrix<_type> dot(_Matrix<_type> &m);           // 点乘
 	_Matrix<_type> cross(_Matrix<_type> &m);         // 叉积
-	_Matrix<_type> conv(Matrix &kernel, bool norm = false);
+	void conv(Matrix &kernel, _Matrix<_type>&dst, bool norm = false);
 
 	inline int channels() { return chs; }
 
@@ -140,8 +140,7 @@ template <class _type> _Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_typ
 template <class _type> _Matrix<_type> operator-(_Matrix<_type> &m, _type delta);
 template <class _type> _Matrix<_type> operator-(_type delta, _Matrix<_type> &m);
 
-template <class _type> _Matrix<_type> conv(_Matrix<_type> &m, Matrix &core);
-template <class _type> _Matrix<_type> conv(_Matrix<_type> &m, Matrix &core, int delta);
+template <class _type> void conv(_Matrix<_type> &src, _Matrix<_type> &dst, Matrix &core);
 
 #endif // !__cplusplus
 

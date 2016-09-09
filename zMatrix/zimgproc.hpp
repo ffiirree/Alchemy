@@ -79,6 +79,12 @@ namespace z {
 		delete[] tempValue;
 	}
 
+	template <class _type> void GaussianBlur(_Matrix<_type>&src, _Matrix<_type> & dst, Size size, double sigmaX, double sigmaY)
+	{
+		Matrix kernel = Gassion(size, sigmaX, sigmaY);
+		src.conv(kernel, dst, true);
+	}
+
 	template <class _type> _Matrix<_type> embossingFilter(_Matrix<_type> src, Size size, float ang)
 	{
 		Matrix kernel(size);
@@ -153,7 +159,7 @@ namespace z {
 		delete[] ker;
 	}
 
-
+	
 
 };
 #endif // !_ZIMGPROC_HPP 

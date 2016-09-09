@@ -71,6 +71,7 @@ m3 = {4, 6, 6};
 ### 线性滤波
 * 方框滤波函数`boxFilter()`
 * 均值滤波函数`blur()`，彩色和灰度图像都可以
+* 高斯滤波函数`GassionBlur()`
 
 ### 非线性滤波
 * 中值滤波函数`medianBlur()`，彩色和灰度图像都可以
@@ -91,3 +92,4 @@ m3 = {4, 6, 6};
 * 2016-09-08：注意不要用Matrix的引用作参数返回值，这个问题需要好好解决
 * blur(), runtime(openCV:27ms):4277ms -> 2964ms -> 728ms;<br>// 受不了openCV的运行效率了，太高了(这是在DEBUG模式下，在Release下要快的多，94ms，opencv 7ms)
 * medianFilter(), runtime(openCV:334ms):21822ms - > 17594ms
+* GassionBlur(), runtime(openCV:116ms):4245ms

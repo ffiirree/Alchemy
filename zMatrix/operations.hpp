@@ -482,12 +482,13 @@ _Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
 }
 
 
-template <class _type> _Matrix<_type> _Matrix<_type>::conv(Matrix &kernel, bool norm)
+template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&dst, bool norm)
 {
 	if (kernel.rows != kernel.cols || kernel.rows % 2 == 0)
 		throw runtime_error("size.width != size.height || size.width % 2 == 0");
 
-	_Matrix<_type> temp(rows, cols, chs);
+	if (!dst.equalSize(*this))
+		dst.create(rows, cols, chs);
 
 	int *tempValue = new int[chs];
 	int zeros = 0;
@@ -495,7 +496,10 @@ template <class _type> _Matrix<_type> _Matrix<_type>::conv(Matrix &kernel, bool 
 	const _type * srcPtr = nullptr;
 	_type * dstPtr = nullptr;
 	int alpha = 0;
-	int delta = kernel.size();
+	double delta = 0;
+	for (int i = 0; i < kernel.size(); ++i) {
+		delta += kernel.data[i];
+	}
 
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
@@ -512,7 +516,6 @@ template <class _type> _Matrix<_type> _Matrix<_type>::conv(Matrix &kernel, bool 
 					if (srcPtr) {
 						for (int k = 0; k < chs; ++k) {
 							tempValue[k] += srcPtr[k] * kernel[ii][jj];
-								
 						}
 					}
 					else {
@@ -522,8 +525,7 @@ template <class _type> _Matrix<_type> _Matrix<_type>::conv(Matrix &kernel, bool 
 			} // !for(ii)
 
 			alpha = delta - zeros;
-
-			dstPtr = temp.ptr(i, j);
+			dstPtr = dst.ptr(i, j);
 
 			for (int k = 0; k < chs; ++k) {
 				if(norm)
@@ -536,17 +538,11 @@ template <class _type> _Matrix<_type> _Matrix<_type>::conv(Matrix &kernel, bool 
 	} // !for(i)
 
 	delete[] tempValue;
-
-	return temp;
 }
 
-template <class _type> _Matrix<_type> conv(_Matrix<_type> &m, Matrix &core)
+template <class _type> void conv(_Matrix<_type> &src, _Matrix<_type> &dst, Matrix &core)
 {
-	return m.conv(core);
-}
-template <class _type> _Matrix<_type> conv(_Matrix<_type> &m, Matrix &core, int delta)
-{
-	return m.conv(core, delta);
+	src.conv(core, dst);
 }
 /**
  * @berif 重载输出运算符
