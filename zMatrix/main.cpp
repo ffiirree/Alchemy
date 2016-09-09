@@ -22,16 +22,23 @@ int main(int argc, char *argv[])
 	src = imread("test.jpeg");
 	Matrix8u mgray, mdis, m = Mat2Matrix8u(src);
 
+	imshow("zOrg", Mat(m));
 
 	timestamp.start();
-	z::GaussianBlur(m, mdis, z::Size(7, 7));
+	z::GaussianBlur(m, mdis, z::Size(5, 5));
 	timestamp.runtime();
-	imshow("z", Mat(mdis));
+	imshow("zGuss", Mat(mdis));
 
 	timestamp.start();
-	cv::GaussianBlur(src, display, cv::Size(7, 7), 0);
+	z::blur(m, mdis, z::Size(5, 5));
 	timestamp.runtime();
-	imshow("cv", display);
+	imshow("zBlur", Mat(mdis));
+
+
+	timestamp.start();
+	z::medianFilter(m, mdis, z::Size(5, 5));
+	timestamp.runtime();
+	imshow("zMedia", Mat(mdis));
 
 	waitKey(0);
 	return 0;
