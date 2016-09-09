@@ -5,7 +5,7 @@ _Matrix 是一个使用C++编写的矩阵运算库，目的是为了辅助进行
 <br><br>
 
 # 版本
-`V 1.1.0`
+`V 1.1.2 Beta`
 
 <br><br>
 
@@ -89,3 +89,5 @@ m3 = {4, 6, 6};
 
 * 2016-09-07：将迹的返回类型同一改为double，防止结果溢出
 * 2016-09-08：注意不要用Matrix的引用作参数返回值，这个问题需要好好解决
+* blur(), runtime(openCV:27ms):4277ms -> 2964ms -> 728ms;<br>// 受不了openCV的运行效率了，太高了(这是在DEBUG模式下，在Release下要快的多，94ms，opencv 7ms)
+* medianFilter(), runtime(openCV:334ms):21822ms - > 17594ms

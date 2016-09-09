@@ -8,6 +8,8 @@
 #include <opencv2\imgproc\imgproc.hpp>
 #include <string>
 
+#include <ctime>  
+
 using namespace std;
 using namespace cv;
 using namespace z;
@@ -15,22 +17,22 @@ using namespace z;
 
 int main(int argc, char *argv[])
 {
-	Mat gray, display, src = imread("test.jpeg");
-	Matrix8u mgray, m = Mat2Matrix8u(src);
-	
+	TimeStamp timestamp;
+	Mat gray, display, src;
+	src = imread("test.jpeg");
+	Matrix8u mgray, mdis, m = Mat2Matrix8u(src);
 
-	cvtColor(src, gray, CV_BGR2GRAY);
-	mgray = Mat2Matrix8u(gray);
+	// openCV
+	timestamp.start();
+	cv::blur(src, display, cv::Size(5, 5));
+	timestamp.runtime();
+	imshow("cv", display);
 
-	imshow("org", Mat(m));
-	imshow("gray", gray);
-
-	cv::medianBlur(src, display, 5);
-	imshow("caitu", display);
-
-	
-	m = z::medianFilter(m, z::Size(5, 5));
-	imshow("d", Mat(m)); 
+	// zMatrix
+	timestamp.start();
+	z::blur(m, mdis, z::Size(5, 5));
+	timestamp.runtime();
+	imshow("z", Mat(mdis));
 
 	waitKey(0);
 	return 0;

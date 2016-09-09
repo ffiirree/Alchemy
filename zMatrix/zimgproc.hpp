@@ -2,6 +2,7 @@
 #define _ZIMGPROC_HPP
 
 #include <algorithm>
+#include <vector>
 
 namespace z {
 
@@ -15,26 +16,67 @@ namespace z {
 	/**
 	 * @berif 均值滤波
 	 */
-	template <class _type> _Matrix<_type> blur(_Matrix<_type> src, Size size)
+	template <class _type> void blur(_Matrix<_type>& src, _Matrix<_type>& dst, Size size)
 	{
-		Matrix kernel(size);
-		kernel.init(1.0);
-
-		return src.conv(kernel, size.area());
+		boxFilter(src, dst, size, true);
 	}
-	
 	/**
 	 * @berif 方框滤波
 	 */
-	template <class _type> _Matrix<_type> boxFilter(_Matrix<_type> src, Size size, bool normalize)
+	template <class _type> void boxFilter(const _Matrix<_type>& src, _Matrix<_type>& dst, Size size, bool normalize)
 	{
-		Matrix kernel(size);
-		kernel.init(1.0);
+		if (size.width != size.height || size.width % 2 == 0)
+			throw runtime_error("size.width != size.height || size.width % 2 == 0");
 
-		if(normalize)
-			return src.conv(kernel, size.area());
-		else
-			return src.conv(kernel);
+		if (!src.equalSize(dst))
+			dst.create(src.rows, src.cols, src.chs);
+
+		int *tempValue = new int[src.chs];
+		int zeros = 0;
+		int m = size.width / 2, n = size.height / 2;
+		const _type * ptr = nullptr;
+		_type * dstPtr = nullptr;
+		int alpha = 0;
+
+		for (int i = 0; i < dst.rows; ++i) {
+			for (int j = 0; j < dst.cols; ++j) {
+
+				memset(tempValue, 0, src.chs * sizeof(int));
+				zeros = 0;
+
+				for (int ii = 0; ii < size.width; ++ii) {
+					for (int jj = 0; jj < size.height; ++jj) {
+
+						// 获取一个像素的地址
+						ptr = src.ptr(i - m + ii, j - n + jj);
+
+						if (ptr) {
+							for (int k = 0; k < src.chs; ++k) {
+								tempValue[k] += ptr[k];
+							}
+						}
+						else {
+							zeros++;
+						}
+					} // !for(jj)
+				} // !for(ii)
+
+				alpha= size.area() - zeros;
+
+				dstPtr = dst.ptr(i,j);
+
+				for (int k = 0; k < src.chs; ++k) {
+					if (normalize)
+						dstPtr[k] = (_type)(tempValue[k] / alpha);
+					else
+						dstPtr[k] = (_type)tempValue;
+				}
+				
+
+			} // !for(j)
+		} // !for(i)
+
+		delete[] tempValue;
 	}
 
 	template <class _type> _Matrix<_type> embossingFilter(_Matrix<_type> src, Size size, float ang)
@@ -58,29 +100,60 @@ namespace z {
 	/**
 	 * @berif 中值滤波
 	 */
-	template <class _type> _Matrix<_type> medianFilter(_Matrix<_type> src, Size size)
+	template <class _type> void medianFilter(_Matrix<_type>&src, _Matrix<_type>& dst, Size size)
 	{
-		Matrix kernel(size);
-		_Matrix<_type> temp = src.clone();
+		int area = size.area();
+		_type ** ker = new _type *[src.chs];
+		for (int i = 0; i < src.chs; ++i) {
+			ker[i] = new _type[area];
+		}
+
+		if (!src.equalSize(dst))
+			dst.create(src.rows, src.cols, src.chs);
+
+		int m = size.width / 2, n = size.height / 2;
+		_type * ptr = nullptr;
+		_type * dstPtr = nullptr;
+		int cnt = 0;
+		int valindex = 0;
+		int valDefault = area / 2;
 
 		for (int i = 0; i < src.rows; ++i) {
 			for (int j = 0; j < src.cols; ++j) {
 
-				for (int z = 0; z < src.step; ++z) {
-					for (int k = 0; k < kernel.rows; ++k) {
-						for (int l = 0; l < kernel.cols; ++l) {
-							kernel[k][l] = src.at(i - kernel.rows / 2 + k, j - kernel.cols / 2 + l, z);
+				cnt = 0;
+				for (int ii = 0; ii < size.width; ++ii) {
+					for (int jj = 0; jj < size.height; ++jj) {
+
+						ptr = src.ptr(i - m + ii, j - n + jj);
+						if (ptr) {
+							for (int k = 0; k < src.chs; ++k) {
+								ker[k][cnt] = ptr[k];
+							}
+							cnt++;
 						}
 					}
-					sort(kernel.data, kernel.data + kernel.size() - 1);
-					temp[i][j * temp.step + z] = kernel[kernel.rows / 2 + 1][kernel.cols / 2 + 1];
 				}
-			}
+				dstPtr = dst.ptr(i, j);
+				if (cnt != area)
+					valindex = cnt / 2;
+				else
+					valindex = valDefault;
+				for (int k = 0; k < src.chs; ++k) {
+					sort(ker[k], ker[k] + cnt);  // 占95%以上的时间
+					dstPtr[k] = ker[k][valindex];
+				}
+
+			} // !for(j)
+		} // !for(i)
+
+		for (int i = 0; i < src.chs; ++i) {
+			delete[] ker[i];
 		}
-
-		return temp;
-
+		delete[] ker;
 	}
-}
 
+
+
+};
 #endif // !_ZIMGPROC_HPP 

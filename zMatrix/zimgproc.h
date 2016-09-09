@@ -46,16 +46,16 @@ typedef _Size<int>      Size;
 
 Matrix8u Mat2Matrix8u(cv::Mat & mat);
 
-// ÏßĞÔÂË²¨
-template <class _type> _Matrix<_type> blur(_Matrix<_type> src, Size size);
-template <class _type> _Matrix<_type> boxFilter(_Matrix<_type> src, Size size, bool normalize);
+// çº¿æ€§æ»¤æ³¢
+template <class _type> void blur(_Matrix<_type>& src, _Matrix<_type>& dst, Size size);
+template <class _type> void boxFilter(const _Matrix<_type>& src, _Matrix<_type>& dst, Size size, bool normalize);
 template <class _type> _Matrix<_type> GaussianBlur(_Matrix<_type> src, Size size);
 template <class _type> _Matrix<_type> embossingFilter(_Matrix<_type> src, Size size, float ang);
 template <class _type> _Matrix<_type> edgeDetection(_Matrix<_type> src, Size size, float ang);
 template <class _type> _Matrix<_type> motionBlur(_Matrix<_type> src, Size size, float ang);
 
-// ·ÇÏßĞÔÂË²¨
-template <class _type> _Matrix<_type> medianFilter(_Matrix<_type> src, Size size);
+// éçº¿æ€§æ»¤æ³¢
+template <class _type> void medianFilter(_Matrix<_type>&src, _Matrix<_type>& dst, Size size);
 }
 
 #include "zimgproc.hpp"

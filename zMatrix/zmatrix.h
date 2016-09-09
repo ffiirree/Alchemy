@@ -51,7 +51,7 @@ public:
 
 	//! allocates new matrix data unless the matrix already has specified size and type.
 	// previous data is unreferenced if needed.
-	void create(int rows, int cols, int step);
+	void create(int _rows, int _cols, int _chs);
 
 	void release();
 	int refAdd(int *addr, int delta);
@@ -60,14 +60,13 @@ public:
 	_Matrix<_type>& operator = (std::initializer_list<_type>);
 	_Matrix<_type>& operator += (const _Matrix<_type>& m);
 
-
-	// 这个函数是否需要两个，const
-	_type at(int rows, int cols);
-	_type at(int rows, int cols, int channel);
-
 	// 检查这两个函数是否达到了想要的目的
-	inline _type* operator[](size_t n) { return &data[n * cols * step]; }
-	inline const _type* operator[](size_t n) const { return &data[n * cols * step]; }
+	inline _type* operator[](size_t n) { return &data[n * step]; }
+	inline const _type* operator[](size_t n) const { return &data[n * step]; }
+
+	//! returns pointer to (i0,i1) submatrix along the dimensions #0 and #1
+	_type* ptr(int i0, int i1);
+	const _type* ptr(int i0, int i1) const;
 
 	_Matrix<_type>& operator()(_type * InputArray, size_t size);
 	_Matrix<_type>& operator()(_type * InputArray, int rows, int cols);
@@ -93,6 +92,7 @@ public:
 	//! returns true if matrix data is NULL
 	inline bool empty() const { return data == nullptr; }
 	inline size_t size() const { return _size; }
+	inline bool equalSize(const _Matrix<_type> & m) const { return (rows == m.rows && cols == m.cols && chs == m.chs); }
 
 	_Matrix<_type> inv();                            // 逆
 	_Matrix<_type> t();                              // 转置
@@ -102,15 +102,16 @@ public:
 	
 	_Matrix<_type> dot(_Matrix<_type> &m);           // 点乘
 	_Matrix<_type> cross(_Matrix<_type> &m);         // 叉积
-	_Matrix<_type> conv(Matrix &m);                  // 卷积
-	_Matrix<_type> conv(Matrix &m, int delta);
+	_Matrix<_type> conv(Matrix &kernel, bool norm = false);
 
-	inline int channels() { return step; }
+	inline int channels() { return chs; }
 
-	int step;
+	
 	int rows, cols;
 	_type *data;
 	_type *datastart, *dataend;
+	int step;
+	int chs;
 
 private:
 	size_t _size;
