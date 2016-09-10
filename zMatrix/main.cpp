@@ -20,26 +20,36 @@ int main(int argc, char *argv[])
 	TimeStamp timestamp;
 	Mat gray, display, src;
 	src = imread("test.jpeg");
-	Matrix8u mgray, mdis, m = Mat2Matrix8u(src);
-
-	imshow("zOrg", Mat(m));
+	Matrix8u mgray, mdis, mcolor = Mat2Matrix8u(src);
 
 	timestamp.start();
-	z::GaussianBlur(m, mdis, z::Size(5, 5));
+	z::morphEx(mcolor, mdis, MORP_OPEN, z::Size(7, 7));
 	timestamp.runtime();
-	imshow("zGuss", Mat(mdis));
+	imshow("MORP_OPEN", Mat(mdis));
 
 	timestamp.start();
-	z::blur(m, mdis, z::Size(5, 5));
+	z::morphEx(mcolor, mdis, MORP_CLOSE, z::Size(7, 7));
 	timestamp.runtime();
-	imshow("zBlur", Mat(mdis));
+	imshow("MORP_CLOSE", Mat(mdis));
 
 
 	timestamp.start();
-	z::medianFilter(m, mdis, z::Size(5, 5));
+	z::morphEx(mcolor, mdis, MORP_TOPHAT, z::Size(7, 7));
 	timestamp.runtime();
-	imshow("zMedia", Mat(mdis));
+	imshow("MORP_TOPHAT", Mat(mdis));
 
-	waitKey(0);
+	timestamp.start();
+	z::morphEx(mcolor, mdis, MORP_BLACKHAT, z::Size(7, 7));
+	timestamp.runtime();
+	imshow("MORP_BLACKHAT", Mat(mdis));
+
+	
+
+	timestamp.start();
+	z::morphEx(mcolor, mdis, MORP_GRADIENT,z::Size(7, 7));
+	timestamp.runtime();
+	imshow("MORP_GRADIENT", Mat(mdis));
+
+ 	waitKey(0);
 	return 0;
 }

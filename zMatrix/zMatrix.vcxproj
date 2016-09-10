@@ -123,14 +123,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="config_default.h" />
+    <ClInclude Include="types_c.h" />
     <ClInclude Include="zimgproc.h" />
     <ClInclude Include="zimgproc.hpp" />
+    <ClInclude Include="zmatch.h" />
     <ClInclude Include="zmatrix.h" />
     <ClInclude Include="operations.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="zimgproc.cpp" />
+    <ClCompile Include="zmatch.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

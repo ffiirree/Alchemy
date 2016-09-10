@@ -59,6 +59,7 @@ public:
 	_Matrix<_type>& operator = (const _Matrix<_type>& m);
 	_Matrix<_type>& operator = (std::initializer_list<_type>);
 	_Matrix<_type>& operator += (const _Matrix<_type>& m);
+	_Matrix<_type>& operator -= (const _Matrix<_type>& m);
 
 	// 检查这两个函数是否达到了想要的目的
 	inline _type* operator[](size_t n) { return &data[n * step]; }

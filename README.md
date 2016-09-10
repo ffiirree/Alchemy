@@ -5,7 +5,7 @@ _Matrix 是一个使用C++编写的矩阵运算库，目的是为了辅助进行
 <br><br>
 
 # 版本
-`V 1.1.3 Beta`
+`V 1.2.0 Beta`
 
 <br><br>
 
@@ -67,6 +67,7 @@ m3 = {4, 6, 6};
 ## 图像处理相关
 ### 基础
 * 和openCV中Mat的转换
+* 彩色图像转化为灰度图，`z::cvtColor(src, dst, BGR2GRAY);`
 
 ### 线性滤波
 * 方框滤波函数`boxFilter()`
@@ -75,6 +76,10 @@ m3 = {4, 6, 6};
 
 ### 非线性滤波
 * 中值滤波函数`medianBlur()`，彩色和灰度图像都可以
+
+### 形态学滤波
+* 腐蚀和膨胀函数`erode()/dilate()`
+* 开运算、闭运算、顶帽、黑帽、形态学梯度运算，函数`morpEX()`
 
 <br><br>
 
@@ -90,6 +95,8 @@ m3 = {4, 6, 6};
 
 * 2016-09-07：将迹的返回类型同一改为double，防止结果溢出
 * 2016-09-08：注意不要用Matrix的引用作参数返回值，这个问题需要好好解决
-* blur(), runtime(openCV:27ms):4277ms -> 2964ms -> 728ms;<br>// 受不了openCV的运行效率了，太高了(这是在DEBUG模式下，在Release下要快的多，94ms，opencv 7ms)
-* medianFilter(), runtime(openCV:334ms):21822ms - > 17594ms
-* GassionBlur(), runtime(openCV:116ms):4245ms
+* blur(), 内核大小为（5， 5，runtime(openCV:27ms):4277ms -> 2964ms -> 728ms;<br>// 受不了openCV的运行效率了，太高了(这是在DEBUG模式下，在Release下要快的多，94ms，opencv 7ms)
+* medianFilter(), 内核大小为（5， 5），runtime(openCV:334ms):21822ms - > 17594ms
+* GassionBlur(), 内核大小为（5， 5），runtime(openCV:116ms):4245ms
+* FFT卷积？？
+* erode()/dilate(), 内核大小为（5， 5）,runtime(openCV:10ms):17555ms -> 920ms(release:140ms, 2ms)

@@ -170,15 +170,20 @@ _Matrix<_type>& _Matrix<_type>::operator = (std::initializer_list<_type> li)
 	return *this;
 }
 
-template <class _type>
-_Matrix<_type>& _Matrix<_type>::operator += (const _Matrix<_type>& m)
+template <class _type> _Matrix<_type>& _Matrix<_type>::operator += (const _Matrix<_type>& m)
 {
 	for (size_t i = 0; datastart + i < dataend; ++i) {
 		data[i] += m.data[i];
 	}
 	return (*this);
 }
-
+template <class _type> _Matrix<_type>&  _Matrix<_type>::operator -= (const _Matrix<_type>& m)
+{
+	for (size_t i = 0; datastart + i < dataend; ++i) {
+		data[i] -= m.data[i];
+	}
+	return (*this);
+}
 
 /**
  * @berif 将矩阵初始化为0
@@ -662,7 +667,7 @@ _Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_type> &m2)
 
 	_Matrix<_type> temp(m1.rows, m1.cols, m1.chs);
 
-	for (size_t i = 0; datastart + i < dataend; ++i) {
+	for (size_t i = 0; m1.datastart + i < m1.dataend; ++i) {
 		temp.data[i] = m1.data[i] - m2.data[i];
 	}
 	return temp;
