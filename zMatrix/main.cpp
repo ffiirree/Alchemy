@@ -2,43 +2,54 @@
 
 #include"config_default.h"
 #include "zmatrix.h"
+#include "zimgproc.h"
+#include <opencv2\core.hpp>
+#include <opencv2\highgui\highgui.hpp>
+#include <opencv2\imgproc\imgproc.hpp>
+#include <string>
+
+#include <ctime>  
 
 using namespace std;
+using namespace cv;
+using namespace z;
 
-Matrix16s test()
-{
-	// 卷积测试
-	Matrix16s m1(5, 5);
-	m1 = { 
-		5,7,9,1,5,
-		3,6,7,1,98,
-		4,2,96,4,3,
-		5,4,9,56,3,
-		5,1,5,7,61
-	};
-
-	cout << "m1.tr() =" << m1.tr() << endl;
-
-	Matrix16s core(5, 5);
-	core = {
-		1,1,1,1,1,
-		1,1,1,1,1,
-		1,1,-1,1,1,
-		1,1,1,1,1,
-		1,1,1,1,1
-	};
-
-	cout << "core.tr() =" << core.tr() << endl;
-
-	cout << m1.conv(core);
-
-	return m1;
-}
 
 int main(int argc, char *argv[])
 {
-	Matrix16s mat = test();
+	TimeStamp timestamp;
+	Mat gray, display, src;
+	src = imread("test.jpeg");
+	Matrix8u mgray, mdis, mcolor = Mat2Matrix8u(src);
 
-	system("pause");
+	timestamp.start();
+	z::morphEx(mcolor, mdis, MORP_OPEN, z::Size(7, 7));
+	timestamp.runtime();
+	imshow("MORP_OPEN", Mat(mdis));
+
+	timestamp.start();
+	z::morphEx(mcolor, mdis, MORP_CLOSE, z::Size(7, 7));
+	timestamp.runtime();
+	imshow("MORP_CLOSE", Mat(mdis));
+
+
+	timestamp.start();
+	z::morphEx(mcolor, mdis, MORP_TOPHAT, z::Size(7, 7));
+	timestamp.runtime();
+	imshow("MORP_TOPHAT", Mat(mdis));
+
+	timestamp.start();
+	z::morphEx(mcolor, mdis, MORP_BLACKHAT, z::Size(7, 7));
+	timestamp.runtime();
+	imshow("MORP_BLACKHAT", Mat(mdis));
+
+	
+
+	timestamp.start();
+	z::morphEx(mcolor, mdis, MORP_GRADIENT,z::Size(7, 7));
+	timestamp.runtime();
+	imshow("MORP_GRADIENT", Mat(mdis));
+
+ 	waitKey(0);
 	return 0;
 }

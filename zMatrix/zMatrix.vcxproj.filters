@@ -24,15 +24,28 @@
     <ClInclude Include="operations.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="zimgproc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="zimgproc.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="types_c.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="zmatch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\README.md">
-      <Filter>头文件</Filter>
-    </None>
+    <ClCompile Include="zimgproc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="zmatch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
