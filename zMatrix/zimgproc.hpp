@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <vector>
 
+
+#ifdef __cplusplus
 namespace z {
 
 	template<class _Tp> inline _Size<_Tp>& _Size<_Tp>::operator = (const _Size& sz)
@@ -318,4 +320,6 @@ namespace z {
 		}
 	}
 };
+#endif
+
 #endif // !_ZIMGPROC_HPP 

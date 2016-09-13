@@ -17,39 +17,6 @@ _Matrix 是一个使用C++编写的矩阵运算库，目的是为了辅助进行
 
 <br><br>
 
-# Usage
-`_Matrix`是一个模板类，在`zmatrix.h`文件中，针对不同的数据类型重命名：
-```
-typedef _Matrix<double>             Matrix;
-typedef _Matrix<double>             Matrix64f;
-typedef _Matrix<float>              Matrix32f;
-typedef _Matrix<signed int>         Matrix32s;
-typedef _Matrix<unsigned int>       Matrix32u;
-typedef _Matrix<signed short>       Matrix16s;
-typedef _Matrix<unsigned short>     Matrix16u;
-typedef _Matrix<signed char>        Matrix8s;
-typedef _Matrix<unsigned char>      Matrix8u;
-```
-
-从上面可以看出`Matrix`是`double`类型的矩阵。
-
-## 定义一个矩阵
-```
-// 定义一个2x2的矩阵，并赋值
-Matrix m1(2, 2);
-m1 = {2, 3,
-     3, 6};
-
-// 这只是对m1的浅复制
-Matrix m2(m1);
-
-// 定义1xn的矩阵
-Matrix m3;
-m3 = {4, 6, 6};
-```
-
-<br><br>
-
 # 已经实现功能
 
 ## 矩阵的基本功能
@@ -80,6 +47,10 @@ m3 = {4, 6, 6};
 ### 形态学滤波
 * 腐蚀和膨胀函数`erode()/dilate()`
 * 开运算、闭运算、顶帽、黑帽、形态学梯度运算，函数`morpEX()`
+
+## 图像变换
+### 边缘检测
+* 简单的canny边缘检测（sobel算子），彩色和灰度均可
 
 <br><br>
 

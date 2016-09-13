@@ -123,6 +123,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="config_default.h" />
+    <ClInclude Include="transform.h" />
+    <ClInclude Include="transform.hpp" />
     <ClInclude Include="types_c.h" />
     <ClInclude Include="zimgproc.h" />
     <ClInclude Include="zimgproc.hpp" />
@@ -132,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="transform.cpp" />
     <ClCompile Include="zimgproc.cpp" />
     <ClCompile Include="zmatch.cpp" />
   </ItemGroup>

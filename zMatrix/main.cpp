@@ -7,6 +7,7 @@
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\imgproc\imgproc.hpp>
 #include <string>
+#include "transform.h"
 
 #include <ctime>  
 
@@ -22,33 +23,20 @@ int main(int argc, char *argv[])
 	src = imread("test.jpeg");
 	Matrix8u mgray, mdis, mcolor = Mat2Matrix8u(src);
 
-	timestamp.start();
-	z::morphEx(mcolor, mdis, MORP_OPEN, z::Size(7, 7));
-	timestamp.runtime();
-	imshow("MORP_OPEN", Mat(mdis));
+	// ‘≠Õº
+	imshow("orginal", Mat(mcolor));
 
-	timestamp.start();
-	z::morphEx(mcolor, mdis, MORP_CLOSE, z::Size(7, 7));
-	timestamp.runtime();
-	imshow("MORP_CLOSE", Mat(mdis));
+	// ª“∂»Õº
+	z::cvtColor(mcolor, mgray, BGR2GRAY);
+	imshow("gray", Mat(mgray));
 
+	// canny ≤ Õº±ﬂ‘µºÏ≤‚
+	z::Canny(mcolor, mdis, 50, 100);
+	imshow("canny color", Mat(mdis));
 
-	timestamp.start();
-	z::morphEx(mcolor, mdis, MORP_TOPHAT, z::Size(7, 7));
-	timestamp.runtime();
-	imshow("MORP_TOPHAT", Mat(mdis));
-
-	timestamp.start();
-	z::morphEx(mcolor, mdis, MORP_BLACKHAT, z::Size(7, 7));
-	timestamp.runtime();
-	imshow("MORP_BLACKHAT", Mat(mdis));
-
-	
-
-	timestamp.start();
-	z::morphEx(mcolor, mdis, MORP_GRADIENT,z::Size(7, 7));
-	timestamp.runtime();
-	imshow("MORP_GRADIENT", Mat(mdis));
+	// canny ª“∂»Õº±ﬂ‘µºÏ≤‚
+	z::Canny(mgray, mdis, 50, 100);
+	imshow("canny gray", Mat(mdis));
 
  	waitKey(0);
 	return 0;

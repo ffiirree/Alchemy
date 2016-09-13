@@ -12,6 +12,7 @@
 #include <opencv2\highgui\highgui.hpp>
 #endif
 
+#ifdef __cplusplus
 namespace z{
 
 template<class _Tp> class _Size;
@@ -70,6 +71,8 @@ template <class _type> void dilate(_Matrix<_type>& src, _Matrix<_type>&dst, Size
 template <class _type> void morphEx(_Matrix<_type>& src, _Matrix<_type>&dst, int op, Size kernel);
 template <class _type> void open(_Matrix<_type>& src, _Matrix<_type>&dst, Size kernel);
 }
+
+#endif // !__cplusplus
 
 #include "zimgproc.hpp"
 
