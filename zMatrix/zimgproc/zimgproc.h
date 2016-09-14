@@ -1,11 +1,22 @@
+/**
+ ******************************************************************************
+ * @file    zimgproc.h
+ * @author  zlq
+ * @version V1.0
+ * @date    2016.9.14
+ * @brief   图像处理的函数定义
+ ******************************************************************************
+ * @attention
+ *
+ *
+ ******************************************************************************
+ */
 #ifndef _ZIMGPROC_H
 #define _ZIMGPROC_H
 
 #include <string>
-#include "config_default.h"
-#include "zmatrix.h"
-#include "types_c.h"
-#include "zmatch.h"
+#include "zcore.h"
+#include "zmatch\zmatch.h"
 
 #if defined(OPENCV)
 #include <opencv2\core.hpp>

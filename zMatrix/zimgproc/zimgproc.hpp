@@ -1,3 +1,16 @@
+/**
+ ******************************************************************************
+ * @file    zimgproc.hpp
+ * @author  zlq
+ * @version V1.0
+ * @date    2016.9.14
+ * @brief   图像处理相关模板函数的实现
+ ******************************************************************************
+ * @attention
+ *
+ *
+ ******************************************************************************
+ */
 #ifndef _ZIMGPROC_HPP
 #define _ZIMGPROC_HPP
 
@@ -45,14 +58,16 @@ namespace z {
 	}
 
 	/**
-	 * @berif ��ֵ�˲�
+	 * @berif 均值滤波
 	 */
 	template <class _type> void blur(_Matrix<_type>& src, _Matrix<_type>& dst, Size size)
 	{
 		boxFilter(src, dst, size, true);
 	}
+
 	/**
-	 * @berif �����˲�
+	 * @berif 方框滤波
+	 * @param[in] normalize，是否归一化，卷积核各项和不为1时除以和。
 	 */
 	template <class _type> void boxFilter(const _Matrix<_type>& src, _Matrix<_type>& dst, Size size, bool normalize)
 	{
@@ -78,7 +93,7 @@ namespace z {
 				for (int ii = 0; ii < size.width; ++ii) {
 					for (int jj = 0; jj < size.height; ++jj) {
 
-						// ��ȡһ�����صĵ�ַ
+						// 获取一个像素的地址
 						ptr = src.ptr(i - m + ii, j - n + jj);
 
 						if (ptr) {
@@ -110,6 +125,10 @@ namespace z {
 		delete[] tempValue;
 	}
 
+	/**
+	 * @berif 高斯滤波
+	 * @param[in] normalize，是否归一化，卷积核各项和不为1时除以和。
+	 */
 	template <class _type> void GaussianBlur(_Matrix<_type>&src, _Matrix<_type> & dst, Size size, double sigmaX, double sigmaY)
 	{
 		Matrix kernel = Gassion(size, sigmaX, sigmaY);
@@ -135,7 +154,7 @@ namespace z {
 	
 
 	/**
-	 * @berif ��ֵ�˲�
+	 * @berif 中值滤波
 	 */
 	template <class _type> void medianFilter(_Matrix<_type>&src, _Matrix<_type>& dst, Size size)
 	{
@@ -177,7 +196,7 @@ namespace z {
 				else
 					valindex = valDefault;
 				for (int k = 0; k < src.chs; ++k) {
-					sort(ker[k], ker[k] + cnt);  // ռ95%���ϵ�ʱ��
+					sort(ker[k], ker[k] + cnt);  // 占95%以上的时间
 					dstPtr[k] = ker[k][valindex];
 				}
 
@@ -191,7 +210,7 @@ namespace z {
 	}
 
 
-	//////////////////////////////////////��̬ѧ�˲�//////////////////////////////////////
+	//////////////////////////////////////形态学滤波//////////////////////////////////////
 	template <class _type> void morphOp(int code, _Matrix<_type>& src, _Matrix<_type>&dst, Size size)
 	{
 		int area = size.area();
@@ -228,7 +247,7 @@ namespace z {
 				}
 				dstPtr = dst.ptr(i, j);
 				switch (code) {
-					// ��ʴ�� �ֲ���Сֵ
+					// 腐蚀， 局部最小值
 				case MORP_ERODE:
 					for (int k = 0; k < src.chs; ++k) {
 						min(ker[k], cnt, minVal);
@@ -236,7 +255,7 @@ namespace z {
 					}
 					break;
 
-					// ���ͣ��ֲ����ֵ
+					// 膨胀，局部最大值
 				case MORP_DILATE:
 					for (int k = 0; k < src.chs; ++k) {
 						max(ker[k], cnt, maxVal);

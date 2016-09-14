@@ -16,7 +16,7 @@
 
 #include <stdint.h>
 #include <iostream>
-#include "config_default.h"
+#include "config.h"
 
 #if defined(OPENCV)
 #include <opencv2\core.hpp>
