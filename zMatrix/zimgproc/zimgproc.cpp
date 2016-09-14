@@ -1,6 +1,23 @@
+/**
+ ******************************************************************************
+ * @file    zimgproc.cpp
+ * @author  zlq
+ * @version V1.0
+ * @date    2016.9.14
+ * @brief   与类型无关的图像处理函数的实现
+ ******************************************************************************
+ * @attention
+ *
+ *
+ ******************************************************************************
+ */
 #include "zimgproc.h"
 
 namespace z{
+
+/**
+ * @berif openCV中的Mat类转换为Matrix8u类
+ */
 Matrix8u Mat2Matrix8u(cv::Mat & mat)
 {
 	Matrix8u temp(mat.rows, mat.cols, mat.channels());
@@ -8,6 +25,10 @@ Matrix8u Mat2Matrix8u(cv::Mat & mat)
 
 	return temp;
 }
+
+/**
+ * @berif 获取用于进行高斯滤波的高斯核
+ */
 Matrix Gassion(z::Size ksize, double sigmaX, double sigmaY)
 {
 	if (ksize.width != ksize.height || ksize.width % 2 != 0)

@@ -14,6 +14,8 @@
 #ifndef _OPERATIONS_HPP
 #define _OPERATIONS_HPP
 
+#include <stdexcept>
+
 #ifdef __cplusplus
 
 namespace z{
@@ -87,7 +89,9 @@ template <class _type> _Matrix<_type>::_Matrix(_Size<int> size, int _chs)
  */
 template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols)
 {
-	_Matrix(_rows, _cols, 1);
+	_log_("Matrix construct with params.");
+	initEmpty();
+	create(_rows, _cols, 1);
 }
 
 template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols, int _chs)
@@ -490,7 +494,7 @@ _Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
 template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&dst, bool norm)
 {
 	if (kernel.rows != kernel.cols || kernel.rows % 2 == 0)
-		throw runtime_error("size.width != size.height || size.width % 2 == 0");
+		throw std::runtime_error("size.width != size.height || size.width % 2 == 0");
 
 	if (!dst.equalSize(*this))
 		dst.create(rows, cols, chs);
@@ -502,7 +506,7 @@ template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&
 	_type * dstPtr = nullptr;
 	int alpha = 0;
 	double delta = 0;
-	for (int i = 0; i < kernel.size(); ++i) {
+	for (size_t i = 0; i < kernel.size(); ++i) {
 		delta += kernel.data[i];
 	}
 

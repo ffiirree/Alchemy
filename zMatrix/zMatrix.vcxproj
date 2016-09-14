@@ -18,6 +18,24 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="config.h" />
+    <ClInclude Include="zcore.h" />
+    <ClInclude Include="zcore\operations.hpp" />
+    <ClInclude Include="zcore\types.h" />
+    <ClInclude Include="zcore\zmatrix.h" />
+    <ClInclude Include="zimgproc\transform.h" />
+    <ClInclude Include="zimgproc\transform.hpp" />
+    <ClInclude Include="zimgproc\zimgproc.h" />
+    <ClInclude Include="zimgproc\zimgproc.hpp" />
+    <ClInclude Include="zmatch\zmatch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="zimgproc\transform.cpp" />
+    <ClCompile Include="zimgproc\zimgproc.cpp" />
+    <ClCompile Include="zmatch\zmatch.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3B17F6DB-D606-4213-A2C9-A7FEA36C51C3}</ProjectGuid>
     <RootNamespace>zMatrix</RootNamespace>
@@ -69,11 +87,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\Program Files\opencv\build\include\opencv2;D:\Program Files\opencv\build\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Visual Processing\project\zMatrix\zMatrix;D:\Program Files\opencv\build\include\opencv2;D:\Program Files\opencv\build\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Program Files\opencv\build\x86\vc12\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>D:\Program Files\opencv\build\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Visual Processing\project\zMatrix\zMatrix;D:\Program Files\opencv\build\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Program Files\opencv\build\x86\vc12\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -121,20 +139,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="config_default.h" />
-    <ClInclude Include="types_c.h" />
-    <ClInclude Include="zimgproc.h" />
-    <ClInclude Include="zimgproc.hpp" />
-    <ClInclude Include="zmatch.h" />
-    <ClInclude Include="zmatrix.h" />
-    <ClInclude Include="operations.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="zimgproc.cpp" />
-    <ClCompile Include="zmatch.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
