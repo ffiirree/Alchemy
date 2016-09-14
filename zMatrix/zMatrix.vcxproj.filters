@@ -45,6 +45,9 @@
     <ClInclude Include="zcore\types.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="zgui\zgui.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -57,6 +60,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="zimgproc\transform.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="zgui\zgui.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -499,12 +499,12 @@ template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&
 	if (!dst.equalSize(*this))
 		dst.create(rows, cols, chs);
 
-	int *tempValue = new int[chs];
+	double *tempValue = new double[chs];
 	int zeros = 0;
 	int m = kernel.rows / 2, n = kernel.cols / 2;
 	const _type * srcPtr = nullptr;
 	_type * dstPtr = nullptr;
-	int alpha = 0;
+	double alpha = 0;
 	double delta = 0;
 	for (size_t i = 0; i < kernel.size(); ++i) {
 		delta += kernel.data[i];

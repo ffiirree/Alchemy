@@ -250,7 +250,7 @@ namespace z {
 					// 腐蚀， 局部最小值
 				case MORP_ERODE:
 					for (int k = 0; k < src.chs; ++k) {
-						min(ker[k], cnt, minVal);
+						_min(ker[k], cnt, minVal);
 						dstPtr[k] = minVal;
 					}
 					break;
@@ -258,7 +258,7 @@ namespace z {
 					// 膨胀，局部最大值
 				case MORP_DILATE:
 					for (int k = 0; k < src.chs; ++k) {
-						max(ker[k], cnt, maxVal);
+						_max(ker[k], cnt, maxVal);
 						dstPtr[k] = maxVal;
 					}
 					break;
