@@ -72,3 +72,5 @@ _Matrix 是一个使用C++编写的矩阵运算库，目的是为了辅助进行
 * GassionBlur(), 内核大小为（5， 5），runtime(openCV:116ms):4245ms
 * FFT卷积？？
 * erode()/dilate(), 内核大小为（5， 5）,runtime(openCV:10ms):17555ms -> 920ms(release:140ms, 2ms)
+* 2016-09-16：修改sobel局部分量的估计没有乘尺度因子
+* 2016-09-16：修改zMatrix中conv上次更改后出现数据类型的错误

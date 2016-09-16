@@ -499,15 +499,15 @@ template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&
 	if (!dst.equalSize(*this))
 		dst.create(rows, cols, chs);
 
-	int *tempValue = new int[chs];
-	int zeros = 0;
+	int *tempValue = new int[chs];                            // 保存卷积未归一化前的中间变量
+	int zeros = 0;                                            // 边缘处理，记录边缘卷积过程中的超出图像的像素个数
 	int m = kernel.rows / 2, n = kernel.cols / 2;
-	const _type * srcPtr = nullptr;
-	_type * dstPtr = nullptr;
+	const _type * srcPtr = nullptr;                           // 指向源图像像素的指针
+	_type * dstPtr = nullptr;                                 // 指向输出图像的像素的指针
 	int alpha = 0;
-	double delta = 0;
+	int delta = 0;
 	for (size_t i = 0; i < kernel.size(); ++i) {
-		delta += kernel.data[i];
+		delta += (int)kernel.data[i];
 	}
 
 	for (int i = 0; i < rows; ++i) {

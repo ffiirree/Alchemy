@@ -263,14 +263,25 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 				} // !for(jj)
 			} // !for(ii)
 
-			if (zerosx != 0) {
-				for (int k = 0; k < src.chs; ++k) {
+			// 局部梯度分量的的估计，通过给滤波结果乘以适当的尺度因子来实现
+			for (int k = 0; k < src.chs; ++k) {
+				if (zerosx != 0) {
 					tempGx[k] /= zerosx;
-					if (zerosy != 0) {
-						tempGy[k] /= zerosy;
-					}
 				}
+				else {
+					tempGx[k] /= 8;
+				}
+				
+				if (zerosy != 0) {
+					tempGy[k] /= zerosy;
+				}
+				else {
+					tempGy[k] /= 8;
+				}
+
 			}
+
+			
 
 			dstPtr = dst.ptr(i, j);
 			if (!noGD)

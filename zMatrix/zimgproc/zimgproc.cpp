@@ -31,8 +31,9 @@ Matrix8u Mat2Matrix8u(cv::Mat & mat)
  */
 Matrix Gassion(z::Size ksize, double sigmaX, double sigmaY)
 {
-	if (ksize.width != ksize.height || ksize.width % 2 != 0)
+	if (ksize.width != ksize.height || ksize.width % 2 != 0) {
 		_log_("ksize.width != ksize.height || ksize.width % 2 != 0");
+	}
 
 	if (sigmaX == 0) sigmaX = ksize.width / 2.0;
 	if (sigmaY == 0) sigmaY = ksize.height / 2.0;
