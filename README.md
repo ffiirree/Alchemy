@@ -53,6 +53,9 @@ _Matrix 是一个使用C++编写的矩阵运算库，目的是为了辅助进行
 * sobel算子
 * 简单的canny边缘检测（sobel算子），彩色和灰度均可，效果不好
 
+## Kinect 4 Windows v2 （Events）
+* Kinect获取深度、彩色和红外图像，返回Mat类型的数据
+
 <br><br>
 
 # 即将实现的功能

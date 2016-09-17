@@ -48,6 +48,9 @@
     <ClInclude Include="zgui\zgui.h">
       <Filter>Header files</Filter>
     </ClInclude>
+    <ClInclude Include="kinect\KinectSensor.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -63,6 +66,9 @@
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="zgui\zgui.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="kinect\KinectSensor.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -9,6 +9,7 @@
 #include "zimgproc\zimgproc.h"
 #include "zimgproc\transform.h"
 #include "zgui\zgui.h"
+#include "kinect\KinectSensor.h"
 
 using namespace std;
 using namespace z;
@@ -16,29 +17,31 @@ using namespace z;
 
 int main(int argc, char *argv[])
 {
-	Matrix8u gray, mdis, img = imread("test.jpeg");
-	cv::Mat display, src = img;
+	KinectSensor kinect(FrameTypes_Color);
+	cv::Mat depthImg48, depthImg24(424, 512, CV_8U), IRImg24(424, 512, CV_8U);
+	char key = 1;
+	while (key != ' ') {
+		if (kinect.isNewFrameArrived(FrameTypes_Color) == S_OK) {
+			if (SUCCEEDED(kinect.update(FrameTypes_Color))) {
 
-	// zMatrix 读取的原图
-	cv::imshow("z org", cv::Mat(img));
+				// 显示彩色图像
+				imshow("color", kinect.getColorImg());
 
-	// zMatrix 的sobel算子边缘检测效果
-	cvtColor(img, gray, BGR2GRAY);
-	sobel(gray, mdis, 1, 1);
-	cv::imshow("z soble", cv::Mat(mdis));
+				//// 显示深度图像，像素位数为48位
+				//depthImg48 = kinect.getDepthImg();
+				//cout << ((USHORT *)depthImg48.data)[512 / 2 + 512 * (424 / 2)] << endl;
+				//depthImg48.convertTo(depthImg24, CV_8U, 255.0f / kinect.getDepthMaxReliableDistance());
+				//circle(depthImg24, cv::Point(512 / 2, 424 / 2), 10, cv::Scalar(0, 255, 0));
+				//imshow("depth", depthImg24);
 
-	// openCV中的sobel算子边缘检测效果
-	cv::Sobel(src, display, CV_8U, 1, 1);
-	cv::imshow("cv sobel", display);
+				//// 显示红外图像
+				//kinect.getInfraImg().convertTo(IRImg24, CV_8U, 1.0 / 256.0);
+				//cv::imshow("infra", IRImg24);
 
-	// zMatrix 中的Canny边缘检测效果
-	Canny(gray, mdis, 3, 6);
-	cv::imshow("z Canny", cv::Mat(mdis));
+				key = cv::waitKey(10);
+			}
+		}
+	}
 
-	// openCV中的Canny边缘检测效果
-	cv::Canny(src, display, 30, 60);
-	cv::imshow("cv Canny", display);
-
- 	cv::waitKey(0);
 	return 0;
 }

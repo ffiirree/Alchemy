@@ -168,6 +168,90 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
 	}
 }
 
+//////////////////////////////////////一阶微分算子///////////////////////////////////////////
+// 重要问题：得到的边缘与灰度过度范围等宽，因此边缘可能无法被精确定位
+//////////////////////////////////////一阶微分算子///////////////////////////////////////////
+
+/**
+ * @berif prewitt算子
+ */
+void prewitt(Matrix8u&src, Matrix8u&dst)
+{
+	if (!dst.equalSize(src))
+		dst.create(src.rows, src.cols, src.chs);
+
+	Matrix8s Gx(3, 3), Gy(3, 3);
+
+	Gx = { -1, 0, 1, -1, 0, 1, -1, 0, 1 };
+	Gy = { -1, -1, -1, 0, 0, 0, 1, 1, 1 };
+
+	int factor = 6;
+
+	int *tempGx = new int[src.chs];
+	int *tempGy = new int[src.chs];
+	int *tempG = new int[src.chs];
+	int zerosx = 0, zerosy = 0;
+	unsigned char * srcPtr = nullptr;
+	unsigned char * dstPtr = nullptr;
+
+	for (int i = 0; i < dst.rows; ++i) {
+		for (int j = 0; j < dst.cols; ++j) {
+
+			memset(tempGx, 0, src.chs * sizeof(int));
+			memset(tempGy, 0, src.chs * sizeof(int));
+			memset(tempG, 0, src.chs * sizeof(int));
+			zerosx = zerosy = 0;
+
+			for (int ii = 0; ii < 3; ++ii) {
+				for (int jj = 0; jj < 3; ++jj) {
+
+					srcPtr = src.ptr(i - 1 + ii, j - 1 + jj);
+
+					if (srcPtr) {
+						for (int k = 0; k < src.chs; ++k) {
+							tempGx[k] += srcPtr[k] * Gx[ii][jj];
+							tempGy[k] += srcPtr[k] * Gy[ii][jj];
+						}
+					}
+					else {
+						zerosx += Gx[ii][jj];
+						zerosy += Gy[ii][jj];
+					}
+
+				} // !for(jj)
+			} // !for(ii)
+
+			  // 局部梯度分量的的估计，通过给滤波结果乘以适当的尺度因子来实现
+			for (int k = 0; k < src.chs; ++k) {
+				if (zerosx != 0) {
+					tempGx[k] /= zerosx;
+				}
+				else {
+					tempGx[k] /= factor;
+				}
+
+				if (zerosy != 0) {
+					tempGy[k] /= zerosy;
+				}
+				else {
+					tempGy[k] /= factor;
+				}
+			}
+
+			dstPtr = dst.ptr(i, j);
+			for (int k = 0; k < src.chs; ++k) {
+				dstPtr[k] = (unsigned char)std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]);
+			}
+
+
+		} // !for(j)
+	} // !for(i)
+
+	delete[] tempGx;
+	delete[] tempGy;
+	delete[] tempG;
+}
+
 /**
  * @berif sobel算子
  * @param[in] ksize, must be 1, 3, 5 or 7.
@@ -201,16 +285,22 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 
 	Matrix8s Gx(ksize, ksize), Gy(ksize, ksize);
 
+	int factor = 0;
+
 	switch (ksize) {
 	case 1:
 		
 		break;
 
 	case 3:
-		Gx = { -1, 0, 1, -2, 0, 2, -1, 0, 1 };
-		Gy = { -1, -2, -1, 0, 0, 0, 1, 2, 1 };
-		//Gx = { -3, 0, 3, -10, 0, 10, -3, 0, 3 };
-		//Gy = { -3, -10, -3, 0, 0, 0, 3, 10, 3 };
+		// 原始sobel算子
+		//Gx = { -1, 0, 1, -2, 0, 2, -1, 0, 1 };
+		//Gy = { -1, -2, -1, 0, 0, 0, 1, 2, 1 };
+		//factor = 8;
+		// 改进型，可以将方向误差减到最小
+		Gx = { -3, 0, 3, -10, 0, 10, -3, 0, 3 };
+		Gy = { -3, -10, -3, 0, 0, 0, 3, 10, 3 };
+		factor = 32;
 		break;
 
 	case 5:
@@ -269,18 +359,16 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 					tempGx[k] /= zerosx;
 				}
 				else {
-					tempGx[k] /= 8;
+					tempGx[k] /= factor;
 				}
 				
 				if (zerosy != 0) {
 					tempGy[k] /= zerosy;
 				}
 				else {
-					tempGy[k] /= 8;
+					tempGy[k] /= factor;
 				}
-
 			}
-
 			
 
 			dstPtr = dst.ptr(i, j);
@@ -312,6 +400,8 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 	delete[] tempGy;
 	delete[] tempG;
 }
+
+
 
 
 /**
