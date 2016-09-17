@@ -1,6 +1,7 @@
 #include"KinectSensor.h"
 #include <iostream>
 #include <malloc.h>
+#include "debug.h"
 
 using namespace std;
 

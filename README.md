@@ -77,3 +77,4 @@ _Matrix 是一个使用C++编写的矩阵运算库，目的是为了辅助进行
 * erode()/dilate(), 内核大小为（5， 5）,runtime(openCV:10ms):17555ms -> 920ms(release:140ms, 2ms)
 * 2016-09-16：修改sobel局部分量的估计没有乘尺度因子
 * 2016-09-16：修改zMatrix中conv上次更改后出现数据类型的错误
+* 2016-09-17: 修改KinectSensor析构函数中释放指针时未检查是否为空的BUG

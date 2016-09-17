@@ -14,6 +14,16 @@
 #ifndef _ZMATCH_H
 #define _ZMATCH_H
 
+template <typename _Tp> void _min(_Tp *addr, size_t size, _Tp & _min);
+template <typename _Tp> void _max(_Tp *addr, size_t size, _Tp & _max);
+
+int average(int x, int y);
+
+
+/**
+ * @berif 求数组中的最大数
+ * @param size，数组的大小 or 需要比较数组前size个
+ */
 template <typename _Tp> void _max(_Tp *addr, size_t size, _Tp & _max)
 {
 	max = *addr;
@@ -26,6 +36,11 @@ template <typename _Tp> void _max(_Tp *addr, size_t size, _Tp & _max)
 	}
 }
 
+
+/**
+ * @berif 求数组中的最大数
+ * @param size，数组的大小 or 需要比较数组前size个
+ */
 template <typename _Tp> void _min(_Tp *addr, size_t size, _Tp & _min)
 {
 	min = *addr;

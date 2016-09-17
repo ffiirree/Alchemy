@@ -15,6 +15,7 @@
 #define _OPERATIONS_HPP
 
 #include <stdexcept>
+#include "debug.h"
 
 #ifdef __cplusplus
 

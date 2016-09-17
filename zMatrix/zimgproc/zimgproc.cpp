@@ -12,6 +12,7 @@
  ******************************************************************************
  */
 #include "zimgproc.h"
+#include "debug.h"
 
 namespace z{
 
@@ -31,8 +32,8 @@ Matrix8u Mat2Matrix8u(cv::Mat & mat)
  */
 Matrix Gassion(z::Size ksize, double sigmaX, double sigmaY)
 {
-	if (ksize.width != ksize.height || ksize.width % 2 != 0) {
-		_log_("ksize.width != ksize.height || ksize.width % 2 != 0");
+	if (ksize.width != ksize.height || ksize.width % 2 != 1) {
+		_log_("ksize.width != ksize.height || ksize.width % 2 != 1");
 	}
 
 	if (sigmaX == 0) sigmaX = ksize.width / 2.0;

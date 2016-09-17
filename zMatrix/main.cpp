@@ -2,12 +2,14 @@
 #include <opencv2\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\imgproc\imgproc.hpp>
+#include <string>
+#include <ctime>  
 
 #include "zcore.h"
 #include "zimgproc\zimgproc.h"
 #include "zimgproc\transform.h"
 #include "zgui\zgui.h"
-#include "kinect\KinectSensor.h"
+#include "debug.h"
 
 using namespace std;
 using namespace z;
@@ -15,32 +17,28 @@ using namespace z;
 
 int main(int argc, char *argv[])
 {
-	KinectSensor kinect(FrameTypes_All);
-	cv::Mat depthImg16, depthImg8(424, 512, CV_8U), IRImg8(424, 512, CV_8U);
-	char key = 0;
+	Matrix8u zcolor, zgray, zdis;
+	cv::Mat cvColor, cvGray, cvdis;
+	TimeStamp timestamp;
 
-	while (key != ' ') {
-		if (kinect.isNewFrameArrived(FrameTypes_All) == S_OK) {
-			if (SUCCEEDED(kinect.update(FrameTypes_All))) {
+	// 读取一张图片
+	zcolor = imread("test.jpeg");
 
-				// 显示彩色图像
-				imshow("color", kinect.getColorImg());
+	// 显示图片需要用openCV的函数
+	cv::imshow("zcolor", cv::Mat(zcolor));
 
-				// 显示深度图像，像素位数为16位
-				depthImg16 = kinect.getDepthImg();
-				cout << ((USHORT *)depthImg16.data)[512 / 2 + 512 * (424 / 2)] << endl;
-				depthImg16.convertTo(depthImg8, CV_8U, 255.0f / kinect.getDepthMaxReliableDistance());
-				circle(depthImg8, cv::Point(512 / 2, 424 / 2), 10, cv::Scalar(0, 255, 0));
-				cv::imshow("depth", depthImg8);
+	// 转化为灰度图像
+	cvtColor(zcolor, zgray, BGR2GRAY);
+	cv::imshow("zgray", cv::Mat(zgray));
 
-				// 显示红外图像
-				kinect.getInfraImg().convertTo(IRImg8, CV_8U, 1.0 / 256.0);
-				cv::imshow("infra", IRImg8);
+	// 高斯滤波
+	GaussianBlur(zcolor, zdis, Size(5, 5));
+	cv::imshow("z GassianBlar", cv::Mat(zdis));
 
-				key = cv::waitKey(10);
-			}
-		}
-	}
+	// sobel 一阶微分算子边缘检测
+	sobel(zgray, zdis, 1, 1, 3);
+	cv::imshow("z sobel", cv::Mat(zdis));
 
+ 	cv::waitKey(0);
 	return 0;
 }

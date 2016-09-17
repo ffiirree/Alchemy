@@ -6,7 +6,10 @@ GLOBAL(int) read_JPEG_file(char * filename, z::Matrix8u & img);
 
 namespace z{
 
-
+/**
+ * @berif 自己实现的读取jpeg的图片
+ * @attention 本函数暂时只能读取jpeg标准的图片，需要读取其他类型的图片请使用openCV的imread函数
+ */
 Matrix8u imread(char *filename)
 {
 	Matrix8u temp;

@@ -19,7 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="black.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="debug.h" />
     <ClInclude Include="kinect\KinectSensor.h" />
     <ClInclude Include="zcore.h" />
     <ClInclude Include="zcore\operations.hpp" />

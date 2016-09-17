@@ -51,6 +51,12 @@
     <ClInclude Include="kinect\KinectSensor.h">
       <Filter>Header files</Filter>
     </ClInclude>
+    <ClInclude Include="black.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="debug.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

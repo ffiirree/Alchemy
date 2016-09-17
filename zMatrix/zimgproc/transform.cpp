@@ -11,9 +11,10 @@
  *
  ******************************************************************************
  */
-#include "transform.h"
 #include <cmath>
 #include <stdexcept>
+#include "transform.h"
+#include "debug.h"
 
 namespace z {
 
@@ -310,7 +311,7 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 		break;
 
 	default:
-		_log_("Error ksize!")
+		_log_("Error ksize!");
 		return;
 	}
 	
