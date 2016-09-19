@@ -23,6 +23,7 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="debug.h" />
     <ClInclude Include="kinect\KinectSensor.h" />
+    <ClInclude Include="test\test.h" />
     <ClInclude Include="zcore.h" />
     <ClInclude Include="zcore\operations.hpp" />
     <ClInclude Include="zcore\types.h" />
@@ -37,6 +38,7 @@
   <ItemGroup>
     <ClCompile Include="kinect\KinectSensor.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="test\test.cpp" />
     <ClCompile Include="zgui\zgui.cpp" />
     <ClCompile Include="zimgproc\transform.cpp" />
     <ClCompile Include="zimgproc\zimgproc.cpp" />

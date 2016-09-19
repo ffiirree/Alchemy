@@ -16,7 +16,8 @@
 
 enum
 {
-	BGR2GRAY = 0
+	BGR2GRAY = 0,
+	BGR2RGB
 };
 
 

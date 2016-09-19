@@ -11,7 +11,7 @@
 #define _BLACK_H
 
 
-#define ARRAY_SIZE(arr)			(1[&arr])					// 求数组的大小
+#define ARRAY_SIZE(arr)			(1[&arr])					// 姹傛暟缁勭殑澶у皬
 
 
 #define st(x)      do { x } while (__LINE__ == -1)

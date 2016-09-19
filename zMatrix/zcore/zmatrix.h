@@ -56,16 +56,22 @@ public:
 	void release();
 	int refAdd(int *addr, int delta);
 
+	template<typename _Tp2> operator _Matrix<_Tp2>() const;
+
 	_Matrix<_type>& operator = (const _Matrix<_type>& m);
 	_Matrix<_type>& operator = (std::initializer_list<_type>);
 	_Matrix<_type>& operator += (const _Matrix<_type>& m);
 	_Matrix<_type>& operator -= (const _Matrix<_type>& m);
 
 	// 检查这两个函数是否达到了想要的目的
-	inline _type* operator[](size_t n) { return &data[n * step]; }
-	inline const _type* operator[](size_t n) const { return &data[n * step]; }
+	inline _type* operator[](size_t n) { return data + n * step; }
+	inline const _type* operator[](size_t n) const { return data + n * step; }
+
 
 	//! returns pointer to (i0,i1) submatrix along the dimensions #0 and #1
+	_type* ptr(int i0);
+	const _type* ptr(int i0) const;
+
 	_type* ptr(int i0, int i1);
 	const _type* ptr(int i0, int i1) const;
 

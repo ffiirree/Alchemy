@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <exception>
 
 
 #ifdef __cplusplus
@@ -50,7 +51,19 @@ namespace z {
 		}
 			break;
 
+		case BGR2RGB:
+			if (!dst.equalSize(src)) {
+				dst.create(src.rows, src.cols, src.chs);
+			}
 
+			for (int i = 0; i < src.rows; ++i) {
+				for (int j = 0; j < src.cols; ++j) {
+					dst.ptr(i, j)[2] = src.ptr(i, j)[0];
+					dst.ptr(i, j)[1] = src.ptr(i, j)[1];
+					dst.ptr(i, j)[0] = src.ptr(i, j)[2];
+				}
+			}
+			break;
 
 		default:
 			break;
@@ -337,6 +350,81 @@ namespace z {
 			dst = temp - dst;
 			break;
 		}
+	}
+
+	/**
+	 * @berif 将多通道矩阵分离称为单通道的矩阵
+	 */
+	template <class _type> void spilt(_Matrix<_type> & src, std::vector<_Matrix<_type>> & mv)
+	{
+		_log_("init\n");
+		mv = vector<_Matrix<_type>>(src.chs);
+
+		for (int i = 0; i < src.chs; ++i) {
+			mv.at(i).create(src.rows, src.cols, 1);
+		}
+
+		for (int i = 0; i < src.rows; ++i) {
+			for (int j = 0; j < src.cols; ++j) {
+				for (int k = 0; k < src.chs; ++k) {
+					mv.at(k).ptr(i, j)[0] = src.ptr(i, j)[k];
+				}
+			}
+		}
+
+		//delete[]ch;
+
+		_log_("spilt end\n");
+	}
+	/**
+	 * @berif 合并两个1通道的矩阵
+	 */
+	template <class _type> void merge(_Matrix<_type> & src1, _Matrix<_type> & src2, _Matrix<_type> & dst)
+	{
+		if (!src1.equalSize(src2))
+			throw std::runtime_error("!src1.equalSize(src2)");
+
+		if (dst.rows != src1.rows || dst.cols != src1.cols)
+			dst.create(src1.rows, src1.cols, 2);
+
+		for (int i = 0; i < src1.rows; ++i) {
+			for (int j = 0; j < src2.cols; ++j) {
+				dst.ptr(i, j)[0] = src1.ptr(i, j)[0];
+				dst.ptr(i, j)[1] = src2.ptr(i, j)[0];
+			}
+		}
+	}
+
+	/**
+	 * @berif 合并通道，顺序按照src中的顺序
+	 */
+	template <class _type> void merge(std::vector<_Matrix<_type>> & src, _Matrix<_type> & dst)
+	{
+		if (src.size() < 1)
+			throw runtime_error("src.size() < 1");
+
+		int rows = src.at(0).rows;
+		int cols = src.at(0).cols;
+		int chs = src.size();
+
+		// 检查
+		for (int i = 1; i < chs; ++i) {
+			if(src.at(i).rows != rows || src.at(i).cols != cols)
+				throw runtime_error("src.at(i).rows != rows || src.at(i).cols != cols");
+		}
+
+		// 是否需要分配内存
+		if(dst.rows != rows || dst.cols != cols || dst.chs != chs)
+			dst.create(rows, cols, chs);
+
+		// 合并
+		for (int i = 0; i < rows; ++i) {
+			for (int j = 0; j < cols; ++j) {
+				for (int k = 0; k < chs; ++k) {
+					dst.ptr(i, j)[k] = src.at(k).ptr(i, j)[0];
+				} // !for(k)
+			} // !for(j)
+		} // !for(i)
 	}
 };
 #endif

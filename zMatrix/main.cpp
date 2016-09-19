@@ -14,31 +14,25 @@
 using namespace std;
 using namespace z;
 
-
 int main(int argc, char *argv[])
 {
-	Matrix8u zcolor, zgray, zdis;
-	cv::Mat cvColor, cvGray, cvdis;
-	TimeStamp timestamp;
+	Matrix8u img = imread("test.jpeg");
+	Matrix8u gray;
+	cvtColor(img, gray, BGR2GRAY);
 
-	// 读取一张图片
-	zcolor = imread("test.jpeg");
+	cv::Mat test = gray;
+	cv::Mat pa[] = { cv::Mat_<double>(test), cv::Mat::zeros(test.size(), CV_64F) };
+	cv::Mat com;
 
-	// 显示图片需要用openCV的函数
-	cv::imshow("zcolor", cv::Mat(zcolor));
+	cv::merge(pa, 2, com);
+	cv::dft(com, com);
 
-	// 转化为灰度图像
-	cvtColor(zcolor, zgray, BGR2GRAY);
-	cv::imshow("zgray", cv::Mat(zgray));
+	Matrix dst;
+	dft(gray, dst);
 
-	// 高斯滤波
-	GaussianBlur(zcolor, zdis, Size(5, 5));
-	cv::imshow("z GassianBlar", cv::Mat(zdis));
 
-	// sobel 一阶微分算子边缘检测
-	sobel(zgray, zdis, 1, 1, 3);
-	cv::imshow("z sobel", cv::Mat(zdis));
-
- 	cv::waitKey(0);
+	cv::waitKey(0);
 	return 0;
 }
+
+

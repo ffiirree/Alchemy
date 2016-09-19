@@ -14,6 +14,10 @@
 #ifndef _ZMATCH_H
 #define _ZMATCH_H
 
+
+#define Pi			((double)3.1415926535898)
+
+
 template <typename _Tp> void _min(_Tp *addr, size_t size, _Tp & _min);
 template <typename _Tp> void _max(_Tp *addr, size_t size, _Tp & _max);
 

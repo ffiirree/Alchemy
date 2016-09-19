@@ -308,6 +308,25 @@ _Matrix<_type> _Matrix<_type>::clone() const
 	copyTo(m);
 	return m;
 }
+template <class _type> template <class _Tp2> _Matrix<_type>::operator _Matrix<_Tp2>() const
+{
+	_Matrix<_Tp2> temp(rows, cols, chs);
+	const _type * ptr1 = 0;
+	_Tp2 * ptr2 = 0;
+
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols;++j) {
+
+			ptr1 = this->ptr(i, j);
+			ptr2 = temp.ptr(i, j);
+
+			for (int k = 0; k < chs; ++k) {
+				ptr2[k] = (_Tp2)ptr1[k];
+			}
+		}
+	}
+	return temp;
+}
 
 
 /**
@@ -376,7 +395,22 @@ _Matrix<_type>::operator cv::Mat() const
 	return temp;
 }
 #endif
+template <class _type> inline _type* _Matrix<_type>::ptr(int i0)
+{
+	if ((unsigned)i0 >= (unsigned)_size) {
+		return nullptr;
+	}
+	return data + i0 * step;
+}
 
+
+template <class _type> inline const _type* _Matrix<_type>::ptr(int i0) const
+{
+	if ((unsigned)i0 >= (unsigned)_size) {
+		return nullptr;
+	}
+	return data + i0 * step;
+}
 /**
  * @berif 获取以像素的指针
  */
