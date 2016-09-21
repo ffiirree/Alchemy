@@ -426,6 +426,30 @@ namespace z {
 			} // !for(j)
 		} // !for(i)
 	}
+
+	template <class _type> void copyMakeBorder(_Matrix<_type> & src, _Matrix<_type> & dst, int top, int bottom, int left, int right)
+	{
+		dst.create(src.rows + top + bottom, src.cols + left + right, src.chs);
+		dst.init(0);
+		_type * srcPtr, *dstPtr;
+
+		for (int i = 0; i < dst.rows; ++i) {
+			for (int j = 0; j < dst.cols; ++j) {
+				dstPtr = dst.ptr(i, j);
+				if (i >= top && j >= left && i < src.rows + top && j < src.cols + left) {
+					srcPtr = src.ptr(i - top, j - left);
+					for (int k = 0; k < dst.chs; ++k) {
+						dstPtr[k] = srcPtr[k];
+					}
+				}
+				else {
+					for (int k = 0; k < dst.chs; ++k) {
+						dstPtr[k] = 0;
+					}
+				}
+			}
+		}
+	}
 };
 #endif
 

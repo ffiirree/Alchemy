@@ -29,6 +29,33 @@ Matrix8u Mat2Matrix8u(cv::Mat & mat)
 }
 
 /**
+* @berif 上下颠倒图像
+*/
+void convertImage(Matrix8u *src, Matrix8u *dst, int flags)
+{
+	if (!dst->equalSize(*src))
+		dst->create(src->rows, src->cols, src->chs);
+
+	int rows = src->rows;
+	int cols = src->cols;
+
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols; ++j) {
+			for (int k = 0; k < src->chs; ++k) {
+				dst->ptr(i, j)[k] = src->ptr(rows - i - 1, j)[k];
+			}
+		}
+	}
+}
+
+void copyToArray(Matrix8u &src, char * arr)
+{
+	int dataSize = src.size()* src.chs;
+	for (size_t i = 0; i < dataSize; ++i) {
+		arr[i] = src.data[i];
+	}
+}
+/**
  * @berif 获取用于进行高斯滤波的高斯核
  */
 Matrix Gassion(z::Size ksize, double sigmaX, double sigmaY)
@@ -132,5 +159,62 @@ void dft(Matrix8u & src, Matrix & dst)
 
 	_dft(gx, dst);
 }
+
+
+int getIdealCols(int cols)
+{
+	int temp = 1;
+	while (cols >= temp) {
+		temp *= 2;
+	}
+	return temp;
+}
+int getIdealRows(int rows)
+{
+	return getIdealCols(rows);
+}
+
+
+//void _fft(Matrix & src, Matrix & dst)
+//{
+//	Matrix temp(src.rows, src.cols, 2);
+//	Matrix end(src.rows, src.cols, 2);
+//
+//
+//	// 按层FFT
+//	const int L = log(src.cols)/log(2);                    // 需要log2(N)层
+//	const int N = src.cols;
+//	for (int i = 0; i < src.rows; ++i) {
+//		for (int l = 0; l < L; ++l) {
+//
+//			for (int n = 0; n < N; ++n) {
+//
+//				double wRe = cos((2 * Pi * n) / N);
+//				double wIm = sin((2 * Pi * n) / N);
+//
+//			}
+//
+//
+//		}
+//	}
+//}
+
+
+
+//void fft(Matrix8u & src, Matrix & dst)
+//{
+//	Matrix gRe;
+//	int fft_rows = getIdealRows(src.rows);
+//	int fft_cols = getIdealCols(src.cols);
+//	copyMakeBorder(Matrix(src), gRe, 0, fft_rows - src.rows, 0, fft_cols - src.cols);
+//	
+//	Matrix gIm(fft_rows, fft_cols, 1);
+//
+//	// 
+//	Matrix gx;
+//	merge(gRe, gIm, gx);
+//
+//	_fft(gx, dst);
+//}
 
 }

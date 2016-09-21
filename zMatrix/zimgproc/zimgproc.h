@@ -241,9 +241,19 @@ template <class _type> void spilt(_Matrix<_type> & src, std::vector<_Matrix<_typ
 template <class _type> void merge(_Matrix<_type> & src1, _Matrix<_type> & src2, _Matrix<_type> & dst);
 template <class _type> void merge(std::vector<_Matrix<_type>> & src, _Matrix<_type> & dst);
 
-// 离散傅里叶
+void convertImage(Matrix8u *src, Matrix8u *dst, int flags = 0);
+void copyToArray(Matrix8u &src, char * arr);
+
+template <class _type> void copyMakeBorder(_Matrix<_type> & src, _Matrix<_type> & dst, int top, int bottom, int left, int right);
+
+// 离散傅里叶DFT
 void _dft(Matrix & src, Matrix & dst);
 void dft(Matrix8u & src, Matrix & dst);
+
+// 快速傅里叶变换FFT
+void _fft(Matrix & src, Matrix & dst);
+void fft(Matrix8u & src, Matrix & dst);
+//unsigned int bit_reverse(unsigned int n);
 
 // 线性滤波
 template <class _type> void blur(_Matrix<_type>& src, _Matrix<_type>& dst, Size size);

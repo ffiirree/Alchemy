@@ -17,21 +17,11 @@ using namespace z;
 int main(int argc, char *argv[])
 {
 	Matrix8u img = imread("test.jpeg");
-	Matrix8u gray;
-	cvtColor(img, gray, BGR2GRAY);
 
-	cv::Mat test = gray;
-	cv::Mat pa[] = { cv::Mat_<double>(test), cv::Mat::zeros(test.size(), CV_64F) };
-	cv::Mat com;
+	// œ‘ æ≤ …´Õº∆¨
+	imshow("hello", img);
 
-	cv::merge(pa, 2, com);
-	cv::dft(com, com);
-
-	Matrix dst;
-	dft(gray, dst);
-
-
-	cv::waitKey(0);
+	waitKey(0);
 	return 0;
 }
 

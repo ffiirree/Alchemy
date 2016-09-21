@@ -1,5 +1,6 @@
 #include "zgui.h"
 #include "zimgproc\zimgproc.h"
+#include "windows_win32.h"
 
 extern "C" {
 #include <zgui\jpeglib.h>
@@ -10,8 +11,8 @@ GLOBAL(void) write_JPEG_file(char * filename, z::Matrix8u & img, int quality);
 namespace z{
 
 /**
- * @berif ×Ô¼ºÊµÏÖµÄ¶ÁÈ¡jpegµÄÍ¼Æ¬
- * @attention ±¾º¯ÊıÔİÊ±Ö»ÄÜ¶ÁÈ¡jpeg±ê×¼µÄÍ¼Æ¬£¬ĞèÒª¶ÁÈ¡ÆäËûÀàĞÍµÄÍ¼Æ¬ÇëÊ¹ÓÃopenCVµÄimreadº¯Êı
+ * @berif è‡ªå·±å®ç°çš„è¯»å–jpegçš„å›¾ç‰‡
+ * @attention æœ¬å‡½æ•°æš‚æ—¶åªèƒ½è¯»å–jpegæ ‡å‡†çš„å›¾ç‰‡ï¼Œéœ€è¦è¯»å–å…¶ä»–ç±»å‹çš„å›¾ç‰‡è¯·ä½¿ç”¨openCVçš„imreadå‡½æ•°
  */
 Matrix8u imread(char *filename)
 {
@@ -27,6 +28,23 @@ void imwrite(char *filename, Matrix8u & img, int quality)
 
 	write_JPEG_file(filename, rgbimg, quality);
 }
+
+void namedWindow(const std::string & name, int flags)
+{
+	zNamedWindow(name.c_str(), flags);
+}
+
+void imshow(const std::string & name, Matrix8u & mat)
+{
+	zShowImage(name.c_str(), &mat);
+}
+
+int waitKey(int delay)
+{
+	return zWaitKey(delay);
+}
+
+
 }
 
 extern "C"{
@@ -310,74 +328,8 @@ GLOBAL(int) read_JPEG_file(char * filename, z::Matrix8u & img)
 }
 
 
-//±ê×¼Ã÷¶ÈÁ¿»¯±í
-static const unsigned int std_luminance_quant_tbl[DCTSIZE2] = {
-	16,  11,  10,  16,  24,  40,  51,  61,
-	12,  12,  14,  19,  26,  58,  60,  55,
-	14,  13,  16,  24,  40,  57,  69,  56,
-	14,  17,  22,  29,  51,  87,  80,  62,
-	18,  22,  37,  56,  68, 109, 103,  77,
-	24,  35,  55,  64,  81, 104, 113,  92,
-	49,  64,  78,  87, 103, 121, 120, 101,
-	72,  92,  95,  98, 112, 100, 103,  99
-};
-//¶ÁÈ¡JPGÎÄ¼şµÄÖÊÁ¿²ÎÊı
-int ReadJpegQuality(const char *filename)
-{
-	FILE * infile = fopen(filename, "rb");
-	fseek(infile, 0, SEEK_END);
-	size_t sz = ftell(infile);
-	fseek(infile, 0, SEEK_SET);
-	unsigned char* buffer = new unsigned char[sz];
-	fread(buffer, 1, sz, infile);
-	fclose(infile);
-	//Èç¹û²»ÊÇJPG¸ñÊ½µÄÎÄ¼ş·µ»Ø-1
-	if (buffer == NULL || sz <= 2 ||
-		0xFF != (uint8_t)buffer[0] ||
-		0xD8 != (uint8_t)buffer[1])
-	{
-		return -1;
-	}
-	struct jpeg_decompress_struct cinfo;
-	struct jpeg_error_mgr jerr;
-	cinfo.err = jpeg_std_error(&jerr);
-	jpeg_create_decompress(&cinfo);
-	jpeg_mem_src(&cinfo, (unsigned char*)buffer, sz);
-	jpeg_read_header(&cinfo, TRUE);
-	int tmp_quality = 0;
-	int linear_quality = 0;
-	const int aver_times = 3;
-	int times = 0;
-	int aver_quality = 0;
-	//Á¿»¯±í·´ÍÆ3´Î£¬È¡Æ½¾ùÖµ
-	for (int i = 0;i<DCTSIZE2;i++)
-	{
-		long temp = cinfo.quant_tbl_ptrs[0]->quantval[i];
-		if (temp<32767L && temp>0)
-		{
-			linear_quality = ceil((float)(temp * 100L - 50L) / std_luminance_quant_tbl[i]);
-			if (linear_quality == 1) tmp_quality = 1;
-			else if (linear_quality == 100) tmp_quality = 100;
-			else if (linear_quality>100)
-			{
-				tmp_quality = ceil((float)5000 / linear_quality);
-			}
-			else
-			{
-				tmp_quality = 100 - ceil((float)linear_quality / 2);
-			}
-
-			aver_quality += tmp_quality;
-
-			if (aver_times == ++times)
-			{
-				aver_quality /= aver_times;
-				break;
-			}
-		}
-	}
-	jpeg_destroy_decompress(&cinfo);
-	return aver_quality;
-}
 
 }
+
+
+

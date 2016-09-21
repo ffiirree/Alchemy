@@ -52,7 +52,9 @@ public:
 	//! allocates new matrix data unless the matrix already has specified size and type.
 	// previous data is unreferenced if needed.
 	void create(int _rows, int _cols, int _chs);
-
+	//! pointer to the reference counter;
+	// when matrix points to user-allocated data, the pointer is NULL
+	int* refcount;
 	void release();
 	int refAdd(int *addr, int delta);
 
@@ -123,9 +125,7 @@ public:
 private:
 	size_t _size;
 
-	//! pointer to the reference counter;
-	// when matrix points to user-allocated data, the pointer is NULL
-	int* refcount;
+	
 
 	void initEmpty();
 };

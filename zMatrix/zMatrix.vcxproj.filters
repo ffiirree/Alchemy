@@ -60,6 +60,9 @@
     <ClInclude Include="zcore\operations.hpp">
       <Filter>Source files</Filter>
     </ClInclude>
+    <ClInclude Include="zgui\windows_win32.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -81,6 +84,9 @@
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="test\test.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="zgui\windows_win32.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>
