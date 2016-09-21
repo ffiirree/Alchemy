@@ -15,6 +15,7 @@
 #define _OPERATIONS_HPP
 
 #include <stdexcept>
+#include "debug.h"
 
 #ifdef __cplusplus
 
@@ -275,7 +276,9 @@ void _Matrix<_type>::eye(int _rows, int _cols)
 	}
 }
 
-
+/**
+ * @berif 将矩阵所有的值初始化为_v
+ */
 template <class _type>
 void _Matrix<_type>::init(_type _v)
 {
@@ -304,6 +307,25 @@ _Matrix<_type> _Matrix<_type>::clone() const
 	_Matrix<_type> m;
 	copyTo(m);
 	return m;
+}
+template <class _type> template <class _Tp2> _Matrix<_type>::operator _Matrix<_Tp2>() const
+{
+	_Matrix<_Tp2> temp(rows, cols, chs);
+	const _type * ptr1 = 0;
+	_Tp2 * ptr2 = 0;
+
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols;++j) {
+
+			ptr1 = this->ptr(i, j);
+			ptr2 = temp.ptr(i, j);
+
+			for (int k = 0; k < chs; ++k) {
+				ptr2[k] = (_Tp2)ptr1[k];
+			}
+		}
+	}
+	return temp;
 }
 
 
@@ -360,6 +382,9 @@ _Matrix<_type>& _Matrix<_type>::operator()(_type * InputArray, int _rows, int _c
 }
 
 #if defined(OPENCV)
+/**
+ * @berif 向openCV中的Mat类转换
+ */
 template <class _type>
 _Matrix<_type>::operator cv::Mat() const
 {
@@ -370,7 +395,25 @@ _Matrix<_type>::operator cv::Mat() const
 	return temp;
 }
 #endif
+template <class _type> inline _type* _Matrix<_type>::ptr(int i0)
+{
+	if ((unsigned)i0 >= (unsigned)_size) {
+		return nullptr;
+	}
+	return data + i0 * step;
+}
 
+
+template <class _type> inline const _type* _Matrix<_type>::ptr(int i0) const
+{
+	if ((unsigned)i0 >= (unsigned)_size) {
+		return nullptr;
+	}
+	return data + i0 * step;
+}
+/**
+ * @berif 获取以像素的指针
+ */
 template <class _type> inline _type* _Matrix<_type>::ptr(int i0, int i1)
 {
 	if ( (unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols) {
@@ -378,7 +421,9 @@ template <class _type> inline _type* _Matrix<_type>::ptr(int i0, int i1)
 	}
 	return data + i0 * step + i1 * chs;
 }
-
+/**
+ * @berif 获取以像素的指针
+ */
 template <class _type> inline const _type* _Matrix<_type>::ptr(int i0, int i1) const
 {
 	if ((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols) {
@@ -422,8 +467,8 @@ double _Matrix<_type>::tr()
 
 
 /**
-* @berif 逆
-*/
+ * @berif 逆
+ */
 template <class _type>
 _Matrix<_type> _Matrix<_type>::inv()
 {
@@ -490,7 +535,13 @@ _Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
 	return temp;
 }
 
-
+/**
+ * @berif 卷积运算
+ *
+ * @param[in] kernel， 卷积核
+ * @param[out] dst，结果
+ * @param[in] norm， 是否对卷积结果归一化
+ */
 template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&dst, bool norm)
 {
 	if (kernel.rows != kernel.cols || kernel.rows % 2 == 0)

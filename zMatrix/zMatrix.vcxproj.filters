@@ -5,13 +5,13 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Source files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Resource files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,9 +36,6 @@
     <ClInclude Include="zcore.h">
       <Filter>Header files</Filter>
     </ClInclude>
-    <ClInclude Include="zcore\operations.hpp">
-      <Filter>Header files</Filter>
-    </ClInclude>
     <ClInclude Include="zcore\zmatrix.h">
       <Filter>Header files</Filter>
     </ClInclude>
@@ -46,6 +43,24 @@
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="zgui\zgui.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="kinect\KinectSensor.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="black.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="debug.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="test\test.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="zcore\operations.hpp">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="zgui\windows_win32.h">
       <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -63,6 +78,15 @@
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="zgui\zgui.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="kinect\KinectSensor.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\test.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="zgui\windows_win32.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>

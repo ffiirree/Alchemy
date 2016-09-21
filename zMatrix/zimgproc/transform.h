@@ -24,12 +24,9 @@
 #ifdef __cplusplus
 namespace z {
 
-
+void prewitt(Matrix8u&src, Matrix8u&dst);
 void sobel(Matrix8u&src, Matrix8u&dst, int dx = 1, int dy = 1, int ksize = 3);
 void Canny(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2, int apertureSize = 3);
-
-
-
 
 }
 

@@ -14,36 +14,9 @@
 #ifndef _CONFIG_DEFAULT_H
 #define _CONFIG_DEFAULT_H
 
-#include <Windows.h>
-#include <iostream>
-//#define DEBUG
 
-#if defined(DEBUG)
-#define _log_(str) do{\
-	cout<<"[" << __FILE__ << "]" << "<" << __func__ << ">" << "(" << __LINE__ << ") : " << str << endl;\
-}while (0)
-#else
-#define _log_(str)   
-#endif
-
-class TimeStamp {
-public:
-	inline void start() { GetLocalTime(&starttime); }
-	void end();
-	inline void runtime() 
-	{
-		GetLocalTime(&endtime);
-
-		int diff = endtime.wMilliseconds - starttime.wMilliseconds;
-		diff += (endtime.wSecond - starttime.wSecond) * 1000;
-		diff += (endtime.wMinute - starttime.wMinute) * 60000;
-
-		std::cout << "runtime = " << diff << "ms" << std::endl;
-	}
-private:
-	SYSTEMTIME starttime, endtime;
-};
-
+// 是否输出自定义的DEBUG信息
+#define DEBUG
 
 
 // !是否使用了openCV
