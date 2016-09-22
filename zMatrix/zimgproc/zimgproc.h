@@ -181,15 +181,24 @@ public:
 	_Scalar<_Tp> init(_Tp _v0);             // 全部初始化为v0
 	_Scalar<_Tp> conj() const;              // 共轭
 	bool isReal() const;                    // 是否为实数
-
-private:
 	_Tp v[4];
 };
-template<class _Tp> inline _Scalar<_Tp>::_Scalar() :v[0](0), v[1](0), v[2](0), v[3](0) { }
-template<class _Tp> inline _Scalar<_Tp>::_Scalar(_Tp _v0) : v[0](_v0), v[1](0), v[2](0), v[3](0) { }
-template<class _Tp> inline _Scalar<_Tp>::_Scalar(_Tp _v0, _Tp _v1, _Tp _v2 = 0, _Tp _v3 = 0):
-	v[0](_v0), v[1](_v1), v[2](_v2), v[3](_v3){}
-template<class _Tp> inline _Scalar<_Tp>::_Scalar(const _Scalar& sr) : v[0](sr.v[0]), v[1](sr.v[1]), v[2](sr.v[2]), v[3](sr.v[3]) { }
+template<class _Tp> inline _Scalar<_Tp>::_Scalar() { v[0] = v[1] = v[2] = v[3] = 0; }
+template<class _Tp> inline _Scalar<_Tp>::_Scalar(_Tp _v0) { v[0] = _v0; v[1] = v[2] = v[3] = 0; }
+template<class _Tp> inline _Scalar<_Tp>::_Scalar(_Tp _v0, _Tp _v1, _Tp _v2 = 0, _Tp _v3 = 0)
+{
+	v[0] = _v0;
+	v[1] = _v1;
+	v[2] = _v2;
+	v[3] = _v3;
+}
+template<class _Tp> inline _Scalar<_Tp>::_Scalar(const _Scalar& sr) 
+{
+	v[0] = sr.v[0];
+	v[1] = sr.v[1];
+	v[2] = sr.v[2];
+	v[3] = sr.v[3];
+}
 template<class _Tp> inline _Scalar<_Tp> _Scalar<_Tp>::init(_Tp _v0) { v[0] = v[1] = v[2] = v[3] = _v0; }
 template<class _Tp> _Scalar<_Tp> _Scalar<_Tp>::conj() const { return _Scalar<_Tp>(v[0], -v[1], -v[2], -v[3]); }
 template<class _Tp> bool _Scalar<_Tp>::isReal() const { return (v[1] == 0 && v[2] == 0 && v[3] == 0); }
