@@ -36,7 +36,8 @@ int waitKey(int delay = 0);
 
 
 // 图形绘制
-void line(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thickness = 1, int lineType = 8, int shift = 0);
+void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thickness = 1);
+void line(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thickness = 1);
 void ellipse(Matrix8u& img, Point center, Size axes, double angle, const Scalar& color, int thickness = 1, int lineType = 8, int shift = 0);
 void rectangle(Matrix8u& img, Rect rec, const Scalar& color, int thickness = 1, int lineType = 8, int shift = 0);
 void circle(Matrix8u& img, Point center, int radius, const Scalar& color, int thickness = 1, int lineType = 8, int shift = 0);
