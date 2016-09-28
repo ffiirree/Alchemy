@@ -12,9 +12,8 @@
  ******************************************************************************
  */
 #include <cmath>
-#include <stdexcept>
 #include "transform.h"
-#include "debug.h"
+#include "zcore\debug.h"
 
 namespace z {
 

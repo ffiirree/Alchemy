@@ -14,7 +14,6 @@
 #ifndef _OPERATIONS_HPP
 #define _OPERATIONS_HPP
 
-#include <stdexcept>
 #include "debug.h"
 
 #ifdef __cplusplus
@@ -454,9 +453,9 @@ template <class _type>
 double _Matrix<_type>::tr()
 {
 	if (chs != 1)
-		throw runtime_error("chs != 1");
+		_log_("chs != 1");
 	if (rows != cols)
-		throw runtime_error("rows != cols");
+		_log_("rows != cols");
 
 	_type temp = (_type)0;
 	for (int i = 0; i < rows; ++i) {
@@ -503,7 +502,7 @@ template <class _type>
 _Matrix<_type> _Matrix<_type>::dot(_Matrix<_type> &m)
 {
 	if (rows != m.rows || cols != m.cols || chs != chs)
-		throw runtime_error("rows != m.rows || cols != m.cols || || chs != chs");
+		_log_("rows != m.rows || cols != m.cols || || chs != chs");
 
 	_Matrix<_type> temp(m.rows, m.cols, m.chs);
 
@@ -524,7 +523,7 @@ template <class _type>
 _Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
 {
 	if (rows != 1 || cols != 3 || m.rows != 1 || m.cols != 3 || chs != 0)
-		throw runtime_error("rows != 1 || cols != 3 || m.rows != 1 || m.cols != 3 || chs != 0");
+		_log_("rows != 1 || cols != 3 || m.rows != 1 || m.cols != 3 || chs != 0");
 
 	_Matrix<_type> temp(1, 3);
 
@@ -545,7 +544,7 @@ _Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
 template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&dst, bool norm)
 {
 	if (kernel.rows != kernel.cols || kernel.rows % 2 == 0)
-		throw std::runtime_error("size.width != size.height || size.width % 2 == 0");
+		_log_("size.width != size.height || size.width % 2 == 0");
 
 	if (!dst.equalSize(*this))
 		dst.create(rows, cols, chs);
@@ -676,9 +675,9 @@ template <class _type>
 _Matrix<_type> operator*(_Matrix<_type> &m1, _Matrix<_type> &m2)
 {
 	if (m1.chs != 1 || m2.chs != 1)
-		throw runtime_error("m1.chs != 1 || m2.chs != 1");
+		_log_("m1.chs != 1 || m2.chs != 1");
 	if (m1.cols != m2.rows)
-		throw runtime_error("m1.cols != m2.rows");
+		_log_("m1.cols != m2.rows");
 
 	_Matrix<_type> m(m1.rows, m2.cols, 1);
 	m.zeros();
@@ -701,11 +700,11 @@ template <class _type>
 _Matrix<_type> operator+(_Matrix<_type> &m1, _Matrix<_type> &m2)
 {
 	if (m1.cols != m2.cols || m1.rows != m2.rows)
-		throw runtime_error("m1.cols != m2.cols || m1.rows != m2.rows");
+		_log_("m1.cols != m2.cols || m1.rows != m2.rows");
 
 	_Matrix<_type> temp(m1.rows, m1.cols, m1.chs);
 
-	for (size_t i = 0; datastart + i < dataend; ++i) {
+	for (size_t i = 0; m1.datastart + i < m1.dataend; ++i) {
 		temp.data[i] = m1.data[i] + m2.data[i];
 	}
 	return temp;
@@ -718,7 +717,7 @@ template <class _type>
 _Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_type> &m2)
 {
 	if (m1.cols != m2.cols || m1.rows != m2.rows)
-		throw runtime_error("m1.cols != m2.cols || m1.rows != m2.rows");
+		_log_("m1.cols != m2.cols || m1.rows != m2.rows");
 
 	_Matrix<_type> temp(m1.rows, m1.cols, m1.chs);
 

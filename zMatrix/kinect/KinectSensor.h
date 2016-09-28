@@ -16,7 +16,7 @@
 ***************************************************************************************************************
 */
 
-#include "config.h"
+#include "zcore\config.h"
 #include <Kinect.h>
 #include <opencv2\core.hpp>
 

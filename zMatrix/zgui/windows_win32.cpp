@@ -1,6 +1,7 @@
 #include "zgui\zgui.h"
 #include "windows_win32.h"
-#include "debug.h"
+#include "zcore\debug.h"
+#include <WinUser.h>
 
 using namespace z;
 

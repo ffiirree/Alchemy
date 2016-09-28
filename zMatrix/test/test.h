@@ -1,7 +1,7 @@
 #ifndef _TEST_H
 #define _TEST_H
 
-#include"black.h"
+#include "zcore\black.h"
 
 #define ASSERT_FALSE(condition) 
 #define ASSERT_TRUE(condition)

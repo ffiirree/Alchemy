@@ -1,7 +1,7 @@
 #include"KinectSensor.h"
 #include <iostream>
 #include <malloc.h>
-#include "debug.h"
+#include "zcore\debug.h"
 
 using namespace std;
 

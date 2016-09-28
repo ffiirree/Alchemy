@@ -12,7 +12,7 @@
  ******************************************************************************
  */
 #include "zimgproc.h"
-#include "debug.h"
+#include "zcore\debug.h"
 #include "zmatch\zmatch.h"
 
 namespace z{

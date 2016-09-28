@@ -55,9 +55,9 @@ void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thic
 	float steps = 0, xi, yi;
 
 	if (abs(dx) > abs(dy))
-		steps = abs(dx);
+		steps = (float)abs(dx);
 	else
-		steps = abs(dy);
+		steps = (float)abs(dy);
 
 	xi = dx / steps;
 	yi = dy / steps;
