@@ -245,7 +245,7 @@ template <class _type>
 void _Matrix<_type>::eye()
 {
 	if (chs > 1)
-		throw runtime_error("channels > 1!!");
+		_log_("channels > 1!!");
 
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
@@ -621,9 +621,9 @@ std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item)
 				os << ',';
 		}
 		if (item.rows != i + 1)
-			os << ';' << endl << ' ';
+			os << ';' << std::endl << ' ';
 		else
-			os << ']' << endl;
+			os << ']' << std::endl;
 	}
 	return os;
 }

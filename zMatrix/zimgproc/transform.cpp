@@ -261,7 +261,8 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
  */
 void sobel(Matrix8u&src, Matrix8u&dst, int dx, int dy, int ksize)
 {
-	sobel(src, dst, Matrix8u(), dx, dy, ksize, true);
+	Matrix8u temp;
+	sobel(src, dst, temp, dx, dy, ksize, true);
 }
 
 /**
