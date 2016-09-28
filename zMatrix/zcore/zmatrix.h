@@ -289,7 +289,7 @@ public:
 };
 template<class _Tp> inline _Scalar<_Tp>::_Scalar() { v[0] = v[1] = v[2] = v[3] = 0; }
 template<class _Tp> inline _Scalar<_Tp>::_Scalar(_Tp _v0) { v[0] = _v0; v[1] = v[2] = v[3] = 0; }
-template<class _Tp> inline _Scalar<_Tp>::_Scalar(_Tp _v0, _Tp _v1, _Tp _v2 = 0, _Tp _v3 = 0)
+template<class _Tp> inline _Scalar<_Tp>::_Scalar(_Tp _v0, _Tp _v1, _Tp _v2, _Tp _v3)
 {
 	v[0] = _v0;
 	v[1] = _v1;
