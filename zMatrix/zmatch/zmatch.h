@@ -30,7 +30,7 @@ int average(int x, int y);
  */
 template <typename _Tp> void _max(_Tp *addr, size_t size, _Tp & _max)
 {
-	max = *addr;
+	_max = *addr;
 	_Tp * begin = addr + 1;
 	_Tp *end = addr + size;
 
@@ -47,7 +47,7 @@ template <typename _Tp> void _max(_Tp *addr, size_t size, _Tp & _max)
  */
 template <typename _Tp> void _min(_Tp *addr, size_t size, _Tp & _min)
 {
-	min = *addr;
+	_min = *addr;
 	_Tp * begin = addr + 1;
 	_Tp *end = addr + size;
 

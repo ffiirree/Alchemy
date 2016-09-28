@@ -1,9 +1,8 @@
 #ifndef _ZGUI_H
 #define _ZGUI_H
 
-
-#include "zcore.h"
 #include <string>
+#include "zcore\zcore.h"
 #include "zimgproc\zimgproc.h"
 
 enum

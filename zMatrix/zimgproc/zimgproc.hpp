@@ -16,7 +16,6 @@
 
 #include <algorithm>
 #include <vector>
-#include <exception>
 
 
 #ifdef __cplusplus
@@ -37,7 +36,6 @@ namespace z {
 			if (!(dst.rows == src.rows && dst.cols == src.cols && dst.chs == 1 && src.chs == 3))
 				dst.create(src.rows, src.cols, 1);
 
-			double mediaValue = 0;
 			_type * srcPtr = nullptr;
 
 			for (int i = 0; i < src.rows; ++i) {
@@ -85,7 +83,7 @@ namespace z {
 	template <class _type> void boxFilter(const _Matrix<_type>& src, _Matrix<_type>& dst, Size size, bool normalize)
 	{
 		if (size.width != size.height || size.width % 2 == 0)
-			throw runtime_error("size.width != size.height || size.width % 2 == 0");
+			_log_("size.width != size.height || size.width % 2 == 0");
 
 		if (!src.equalSize(dst))
 			dst.create(src.rows, src.cols, src.chs);
@@ -382,7 +380,7 @@ namespace z {
 	template <class _type> void merge(_Matrix<_type> & src1, _Matrix<_type> & src2, _Matrix<_type> & dst)
 	{
 		if (!src1.equalSize(src2))
-			throw std::runtime_error("!src1.equalSize(src2)");
+			_log_("!src1.equalSize(src2)");
 
 		if (dst.rows != src1.rows || dst.cols != src1.cols)
 			dst.create(src1.rows, src1.cols, 2);
@@ -401,7 +399,7 @@ namespace z {
 	template <class _type> void merge(std::vector<_Matrix<_type>> & src, _Matrix<_type> & dst)
 	{
 		if (src.size() < 1)
-			throw runtime_error("src.size() < 1");
+			_log_("src.size() < 1");
 
 		int rows = src.at(0).rows;
 		int cols = src.at(0).cols;
@@ -410,7 +408,7 @@ namespace z {
 		// 检查
 		for (int i = 1; i < chs; ++i) {
 			if(src.at(i).rows != rows || src.at(i).cols != cols)
-				throw runtime_error("src.at(i).rows != rows || src.at(i).cols != cols");
+				_log_("src.at(i).rows != rows || src.at(i).cols != cols");
 		}
 
 		// 是否需要分配内存

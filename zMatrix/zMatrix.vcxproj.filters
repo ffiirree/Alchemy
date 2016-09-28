@@ -30,12 +30,6 @@
     <ClInclude Include="zimgproc\transform.hpp">
       <Filter>Source files</Filter>
     </ClInclude>
-    <ClInclude Include="config.h">
-      <Filter>Header files</Filter>
-    </ClInclude>
-    <ClInclude Include="zcore.h">
-      <Filter>Header files</Filter>
-    </ClInclude>
     <ClInclude Include="zcore\zmatrix.h">
       <Filter>Header files</Filter>
     </ClInclude>
@@ -48,12 +42,6 @@
     <ClInclude Include="kinect\KinectSensor.h">
       <Filter>Header files</Filter>
     </ClInclude>
-    <ClInclude Include="black.h">
-      <Filter>Header files</Filter>
-    </ClInclude>
-    <ClInclude Include="debug.h">
-      <Filter>Header files</Filter>
-    </ClInclude>
     <ClInclude Include="test\test.h">
       <Filter>Header files</Filter>
     </ClInclude>
@@ -61,6 +49,18 @@
       <Filter>Source files</Filter>
     </ClInclude>
     <ClInclude Include="zgui\windows_win32.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="zcore\black.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="zcore\config.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="zcore\debug.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="zcore\zcore.h">
       <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>
