@@ -4,7 +4,7 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
- * @brief   å›¾åƒå¤„ç†çš„å‡½æ•°å®šä¹‰
+ * @brief   Í¼Ïñ´¦ÀíµÄº¯Êı¶¨Òå
  ******************************************************************************
  * @attention
  *
@@ -34,7 +34,7 @@ namespace z{
 Matrix8u Mat2Matrix8u(cv::Mat & mat);
 template <class _type> void cvtColor(_Matrix<_type>&src, _Matrix<_type>&dst, int code);
 
-// å¤šé€šé“åˆ†ç¦»å’Œæ··åˆ
+// ¶àÍ¨µÀ·ÖÀëºÍ»ìºÏ
 template <class _type> void spilt(_Matrix<_type> & src, std::vector<_Matrix<_type>> & mv);
 template <class _type> void merge(_Matrix<_type> & src1, _Matrix<_type> & src2, _Matrix<_type> & dst);
 template <class _type> void merge(std::vector<_Matrix<_type>> & src, _Matrix<_type> & dst);
@@ -44,16 +44,16 @@ void copyToArray(Matrix8u &src, char * arr);
 
 template <class _type> void copyMakeBorder(_Matrix<_type> & src, _Matrix<_type> & dst, int top, int bottom, int left, int right);
 
-// ç¦»æ•£å‚…é‡Œå¶DFT
+// ÀëÉ¢¸µÀïÒ¶DFT
 void _dft(Matrix & src, Matrix & dst);
 void dft(Matrix8u & src, Matrix & dst);
 
-// å¿«é€Ÿå‚…é‡Œå¶å˜æ¢FFT
+// ¿ìËÙ¸µÀïÒ¶±ä»»FFT
 void _fft(Matrix & src, Matrix & dst);
 void fft(Matrix8u & src, Matrix & dst);
 //unsigned int bit_reverse(unsigned int n);
 
-// çº¿æ€§æ»¤æ³¢
+// ÏßĞÔÂË²¨
 template <class _type> void blur(_Matrix<_type>& src, _Matrix<_type>& dst, Size size);
 template <class _type> void boxFilter(const _Matrix<_type>& src, _Matrix<_type>& dst, Size size, bool normalize);
 template <class _type> void GaussianBlur(_Matrix<_type>&src, _Matrix<_type> & dst, Size size, double sigmaX = 0, double sigmaY = 0);
@@ -61,16 +61,16 @@ template <class _type> _Matrix<_type> embossingFilter(_Matrix<_type> src, Size s
 template <class _type> _Matrix<_type> edgeDetection(_Matrix<_type> src, Size size, float ang);
 template <class _type> _Matrix<_type> motionBlur(_Matrix<_type> src, Size size, float ang);
 
-// éçº¿æ€§æ»¤æ³¢
+// ·ÇÏßĞÔÂË²¨
 template <class _type> void medianFilter(_Matrix<_type>&src, _Matrix<_type>& dst, Size size);
 Matrix Gassion(z::Size ksize, double sigmaX, double sigmaY);
 
-// å½¢æ€å­¦æ»¤æ³¢
+// ĞÎÌ¬Ñ§ÂË²¨
 template <class _type> void morphOp(int code, _Matrix<_type>& src, _Matrix<_type>&dst, Size kernel);
 template <class _type> void erode(_Matrix<_type>& src, _Matrix<_type>&dst, Size kernel);
 template <class _type> void dilate(_Matrix<_type>& src, _Matrix<_type>&dst, Size kernel);
 
-//å½¢æ€å­¦æ»¤æ³¢çš„é«˜çº§æ“ä½œ
+//ĞÎÌ¬Ñ§ÂË²¨µÄ¸ß¼¶²Ù×÷
 template <class _type> void morphEx(_Matrix<_type>& src, _Matrix<_type>&dst, int op, Size kernel);
 template <class _type> void open(_Matrix<_type>& src, _Matrix<_type>&dst, Size kernel);
 }

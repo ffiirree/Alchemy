@@ -4,7 +4,7 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.7
- * @brief   æ¨¡æ¿ç±»_Matrixçš„å®šä¹‰
+ * @brief   Ä£°åÀà_MatrixµÄ¶¨Òå
  ******************************************************************************
  * @attention
  *
@@ -66,7 +66,7 @@ public:
 	_Matrix<_type>& operator += (const _Matrix<_type>& m);
 	_Matrix<_type>& operator -= (const _Matrix<_type>& m);
 
-	// æ£€æŸ¥è¿™ä¸¤ä¸ªå‡½æ•°æ˜¯å¦è¾¾åˆ°äº†æƒ³è¦çš„ç›®çš„
+	// ¼ì²éÕâÁ½¸öº¯ÊıÊÇ·ñ´ïµ½ÁËÏëÒªµÄÄ¿µÄ
 	inline _type* operator[](size_t n) { return data + n * step; }
 	inline const _type* operator[](size_t n) const { return data + n * step; }
 
@@ -82,7 +82,7 @@ public:
 	_Matrix<_type>& operator()(_type * InputArray, int rows, int cols);
 
 #if defined(OPENCV)
-	// ç±»å‹è½¬æ¢
+	// ÀàĞÍ×ª»»
 	operator cv::Mat() const;
 #endif
 
@@ -104,14 +104,14 @@ public:
 	inline size_t size() const { return _size; }
 	inline bool equalSize(const _Matrix<_type> & m) const { return (rows == m.rows && cols == m.cols && chs == m.chs); }
 
-	_Matrix<_type> inv();                            // é€†
-	_Matrix<_type> t();                              // è½¬ç½®
+	_Matrix<_type> inv();                            // Äæ
+	_Matrix<_type> t();                              // ×ªÖÃ
 
-	_type rank();                                    // æ±‚ç§©
-	double tr();                                     // è¿¹
+	_type rank();                                    // ÇóÖÈ
+	double tr();                                     // ¼£
 	
-	_Matrix<_type> dot(_Matrix<_type> &m);           // ç‚¹ä¹˜
-	_Matrix<_type> cross(_Matrix<_type> &m);         // å‰ç§¯
+	_Matrix<_type> dot(_Matrix<_type> &m);           // µã³Ë
+	_Matrix<_type> cross(_Matrix<_type> &m);         // ²æ»ı
 	void conv(Matrix &kernel, _Matrix<_type>&dst, bool norm = false);
 
 	inline int channels() { return chs; }
@@ -163,9 +163,9 @@ public:
 
 	_Point& operator = (const _Point& pt);
 
-	_Tp dot(const _Point& pt) const;                    // ç‚¹ä¹˜
-	double cross(const _Point& pt) const;               // å‰ç§¯
-	bool inside(const _Rect<_Tp>& r) const;             // æ£€æŸ¥ç‚¹æ˜¯å¦åœ¨åŒºåŸŸå†…
+	_Tp dot(const _Point& pt) const;                    // µã³Ë
+	double cross(const _Point& pt) const;               // ²æ»ı
+	bool inside(const _Rect<_Tp>& r) const;             // ¼ì²éµãÊÇ·ñÔÚÇøÓòÄÚ
 
 	_Tp x, y;
 };
@@ -224,12 +224,12 @@ public:
 	_Rect(const _Point<_Tp>& pt1, const _Point<_Tp>& pt2);
 
 	_Rect& operator = (const _Rect& r);
-	_Point<_Tp> getTL() const { return _Point<_Tp>(x, y); }                       // ä¸Šå·¦
-	_Point<_Tp> getBR() const { return _Point<_Tp>(x + width, y + height); }      // ä¸‹å³
+	_Point<_Tp> getTL() const { return _Point<_Tp>(x, y); }                       // ÉÏ×ó
+	_Point<_Tp> getBR() const { return _Point<_Tp>(x + width, y + height); }      // ÏÂÓÒ
 
-	_Size<_Tp> size() const { return _Size<_Tp>(width, height); }                  // çŸ©å½¢çš„å¤§å°
+	_Size<_Tp> size() const { return _Size<_Tp>(width, height); }                  // ¾ØĞÎµÄ´óĞ¡
 
-																				  // æ£€æŸ¥ç‚¹æ˜¯å¦åœ¨èŒƒå›´å†…
+																				  // ¼ì²éµãÊÇ·ñÔÚ·¶Î§ÄÚ
 	bool contains(const _Point<_Tp>& pt) const { return (x < pt.x && (x + width) > pt.x && y < pt.y && (y + height) > pt.y); }
 
 	_Tp x, y, width, height;
@@ -282,9 +282,9 @@ public:
 	_Scalar(_Tp _v0);
 	_Scalar(const _Scalar& sr);
 
-	_Scalar<_Tp> init(_Tp _v0);             // å…¨éƒ¨åˆå§‹åŒ–ä¸ºv0
-	_Scalar<_Tp> conj() const;              // å…±è½­
-	bool isReal() const;                    // æ˜¯å¦ä¸ºå®æ•°
+	_Scalar<_Tp> init(_Tp _v0);             // È«²¿³õÊ¼»¯Îªv0
+	_Scalar<_Tp> conj() const;              // ¹²éî
+	bool isReal() const;                    // ÊÇ·ñÎªÊµÊı
 	_Tp v[4];
 };
 template<class _Tp> inline _Scalar<_Tp>::_Scalar() { v[0] = v[1] = v[2] = v[3] = 0; }

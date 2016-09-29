@@ -4,7 +4,7 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.7
- * @brief   æ¨¡æ¿ç±»_Matrixçš„å®ç°
+ * @brief   Ä£°åÀà_MatrixµÄÊµÏÖ
  ******************************************************************************
  * @attention
  *
@@ -21,7 +21,7 @@
 namespace z{
 
 /**
- * @berif å°†çŸ©é˜µåˆå§‹åŒ–ä¸ºç©ºçŸ©é˜µ
+ * @berif ½«¾ØÕó³õÊ¼»¯Îª¿Õ¾ØÕó
  */
 template <class _type>
 void _Matrix<_type>::initEmpty()
@@ -34,10 +34,10 @@ void _Matrix<_type>::initEmpty()
 }
 
 /**
- * @berif çœŸæ­£çš„åˆ›å»ºçŸ©é˜µï¼Œåˆ†é…å†…å­˜
- * @attention æ‰€æœ‰çŸ©é˜µæ•°æ®çš„åˆ†é…éƒ½åº”è¯¥é€šè¿‡è°ƒç”¨è¯¥å‡½æ•°å®ç°ï¼ˆè°ƒç”¨è¯¥å‡½æ•°ä¸€èˆ¬æ„å‘³ç€é‡æ–°åˆ›å»ºå‡½æ•°ï¼‰
- * @param[in] _rowsï¼Œè¡Œæ•°
- * @param[in] _colsï¼Œåˆ—æ•°
+ * @berif ÕæÕıµÄ´´½¨¾ØÕó£¬·ÖÅäÄÚ´æ
+ * @attention ËùÓĞ¾ØÕóÊı¾İµÄ·ÖÅä¶¼Ó¦¸ÃÍ¨¹ıµ÷ÓÃ¸Ãº¯ÊıÊµÏÖ£¨µ÷ÓÃ¸Ãº¯ÊıÒ»°ãÒâÎ¶×ÅÖØĞÂ´´½¨º¯Êı£©
+ * @param[in] _rows£¬ĞĞÊı
+ * @param[in] _cols£¬ÁĞÊı
  */
 template <class _type>
 void _Matrix<_type>::create(int _rows, int _cols, int _chs)
@@ -53,7 +53,7 @@ void _Matrix<_type>::create(int _rows, int _cols, int _chs)
 	// 
 	release();
 
-	// åˆ†é…
+	// ·ÖÅä
 	datastart = data = new _type[_rows * _cols * _chs];
 	dataend = data + _size * _chs;
 	refcount = new int(1);
@@ -84,8 +84,8 @@ template <class _type> _Matrix<_type>::_Matrix(_Size<int> size, int _chs)
 }
 /**
  * @berif Constructor with params.
- * @param[in] _rowsï¼Œè¡Œæ•°
- * @param[in] _colsï¼Œåˆ—æ•°
+ * @param[in] _rows£¬ĞĞÊı
+ * @param[in] _cols£¬ÁĞÊı
  */
 template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols)
 {
@@ -103,7 +103,7 @@ template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols, int _chs)
 
 /**
  * @berif Copying function
- * @attention è¿™æ˜¯ä¸€ä¸ªæµ…å¤åˆ¶
+ * @attention ÕâÊÇÒ»¸öÇ³¸´ÖÆ
  */
 template <class _type> _Matrix<_type>::_Matrix(const _Matrix<_type>& m)
 	:rows(m.rows), cols(m.cols), data(m.data), refcount(m.refcount),_size(m._size), 
@@ -115,7 +115,7 @@ template <class _type> _Matrix<_type>::_Matrix(const _Matrix<_type>& m)
 }
 
 /**
- * @berif æ§åˆ¶å¼•ç”¨è®¡æ•°çš„å€¼
+ * @berif ¿ØÖÆÒıÓÃ¼ÆÊıµÄÖµ
  */
 template <class _type>
 int _Matrix<_type>::refAdd(int *addr, int delta)
@@ -126,8 +126,8 @@ int _Matrix<_type>::refAdd(int *addr, int delta)
 }
 
 /**
- * @berif é‡Šæ”¾èµ„æº
- * @attention çŸ©é˜µçš„èµ„æºç”±è¯¥å‡½æ•°æ§åˆ¶å¹¶é‡Šæ”¾
+ * @berif ÊÍ·Å×ÊÔ´
+ * @attention ¾ØÕóµÄ×ÊÔ´ÓÉ¸Ãº¯Êı¿ØÖÆ²¢ÊÍ·Å
  */
 template <class _type>
 void _Matrix<_type>::release()
@@ -152,7 +152,7 @@ _Matrix<_type>::~_Matrix()
 
 
 /**
- * @berif å½¢å¦‚mat = {1, 2, 3}çš„èµ‹å€¼æ–¹å¼
+ * @berif ĞÎÈçmat = {1, 2, 3}µÄ¸³Öµ·½Ê½
  */
 template <class _type>
 _Matrix<_type>& _Matrix<_type>::operator = (std::initializer_list<_type> li)
@@ -190,7 +190,7 @@ template <class _type> _Matrix<_type>&  _Matrix<_type>::operator -= (const _Matr
 }
 
 /**
- * @berif å°†çŸ©é˜µåˆå§‹åŒ–ä¸º0
+ * @berif ½«¾ØÕó³õÊ¼»¯Îª0
  */
 template <class _type>
 void _Matrix<_type>::zeros()
@@ -201,7 +201,7 @@ void _Matrix<_type>::zeros()
 }
 
 /**
- * @berif é‡æ–°åˆ†é…å†…å­˜å¹¶åˆå§‹åŒ–ä¸º0
+ * @berif ÖØĞÂ·ÖÅäÄÚ´æ²¢³õÊ¼»¯Îª0
  */
 template <class _type>
 void _Matrix<_type>::zeros(int _rows, int _cols)
@@ -214,7 +214,7 @@ void _Matrix<_type>::zeros(int _rows, int _cols)
 }
 
 /**
- * @berif å°†çŸ©é˜µåˆå§‹åŒ–ä¸º1
+ * @berif ½«¾ØÕó³õÊ¼»¯Îª1
  */
 template <class _type>
 void _Matrix<_type>::ones()
@@ -225,7 +225,7 @@ void _Matrix<_type>::ones()
 }
 
 /**
- * @berif é‡æ–°åˆ†é…å†…å­˜å¹¶åˆå§‹åŒ–ä¸º1
+ * @berif ÖØĞÂ·ÖÅäÄÚ´æ²¢³õÊ¼»¯Îª1
  */
 template <class _type>
 void _Matrix<_type>::ones(int _rows, int _cols)
@@ -239,7 +239,7 @@ void _Matrix<_type>::ones(int _rows, int _cols)
 
 
 /**
- * @berif å°†çŸ©é˜µåˆå§‹åŒ–ä¸ºå•ä½çŸ©é˜µ
+ * @berif ½«¾ØÕó³õÊ¼»¯Îªµ¥Î»¾ØÕó
  */
 template <class _type>
 void _Matrix<_type>::eye()
@@ -258,7 +258,7 @@ void _Matrix<_type>::eye()
 }
 
 /**
- * @berif é‡æ–°åˆ†é…å†…å­˜å¹¶åˆå§‹åŒ–ä¸ºå•ä½çŸ©é˜µ
+ * @berif ÖØĞÂ·ÖÅäÄÚ´æ²¢³õÊ¼»¯Îªµ¥Î»¾ØÕó
  */
 template <class _type>
 void _Matrix<_type>::eye(int _rows, int _cols)
@@ -276,7 +276,7 @@ void _Matrix<_type>::eye(int _rows, int _cols)
 }
 
 /**
- * @berif å°†çŸ©é˜µæ‰€æœ‰çš„å€¼åˆå§‹åŒ–ä¸º_v
+ * @berif ½«¾ØÕóËùÓĞµÄÖµ³õÊ¼»¯Îª_v
  */
 template <class _type>
 void _Matrix<_type>::init(_type _v)
@@ -286,8 +286,8 @@ void _Matrix<_type>::init(_type _v)
 }
 
 /**
- * @berif æ·±åº¦å¤åˆ¶å‡½æ•°
- * @param[out] outputMatrixï¼Œå¤åˆ¶çš„ç›®çš„çŸ©é˜µï¼Œä¼šè¢«é‡æ–°åˆ†é…å†…å­˜å¹¶å¤åˆ¶æ•°æ®
+ * @berif Éî¶È¸´ÖÆº¯Êı
+ * @param[out] outputMatrix£¬¸´ÖÆµÄÄ¿µÄ¾ØÕó£¬»á±»ÖØĞÂ·ÖÅäÄÚ´æ²¢¸´ÖÆÊı¾İ
  */
 template <class _type>
 void _Matrix<_type>::copyTo(_Matrix<_type> & outputMatrix) const
@@ -297,8 +297,8 @@ void _Matrix<_type>::copyTo(_Matrix<_type> & outputMatrix) const
 }
 
 /**
- * @berif æ·±åº¦å¤åˆ¶å‡½æ•°
- * @ret è¿”å›ä¸´æ—¶çŸ©é˜µçš„æ‹·è´
+ * @berif Éî¶È¸´ÖÆº¯Êı
+ * @ret ·µ»ØÁÙÊ±¾ØÕóµÄ¿½±´
  */
 template <class _type>
 _Matrix<_type> _Matrix<_type>::clone() const
@@ -329,22 +329,22 @@ template <class _type> template <class _Tp2> _Matrix<_type>::operator _Matrix<_T
 
 
 /**
- * @berif èµ‹å€¼å‡½æ•°
- * @attention è¿™æ˜¯ä¸€ä¸ªæµ…å¤åˆ¶
+ * @berif ¸³Öµº¯Êı
+ * @attention ÕâÊÇÒ»¸öÇ³¸´ÖÆ
  */
 template <class _type>
 _Matrix<_type>& _Matrix<_type>::operator=(const _Matrix<_type> &m)
 {
 	_log_("Matrix assignment function.");
-	// é˜²æ­¢å‡ºç°è‡ªå·±ç»™è‡ªå·±å¤åˆ¶æ—¶å€™çš„é—®é¢˜
+	// ·ÀÖ¹³öÏÖ×Ô¼º¸ø×Ô¼º¸´ÖÆÊ±ºòµÄÎÊÌâ
 	if (this != &m) {
 		if (m.refcount)
 			refAdd(m.refcount, 1);
 
-		// é‡Šæ”¾æ‰å·¦å€¼çš„å†…å®¹
+		// ÊÍ·Åµô×óÖµµÄÄÚÈİ
 		release();
 
-		// èµ‹å€¼
+		// ¸³Öµ
 		chs = m.chs;
 		_size = m.size();
 		data = m.data;
@@ -382,7 +382,7 @@ _Matrix<_type>& _Matrix<_type>::operator()(_type * InputArray, int _rows, int _c
 
 #if defined(OPENCV)
 /**
- * @berif å‘openCVä¸­çš„Matç±»è½¬æ¢
+ * @berif ÏòopenCVÖĞµÄMatÀà×ª»»
  */
 template <class _type>
 _Matrix<_type>::operator cv::Mat() const
@@ -411,7 +411,7 @@ template <class _type> inline const _type* _Matrix<_type>::ptr(int i0) const
 	return data + i0 * step;
 }
 /**
- * @berif è·å–ä»¥åƒç´ çš„æŒ‡é’ˆ
+ * @berif »ñÈ¡ÒÔÏñËØµÄÖ¸Õë
  */
 template <class _type> inline _type* _Matrix<_type>::ptr(int i0, int i1)
 {
@@ -421,7 +421,7 @@ template <class _type> inline _type* _Matrix<_type>::ptr(int i0, int i1)
 	return data + i0 * step + i1 * chs;
 }
 /**
- * @berif è·å–ä»¥åƒç´ çš„æŒ‡é’ˆ
+ * @berif »ñÈ¡ÒÔÏñËØµÄÖ¸Õë
  */
 template <class _type> inline const _type* _Matrix<_type>::ptr(int i0, int i1) const
 {
@@ -432,8 +432,8 @@ template <class _type> inline const _type* _Matrix<_type>::ptr(int i0, int i1) c
 }
 
 /**
- * @berif æ±‚çŸ©é˜µçš„ç§©
- * m x nçŸ©é˜µä¸­min(m, n)çŸ©é˜µçš„ç§©
+ * @berif Çó¾ØÕóµÄÖÈ
+ * m x n¾ØÕóÖĞmin(m, n)¾ØÕóµÄÖÈ
  */
 template <class _type>
 _type _Matrix<_type>::rank()
@@ -444,10 +444,10 @@ _type _Matrix<_type>::rank()
 }
 
 /**
- * @berif æ±‚çŸ©é˜µçš„è¿¹ï¼Œå³å¯¹è§’çº¿å…ƒç´ ä¹‹å’Œ
- * @attention 1ã€çŸ©é˜µå¿…é¡»æ˜¯æ–¹é˜µ
- *            2ã€ç”±äºè¿¹æ˜¯å¯¹è§’çº¿å…ƒç´ ä¹‹å’Œï¼Œæ‰€ä»¥å¯¹äºcharã€shortç­‰å¯èƒ½ä¼šå‘ç”Ÿæº¢å‡ºï¼Œæ‰€ä»¥åŒä¸€æ”¹ä¸ºdouble
- * m x nçŸ©é˜µä¸­min(m, n)çŸ©é˜µçš„ç§©
+ * @berif Çó¾ØÕóµÄ¼££¬¼´¶Ô½ÇÏßÔªËØÖ®ºÍ
+ * @attention 1¡¢¾ØÕó±ØĞëÊÇ·½Õó
+ *            2¡¢ÓÉÓÚ¼£ÊÇ¶Ô½ÇÏßÔªËØÖ®ºÍ£¬ËùÒÔ¶ÔÓÚchar¡¢shortµÈ¿ÉÄÜ»á·¢ÉúÒç³ö£¬ËùÒÔÍ¬Ò»¸ÄÎªdouble
+ * m x n¾ØÕóÖĞmin(m, n)¾ØÕóµÄÖÈ
  */
 template <class _type>
 double _Matrix<_type>::tr()
@@ -466,7 +466,7 @@ double _Matrix<_type>::tr()
 
 
 /**
- * @berif é€†
+ * @berif Äæ
  */
 template <class _type>
 _Matrix<_type> _Matrix<_type>::inv()
@@ -478,7 +478,7 @@ _Matrix<_type> _Matrix<_type>::inv()
 
 
 /**
- * @berif è½¬ç½®
+ * @berif ×ªÖÃ
  */
 template <class _type>
 _Matrix<_type>  _Matrix<_type>::t()
@@ -496,7 +496,7 @@ _Matrix<_type>  _Matrix<_type>::t()
 }
 
 /**
- * @berif ç‚¹ä¹˜
+ * @berif µã³Ë
  */
 template <class _type>
 _Matrix<_type> _Matrix<_type>::dot(_Matrix<_type> &m)
@@ -514,7 +514,7 @@ _Matrix<_type> _Matrix<_type>::dot(_Matrix<_type> &m)
 }
 
 /**
- * @berif å‰ä¹˜
+ * @berif ²æ³Ë
  * @attention C = cross(A,B) returns the cross product of the vectors
  *            A and B.  That is, C = A x B.  A and B must be 3 element
  *            vectors.
@@ -535,11 +535,11 @@ _Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
 }
 
 /**
- * @berif å·ç§¯è¿ç®—
+ * @berif ¾í»ıÔËËã
  *
- * @param[in] kernelï¼Œ å·ç§¯æ ¸
- * @param[out] dstï¼Œç»“æœ
- * @param[in] normï¼Œ æ˜¯å¦å¯¹å·ç§¯ç»“æœå½’ä¸€åŒ–
+ * @param[in] kernel£¬ ¾í»ıºË
+ * @param[out] dst£¬½á¹û
+ * @param[in] norm£¬ ÊÇ·ñ¶Ô¾í»ı½á¹û¹éÒ»»¯
  */
 template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&dst, bool norm)
 {
@@ -549,11 +549,11 @@ template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&
 	if (!dst.equalSize(*this))
 		dst.create(rows, cols, chs);
 
-	int *tempValue = new int[chs];                            // ä¿å­˜å·ç§¯æœªå½’ä¸€åŒ–å‰çš„ä¸­é—´å˜é‡
-	int zeros = 0;                                            // è¾¹ç¼˜å¤„ç†ï¼Œè®°å½•è¾¹ç¼˜å·ç§¯è¿‡ç¨‹ä¸­çš„è¶…å‡ºå›¾åƒçš„åƒç´ ä¸ªæ•°
+	int *tempValue = new int[chs];                            // ±£´æ¾í»ıÎ´¹éÒ»»¯Ç°µÄÖĞ¼ä±äÁ¿
+	int zeros = 0;                                            // ±ßÔµ´¦Àí£¬¼ÇÂ¼±ßÔµ¾í»ı¹ı³ÌÖĞµÄ³¬³öÍ¼ÏñµÄÏñËØ¸öÊı
 	int m = kernel.rows / 2, n = kernel.cols / 2;
-	const _type * srcPtr = nullptr;                           // æŒ‡å‘æºå›¾åƒåƒç´ çš„æŒ‡é’ˆ
-	_type * dstPtr = nullptr;                                 // æŒ‡å‘è¾“å‡ºå›¾åƒçš„åƒç´ çš„æŒ‡é’ˆ
+	const _type * srcPtr = nullptr;                           // Ö¸ÏòÔ´Í¼ÏñÏñËØµÄÖ¸Õë
+	_type * dstPtr = nullptr;                                 // Ö¸ÏòÊä³öÍ¼ÏñµÄÏñËØµÄÖ¸Õë
 	int alpha = 0;
 	int delta = 0;
 	for (size_t i = 0; i < kernel.size(); ++i) {
@@ -569,7 +569,7 @@ template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&
 			for (int ii = 0; ii < kernel.rows; ++ii) {
 				for (int jj = 0; jj < kernel.cols; ++jj) {
 
-					// è·å–ä¸€ä¸ªåƒç´ çš„åœ°å€
+					// »ñÈ¡Ò»¸öÏñËØµÄµØÖ·
 					srcPtr = this->ptr(i - m + ii, j - n + jj);
 
 					if (srcPtr) {
@@ -604,7 +604,7 @@ template <class _type> void conv(_Matrix<_type> &src, _Matrix<_type> &dst, Matri
 	src.conv(core, dst);
 }
 /**
- * @berif é‡è½½è¾“å‡ºè¿ç®—ç¬¦
+ * @berif ÖØÔØÊä³öÔËËã·û
  */
 template <class _type>
 std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item)
@@ -629,21 +629,21 @@ std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item)
 }
 
 /**
- * @berif æ¯”è¾ƒä¸¤ä¸ªçŸ©é˜µæ˜¯å¦ç›¸ç­‰
+ * @berif ±È½ÏÁ½¸ö¾ØÕóÊÇ·ñÏàµÈ
  */
 template <class _type>
 bool operator==(const _Matrix<_type> &m1, const _Matrix<_type> &m2)
 {
-	// 1ã€æ²¡æœ‰åˆ†é…å†…å­˜çš„çŸ©é˜µæ¯”è¾ƒï¼Œæ²¡æœ‰ç»è¿‡create()
+	// 1¡¢Ã»ÓĞ·ÖÅäÄÚ´æµÄ¾ØÕó±È½Ï£¬Ã»ÓĞ¾­¹ıcreate()
 	if (m1.data == nullptr && m1.data == m2.data) {
 		return true;
 	}
-	// 2ã€åˆ†é…å†…å­˜
+	// 2¡¢·ÖÅäÄÚ´æ
 	else if (m1.data != nullptr) {
-		// å†…å­˜åœ°å€ç›¸ç­‰ï¼Œå¼•ç”¨ï¼Œç›¸ç­‰
+		// ÄÚ´æµØÖ·ÏàµÈ£¬ÒıÓÃ£¬ÏàµÈ
 		if (m1.data == m2.data)
 			return true;
-		// åœ°å€ä¸ç›¸ç­‰, è¡Œåˆ—ç›¸ç­‰çš„å‰æä¸‹ï¼Œå…ƒç´ ç›¸ç­‰
+		// µØÖ·²»ÏàµÈ, ĞĞÁĞÏàµÈµÄÇ°ÌáÏÂ£¬ÔªËØÏàµÈ
 		else {
 			if (m1.cols == m2.cols && m1.rows == m2.rows && m1.chs == m2.chs) {
 				int i = 0;
@@ -660,7 +660,7 @@ bool operator==(const _Matrix<_type> &m1, const _Matrix<_type> &m2)
 }
 
 /**
- * @berif æ¯”è¾ƒä¸¤ä¸ªçŸ©é˜µæ˜¯å¦ä¸ç›¸ç­‰
+ * @berif ±È½ÏÁ½¸ö¾ØÕóÊÇ·ñ²»ÏàµÈ
  */
 template <class _type>
 bool operator!=(const _Matrix<_type> &m1, const _Matrix<_type> &m2)
@@ -669,7 +669,7 @@ bool operator!=(const _Matrix<_type> &m1, const _Matrix<_type> &m2)
 }
 
 /**
- * @berif çŸ©é˜µä¹˜æ³•ï¼Œé‡è½½*
+ * @berif ¾ØÕó³Ë·¨£¬ÖØÔØ*
  */
 template <class _type>
 _Matrix<_type> operator*(_Matrix<_type> &m1, _Matrix<_type> &m2)
@@ -694,7 +694,7 @@ _Matrix<_type> operator*(_Matrix<_type> &m1, _Matrix<_type> &m2)
 }
 
 /**
- * @berif çŸ©é˜µåŠ æ³•ï¼Œé‡è½½+
+ * @berif ¾ØÕó¼Ó·¨£¬ÖØÔØ+
  */
 template <class _type>
 _Matrix<_type> operator+(_Matrix<_type> &m1, _Matrix<_type> &m2)
@@ -711,7 +711,7 @@ _Matrix<_type> operator+(_Matrix<_type> &m1, _Matrix<_type> &m2)
 }
 
 /**
- * @berif çŸ©é˜µå‡æ³•ï¼Œé‡è½½-
+ * @berif ¾ØÕó¼õ·¨£¬ÖØÔØ-
  */
 template <class _type>
 _Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_type> &m2)
@@ -728,7 +728,7 @@ _Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_type> &m2)
 }
 
 /**
- * @berif çŸ©é˜µæ•°ä¹˜ï¼Œé‡è½½*
+ * @berif ¾ØÕóÊı³Ë£¬ÖØÔØ*
  */
 template <class _type>
 _Matrix<_type> operator*(_Matrix<_type> &m, _type delta)
@@ -749,7 +749,7 @@ _Matrix<_type> operator*(_type delta, _Matrix<_type> &m)
 }
 
 /**
- * @berif çŸ©é˜µåŠ æ³•ï¼Œé‡è½½+
+ * @berif ¾ØÕó¼Ó·¨£¬ÖØÔØ+
  */
 template <class _type>
 _Matrix<_type> operator+(_Matrix<_type> &m, _type delta)
@@ -769,7 +769,7 @@ _Matrix<_type> operator+(_type delta, _Matrix<_type> &m)
 }
 
 /**
- * @berif çŸ©é˜µå‡æ³•ï¼Œé‡è½½-
+ * @berif ¾ØÕó¼õ·¨£¬ÖØÔØ-
  */
 template <class _type>
 _Matrix<_type> operator-(_Matrix<_type> &m, _type delta)

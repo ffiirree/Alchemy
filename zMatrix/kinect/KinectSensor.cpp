@@ -50,9 +50,9 @@ KinectSensor::KinectSensor(FrameTypes _type)
 }
 
 /**
- * @berif åˆå§‹åŒ–Kinectä¼ æ„Ÿå™¨ï¼Œåˆ†åˆ«èŽ·å–sourceå¹¶ä¸”æ‰“å¼€Reader
- *		Kinect èŽ·å–æ•°æ®çš„æµç¨‹å¤§ä½“éµå¾ªï¼šSource->Reader->Frameæµç¨‹æ¥èŽ·å–æœ€ç»ˆçš„æ•°æ®
- * @attention æ³¨æ„èŽ·å–èµ„æºåŽçš„é‡Šæ”¾
+ * @berif ³õÊ¼»¯Kinect´«¸ÐÆ÷£¬·Ö±ð»ñÈ¡source²¢ÇÒ´ò¿ªReader
+ *		Kinect »ñÈ¡Êý¾ÝµÄÁ÷³Ì´óÌå×ñÑ­£ºSource->Reader->FrameÁ÷³ÌÀ´»ñÈ¡×îÖÕµÄÊý¾Ý
+ * @attention ×¢Òâ»ñÈ¡×ÊÔ´ºóµÄÊÍ·Å
  */
 HRESULT KinectSensor::KinectInitialize(FrameTypes _type)
 {
@@ -128,9 +128,9 @@ HRESULT KinectSensor::KinectInitialize(FrameTypes _type)
 
 
 /**
- * @berif æ›´æ–°å›¾å½¢æ•°æ®
- * @attention AcquireLatestFrame()å‡½æ•°ä¸ä¸€å®šä¼šæˆåŠŸè¿”å›žæ•°æ®ï¼Œä¸€å®šè¦åšå¥½å¤„ç†ï¼Œ
- *            ç‰¹åˆ«æ˜¯ä½¿ç”¨è½®è¯¢çš„æ—¶å€™ï¼Œç»å¸¸å¤±è´¥ï¼›ä½¿ç”¨eventåŽåŸºæœ¬éƒ½ä¼šæˆåŠŸ
+ * @berif ¸üÐÂÍ¼ÐÎÊý¾Ý
+ * @attention AcquireLatestFrame()º¯Êý²»Ò»¶¨»á³É¹¦·µ»ØÊý¾Ý£¬Ò»¶¨Òª×öºÃ´¦Àí£¬
+ *            ÌØ±ðÊÇÊ¹ÓÃÂÖÑ¯µÄÊ±ºò£¬¾­³£Ê§°Ü£»Ê¹ÓÃeventºó»ù±¾¶¼»á³É¹¦
  */
 HRESULT KinectSensor::update(FrameTypes _type)
 {
@@ -206,7 +206,7 @@ HRESULT KinectSensor::updateAll()
 		// Cheak all data-------------------------
 		if (SUCCEEDED(hrColor) && SUCCEEDED(hrDepth) && SUCCEEDED(hrInfra)) {
 			// depth data
-			// èŽ·å–æ·±åº¦å›¾åƒçš„æ—¶é—´æˆ³
+			// »ñÈ¡Éî¶ÈÍ¼ÏñµÄÊ±¼ä´Á
 			hr = pDepthFrame->get_RelativeTime(&depthFrameTimestamp);
 
 			if (SUCCEEDED(hr)) {
@@ -264,8 +264,8 @@ HRESULT KinectSensor::updateAll()
 
 
 /**
- * @attention AccessUnderlyingBuffer()å‡½æ•°èŽ·å–çš„åªæ˜¯æŒ‡å‘æ•°æ®çš„æŒ‡é’ˆ
- *    å¯ä»¥ä½¿ç”¨CopyFrameDataToArray()å°†æ•°æ®æ‹·è´å‡ºæ¥
+ * @attention AccessUnderlyingBuffer()º¯Êý»ñÈ¡µÄÖ»ÊÇÖ¸ÏòÊý¾ÝµÄÖ¸Õë
+ *    ¿ÉÒÔÊ¹ÓÃCopyFrameDataToArray()½«Êý¾Ý¿½±´³öÀ´
  */
 HRESULT KinectSensor::updateDepthData()
 {
@@ -276,7 +276,7 @@ HRESULT KinectSensor::updateDepthData()
 	HRESULT hr = pDepthFrameReader->AcquireLatestFrame(&pDepthFrame);
 
 	if (SUCCEEDED(hr)) {
-		// èŽ·å–æ·±åº¦å›¾åƒçš„æ—¶é—´æˆ³
+		// »ñÈ¡Éî¶ÈÍ¼ÏñµÄÊ±¼ä´Á
 		hr = pDepthFrame->get_RelativeTime(&depthFrameTimestamp);
 
 		if (SUCCEEDED(hr)) {

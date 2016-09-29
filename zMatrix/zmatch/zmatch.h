@@ -4,7 +4,7 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
- * @brief   ç®€å•çš„æ•°å­¦å‡½æ•°å®šä¹‰
+ * @brief   ¼òµ¥µÄÊıÑ§º¯Êı¶¨Òå
  ******************************************************************************
  * @attention
  *
@@ -25,8 +25,8 @@ int average(int x, int y);
 
 
 /**
- * @berif æ±‚æ•°ç»„ä¸­çš„æœ€å¤§æ•°
- * @param sizeï¼Œæ•°ç»„çš„å¤§å° or éœ€è¦æ¯”è¾ƒæ•°ç»„å‰sizeä¸ª
+ * @berif ÇóÊı×éÖĞµÄ×î´óÊı
+ * @param size£¬Êı×éµÄ´óĞ¡ or ĞèÒª±È½ÏÊı×éÇ°size¸ö
  */
 template <typename _Tp> void _max(_Tp *addr, size_t size, _Tp & _max)
 {
@@ -42,8 +42,8 @@ template <typename _Tp> void _max(_Tp *addr, size_t size, _Tp & _max)
 
 
 /**
- * @berif æ±‚æ•°ç»„ä¸­çš„æœ€å¤§æ•°
- * @param sizeï¼Œæ•°ç»„çš„å¤§å° or éœ€è¦æ¯”è¾ƒæ•°ç»„å‰sizeä¸ª
+ * @berif ÇóÊı×éÖĞµÄ×î´óÊı
+ * @param size£¬Êı×éµÄ´óĞ¡ or ĞèÒª±È½ÏÊı×éÇ°size¸ö
  */
 template <typename _Tp> void _min(_Tp *addr, size_t size, _Tp & _min)
 {

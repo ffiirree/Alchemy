@@ -4,7 +4,7 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
- * @brief   å›¾åƒå˜æ¢çš„å‡½æ•°å®ç°
+ * @brief   Í¼Ïñ±ä»»µÄº¯ÊıÊµÏÖ
  ******************************************************************************
  * @attention
  *
@@ -18,15 +18,15 @@
 namespace z {
 
 /**
- * @declaration å‡½æ•°å£°æ˜
- *              å†…éƒ¨å‡½æ•°
+ * @declaration º¯ÊıÉùÃ÷
+ *              ÄÚ²¿º¯Êı
  */ 
 static inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD);
 static void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2);
 static void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx = 1, int dy = 1, int ksize = 3, bool noGD = false);
 
 /**
- * @berif Cannyä¸­çš„éæå¤§å€¼æŠ‘åˆ¶
+ * @berif CannyÖĞµÄ·Ç¼«´óÖµÒÖÖÆ
  */
 inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD)
 {
@@ -114,7 +114,7 @@ inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD)
 
 
 /**
- * @berif Cannyä¸­çš„åŒé˜ˆå€¼
+ * @berif CannyÖĞµÄË«ãĞÖµ
  */
 void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2)
 {
@@ -130,14 +130,14 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
 		for (int j = 0; j < src.cols; ++j) {
 			ptr = src.ptr(i, j);
 
-			ptr1 = src.ptr(i - 1, j);             // ä¸Š
-			ptr2 = src.ptr(i, j - 1);             // å·¦
-			ptr3 = src.ptr(i, j + 1);             // å³
-			ptr4 = src.ptr(i + 1, j);             // ä¸‹
-			ptr5 = src.ptr(i - 1, j - 1);         // ä¸Šå·¦     
-			ptr6 = src.ptr(i - 1, j + 1);         // ä¸Šå³
-			ptr7 = src.ptr(i + 1, j + 1);         // ä¸‹å³
-			ptr8 = src.ptr(i + 1, j - 1);         // ä¸‹å·¦
+			ptr1 = src.ptr(i - 1, j);             // ÉÏ
+			ptr2 = src.ptr(i, j - 1);             // ×ó
+			ptr3 = src.ptr(i, j + 1);             // ÓÒ
+			ptr4 = src.ptr(i + 1, j);             // ÏÂ
+			ptr5 = src.ptr(i - 1, j - 1);         // ÉÏ×ó     
+			ptr6 = src.ptr(i - 1, j + 1);         // ÉÏÓÒ
+			ptr7 = src.ptr(i + 1, j + 1);         // ÏÂÓÒ
+			ptr8 = src.ptr(i + 1, j - 1);         // ÏÂ×ó
 
 			dstPtr = dst.ptr(i, j);
 
@@ -168,12 +168,12 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
 	}
 }
 
-//////////////////////////////////////ä¸€é˜¶å¾®åˆ†ç®—å­///////////////////////////////////////////
-// é‡è¦é—®é¢˜ï¼šå¾—åˆ°çš„è¾¹ç¼˜ä¸ç°åº¦è¿‡åº¦èŒƒå›´ç­‰å®½ï¼Œå› æ­¤è¾¹ç¼˜å¯èƒ½æ— æ³•è¢«ç²¾ç¡®å®šä½
-//////////////////////////////////////ä¸€é˜¶å¾®åˆ†ç®—å­///////////////////////////////////////////
+//////////////////////////////////////Ò»½×Î¢·ÖËã×Ó///////////////////////////////////////////
+// ÖØÒªÎÊÌâ£ºµÃµ½µÄ±ßÔµÓë»Ò¶È¹ı¶È·¶Î§µÈ¿í£¬Òò´Ë±ßÔµ¿ÉÄÜÎŞ·¨±»¾«È·¶¨Î»
+//////////////////////////////////////Ò»½×Î¢·ÖËã×Ó///////////////////////////////////////////
 
 /**
- * @berif prewittç®—å­
+ * @berif prewittËã×Ó
  */
 void prewitt(Matrix8u&src, Matrix8u&dst)
 {
@@ -221,7 +221,7 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
 				} // !for(jj)
 			} // !for(ii)
 
-			  // å±€éƒ¨æ¢¯åº¦åˆ†é‡çš„çš„ä¼°è®¡ï¼Œé€šè¿‡ç»™æ»¤æ³¢ç»“æœä¹˜ä»¥é€‚å½“çš„å°ºåº¦å› å­æ¥å®ç°
+			  // ¾Ö²¿Ìİ¶È·ÖÁ¿µÄµÄ¹À¼Æ£¬Í¨¹ı¸øÂË²¨½á¹û³ËÒÔÊÊµ±µÄ³ß¶ÈÒò×ÓÀ´ÊµÏÖ
 			for (int k = 0; k < src.chs; ++k) {
 				if (zerosx != 0) {
 					tempGx[k] /= zerosx;
@@ -253,11 +253,11 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
 }
 
 /**
- * @berif sobelç®—å­
+ * @berif sobelËã×Ó
  * @param[in] ksize, must be 1, 3, 5 or 7.
  * @param[in] dx
  * @param[in] dy
- * @ksize[in] å·ç§¯æ ¸çš„å¤§å°
+ * @ksize[in] ¾í»ıºËµÄ´óĞ¡
  */
 void sobel(Matrix8u&src, Matrix8u&dst, int dx, int dy, int ksize)
 {
@@ -265,15 +265,15 @@ void sobel(Matrix8u&src, Matrix8u&dst, int dx, int dy, int ksize)
 }
 
 /**
- * @berif sobelç®—å­
+ * @berif sobelËã×Ó
  * @param[in] src
  * @param[out] dst
- * @param[out] dstGDï¼Œ
+ * @param[out] dstGD£¬
  * @param[in] ksize, must be 1, 3, 5 or 7.
  * @param[in] dx
  * @param[in] dy
- * @ksize[in] å·ç§¯æ ¸çš„å¤§å°
- * @param[in] noGDï¼Œæ˜¯å¦è¿›è¡Œæ¢¯åº¦éæå¤§å€¼æŠ‘åˆ¶
+ * @ksize[in] ¾í»ıºËµÄ´óĞ¡
+ * @param[in] noGD£¬ÊÇ·ñ½øĞĞÌİ¶È·Ç¼«´óÖµÒÖÖÆ
  */
 void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize, bool noGD)
 {
@@ -293,11 +293,11 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 		break;
 
 	case 3:
-		// åŸå§‹sobelç®—å­
+		// Ô­Ê¼sobelËã×Ó
 		//Gx = { -1, 0, 1, -2, 0, 2, -1, 0, 1 };
 		//Gy = { -1, -2, -1, 0, 0, 0, 1, 2, 1 };
 		//factor = 8;
-		// æ”¹è¿›å‹ï¼Œå¯ä»¥å°†æ–¹å‘è¯¯å·®å‡åˆ°æœ€å°
+		// ¸Ä½øĞÍ£¬¿ÉÒÔ½«·½ÏòÎó²î¼õµ½×îĞ¡
 		Gx = { -3, 0, 3, -10, 0, 10, -3, 0, 3 };
 		Gy = { -3, -10, -3, 0, 0, 0, 3, 10, 3 };
 		factor = 32;
@@ -353,7 +353,7 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 				} // !for(jj)
 			} // !for(ii)
 
-			// å±€éƒ¨æ¢¯åº¦åˆ†é‡çš„çš„ä¼°è®¡ï¼Œé€šè¿‡ç»™æ»¤æ³¢ç»“æœä¹˜ä»¥é€‚å½“çš„å°ºåº¦å› å­æ¥å®ç°
+			// ¾Ö²¿Ìİ¶È·ÖÁ¿µÄµÄ¹À¼Æ£¬Í¨¹ı¸øÂË²¨½á¹û³ËÒÔÊÊµ±µÄ³ß¶ÈÒò×ÓÀ´ÊµÏÖ
 			for (int k = 0; k < src.chs; ++k) {
 				if (zerosx != 0) {
 					tempGx[k] /= zerosx;
@@ -377,7 +377,7 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 
 			for (int k = 0; k < src.chs; ++k) {
 				dstPtr[k] = (unsigned char)std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]);
-				// è®¡ç®—æ¢¯åº¦
+				// ¼ÆËãÌİ¶È
 				if (!noGD) {
 					ang = atan2(tempGy[k],tempGx[k]) * RAD2ANG;
 
@@ -405,29 +405,29 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 
 
 /**
- * @berif Canny è¾¹ç¼˜æ£€æµ‹ç®—æ³•
+ * @berif Canny ±ßÔµ¼ì²âËã·¨
  *
- * @param[in] srcï¼Œéœ€è¦å¤„ç†çš„å›¾åƒ
- * @param[out] dstï¼Œè¾“å‡ºå›¾åƒ
- * @param[in] threshold1ï¼ŒåŒé˜ˆå€¼ç¬¬ä¸€ä¸ªé˜ˆå€¼
- * @param[in] threshold2ï¼ŒåŒé˜ˆå€¼ç¬¬äºŒä¸ªé˜ˆå€¼
+ * @param[in] src£¬ĞèÒª´¦ÀíµÄÍ¼Ïñ
+ * @param[out] dst£¬Êä³öÍ¼Ïñ
+ * @param[in] threshold1£¬Ë«ãĞÖµµÚÒ»¸öãĞÖµ
+ * @param[in] threshold2£¬Ë«ãĞÖµµÚ¶ş¸öãĞÖµ
  */
 void Canny(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2, int apertureSize)
 {
-	// ä¸­é—´å˜é‡
+	// ÖĞ¼ä±äÁ¿
 	Matrix8u dstGD;
 	Matrix8u temp, temp1, temp2;
 
-	// ç¬¬ä¸€æ­¥ï¼Œé«˜æ–¯æ»¤æ³¢
+	// µÚÒ»²½£¬¸ßË¹ÂË²¨
 	GaussianBlur(src, temp, z::Size(5, 5));
 
-	// ç¬¬äºŒæ­¥ï¼Œä½¿ç”¨sobelç®—å­
+	// µÚ¶ş²½£¬Ê¹ÓÃsobelËã×Ó
 	sobel(temp, temp1, dstGD, 1, 1, apertureSize);
 
-	// ç¬¬ä¸‰æ­¥,éæå¤§å€¼æŠ‘åˆ¶
+	// µÚÈı²½,·Ç¼«´óÖµÒÖÖÆ
 	only_max(temp1, temp2, dstGD);
 	
-	// ç¬¬å››æ­¥ï¼ŒåŒé˜ˆå€¼
+	// µÚËÄ²½£¬Ë«ãĞÖµ
 	double_threashold(temp2, dst, threshold1, threshold2);
 }
 
