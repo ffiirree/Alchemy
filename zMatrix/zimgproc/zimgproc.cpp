@@ -4,7 +4,7 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
- * @brief   ä¸ç±»å‹æ— å…³çš„å›¾åƒå¤„ç†å‡½æ•°çš„å®ç°
+ * @brief   ÓëÀàĞÍÎŞ¹ØµÄÍ¼Ïñ´¦Àíº¯ÊıµÄÊµÏÖ
  ******************************************************************************
  * @attention
  *
@@ -18,7 +18,7 @@
 namespace z{
 
 /**
- * @berif openCVä¸­çš„Matç±»è½¬æ¢ä¸ºMatrix8uç±»
+ * @berif openCVÖĞµÄMatÀà×ª»»ÎªMatrix8uÀà
  */
 Matrix8u Mat2Matrix8u(cv::Mat & mat)
 {
@@ -29,7 +29,7 @@ Matrix8u Mat2Matrix8u(cv::Mat & mat)
 }
 
 /**
-* @berif ä¸Šä¸‹é¢ å€’å›¾åƒ
+* @berif ÉÏÏÂµßµ¹Í¼Ïñ
 */
 void convertImage(Matrix8u *src, Matrix8u *dst, int flags)
 {
@@ -56,7 +56,7 @@ void copyToArray(Matrix8u &src, char * arr)
 	}
 }
 /**
- * @berif è·å–ç”¨äºè¿›è¡Œé«˜æ–¯æ»¤æ³¢çš„é«˜æ–¯æ ¸
+ * @berif »ñÈ¡ÓÃÓÚ½øĞĞ¸ßË¹ÂË²¨µÄ¸ßË¹ºË
  */
 Matrix Gassion(z::Size ksize, double sigmaX, double sigmaY)
 {
@@ -97,7 +97,7 @@ void _dft(Matrix & src, Matrix & dst)
 	Matrix temp(src.rows, src.cols, 2);
 	Matrix end(src.rows, src.cols, 2);
 
-	// æŒ‰å±‚è®¡ç®—
+	// °´²ã¼ÆËã
 	const int N = src.cols;
 	for (int i = 0; i < src.rows; ++i) {
 		for (int v = 0; v < N; ++v) {
@@ -119,7 +119,7 @@ void _dft(Matrix & src, Matrix & dst)
 		}
 	}
 	
-	// æŒ‰åˆ—è®¡ç®—
+	// °´ÁĞ¼ÆËã
 	const int M = src.rows;
 	for (int j = 0; j < src.cols; ++j) {
 		for (int u = 0; u < M; ++u) {
@@ -133,8 +133,8 @@ void _dft(Matrix & src, Matrix & dst)
 				double gRe = temp.ptr(m, j)[0];
 				double gIm = temp.ptr(m, j)[1];
 
-				// å¤æ•°ä¹˜æ³•
-				// (gRe - gIm * i)Â·(cosx - sinx * i) = (gRe * cosx + gIm * sinx) - (gRe * sinx + gIm * cosx) * i
+				// ¸´Êı³Ë·¨
+				// (gRe - gIm * i)¡¤(cosx - sinx * i) = (gRe * cosx + gIm * sinx) - (gRe * sinx + gIm * cosx) * i
 				Re = Re + gRe * cosx + gIm * sinx;
 				Im = Im + (gRe * sinx + gIm * cosx);
 			}
@@ -147,7 +147,7 @@ void _dft(Matrix & src, Matrix & dst)
 }
 
 /**
- * @berif 1Dæˆ–2Dç¦»æ•£å‚…é‡Œå¶å˜æ¢
+ * @berif 1D»ò2DÀëÉ¢¸µÀïÒ¶±ä»»
  */
 void dft(Matrix8u & src, Matrix & dst)
 {
@@ -181,8 +181,8 @@ int getIdealRows(int rows)
 //	Matrix end(src.rows, src.cols, 2);
 //
 //
-//	// æŒ‰å±‚FFT
-//	const int L = log(src.cols)/log(2);                    // éœ€è¦log2(N)å±‚
+//	// °´²ãFFT
+//	const int L = log(src.cols)/log(2);                    // ĞèÒªlog2(N)²ã
 //	const int N = src.cols;
 //	for (int i = 0; i < src.rows; ++i) {
 //		for (int l = 0; l < L; ++l) {

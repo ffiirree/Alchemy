@@ -22,12 +22,12 @@ static void fillBitmapInfo(BITMAPINFO* bmi, int width, int height, int bpp, int 
 
 	memset(bmih, 0, sizeof(*bmih));
 
-	bmih->biSize = sizeof(BITMAPINFOHEADER);                // ç»“æ„å¤§å° = 40
-	bmih->biWidth = width;                                  // ä»¥åƒç´ è®¡çš„å›¾åƒçš„å®½åº¦
-	bmih->biHeight = origin ? abs(height) : -abs(height);   // ä»¥åƒç´ è®¡çš„å›¾åƒçš„é«˜åº¦
+	bmih->biSize = sizeof(BITMAPINFOHEADER);                // ½á¹¹´óĞ¡ = 40
+	bmih->biWidth = width;                                  // ÒÔÏñËØ¼ÆµÄÍ¼ÏñµÄ¿í¶È
+	bmih->biHeight = origin ? abs(height) : -abs(height);   // ÒÔÏñËØ¼ÆµÄÍ¼ÏñµÄ¸ß¶È
 	bmih->biPlanes = 1;                                     // = 1
-	bmih->biBitCount = (unsigned short)bpp;                 // æ¯ä¸ªåƒç´ çš„ä½æ•°
-	bmih->biCompression = BI_RGB;                           // å‹ç¼©ç ç‡
+	bmih->biBitCount = (unsigned short)bpp;                 // Ã¿¸öÏñËØµÄÎ»Êı
+	bmih->biCompression = BI_RGB;                           // Ñ¹ËõÂëÂÊ
 
 	if (bpp == 8)
 	{
@@ -69,16 +69,16 @@ int zNamedWindow(const char *name, int flags)
 	rect.x = rect.y = 100;
 	rect.width = rect.height = 50;
 
-	// åˆ›å»ºçª—å£
+	// ´´½¨´°¿Ú
 	hWnd = CreateWindow(
-		highGUIclassName,                // çª—å£ç±»å   
-		name,                            // çª—å£æ ‡é¢˜
-		style | WS_OVERLAPPED,           // çª—å£é£æ ¼
-		rect.x, rect.y,                  // æ˜¾ç¤ºä½ç½®
-		rect.width, rect.height,         // çª—å£å¤§å°
-		0,                               // çˆ¶çª—å£æ— 
-		0,                               // å­èœå•æ— 
-		hg_hinstance,                    // è¯¥çª—å£åº”ç”¨ç¨‹åºçš„å®ä¾‹å¥æŸ„
+		highGUIclassName,                // ´°¿ÚÀàÃû   
+		name,                            // ´°¿Ú±êÌâ
+		style | WS_OVERLAPPED,           // ´°¿Ú·ç¸ñ
+		rect.x, rect.y,                  // ÏÔÊ¾Î»ÖÃ
+		rect.width, rect.height,         // ´°¿Ú´óĞ¡
+		0,                               // ¸¸´°¿ÚÎŞ
+		0,                               // ×Ó²Ëµ¥ÎŞ
+		hg_hinstance,                    // ¸Ã´°¿ÚÓ¦ÓÃ³ÌĞòµÄÊµÀı¾ä±ú
 		0);
 
 	if (!hWnd)
@@ -87,15 +87,15 @@ int zNamedWindow(const char *name, int flags)
 
 	nameLen = (int)strlen(name);
 
-	window = (zWindow *)malloc(sizeof(zWindow) + nameLen + 1);           // ä¸ºçª—å£ä¿¡æ¯åˆ†é…å†…å­˜
-	window->hwnd = hWnd;                                                 // å½“å‰çª—å£çš„å¥æŸ„
-	window->name = (char *)(window + 1);                                 // çª—å£çš„åå­—
+	window = (zWindow *)malloc(sizeof(zWindow) + nameLen + 1);           // Îª´°¿ÚĞÅÏ¢·ÖÅäÄÚ´æ
+	window->hwnd = hWnd;                                                 // µ±Ç°´°¿ÚµÄ¾ä±ú
+	window->name = (char *)(window + 1);                                 // ´°¿ÚµÄÃû×Ö
 	memcpy(window->name, name, nameLen + 1);
 
 	window->flags = flags;
 	window->image = 0;
 
-	window->hdc = CreateCompatibleDC(0);                                 // è¯¥å‡½æ•°åˆ›å»ºä¸€ä¸ªä¸æŒ‡å®šè®¾å¤‡å…¼å®¹çš„å†…å­˜è®¾å¤‡ä¸Šä¸‹æ–‡ç¯å¢ƒ
+	window->hdc = CreateCompatibleDC(0);                                 // ¸Ãº¯Êı´´½¨Ò»¸öÓëÖ¸¶¨Éè±¸¼æÈİµÄÄÚ´æÉè±¸ÉÏÏÂÎÄ»·¾³
 	window->last_key = 0;
 	window->status = WINDOW_NORMAL;
 
@@ -125,7 +125,7 @@ static bool getBitmapData(zWindow* window, SIZE* size, int* channels, void** dat
 
 	if (h == NULL)
 		return true;
-	if (GetObject(h, sizeof(bmp), &bmp) == 0)   //å¾—åˆ°æŒ‡å®šå›¾å½¢å¯¹è±¡çš„ä¿¡æ¯
+	if (GetObject(h, sizeof(bmp), &bmp) == 0)   //µÃµ½Ö¸¶¨Í¼ĞÎ¶ÔÏóµÄĞÅÏ¢
 		return true;
 
 	if (size)
@@ -185,7 +185,7 @@ void zShowImage(const char *name, void * arr)
 		channels = channels0;
 
 		fillBitmapInfo(binfo, size.cx, size.cy, channels * 8, 1);
-		// CreateDIBSectionä¼šæ ¹æ®BITMAPINFOHEADERåˆ†é…ä¸€å—å†…å­˜åŒºåŸŸï¼ŒæŠŠè¿™å—å†…å­˜çš„æŒ‡é’ˆå­˜æ”¾åœ¨æä¾›çš„pBitså‚æ•°é‡Œ
+		// CreateDIBSection»á¸ù¾İBITMAPINFOHEADER·ÖÅäÒ»¿éÄÚ´æÇøÓò£¬°ÑÕâ¿éÄÚ´æµÄÖ¸Õë´æ·ÅÔÚÌá¹©µÄpBits²ÎÊıÀï
 		window->image = SelectObject(window->hdc,
 			CreateDIBSection(window->hdc, binfo, DIB_RGB_COLORS, &dst_ptr, 0, 0));
 	}
@@ -206,21 +206,21 @@ extern "C" int initSystem(int argc, char** argv)
 
 		hg_windows = 0;
 
-		// å£°æ˜ä¸€ä¸ªçª—å£ç±»å¯¹è±¡
+		// ÉùÃ÷Ò»¸ö´°¿ÚÀà¶ÔÏó
 		WNDCLASS win;
 
 		win.style = CS_OWNDC | CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
-		win.lpfnWndProc = WindowProc;                                          // æŒ‡å‘çª—å£è¿‡ç¨‹å‡½æ•°çš„æŒ‡é’ˆ
-		win.cbClsExtra = 0;                                                    // çª—å£ç±»æ‰©å±•æ— 
-		win.cbWndExtra = 0;                                                    // çª—å£å®ä¾‹æ‰©å±•æ— 
-		win.hInstance = hg_hinstance;                                          // çª—å£å®ä¾‹å¥æŸ„
-		win.lpszClassName = highGUIclassName;                                  // æŒ‡å‘çª—å£ç±»çš„åå­—çš„æŒ‡é’ˆ
+		win.lpfnWndProc = WindowProc;                                          // Ö¸Ïò´°¿Ú¹ı³Ìº¯ÊıµÄÖ¸Õë
+		win.cbClsExtra = 0;                                                    // ´°¿ÚÀàÀ©Õ¹ÎŞ
+		win.cbWndExtra = 0;                                                    // ´°¿ÚÊµÀıÀ©Õ¹ÎŞ
+		win.hInstance = hg_hinstance;                                          // ´°¿ÚÊµÀı¾ä±ú
+		win.lpszClassName = highGUIclassName;                                  // Ö¸Ïò´°¿ÚÀàµÄÃû×ÖµÄÖ¸Õë
 		win.lpszMenuName = highGUIclassName;
-		win.hIcon = LoadIcon(0, IDI_APPLICATION);                              // ä½¿ç”¨ç¼ºçœå›¾æ ‡
+		win.hIcon = LoadIcon(0, IDI_APPLICATION);                              // Ê¹ÓÃÈ±Ê¡Í¼±ê
 		win.hCursor = (HCURSOR)LoadCursor(0, (LPSTR)(size_t)IDC_CROSS);
 		win.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
 
-		// æ³¨å†Œçª—å£ç±»
+		// ×¢²á´°¿ÚÀà
 		RegisterClass(&win);
 
 		wasInitialized = 1;

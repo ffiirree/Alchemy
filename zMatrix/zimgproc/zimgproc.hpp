@@ -4,7 +4,7 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
- * @brief   å›¾åƒå¤„ç†ç›¸å…³æ¨¡æ¿å‡½æ•°çš„å®ç°
+ * @brief   Í¼Ïñ´¦ÀíÏà¹ØÄ£°åº¯ÊıµÄÊµÏÖ
  ******************************************************************************
  * @attention
  *
@@ -69,7 +69,7 @@ namespace z {
 	}
 
 	/**
-	 * @berif å‡å€¼æ»¤æ³¢
+	 * @berif ¾ùÖµÂË²¨
 	 */
 	template <class _type> void blur(_Matrix<_type>& src, _Matrix<_type>& dst, Size size)
 	{
@@ -77,8 +77,8 @@ namespace z {
 	}
 
 	/**
-	 * @berif æ–¹æ¡†æ»¤æ³¢
-	 * @param[in] normalizeï¼Œæ˜¯å¦å½’ä¸€åŒ–ï¼Œå·ç§¯æ ¸å„é¡¹å’Œä¸ä¸º1æ—¶é™¤ä»¥å’Œã€‚
+	 * @berif ·½¿òÂË²¨
+	 * @param[in] normalize£¬ÊÇ·ñ¹éÒ»»¯£¬¾í»ıºË¸÷ÏîºÍ²»Îª1Ê±³ıÒÔºÍ¡£
 	 */
 	template <class _type> void boxFilter(const _Matrix<_type>& src, _Matrix<_type>& dst, Size size, bool normalize)
 	{
@@ -104,7 +104,7 @@ namespace z {
 				for (int ii = 0; ii < size.width; ++ii) {
 					for (int jj = 0; jj < size.height; ++jj) {
 
-						// è·å–ä¸€ä¸ªåƒç´ çš„åœ°å€
+						// »ñÈ¡Ò»¸öÏñËØµÄµØÖ·
 						ptr = src.ptr(i - m + ii, j - n + jj);
 
 						if (ptr) {
@@ -137,8 +137,8 @@ namespace z {
 	}
 
 	/**
-	 * @berif é«˜æ–¯æ»¤æ³¢
-	 * @param[in] normalizeï¼Œæ˜¯å¦å½’ä¸€åŒ–ï¼Œå·ç§¯æ ¸å„é¡¹å’Œä¸ä¸º1æ—¶é™¤ä»¥å’Œã€‚
+	 * @berif ¸ßË¹ÂË²¨
+	 * @param[in] normalize£¬ÊÇ·ñ¹éÒ»»¯£¬¾í»ıºË¸÷ÏîºÍ²»Îª1Ê±³ıÒÔºÍ¡£
 	 */
 	template <class _type> void GaussianBlur(_Matrix<_type>&src, _Matrix<_type> & dst, Size size, double sigmaX, double sigmaY)
 	{
@@ -165,7 +165,7 @@ namespace z {
 	
 
 	/**
-	 * @berif ä¸­å€¼æ»¤æ³¢
+	 * @berif ÖĞÖµÂË²¨
 	 */
 	template <class _type> void medianFilter(_Matrix<_type>&src, _Matrix<_type>& dst, Size size)
 	{
@@ -207,7 +207,7 @@ namespace z {
 				else
 					valindex = valDefault;
 				for (int k = 0; k < src.chs; ++k) {
-					sort(ker[k], ker[k] + cnt);  // å 95%ä»¥ä¸Šçš„æ—¶é—´
+					sort(ker[k], ker[k] + cnt);  // Õ¼95%ÒÔÉÏµÄÊ±¼ä
 					dstPtr[k] = ker[k][valindex];
 				}
 
@@ -221,7 +221,7 @@ namespace z {
 	}
 
 
-	//////////////////////////////////////å½¢æ€å­¦æ»¤æ³¢//////////////////////////////////////
+	//////////////////////////////////////ĞÎÌ¬Ñ§ÂË²¨//////////////////////////////////////
 	template <class _type> void morphOp(int code, _Matrix<_type>& src, _Matrix<_type>&dst, Size size)
 	{
 		int area = size.area();
@@ -258,7 +258,7 @@ namespace z {
 				}
 				dstPtr = dst.ptr(i, j);
 				switch (code) {
-					// è…èš€ï¼Œ å±€éƒ¨æœ€å°å€¼
+					// ¸¯Ê´£¬ ¾Ö²¿×îĞ¡Öµ
 				case MORP_ERODE:
 					for (int k = 0; k < src.chs; ++k) {
 						_min(ker[k], cnt, minVal);
@@ -266,7 +266,7 @@ namespace z {
 					}
 					break;
 
-					// è†¨èƒ€ï¼Œå±€éƒ¨æœ€å¤§å€¼
+					// ÅòÕÍ£¬¾Ö²¿×î´óÖµ
 				case MORP_DILATE:
 					for (int k = 0; k < src.chs; ++k) {
 						_max(ker[k], cnt, maxVal);
@@ -351,7 +351,7 @@ namespace z {
 	}
 
 	/**
-	 * @berif å°†å¤šé€šé“çŸ©é˜µåˆ†ç¦»ç§°ä¸ºå•é€šé“çš„çŸ©é˜µ
+	 * @berif ½«¶àÍ¨µÀ¾ØÕó·ÖÀë³ÆÎªµ¥Í¨µÀµÄ¾ØÕó
 	 */
 	template <class _type> void spilt(_Matrix<_type> & src, std::vector<_Matrix<_type>> & mv)
 	{
@@ -375,7 +375,7 @@ namespace z {
 		_log_("spilt end\n");
 	}
 	/**
-	 * @berif åˆå¹¶ä¸¤ä¸ª1é€šé“çš„çŸ©é˜µ
+	 * @berif ºÏ²¢Á½¸ö1Í¨µÀµÄ¾ØÕó
 	 */
 	template <class _type> void merge(_Matrix<_type> & src1, _Matrix<_type> & src2, _Matrix<_type> & dst)
 	{
@@ -394,7 +394,7 @@ namespace z {
 	}
 
 	/**
-	 * @berif åˆå¹¶é€šé“ï¼Œé¡ºåºæŒ‰ç…§srcä¸­çš„é¡ºåº
+	 * @berif ºÏ²¢Í¨µÀ£¬Ë³Ğò°´ÕÕsrcÖĞµÄË³Ğò
 	 */
 	template <class _type> void merge(std::vector<_Matrix<_type>> & src, _Matrix<_type> & dst)
 	{
@@ -405,17 +405,17 @@ namespace z {
 		int cols = src.at(0).cols;
 		int chs = src.size();
 
-		// æ£€æŸ¥
+		// ¼ì²é
 		for (int i = 1; i < chs; ++i) {
 			if(src.at(i).rows != rows || src.at(i).cols != cols)
 				_log_("src.at(i).rows != rows || src.at(i).cols != cols");
 		}
 
-		// æ˜¯å¦éœ€è¦åˆ†é…å†…å­˜
+		// ÊÇ·ñĞèÒª·ÖÅäÄÚ´æ
 		if(dst.rows != rows || dst.cols != cols || dst.chs != chs)
 			dst.create(rows, cols, chs);
 
-		// åˆå¹¶
+		// ºÏ²¢
 		for (int i = 0; i < rows; ++i) {
 			for (int j = 0; j < cols; ++j) {
 				for (int k = 0; k < chs; ++k) {

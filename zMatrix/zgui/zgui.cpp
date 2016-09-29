@@ -13,8 +13,8 @@ GLOBAL(void) write_JPEG_file(char * filename, z::Matrix8u & img, int quality);
 namespace z{
 
 /**
- * @berif è‡ªå·±å®ç°çš„è¯»å–jpegçš„å›¾ç‰‡
- * @attention æœ¬å‡½æ•°æš‚æ—¶åªèƒ½è¯»å–jpegæ ‡å‡†çš„å›¾ç‰‡ï¼Œéœ€è¦è¯»å–å…¶ä»–ç±»å‹çš„å›¾ç‰‡è¯·ä½¿ç”¨openCVçš„imreadå‡½æ•°
+ * @berif ×Ô¼ºÊµÏÖµÄ¶ÁÈ¡jpegµÄÍ¼Æ¬
+ * @attention ±¾º¯ÊıÔİÊ±Ö»ÄÜ¶ÁÈ¡jpeg±ê×¼µÄÍ¼Æ¬£¬ĞèÒª¶ÁÈ¡ÆäËûÀàĞÍµÄÍ¼Æ¬ÇëÊ¹ÓÃopenCVµÄimreadº¯Êı
  */
 Matrix8u imread(char *filename)
 {

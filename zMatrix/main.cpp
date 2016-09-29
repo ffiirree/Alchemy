@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 
 	line(img, Point(10, 20), Point(100, 68), Scalar(255, 255, 255));
 
-	// 显示彩色图片
+	// ��ʾ��ɫͼƬ
 	imshow("hello", img);
 	waitKey(0);
 	return 0;
