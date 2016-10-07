@@ -33,6 +33,16 @@ void _Matrix<_type>::initEmpty()
 	chs = 0;
 }
 
+template<class _type>
+inline void _Matrix<_type>::swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1) {
+	_type temp;
+	for (uint8_t k = 0; k < chs; ++k) {
+		temp = ptr(i0, j0)[k];
+		ptr(i0, j0)[k] = ptr(i1, j1)[k];
+		ptr(i1, j1)[k] = temp;
+	}
+}
+
 /**
  * @berif 真正的创建矩阵，分配内存
  * @attention 所有矩阵数据的分配都应该通过调用该函数实现（调用该函数一般意味着重新创建函数）
@@ -618,12 +628,12 @@ std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item)
 			else
 				os << item[i][j];
 			if (item.cols * item.chs != j + 1)
-				os << ',';
+				os << ", ";
 		}
 		if (item.rows != i + 1)
-			os << ';' << endl << ' ';
+			os << ';' << std::endl << ' ';
 		else
-			os << ']' << endl;
+			os << ']' << std::endl;
 	}
 	return os;
 }
@@ -782,6 +792,55 @@ _Matrix<_type> operator-(_type delta, _Matrix<_type> &m)
 	return m * (-1) + delta;
 }
 
+
+/////////////////////////////////////////_Complex_////////////////////////////////////////////
+template <class _Tp> inline _Complex_<_Tp>::_Complex_() :re(0), im(0) {}
+template <class _Tp> inline _Complex_<_Tp>::_Complex_(_Tp _re, _Tp _im) : re(_re), im(_im) {}
+template <class _Tp> inline _Complex_<_Tp>::_Complex_(const _Complex_&c) : re(c.re), im(c.im) {}
+template <class _Tp> _Complex_<_Tp> & _Complex_<_Tp>::operator=(const _Complex_ &c) { re = c.re; im = c.im; return *this; };
+
+template <class _Tp> bool operator ==(const _Complex_<_Tp> & c1, const _Complex_<_Tp> &c2)
+{
+	return (c1.re == c2.re && c1.im == c2.im);
+}
+template <class _Tp> bool operator !=(const _Complex_<_Tp> & c1, const _Complex_<_Tp> &c2)
+{
+	return !(c1 == c2);
+}
+
+template <class _Tp> _Complex_<_Tp> operator*(const _Complex_<_Tp> & c1, const _Complex_<_Tp> & c2)
+{
+	return _Complex_<_Tp>(c1.re * c2.re - c1.im * c2.im, c1.im * c2.re + c1.re * c2.im);
+}
+
+template <class _Tp> _Complex_<_Tp> operator+(const _Complex_<_Tp> & c1, const _Complex_<_Tp> &c2)
+{
+	return _Complex_<_Tp>(c1.re + c2.re, c1.im + c2.im);
+}
+
+template <class _Tp> _Complex_<_Tp> operator-(const _Complex_<_Tp> & c1, const _Complex_<_Tp> &c2)
+{
+	return _Complex_<_Tp>(c1.re - c2.re, c1.im - c2.im);
+}
+
+template <class _Tp> _Complex_<_Tp>& _Complex_<_Tp>::operator+=(const _Complex_<_Tp> & c)
+{
+	re += c.re;
+	im += c.im;
+	return *this;
+}
+
+template <class _Tp> _Complex_<_Tp>& _Complex_<_Tp>::operator-=(const _Complex_<_Tp> & c)
+{
+	re -= c.re;
+	im -= c.im;
+	return *this;
+}
+
+template <class _Tp> std::ostream & operator<<(std::ostream & os, const _Complex_<_Tp> & c)
+{
+	os << "(" << c.re << ", " << c.im << ")";
+}
 
 }
 

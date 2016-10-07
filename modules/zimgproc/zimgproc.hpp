@@ -356,7 +356,7 @@ namespace z {
 	template <class _type> void spilt(_Matrix<_type> & src, std::vector<_Matrix<_type>> & mv)
 	{
 		_log_("init\n");
-		mv = vector<_Matrix<_type>>(src.chs);
+		mv = std::vector<_Matrix<_type>>(src.chs);
 
 		for (int i = 0; i < src.chs; ++i) {
 			mv.at(i).create(src.rows, src.cols, 1);

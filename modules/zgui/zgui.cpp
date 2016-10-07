@@ -5,7 +5,7 @@
 
 
 extern "C" {
-#include <zgui\jpeglib.h>
+#include <jpeglib.h>
 GLOBAL(int) read_JPEG_file(char * filename, z::Matrix8u & img);
 GLOBAL(void) write_JPEG_file(char * filename, z::Matrix8u & img, int quality);
 }

@@ -16,7 +16,7 @@
 
 
 // 是否输出自定义的DEBUG信息
-#define DEBUG
+//#define DEBUG
 
 
 // !是否使用了openCV
