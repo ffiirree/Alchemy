@@ -23,6 +23,11 @@
 #include <opencv2\highgui\highgui.hpp>
 #endif
 
+
+typedef enum {
+	DFT = -0x01, IDFT = 0x01
+}Ft;
+
 #ifdef __cplusplus
 namespace z{
 
@@ -45,13 +50,19 @@ void copyToArray(Matrix8u &src, char * arr);
 template <class _type> void copyMakeBorder(_Matrix<_type> & src, _Matrix<_type> & dst, int top, int bottom, int left, int right);
 
 // 离散傅里叶DFT
-void _dft(Matrix & src, Matrix & dst);
-void dft(Matrix8u & src, Matrix & dst);
+void _dft(Matrix & src);
+void dft(Matrix & src, Matrix & dst);
+void idft(Matrix & src, Matrix & dst);
+
+void bitRevCols(Matrix & src);
+void bitRevRows(Matrix & src);
+
+
 
 // 快速傅里叶变换FFT
-void _fft(Matrix & src, Matrix & dst);
-void fft(Matrix8u & src, Matrix & dst);
-//unsigned int bit_reverse(unsigned int n);
+void _fft(Matrix & src, Ft ft);
+void fft(Matrix & src, Matrix & dst);
+void ifft(Matrix & src, Matrix & dst);
 
 // 线性滤波
 template <class _type> void blur(_Matrix<_type>& src, _Matrix<_type>& dst, Size size);

@@ -10,6 +10,7 @@
 #include <Windows.h>
 #include <iostream>
 #include "black.h"
+#include "config.h"
 
 #ifndef _DEBUG_H
 #define _DEBUG_H

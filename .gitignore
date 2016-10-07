@@ -246,5 +246,7 @@ ModelManifest.xml
 
 
 .vscode/
+.vs
 
-!zMatrix/libjpeg.lib
+!3rdparty/libjpeg/lib/libjpeg.lib
+!bin/test.jpeg

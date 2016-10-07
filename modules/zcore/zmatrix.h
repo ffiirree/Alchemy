@@ -116,6 +116,7 @@ public:
 
 	inline int channels() { return chs; }
 
+	void swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1);
 	
 	int rows, cols;
 	_type *data;
@@ -150,7 +151,34 @@ template <class _type> _Matrix<_type> operator-(_type delta, _Matrix<_type> &m);
 
 template <class _type> void conv(_Matrix<_type> &src, _Matrix<_type> &dst, Matrix &core);
 
+/////////////////////////////////////////_Complex_////////////////////////////////////////////
+template <class _Tp> class _Complex_
+{
+public:
+	_Complex_();
+	_Complex_(_Tp _re, _Tp _im);
+	_Complex_(const _Complex_ & c);
+	_Complex_ &operator=(const _Complex_ &c);
 
+	_Complex_<_Tp>& operator+=(const _Complex_<_Tp> & c);
+	_Complex_<_Tp>& operator-=(const _Complex_<_Tp> & c);
+
+	_Tp re, im;
+};
+template <class _Tp> bool operator ==(const _Complex_<_Tp> & c1, const _Complex_<_Tp> &c2);
+template <class _Tp> bool operator !=(const _Complex_<_Tp> & c1, const _Complex_<_Tp> &c2);
+template <class _Tp> _Complex_<_Tp> operator * (const _Complex_<_Tp> & c1, const _Complex_<_Tp> &c2);
+template <class _Tp> _Complex_<_Tp> operator + (const _Complex_<_Tp> & c1, const _Complex_<_Tp> &c2);
+template <class _Tp> _Complex_<_Tp> operator - (const _Complex_<_Tp> & c1, const _Complex_<_Tp> &c2);
+
+template <class _Tp> std::ostream & operator <<(std::ostream & os, const _Complex_<_Tp> & c);
+
+
+typedef _Complex_<signed char> Complex8s;
+typedef _Complex_<signed int> Complex32s;
+typedef _Complex_<float> Complex32f;
+typedef _Complex_<double> Complex64f;
+typedef Complex64f Complex;
 
 
 /////////////////////////////////////////_Point////////////////////////////////////////////
@@ -343,9 +371,9 @@ typedef _Size<double>   Size2d;
 typedef _Size<float>    Sizef;
 typedef _Size<int>      Size;
 
+}
 #endif // !__cplusplus
 
-}
 #include "operations.hpp"
 
 #endif  // !_ZMATRIX_H
