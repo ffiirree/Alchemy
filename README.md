@@ -10,24 +10,19 @@ zMatrix 是一个使用C++编写的图像处理库，它的基础是_Matrix矩�
 
 <br><br>
 
-# 使用(Windows)
-### 开发环境
-* cmake 3.5版本以上，下载地址：[https://cmake.org/download/](https://cmake.org/download/)
-* 最好Visual Studio 2015，其他平台未测试
+# USGE
+### 环境变量
+```
+    OPENCV_DIR，值为OpenCV的根目录
+    (可选：如果使用Kinect， KINECTSDK20_DIR，Kinect的根目录，并在CMakeLists.txt中打开配置)
+```
 
-### 使用方式
-#### 第一种
-* 不使用CMake-GUI，进入build文件夹(没有新建一个)下，使用命令 `cmake ..`
-
-#### 第二种(默认VS2015)
-* 使用CMake-GUI，源文件选择工程根目录，输出文件选择build文件夹(没有新建一个)
-* 编译器选择微软的，一般默认就是，点击Configure，没有问题点击Cenerate生成工程
-* 进入build打开工程
-
-### 注意
-* 需要两个环境变量，`OPENCV_DIR`指向openCV的根目录, `KINECTSDK20_DIR`指向Kinect SDK的根目录，一般Kinect的安装完会自动添加，<br>
-  opencv的需要手动添加
-* 如果不需要Kinect的部分，可以在CMakeLists.txt中修改编译规则，屏蔽掉这一部分
+### 生成工程
+```
+    mkdir build
+    cd build
+    cmake ..
+```
 
 <br><br>
 
