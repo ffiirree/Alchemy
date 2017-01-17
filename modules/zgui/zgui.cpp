@@ -70,6 +70,24 @@ void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thic
 		y += yi;
 	}
 }
+void lineBresenham(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thickness)
+{
+	// 1、计算在x、y方向上的位移
+	int dx = pt2.x - pt1.x;
+	int dy = pt2.y - pt1.y;
+	int steps = 0;
+
+	// 1、循环次数
+	if (abs(dx) > abs(dy)) {
+		steps = abs(dx);
+	}
+	else {
+		steps = dy;
+	}
+
+	// 
+}
+
 
 void line(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thickness)
 {

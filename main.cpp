@@ -16,32 +16,35 @@ using namespace z;
 
 int main(int argc, char *argv[])
 {
-	z::Matrix test(4, 8);
-	test = { 0, 1, 2, 3, 4, 5, 6, 7,
-		1, 2, 3, 4, 5, 6, 7, 0,
-		2, 3, 4, 5, 6, 7, 0, 1,
-		3, 4, 5, 6, 7, 0, 1, 2 };
+	Matrix8u test = imread("test.jpeg");
 
-	// 输出测试数据
-	cout << "Test Matrix is:" << endl << test << endl;
+	//line(test, Point(0, 0), Point(300, 400), Scalar(255, 0, 0));
 
-	z::Matrix dft_test = test.clone();
-	z::Matrix dft_dst, idft_dst;
+	//imshow("test", test);
+	//waitKey(0);
 
-	// 普通离散傅里叶变换
-	z::dft(dft_test, dft_dst);
-	cout << "z_dft = " << endl << dft_dst << endl;
+	Matrix32s ker(3, 3, 1), ker2(3, 3, 1);
+	Matrix8u dst, dst2;
+	ker = {
+		1, 0, 0,
+		0, 1, 0,
+		-200, -200, 1
+	};
+	ker2 = {
+		1, 0, 0,
+		0, 1, 0,
+		200, 200, 1
+	};
 
-	z::idft(dft_dst, idft_dst);
-	cout << "z_idft = " << endl << idft_dst << endl;
 
-	// 快速傅里叶变换
-	// 结果应该和DFT的结果一样(会有很小的差别)
-	z::Matrix dst;
-	z::fft(test, dst);
-	cout << "z_fft = " << endl << dst << endl;
+	remap(test, ker, dst);
+	remap(test, ker2, dst2);
 
-	getchar();
+	imshow("org", test);
+	imshow("hou", dst);
+	imshow("hou2", dst2);
+
+	waitKey(0);
 
 	return 0;
 }

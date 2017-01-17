@@ -432,6 +432,28 @@ void Canny(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2, int
 	double_threashold(temp2, dst, threshold1, threshold2);
 }
 
+void remap(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst)
+{
+	if (!dst.equalSize(src)) {
+		dst.create(src.rows, src.cols, src.chs);
+	}
+	dst.zeros();
+
+	Matrix32s srcCoord(1,3,1), dstCoord;
+
+	for (int i = 0; i < src.rows; ++i) {
+		for (int j = 0; j < src.cols; ++j) {
+			srcCoord = { i, j, 1 };
+			dstCoord = srcCoord * kernel;
+
+			for (int k = 0; k < src.chs && (dstCoord[0][0] < dst.rows && dstCoord[0][1] < dst.cols &&  dstCoord[0][0] > 0 && dstCoord[0][1] > 0); ++k) {
+				dst.ptr(dstCoord[0][0], dstCoord[0][1])[k] = src.ptr(i, j)[k];
+			}
+		
+		}
+	}
+}
+
 
 } // ! namespace z
 
