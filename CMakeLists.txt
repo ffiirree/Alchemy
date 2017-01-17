@@ -42,7 +42,7 @@ elseif (WIN32)
 	
 	# 库文件目录，OpenCV + Kinect SDK 2.0
 	set(OPENCV_LIB_DIRS $ENV{OPENCV_DIR}/build/x86/vc12/lib)
-	set(KINECT_LIB_DIRS $ENV{KINECTSDK20_DIR}/Lib/x86)
+	#set(KINECT_LIB_DIRS $ENV{KINECTSDK20_DIR}/Lib/x86)
 	set(LIBJPEG_LIB_DIRS ${PROJECT_SOURCE_DIR}/3rdparty/libjpeg/lib)
 	
 	set(OPENCV_LIBS "${OPENCV_LIB_DIRS}/opencv_objdetect2413.lib;${OPENCV_LIB_DIRS}/opencv_ts2413.lib;${OPENCV_LIB_DIRS}/opencv_video2413.lib"
@@ -50,8 +50,9 @@ elseif (WIN32)
 		"${OPENCV_LIB_DIRS}/opencv_superres2413.lib;${OPENCV_LIB_DIRS}/opencv_videostab2413.lib;${OPENCV_LIB_DIRS}/opencv_calib3d2413.lib;${OPENCV_LIB_DIRS}/opencv_contrib2413.lib"
 		"${OPENCV_LIB_DIRS}/opencv_core2413.lib;${OPENCV_LIB_DIRS}/opencv_features2d2413.lib;${OPENCV_LIB_DIRS}/opencv_flann2413.lib;${OPENCV_LIB_DIRS}/opencv_gpu2413.lib"
 		"${OPENCV_LIB_DIRS}/opencv_highgui2413.lib;${OPENCV_LIB_DIRS}/opencv_imgproc2413.lib;${OPENCV_LIB_DIRS}/opencv_legacy2413.lib;${OPENCV_LIB_DIRS}/opencv_ml2413.lib")
-	set(KINECT_LIBS  "${KINECT_LIB_DIRS}/Kinect20.lib")
+	#set(KINECT_LIBS  "${KINECT_LIB_DIRS}/Kinect20.lib")
 	set(LIBJPEG_LIBS "${LIBJPEG_LIB_DIRS}/libjpeg.lib")
 	
-	target_link_libraries(zMatrix  zgui zimgproc zmatch zkinect ${OpenCV_LIBS} ${KINECT_LIBS} ${LIBJPEG_LIBS} )
+	#target_link_libraries(zMatrix  zgui zimgproc zmatch zkinect ${OpenCV_LIBS} ${KINECT_LIBS} ${LIBJPEG_LIBS} )
+	target_link_libraries(zMatrix  zgui zimgproc zmatch zkinect ${OpenCV_LIBS} ${LIBJPEG_LIBS} )
 endif()

@@ -17,6 +17,8 @@
 */
 
 #include "zcore\config.h"
+
+#ifdef USING_KINECT
 #include <Kinect.h>
 #include <opencv2\core.hpp>
 
@@ -118,6 +120,6 @@ private:
 };
 
 
-
+#endif // USING_KINECT
 #endif // !_KREADER_H
 

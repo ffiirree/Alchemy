@@ -1,4 +1,6 @@
 #include"KinectSensor.h"
+
+#ifdef USING_KINECT
 #include <iostream>
 #include <malloc.h>
 #include "zcore\debug.h"
@@ -470,3 +472,4 @@ HRESULT KinectSensor::isNewFrameArrived(FrameTypes frameTypes)
 		return S_FALSE;
 	}
 }
+#endif // USING_KINECT

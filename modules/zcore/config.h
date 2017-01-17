@@ -24,5 +24,8 @@
 #define OPENCV
 #endif
 
+//  «∑Ò π”√Kinect
+//#define USING_KINECT
+
 #endif //!_CONFIG_DEFAULT_H
 
