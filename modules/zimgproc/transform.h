@@ -24,7 +24,8 @@
 #ifdef __cplusplus
 namespace z {
 // 图像几何变换
-void remap(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst);
+// 平移
+void translation(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst);
 
 
 // 边缘检测技术

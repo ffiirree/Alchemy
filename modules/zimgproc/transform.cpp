@@ -432,7 +432,7 @@ void Canny(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2, int
 	double_threashold(temp2, dst, threshold1, threshold2);
 }
 
-void remap(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst)
+void translation(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst)
 {
 	if (!dst.equalSize(src)) {
 		dst.create(src.rows, src.cols, src.chs);
