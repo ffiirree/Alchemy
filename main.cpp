@@ -14,29 +14,18 @@
 int main(int argc, char *argv[])
 {
 	z::Matrix8u test = z::imread("test.jpeg");
+    cv::imshow("origin image", cv::Mat(test));
 
-	z::Matrix32s ker(3, 3, 1), ker2(3, 3, 1);
-	z::Matrix8u dst, dst2;
-	ker = {
-		1, 0, 0,
-		0, 1, 0,
-		-200, -200, 1
-	};
-	ker2 = {
-		1, 0, 0,
-		0, 1, 0,
-		200, 200, 1
-	};
+    z::Matrix8u gray(test.size(), 1);
+    z::cvtColor(test, gray, BGR2GRAY);
 
+    cv::imshow("gray", cv::Mat(gray));
 
-	z::translation(test, ker, dst);
-	z::translation(test, ker2, dst2);
+    auto bin_image = gray > 150;
+    cv::imshow("binary image", cv::Mat(bin_image));
+	
 
-	z::imshow("org", test);
-	z::imshow("hou", dst);
-	z::imshow("hou2", dst2);
-
-	z::waitKey(0);
+    cv::waitKey(0);
 
 	return 0;
 }

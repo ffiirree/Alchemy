@@ -149,6 +149,11 @@ template <class _type> _Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_typ
 template <class _type> _Matrix<_type> operator-(_Matrix<_type> &m, _type delta);
 template <class _type> _Matrix<_type> operator-(_type delta, _Matrix<_type> &m);
 
+template <class _T1, class _T2> _Matrix<_T1> operator>(_Matrix<_T1> &m, _T2 threshold);
+template <class _T1, class _T2> _Matrix<_T1> operator<(_Matrix<_T1> &m, _T2 threshold);
+template <class _T1, class _T2> _Matrix<_T1> operator>=(_Matrix<_T1> &m, _T2 threshold);
+template <class _T1, class _T2> _Matrix<_T1> operator<=(_Matrix<_T1> &m, _T2 threshold);
+
 template <class _type> void conv(_Matrix<_type> &src, _Matrix<_type> &dst, Matrix &core);
 
 /////////////////////////////////////////_Complex_////////////////////////////////////////////

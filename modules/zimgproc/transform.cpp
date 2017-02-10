@@ -455,5 +455,11 @@ void translation(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst)
 }
 
 
+void findContours(Matrix8u &src, Matrix8u &dst)
+{
+
+}
+
+
 } // ! namespace z
 

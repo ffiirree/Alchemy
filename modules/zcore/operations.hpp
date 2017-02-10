@@ -792,6 +792,58 @@ _Matrix<_type> operator-(_type delta, _Matrix<_type> &m)
 	return m * (-1) + delta;
 }
 
+template <class _T1, class _T2> _Matrix<_T1> operator>(_Matrix<_T1> &m, _T2 threshold)
+{
+    _Matrix<_T1> temp(m.rows, m.cols, m.chs);
+    temp.zeros();
+
+    for (size_t i = 0; m.datastart + i < m.dataend; ++i) {
+        if (m.data[i] > threshold)
+            temp.data[i] = 255;
+    }
+
+    return temp;
+}
+
+
+template <class _T1, class _T2> _Matrix<_T1> operator<(_Matrix<_T1> &m, _T2 threshold)
+{
+    _Matrix<_T1> temp(m.rows, m.cols, m.chs);
+    temp.zeros();
+
+    for (size_t i = 0; m.datastart + i < m.dataend; ++i) {
+        if (m.data[i] < threshold)
+            temp.data[i] = 255;
+    }
+
+    return temp;
+}
+
+template <class _T1, class _T2> _Matrix<_T1> operator>=(_Matrix<_T1> &m, _T2 threshold)
+{
+    _Matrix<_T1> temp(m.rows, m.cols, m.chs);
+    temp.zeros();
+
+    for (size_t i = 0; m.datastart + i < m.dataend; ++i) {
+        if (m.data[i] >= threshold)
+            temp.data[i] = 255;
+    }
+
+    return temp;
+}
+
+template <class _T1, class _T2> _Matrix<_T1> operator<=(_Matrix<_T1> &m, _T2 threshold)
+{
+    _Matrix<_T1> temp(m.rows, m.cols, m.chs);
+    temp.zeros();
+
+    for (size_t i = 0; m.datastart + i < m.dataend; ++i) {
+        if (m.data[i] <= threshold)
+            temp.data[i] = 255;
+    }
+
+    return temp;
+}
 
 /////////////////////////////////////////_Complex_////////////////////////////////////////////
 template <class _Tp> inline _Complex_<_Tp>::_Complex_() :re(0), im(0) {}
