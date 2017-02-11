@@ -53,11 +53,14 @@ zMatrix 是一个使用C++编写的图像处理库，它的基础是_Matrix矩�
 * 简单的canny边缘检测（sobel算子），彩色和灰度均可，效果不好
 
 ### 离散傅里叶变换
-* dft() 和 idft()
-* fft : 实现了基2快速离散傅里叶变换fft()，ifft未实现
+* `dft()` 和 `idft()`
+* fft : 实现了基2快速离散傅里叶变换`fft()`，`ifft()`未实现
 
 ### 仿射变换
-* translation(), 平移变换
+* `translation()`, 平移变换
+
+### 图像轮廓
+* 寻找轮廓：`findContours()` 和 `findOutermostContours()`
 
 ## Kinect 4 Windows v2 （Events）
 * Kinect获取深度、彩色和红外图像，返回Mat类型的数据
