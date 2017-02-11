@@ -194,7 +194,7 @@ public:
 	_Point(_Tp _x, _Tp _y);
 	_Point(const _Point& pt);
 
-	_Point& operator = (const _Point& pt);
+	_Point<_Tp>& operator = (const _Point<_Tp>& pt);
 
 	_Tp dot(const _Point& pt) const;                    // µã³Ë
 	double cross(const _Point& pt) const;               // ²æ»ý
@@ -205,7 +205,7 @@ public:
 template<class _Tp> inline _Point<_Tp>::_Point() : x(0), y(0) { }
 template<class _Tp> inline _Point<_Tp>::_Point(_Tp _x, _Tp _y) : x(_x), y(_y) { }
 template<class _Tp> inline _Point<_Tp>::_Point(const _Point& pt) : x(pt.x), y(pt.y) { }
-template<class _Tp> _Point<_Tp>& _Point<_Tp>::operator = (const _Point& pt) { x = pt.x; y = pt.y; }
+template<class _Tp> _Point<_Tp>& _Point<_Tp>::operator = (const _Point& pt) { x = pt.x; y = pt.y; return *this; }
 template<class _Tp> _Tp _Point<_Tp>::dot(const _Point& pt) const { return (_Tp)x*pt.x + (_Tp)y*pt.y; }
 template<class _Tp> inline double _Point<_Tp>::cross(const _Point<_Tp>& pt) const
 {
@@ -215,6 +215,25 @@ typedef _Point<int>                 Point2i;
 typedef _Point<double>              Point2f;
 typedef _Point<float>               Point2d;
 typedef _Point<int>                 Point;
+
+template <typename _T> _Point<_T> operator+(_Point<_T> &p1, _Point<_T> &p2) { return{ p1.x + p2.x, p1.y + p2.y };}
+template <typename _T> bool operator==(_Point<_T> &p1, _Point<_T> &p2) { return p1.x == p2.x && p1.y == p2.y; }
+template <typename _T> bool operator!=(_Point<_T> &p1, _Point<_T> &p2) { return !p1 == p2; }
+template <typename _T> bool operator>(_Point<_T> &p1, _Point<_T> &p2) { return p1.x > p2.x && p1.y > p2.y; }
+template <typename _T> bool operator>=(_Point<_T> &p1, _Point<_T> &p2) { return p1.x >= p2.x && p1.y >= p2.y; }
+template <typename _T> bool operator<(_Point<_T> &p1, _Point<_T> &p2) { return p1.x < p2.x && p1.y < p2.y; }
+template <typename _T> bool operator<=(_Point<_T> &p1, _Point<_T> &p2) { return p1.x <= p2.x && p1.y <= p2.y; }
+
+
+template<typename _T> std::ostream &operator<<(std::ostream &os, _Point<_T> &p)
+{
+    if(sizeof(_T) == 1)
+        os << "[" << (int)p.x << ", " << (int)p.y << "]";
+    else 
+        os << "[" << p.x << ", " << p.y << "]";
+
+    return os;
+}
 
 /////////////////////////////////////////_Point3////////////////////////////////////////////
 template<class _Tp> class _Point3

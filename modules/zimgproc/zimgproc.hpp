@@ -207,7 +207,7 @@ namespace z {
 				else
 					valindex = valDefault;
 				for (int k = 0; k < src.chs; ++k) {
-					sort(ker[k], ker[k] + cnt);  // 占95%以上的时间
+					std::sort(ker[k], ker[k] + cnt);  // 占95%以上的时间
 					dstPtr[k] = ker[k][valindex];
 				}
 
