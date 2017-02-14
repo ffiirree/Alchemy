@@ -30,17 +30,21 @@ int main(int argc, char *argv[])
     std::vector<std::vector<z::Point>> contours;
     timer.start();
     z::Matrix8u res(test.rows, test.cols, 3);
-    z::findOutermostContours(bin_image, contours);
+    z::findContours(bin_image, contours);
     std::cout << timer.runtime() << std::endl;
 
+    // ÏÔÊ¾½á¹û
+    int r = 0, g = 200, b = 100;
     for (const auto &c : contours) {
         for (const auto &j : c) {
-            res.ptr(j.x, j.y)[0] = 255;
-            res.ptr(j.x, j.y)[1] = 0;
-            res.ptr(j.x, j.y)[2] = 0;
+            *((z::Scalar *)res.ptr(j.x, j.y)) = z::Scalar(r, g, b);
         }
+        r += 50;
+        b += 100;
+        b += 150;
     }
     
+    // 
     cv::imshow("res", cv::Mat(res));
     cv::waitKey(0);
 	return 0;
