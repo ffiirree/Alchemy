@@ -23,13 +23,16 @@ int main(int argc, char *argv[])
 
     // 二值化
     auto bin_image = gray > 150;
+    auto bin_image_2 = gray > 150;
     cv::imshow("binary image", cv::Mat(bin_image));
+    
 
     // 寻找轮廓
     TimeStamp timer;
     std::vector<std::vector<z::Point>> contours;
     timer.start();
     z::Matrix8u res(test.rows, test.cols, 3);
+    res.zeros();
     z::findContours(bin_image, contours);
     std::cout << timer.runtime() << std::endl;
 
@@ -39,13 +42,26 @@ int main(int argc, char *argv[])
         for (const auto &j : c) {
             *((z::Scalar *)res.ptr(j.x, j.y)) = z::Scalar(r, g, b);
         }
-        r += 50;
-        b += 100;
-        b += 150;
+        r += 50, b += 100, b += 150;
     }
-    
-    // 
-    cv::imshow("res", cv::Mat(res));
+    cv::imshow("findContours", cv::Mat(res));
+
+    // 寻找最外轮廓
+    contours.clear();
+    timer.start();
+    z::findOutermostContours(bin_image_2, contours);
+    std::cout << timer.runtime() << std::endl;
+
+    // 显示结果
+    res.zeros();
+    for (const auto &c : contours) {
+        for (const auto &j : c) {
+            *((z::Scalar *)res.ptr(j.x, j.y)) = z::Scalar(r, g, b);
+        }
+        r += 50, b += 100, b += 150;
+    }
+    cv::imshow("findOutermostContours", cv::Mat(res));
+     
     cv::waitKey(0);
 	return 0;
 }
