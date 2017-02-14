@@ -8,5 +8,7 @@ if (WIN32)
 	include_directories(${KINECT_INCLUDE})
 endif()
 
+file(GLOB_RECURSE HEADERS *.h)
+source_group("Header Files" FILES ${HEADERS})
 aux_source_directory(. ZKINECT_SRCS)
-add_library(zkinect STATIC ${ZKINECT_SRCS})
+add_library(zkinect STATIC ${ZKINECT_SRCS} ${HEADERS})

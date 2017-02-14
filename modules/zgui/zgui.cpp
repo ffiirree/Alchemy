@@ -6,6 +6,7 @@
 
 extern "C" {
 #include <jpeglib.h>
+#include <setjmp.h>
 GLOBAL(int) read_JPEG_file(char * filename, z::Matrix8u & img);
 GLOBAL(void) write_JPEG_file(char * filename, z::Matrix8u & img, int quality);
 }
@@ -49,7 +50,7 @@ int waitKey(int delay)
 
 void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thickness)
 {
-	float x = pt1.x, y = pt1.y;
+	float x = static_cast<float>(pt1.x), y = static_cast<float>(pt1.y);
 	int dx = pt2.x - pt1.x;
 	int dy = pt2.y - pt1.y;
 	float steps = 0, xi, yi;
@@ -64,7 +65,7 @@ void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thic
 
 	for (int i = 0; i < steps;++i) {
 		for (int k = 0; k < img.chs; ++k) {
-			img.ptr(x, y)[img.chs - k - 1] = color.v[k];
+			img.ptr(static_cast<int>(x), static_cast<int>(y))[img.chs - k - 1] = color.v[k];
 		}
 		x += xi;
 		y += yi;

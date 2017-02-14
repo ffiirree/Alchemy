@@ -51,7 +51,7 @@ void convertImage(Matrix8u *src, Matrix8u *dst, int flags)
 void copyToArray(Matrix8u &src, char * arr)
 {
 	int dataSize = src.size()* src.chs;
-	for (size_t i = 0; i < dataSize; ++i) {
+	for (int i = 0; i < dataSize; ++i) {
 		arr[i] = src.data[i];
 	}
 }

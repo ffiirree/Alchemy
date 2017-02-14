@@ -52,7 +52,6 @@ int zNamedWindow(const char *name, int flags)
 {
 	HWND hWnd;
 	zWindow * window;
-	MSG msg;
 	DWORD style = WS_VISIBLE | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU;
 	int nameLen = 0;
 	zRect rect;

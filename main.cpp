@@ -1,9 +1,5 @@
 #include <iostream>
-#include <opencv2\core.hpp>
-#include <opencv2\highgui\highgui.hpp>
-#include <opencv2\imgproc\imgproc.hpp>
-#include <string>
-#include <ctime>  
+#include <opencv2\opencv.hpp>
 
 #include "zcore\zcore.h"
 #include "zimgproc\zimgproc.h"
@@ -30,13 +26,22 @@ int main(int argc, char *argv[])
     cv::imshow("binary image", cv::Mat(bin_image));
 
     // Ñ°ÕÒÂÖÀª
-    TimeStamp time;
+    TimeStamp timer;
     std::vector<std::vector<z::Point>> contours;
-    time.start();
-    z::findContours(bin_image, contours);
-    time.runtime();
-    cv::imshow("res", cv::Mat(bin_image));
+    timer.start();
+    z::Matrix8u res(test.rows, test.cols, 3);
+    z::findOutermostContours(bin_image, contours);
+    std::cout << timer.runtime() << std::endl;
+
+    for (const auto &c : contours) {
+        for (const auto &j : c) {
+            res.ptr(j.x, j.y)[0] = 255;
+            res.ptr(j.x, j.y)[1] = 0;
+            res.ptr(j.x, j.y)[2] = 0;
+        }
+    }
     
+    cv::imshow("res", cv::Mat(res));
     cv::waitKey(0);
 	return 0;
 }

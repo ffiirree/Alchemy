@@ -460,16 +460,17 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
 {
     std::vector<Point> middle_res;
     // 二进制化
-    for (int i = 0; i < src.rows; ++i)
-        for (int j = 0; j < src.cols; ++j)
-            if (src.ptr(i, j)[0])
-                src.ptr(i, j)[0] = 1;
+    for (int i = src.rows * src.cols; i >= 0; --i)
+            if (src.data[i])
+                src.data[i] = 1;
     
     int NBD = 1, LNBD = 1;
-
-    std::vector<Point> stk;
-
     Point p1, p2, p3, p4;
+
+    // 边界上相邻两个点之间的相对位置
+    uint8_t rpos;
+    Point clockwise[8] = { { 0, -1 },{ -1, -1 },{ -1, 0 },{ -1, 1 },{ 0, 1 },{ 1, 1 },{ 1, 0 },{ 1, -1 } };      // 顺时针
+    Point anticlockwise[8] = { { 0, -1 },{ 1, -1 },{ 1, 0 },{ 1, 1 },{ 0, 1 },{ -1, 1 },{ -1, 0 },{ -1, -1 } };  // 逆时针
 
     for (int i = 0; i < src.rows; ++i) {
         for (int j = 0; j < src.cols; ++j) {
@@ -478,6 +479,7 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             // [ 0 | 1 ]
             if ((j - 1 < 0 || !_data(i, j - 1)) && _data(i, j) == 1) {
                 NBD++;
+                rpos = 0;
 
                 if (NBD == 128) goto end;           // overflow
 
@@ -486,6 +488,7 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             // [ >=1 | 0 ]
             else if (_data(i, j) >= 1 && (j + 1 >= src.cols || !_data(i, j + 1))) {
                 NBD++;
+                rpos = 4;
 
                 if (NBD == 128) goto end;           // overflow
 
@@ -498,46 +501,31 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             }
 
             // step (3.1)
-            Point start = { p2.x - i, p2.y - j};
-            int ii = 0;
-            for (; ii < 8; ++ii) {
-                Point temp = start + Point(i, j);
-                if (temp > Point(0, 0) && temp < Point(src.rows, src.cols) && _data(temp.x, temp.y) != 0) {
-                    p1 = temp;
+            int k = 0;
+            for (; k < 8; ++k) {
+                p1 = clockwise[rpos++ & 0x07] + Point(i, j);
+                if (p1.x >= 0 && p1.y >= 0 && p1.x < src.rows && p1.y < src.cols && _data(p1.x, p1.y))
                     break;
-                }
-
-                if (start.x == -1 && start.y != 1)          start.y += 1;
-                else if (start.x != 1 && start.y == 1)      start.x += 1;
-                else if (start.x == 1 && start.y != -1)     start.y -= 1;
-                else if (start.x != -1 && start.y == -1)    start.x -= 1;
             }
-            if (ii == 8) {
+            if (k == 8) {
                 middle_res.push_back({ i, j });
                 _data(i, j) = -NBD;
                 goto next;
             }
+            rpos = 8 - rpos + 1;
 
             // step (3.2)
             p2 = p1, p3 = { i, j };
             
             for (;;) {
-
                 // step (3.3)
-                Point start = { p2.x - p3.x, p2.y - p3.y };
-                for (int ii = 0; ii < 8; ++ii) {
-                    if (start.x != 1 && start.y == -1)          start.x += 1;
-                    else if (start.x == 1 && start.y != 1)      start.y += 1;
-                    else if (start.x != -1 && start.y == 1)     start.x -= 1;
-                    else if (start.x == -1 && start.y != -1)    start.y -= 1;
-
-                    Point temp = start + p3;
-                    if (temp >= Point(0, 0) && temp < Point(src.rows, src.cols) && _data(temp.x, temp.y) != 0) {
-                        p4 = temp;
+                for (int k = 0; k < 8; ++k) {
+                    p4 = anticlockwise[++rpos & 0x07] + p3;
+                    if (p4.x >= 0 && p4.y >= 0 && p4.x < src.rows && p4.y < src.cols && _data(p4.x, p4.y))
                         break;
-                    }   
                 }
-
+                rpos += 4;
+               
                 // step (3.4)
                 if (p3.y + 1 >= src.cols || _data(p3.x, p3.y + 1) == 0) {
                     _data(p3.x, p3.y) = -NBD;
@@ -546,12 +534,14 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
                 else if (_data(p3.x, p3.y) == 1) {
                     _data(p3.x, p3.y) = NBD;
                     middle_res.push_back(p3);
-                }
-                    
+                }   
 
                 // step (3.5)
-                if (p4 == Point(i, j) && p3 == p1)
+                if (p4.x == i && p4.y == j && p3 == p1) {
+                    dst.push_back(middle_res);
+                    middle_res.clear();
                     goto next;
+                }
                 else {
                     p2 = p3;
                     p3 = p4;
@@ -560,79 +550,87 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
 
             // step (4)
         next:
-            if (_data(i, j) != 1) {
-                LNBD = fabs(_data(i, j));
-                if (!middle_res.empty()) {
-                    dst.push_back(middle_res);
-                    middle_res.clear();
-                }
+            if (_data(i, j) != 1 && _data(i, j) != 0) {
+                LNBD = abs(_data(i, j));
             }  
         }
     }
 end:
     return;
 }
+#undef _data
 
+#define _data(x, y) src.ptr(x, y)[0]
 void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
 {
     std::vector<Point> middle_res;
-
-    // 二进制化
-    for (int i = 0; i < src.rows; ++i)
-        for (int j = 0; j < src.cols; ++j)
-            if (*src.ptr(i, j))
-                *src.ptr(i, j) = 1;
-
     int LNBD = 0;
 
-    std::vector<Point> stk;
+    uint8_t rpos = 0;
+    Point clockwise[8] = { { 0, -1 },{ -1, -1 },{ -1, 0 },{ -1, 1 },{ 0, 1 },{ 1, 1 },{ 1, 0 },{ 1, -1 } };      // 顺时针
+    Point anticlockwise[8] = { { 0, -1 },{ 1, -1 },{ 1, 0 },{ 1, 1 },{ 0, 1 },{ -1, 1 },{ -1, 0 },{ -1, -1 } };  // 逆时针
+
+    Point p1, p2, p3, p4;
+
     for (int i = 0; i < src.rows; ++i) {
         LNBD = 0;
         for (int j = 0; j < src.cols; ++j) {
 
-            if (_data(i, j) == 2) LNBD = 2;
-            else if(_data(i, j) == -2) LNBD = -2;
+            // [ 0 | 1] && LNBD == -2(254)
+            if (((j - 1) <= 0 || !_data(i, j - 1)) && _data(i, j) == 255 && (LNBD == 0 || LNBD == 254))
+                p2 = { i, j - 1 };
+            else goto next;
 
-            //outer border: [ 0 | 1 ]
-            if ((j - 1 < 0 || !_data(i, j - 1)) && _data(i, j) == 1 && LNBD <= 0) {
-                stk.push_back({ i, j });
+            // 顺时针查找第一个点
+            int k = 0;
+            for (; k < 8; ++k) {
+                p1 = clockwise[k] + Point(i, j);
+                if (p1.x >= 0 && p1.y >= 0 && p1.x < src.rows && p1.y < src.cols && _data(p1.x, p1.y) != 0)
+                    break;
+            }
+            if (k == 8) {
+                middle_res.push_back({ i, j });
+                _data(i, j) = 254;
+                goto next;
+            }
+            rpos = 8 - k + 1;
 
-                // 4-
-                for (;;) {
-                    auto p = stk.back(); stk.pop_back();
-
-                    // 检查是否是边界点
-                    if (p.x - 1 < 0 || !_data(p.x - 1, p.y))            goto stk_push;
-                    if (p.y - 1 < 0 || !_data(p.x, p.y - 1))            goto stk_push;
-                    if (p.y + 1 >= src.cols || !_data(p.x, p.y + 1))    goto stk_push;
-                    if (p.x + 1 >= src.rows || !_data(p.x + 1, p.y))    goto stk_push;
-
-                    goto  next;
-
-                stk_push:
-                    (p.y + 1 >= src.cols || !_data(p.x, p.y + 1)) ? _data(p.x, p.y) = -2 : _data(p.x, p.y) = 2;        // 标记
-                    middle_res.push_back({ p.x, p.y });
-
-                    // 8-入栈
-                    if (p.x - 1 >= 0 && p.y - 1 >= 0 && (p.x - 1, p.y - 1) == 1)                    stk.push_back({ p.x - 1, p.y - 1 });
-                    if (p.x - 1 >= 0 && _data(p.x - 1, p.y) == 1)                                   stk.push_back({ p.x - 1, p.y });
-                    if (p.x - 1 >= 0 && p.y + 1 < src.cols && _data(p.x - 1, p.y + 1) == 1)         stk.push_back({ p.x - 1, p.y + 1 });
-                    if (p.y - 1 >= 0 && _data(p.x, p.y - 1) == 1)                                   stk.push_back({ p.x, p.y - 1 });
-                    if (p.y + 1 < src.cols && _data(p.x, p.y + 1) == 1)                             stk.push_back({ p.x, p.y + 1 });
-                    if (p.x + 1 < src.rows && p.y - 1 >= 0 && _data(p.x + 1, p.y - 1) == 1)         stk.push_back({ p.x + 1, p.y - 1 });
-                    if (p.x + 1 < src.rows && _data(p.x + 1, p.y) == 1)                             stk.push_back({ p.x + 1, p.y });
-                    if (p.x + 1 < src.rows && p.y + 1 < src.cols && _data(p.x + 1, p.y + 1) == 1)   stk.push_back({ p.x + 1, p.y + 1 });
-
-
-                next:
-                    if (stk.empty()) {
-                        std::cout << middle_res.size() << std::endl;
-                        dst.push_back(middle_res);
-                        middle_res.clear();
-                        LNBD = _data(i, j);
+            // step (3.2)
+            p2 = p1, p3 = { i, j };
+            for (;;) {
+                // step (3.3)
+                for (int k = 0; k < 8; ++k) {
+                    p4 = anticlockwise[++rpos & 0x07] + p3;
+                    if (p4.x >= 0 && p4.y >= 0 && p4.x < src.rows && p4.y < src.cols && _data(p4.x, p4.y))
                         break;
-                    }
                 }
+                rpos += 4;
+
+                // step (3.4)
+                if (p3.y + 1 >= src.cols || _data(p3.x, p3.y + 1) == 0) {
+                    _data(p3.x, p3.y) = 254;
+                    middle_res.push_back(p3);
+                }
+                else if (_data(p3.x, p3.y) == 255) {
+                    _data(p3.x, p3.y) = 2;
+                    middle_res.push_back(p3);
+                }
+
+                // step (3.5)
+                if (p4.x == i && p4.y == j && p3 == p1) {
+                    dst.push_back(middle_res);
+                    middle_res.clear();
+                    goto next;
+                }
+                else {
+                    p2 = p3;
+                    p3 = p4;
+                }
+            }
+
+        next:
+            if (_data(i, j) != 0 && _data(i, j) != 255) {
+                LNBD = _data(i, j);
             }
         }
     }

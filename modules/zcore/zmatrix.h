@@ -216,9 +216,10 @@ typedef _Point<double>              Point2f;
 typedef _Point<float>               Point2d;
 typedef _Point<int>                 Point;
 
+// ！没有做溢出处理，之后加上，类似opencv的saturate_cast函数
 template <typename _T> _Point<_T> operator+(_Point<_T> &p1, _Point<_T> &p2) { return{ p1.x + p2.x, p1.y + p2.y };}
 template <typename _T> bool operator==(_Point<_T> &p1, _Point<_T> &p2) { return p1.x == p2.x && p1.y == p2.y; }
-template <typename _T> bool operator!=(_Point<_T> &p1, _Point<_T> &p2) { return !p1 == p2; }
+template <typename _T> bool operator!=(_Point<_T> &p1, _Point<_T> &p2) { return !(p1 == p2); }
 template <typename _T> bool operator>(_Point<_T> &p1, _Point<_T> &p2) { return p1.x > p2.x && p1.y > p2.y; }
 template <typename _T> bool operator>=(_Point<_T> &p1, _Point<_T> &p2) { return p1.x >= p2.x && p1.y >= p2.y; }
 template <typename _T> bool operator<(_Point<_T> &p1, _Point<_T> &p2) { return p1.x < p2.x && p1.y < p2.y; }

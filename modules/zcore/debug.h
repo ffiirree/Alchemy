@@ -21,7 +21,7 @@
 #if defined(DEBUG)
 #define _log_(str) st(std::cout<<"[" << __FILE__ << "]" << "<" << __func__ << ">" << "(" << __LINE__ << ") : " << str << std::endl;)
 #else
-#define _log_(str)   
+#define _log_(str) 
 #endif
 
 
@@ -38,7 +38,7 @@ public:
 	/**
 	 * @berif 测试结束的地方，并打印从start()开始运行的时间差
 	 */
-	inline void runtime()
+	inline int runtime()
 	{
 		GetLocalTime(&endtime);
 
@@ -46,7 +46,7 @@ public:
 		diff += (endtime.wSecond - starttime.wSecond) * 1000;
 		diff += (endtime.wMinute - starttime.wMinute) * 60000;
 
-		std::cout << "runtime = " << diff << "ms" << std::endl;
+        return  diff;
 	}
 private:
 	SYSTEMTIME starttime, endtime;

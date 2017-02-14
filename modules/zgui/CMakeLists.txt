@@ -11,5 +11,7 @@ if (WIN32)
 	include_directories(${LIBJPEG_INC})
 endif()
 
+file(GLOB_RECURSE HEADERS *.h)
+source_group("Header Files" FILES ${HEADERS})
 aux_source_directory(. ZGUI_SRCS)
-add_library(zgui STATIC ${ZGUI_SRCS})
+add_library(zgui STATIC ${ZGUI_SRCS} ${HEADERS})
