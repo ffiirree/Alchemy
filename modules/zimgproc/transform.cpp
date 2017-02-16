@@ -149,14 +149,14 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
 				else if (ptr[k] > maxt) {
 					dstPtr[k] = 255;
 				}
-				else if ((ptr1 != 0 && ptr1[k] > maxt)
-					|| (ptr2 != 0 && ptr2[k] > maxt)
-					|| (ptr3 != 0 && ptr3[k] > maxt)
-					|| (ptr4 != 0 && ptr4[k] > maxt)
-					|| (ptr5 != 0 && ptr5[k] > maxt)
-					|| (ptr6 != 0 && ptr6[k] > maxt)
-					|| (ptr7 != 0 && ptr7[k] > maxt)
-					|| (ptr8 != 0 && ptr8[k] > maxt)) {
+				else if ((ptr1 != nullptr && ptr1[k] > maxt)
+					|| (ptr2 != nullptr && ptr2[k] > maxt)
+					|| (ptr3 != nullptr && ptr3[k] > maxt)
+					|| (ptr4 != nullptr && ptr4[k] > maxt)
+					|| (ptr5 != nullptr && ptr5[k] > maxt)
+					|| (ptr6 != nullptr && ptr6[k] > maxt)
+					|| (ptr7 != nullptr && ptr7[k] > maxt)
+					|| (ptr8 != nullptr && ptr8[k] > maxt)) {
 					dstPtr[k] = 255;
 				}
 				else {

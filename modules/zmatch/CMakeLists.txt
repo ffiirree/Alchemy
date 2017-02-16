@@ -11,3 +11,5 @@ file(GLOB_RECURSE HEADERS *.h)
 source_group("Header Files" FILES ${HEADERS})
 aux_source_directory(. ZMATCH_SRCS)
 add_library(zmatch STATIC ${ZMATCH_SRCS} ${HEADERS})
+
+install(TARGETS zmatch ARCHIVE DESTINATION "D:/zMatrix/lib/")

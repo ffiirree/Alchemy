@@ -13,6 +13,7 @@ project(${PROJECT_NAME})
 # 编译要求，使用C++11
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 # 子目录
 add_subdirectory(modules)
@@ -80,4 +81,23 @@ elseif (WIN32)
 	set(LIBJPEG_LIB_DIRS ${PROJECT_SOURCE_DIR}/3rdparty/libjpeg/lib)
 	set(LIBJPEG_LIBS "${LIBJPEG_LIB_DIRS}/libjpeg.lib")
 	target_link_libraries(${PROJECT_NAME} ${LIBJPEG_LIBS})
+
+
+	# install
+	install(TARGETS ${PROJECT_NAME}
+			RUNTIME DESTINATION "D:/zMatrix/samples"
+			ARCHIVE DESTINATION "D:/zMatrix/lib")
+
+	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/kinect/ DESTINATION "D:/zMatrix/include/kinect" FILES_MATCHING PATTERN "*.h")
+	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/test/ DESTINATION "D:/zMatrix/include/test" FILES_MATCHING PATTERN "*.h")
+	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zcore/ DESTINATION "D:/zMatrix/include/zcore" FILES_MATCHING PATTERN "*.h")
+	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zgui/ DESTINATION "D:/zMatrix/include/zgui" FILES_MATCHING PATTERN "*.h")
+	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zimgproc/ DESTINATION "D:/zMatrix/include/zimgproc" FILES_MATCHING PATTERN "*.h")
+	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zmatch/ DESTINATION "D:/zMatrix/include/zmatch" FILES_MATCHING PATTERN "*.h")
+
+	install(FILES  ${PROJECT_SOURCE_DIR}/resources/test.jpeg DESTINATION "D:/zMatrix/samples")
+
+	# test
+	enable_testing()
+	
 endif()

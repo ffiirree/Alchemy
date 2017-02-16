@@ -15,3 +15,5 @@ file(GLOB_RECURSE HEADERS *.h)
 source_group("Header Files" FILES ${HEADERS})
 aux_source_directory(. ZGUI_SRCS)
 add_library(zgui STATIC ${ZGUI_SRCS} ${HEADERS})
+
+install(TARGETS zgui ARCHIVE DESTINATION "D:/zMatrix/lib/")
