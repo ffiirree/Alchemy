@@ -125,7 +125,10 @@ void _dft(Matrix & src, Matrix & dst, Ft ft)
 		}
 	}
 
-    if(src.rows < 2) return ;
+    if (src.rows < 2) {
+        dst = temp;
+        return;
+    }
 
 	// 按列计算
 	const int M = src.rows;
@@ -154,7 +157,7 @@ void _dft(Matrix & src, Matrix & dst, Ft ft)
 }
 
 
-    /**
+/**
  * @berif 1D或2D离散傅里叶变换
  */
 void dft(Matrix & src, Matrix & dst)
@@ -290,8 +293,7 @@ void _fft(Matrix & src, Ft ft)
 	} // !for(i)
 
     // 如果是1D的矩阵，则返回
-    if(src.rows < 2)
-        return;
+    if(src.rows < 2) return;
 
     // 行反转
     bitRevRows(src);

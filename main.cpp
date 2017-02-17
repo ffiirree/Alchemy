@@ -9,59 +9,37 @@
 
 int main(int argc, char *argv[])
 {
-    // 载入原始图像
-	z::Matrix8u test = z::imread("test.jpeg");
-    cv::imshow("origin image", cv::Mat(test));
+    z::Matrix test(4, 8);
+    test = { 
+        0, 1, 2, 3, 4, 5, 6, 7,
+        1, 2, 3, 4, 5, 6, 7, 0,
+        2, 3, 4, 5, 6, 7, 0, 1,
+        3, 4, 5, 6, 7, 0, 1, 2 
+    };
 
-    // 灰度图
-    z::Matrix8u gray(test.size(), 1);
-    z::cvtColor(test, gray, BGR2GRAY);
-    cv::imshow("gray", cv::Mat(gray));
+    // 输出测试数据
+    std::cout << "Test Matrix is:" << std::endl << test << std::endl;
 
-    // 中值滤波
-    z::medianFilter(gray, gray, z::Size(3, 3));
+    z::Matrix dft_test = test.clone();
+    z::Matrix dft_dst, idft_dst;
 
-    // 二值化
-    auto bin_image = gray > 150;
-    auto bin_image_2 = gray > 150;
-    cv::imshow("binary image", cv::Mat(bin_image));
-    
+    // 普通离散傅里叶变换
+    z::dft(dft_test, dft_dst);
+    std::cout << "z_dft = " << std::endl << dft_dst << std::endl;
 
-    // 寻找轮廓
-    TimeStamp timer;
-    std::vector<std::vector<z::Point>> contours;
-    timer.start();
-    z::Matrix8u res(test.rows, test.cols, 3);
-    res.zeros();
-    z::findContours(bin_image, contours);
-    std::cout << timer.runtime() << std::endl;
+    z::idft(dft_dst, idft_dst);
+    std::cout << "z_idft = " << std::endl << idft_dst << std::endl;
 
-    // 显示结果
-    int r = 0, g = 200, b = 100;
-    for (const auto &c : contours) {
-        for (const auto &j : c) {
-            *((z::Scalar *)res.ptr(j.x, j.y)) = z::Scalar(r, g, b);
-        }
-        r += 50, b += 100, b += 150;
-    }
-    cv::imshow("findContours", cv::Mat(res));
+    // 快速傅里叶变换
+    // 结果应该和DFT的结果一样(会有很小的差别)
+    z::Matrix fft_dst;
+    z::fft(test, fft_dst);
+    std::cout << "z_fft = " << std::endl << fft_dst << std::endl;
 
-    // 寻找最外轮廓
-    contours.clear();
-    timer.start();
-    z::findOutermostContours(bin_image_2, contours);
-    std::cout << timer.runtime() << std::endl;
+    z::Matrix ifft_dst;
+    z::ifft(fft_dst, ifft_dst);
+    std::cout << "z_ifft = " << std::endl << ifft_dst << std::endl;
 
-    // 显示结果
-    res.zeros();
-    for (const auto &c : contours) {
-        for (const auto &j : c) {
-            *((z::Scalar *)res.ptr(j.x, j.y)) = z::Scalar(r, g, b);
-        }
-        r += 50, b += 100, b += 150;
-    }
-    cv::imshow("findOutermostContours", cv::Mat(res));
-     
-    cv::waitKey(0);
+    system("pause");
 	return 0;
 }

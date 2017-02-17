@@ -1,5 +1,0 @@
-add_subdirectory(zcore)
-add_subdirectory(zimgproc)
-add_subdirectory(zgui)
-add_subdirectory(zmatch)
-add_subdirectory(kinect)
