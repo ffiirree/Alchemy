@@ -15,7 +15,10 @@
 #define _ZMATCH_H
 
 
-#define Pi			((double)3.1415926535898)
+#define Pi			((double)3.141592653589793238462643383279502884197169399375105820974944)
+
+#define fequ(temp)      (fabs(temp) < 10e-5)
+#define dequ(temp)      (fabs(temp) < 10e-6)  
 
 
 template <typename _Tp> void _min(_Tp *addr, size_t size, _Tp & _min);

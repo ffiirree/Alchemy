@@ -103,6 +103,9 @@ elseif (WIN32)
 	add_executable(test_findContours modules/test/test_findContours.cpp)
 	LINK_ALL_LIBS(test_findContours)
 
+	add_executable(test_fft modules/test/test_fft.cpp)
+	LINK_ALL_LIBS(test_fft)
+
 	# install
 	set(INSTALL_DIR "D:/zMatrix")
 	# header files
@@ -114,16 +117,12 @@ elseif (WIN32)
 	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zmatch/ DESTINATION "${INSTALL_DIR}/include/zmatch" FILES_MATCHING PATTERN "*.h")
 
 	install(FILES  ${PROJECT_SOURCE_DIR}/resources/test.jpeg DESTINATION "${INSTALL_DIR}/samples")
-	# exe
-	install(
-		TARGETS test_findContours 
-		RUNTIME DESTINATION "${INSTALL_DIR}/samples"
-	)
 
 	# test
 	enable_testing()
 
 	# test findContours
 	add_test(TEST_findContours ${EXECUTABLE_OUTPUT_PATH}/test_findContours)
+	add_test(TEST_FFT ${EXECUTABLE_OUTPUT_PATH}/test_fft)
 
 endif()

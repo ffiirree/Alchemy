@@ -640,6 +640,7 @@ std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item)
 
 /**
  * @berif 比较两个矩阵是否相等
+ * @attention 浮点数的比较
  */
 template <class _type>
 bool operator==(const _Matrix<_type> &m1, const _Matrix<_type> &m2)

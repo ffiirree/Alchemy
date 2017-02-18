@@ -175,9 +175,7 @@ void idft(Matrix & src, Matrix & dst)
     std::vector<Matrix> mv;
     Matrix temp;
     _dft(src, temp, IDFT);
-    spilt(temp, mv);
-
-    dst = mv.at(0);
+    dst = temp;
 }
 
 
@@ -268,7 +266,7 @@ void _fft(Matrix & src, Ft ft)
         // 蝶形算法
 		for (int l = 2; l <= src.cols; l <<= 1) {    // 需要log2(N)层
             for(int k = 0; k < src.cols; k += l) {
-                for(int n = 0; n < l >> 1; ++n) {
+                for(int n = 0; n < (l >> 1); ++n) {
 
                     // Wn旋转因子
                     Complex W(cos((2 * Pi * n) / l), ft * sin((2 * Pi * n) / l));
@@ -302,7 +300,7 @@ void _fft(Matrix & src, Ft ft)
 
         for (int l = 2; l <= src.rows; l <<= 1) {    // 需要log2(N)层
             for (int k = 0; k < src.rows; k += l) {
-                for (int n = 0; n < l >> 1; ++n) {
+                for (int n = 0; n < (l >> 1); ++n) {
 
                     // W = cos(2 * Pi / N) - sin(2 * Pi / N)
                     Complex W(cos((2 * Pi * n) / l), ft * sin((2 * Pi * n) / l));
@@ -353,8 +351,11 @@ void ifft(Matrix & src, Matrix & dst)
 {
     std::vector<Matrix> mv;
     _fft(src, IDFT);
-    spilt(src, mv);
-    dst = mv.at(0);
+    
+    for (int i = 0; i < src.size() * 2; ++i) {
+        *(src.data + i) /= src.size();
+    }
+    dst = src;
 }
 
 
