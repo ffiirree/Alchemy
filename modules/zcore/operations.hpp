@@ -52,8 +52,6 @@ inline void _Matrix<_type>::swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1)
 template <class _type>
 void _Matrix<_type>::create(int _rows, int _cols, int _chs)
 {
-	_log_("Matrix create.");
-
 	chs = _chs;
 	rows = _rows;
 	cols = _cols;
@@ -76,19 +74,16 @@ void _Matrix<_type>::create(int _rows, int _cols, int _chs)
  */
 template <class _type> _Matrix<_type>::_Matrix()
 {
-	_log_("Matrix construct without params.");
 	initEmpty();
 }
 
 template <class _type> _Matrix<_type>::_Matrix(_Size<int> size)
 {
-	_log_("Matrix construct with params.");
 	initEmpty();
 	create(size.width, size.height, 1);
 }
 template <class _type> _Matrix<_type>::_Matrix(_Size<int> size, int _chs)
 {
-	_log_("Matrix construct with params.");
 	initEmpty();
 	create(size.width, size.height, _chs);
 }
@@ -99,14 +94,12 @@ template <class _type> _Matrix<_type>::_Matrix(_Size<int> size, int _chs)
  */
 template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols)
 {
-	_log_("Matrix construct with params.");
 	initEmpty();
 	create(_rows, _cols, 1);
 }
 
 template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols, int _chs)
 {
-	_log_("Matrix construct with params.");
 	initEmpty();
 	create(_rows, _cols, _chs);
 }
@@ -119,7 +112,6 @@ template <class _type> _Matrix<_type>::_Matrix(const _Matrix<_type>& m)
 	:rows(m.rows), cols(m.cols), data(m.data), refcount(m.refcount),_size(m._size), 
 	step(m.step),datastart(m.datastart), dataend(m.dataend), chs(m.chs)
 {
-	_log_("Matrix copying function.");
 	if (refcount)
 		refAdd(refcount, 1);
 }
@@ -147,7 +139,6 @@ void _Matrix<_type>::release()
 		data = datastart = dataend = nullptr;
 		delete refcount;
 		refcount = nullptr;
-		_log_("Matrix release.");
 	}
 }
 
@@ -345,7 +336,6 @@ template <class _type> template <class _Tp2> _Matrix<_type>::operator _Matrix<_T
 template <class _type>
 _Matrix<_type>& _Matrix<_type>::operator=(const _Matrix<_type> &m)
 {
-	_log_("Matrix assignment function.");
 	// 防止出现自己给自己复制时候的问题
 	if (this != &m) {
 		if (m.refcount)

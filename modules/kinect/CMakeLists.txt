@@ -13,3 +13,5 @@ aux_source_directory(. ZKINECT_SRCS)
 add_library(zkinect STATIC ${ZKINECT_SRCS} ${HEADERS})
 
 install(TARGETS zkinect ARCHIVE DESTINATION "D:/zMatrix/lib/")
+
+set_property(TARGET zkinect PROPERTY FOLDER "modules")
