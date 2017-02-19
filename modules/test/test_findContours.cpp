@@ -37,12 +37,12 @@ int main(int argc, char *argv[])
     std::cout << timer.runtime() << std::endl;
 
     // ÏÔÊ¾½á¹û
-    int r = 0, g = 200, b = 100;
+    uchar r = 75, g = 150, b = 225;
     for (const auto &c : contours) {
         for (const auto &j : c) {
             *((z::Scalar *)res.ptr(j.x, j.y)) = z::Scalar(r, g, b);
         }
-        r += 50, b += 100, b += 150;
+        r += 25, b += 50, b += 75;
     }
     cv::imshow("findContours", cv::Mat(res));
 
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
         for (const auto &j : c) {
             *((z::Scalar *)res.ptr(j.x, j.y)) = z::Scalar(r, g, b);
         }
-        r += 50, b += 100, b += 150;
+        r += 25, b += 50, b += 75;
     }
     cv::imshow("findOutermostContours", cv::Mat(res));
 

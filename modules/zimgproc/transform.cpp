@@ -510,6 +510,8 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             if (k == 8) {
                 middle_res.push_back({ i, j });
                 _data(i, j) = -NBD;
+                dst.push_back(middle_res);
+                middle_res.clear();
                 goto next;
             }
             rpos = 8 - rpos + 1;
@@ -591,6 +593,8 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             if (k == 8) {
                 middle_res.push_back({ i, j });
                 _data(i, j) = 254;
+                dst.push_back(middle_res);
+                middle_res.clear();
                 goto next;
             }
             rpos = 8 - k + 1;
