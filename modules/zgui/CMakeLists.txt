@@ -1,14 +1,6 @@
 ﻿include_directories(${PROJECT_SOURCE_DIR}/modules)
-if (WIN32)
-	# 头文件目录，OpenCV + Kinect SDK 2.0
-	set(OPENCV_INCLUDE "$ENV{OPENCV_DIR}/build/include;$ENV{OPENCV_DIR}/build/include/opencv2")
-	set(KINECT_INCLUDE "$ENV{KINECTSDK20_DIR}/inc")
-	set(LIBJPEG_INC "${PROJECT_SOURCE_DIR}/3rdparty/libjpeg/include")
-
-	include_directories(${OPENCV_INCLUDE})
-	include_directories(${KINECT_INCLUDE})
-	include_directories(${LIBJPEG_INC})
-endif()
+include_directories(${OPENCV_INCLUDE_DIRS})
+include_directories("${PROJECT_SOURCE_DIR}/3rdparty/libjpeg/include")
 
 file(GLOB_RECURSE HEADERS *.h)
 source_group("Header Files" FILES ${HEADERS})

@@ -19,7 +19,7 @@
 #include "config.h"
 
 #if defined(OPENCV)
-#include <opencv2\core.hpp>
+#include <opencv2\opencv.hpp>
 #endif
 
 #ifdef __cplusplus

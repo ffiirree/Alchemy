@@ -13,7 +13,6 @@ zMatrix 是一个使用C++编写的图像处理库，它的基础是_Matrix矩�
 # USGE
 ### 环境变量
 ```
-    OPENCV_DIR，值为OpenCV的根目录
     (可选：如果使用Kinect， KINECTSDK20_DIR，Kinect的根目录，并在CMakeLists.txt中打开配置)
 ```
 
