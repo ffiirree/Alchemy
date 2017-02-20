@@ -7,7 +7,6 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(PROJECT_NAME zMatrix)
-
 project(${PROJECT_NAME})
 
 # 使用项目分组
@@ -20,63 +19,50 @@ message("## Cxx Flags: " ${CMAKE_CXX_FLAGS})
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-# 子目录
-add_subdirectory(modules/kinect)
-add_subdirectory(test)
-add_subdirectory(modules/zcore)
-add_subdirectory(modules/zgui)
-add_subdirectory(modules/zimgproc)
-add_subdirectory(modules/zmatch)
-
+# 安装目录
+if(UNIX)
+	message("## This is Unix.")
+	set(INSTALL_DIR "/usr/zMatrix")
+elseif(WIN32)
+	message("## This is Windows.")
+	set(INSTALL_DIR "D:/zMatrix")
+endif()
 
 find_package(OpenCV REQUIRED)
 if(OpenCV_FOUND)
-	message("## OpenCV: Found")
-	include_directories(${PROJECT_SOURCE_DIR})
+	# libjpeg
+	set(LIBJPEG_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/3rdparty/libjpeg/include")
+	set(LIBJPEG_LIBS "${PROJECT_SOURCE_DIR}/3rdparty/libjpeg/lib/libjpeg.lib")
+
 	include_directories(${PROJECT_SOURCE_DIR}/modules)
+	include_directories(${OPENCV_INCLUDE_DIRS})
+	include_directories(${OpenCV_INCLUDES_DIRS})
+	include_directories(${LIBJPEG_INCLUDE_DIRS})
 
-	include_directories(${OpenCV_INCLUDE_DIRS})
-	set(OPENCV_INCLUDE_DIRS ${OpenCV_INCLUDE_DIRS} CACHE INTERNAL "OpenCV include dirs")
-	# 生成可执行文件zMatrix
-	aux_source_directory(. DIR_SRCS)
-	add_executable(${PROJECT_NAME} ${DIR_SRCS})
+	# 生成不同版本的库
+	set(CMAKE_DEBUG_POSTFIX "d")
 
-	set(LIBJPEG_LIB_DIRS ${PROJECT_SOURCE_DIR}/3rdparty/libjpeg/lib)
-	set(LIBJPEG_LIBS "${LIBJPEG_LIB_DIRS}/libjpeg.lib")
-	set(OPENCV_LIBS ${OpenCV_LIBS})
-	target_link_libraries(${PROJECT_NAME} ${LIBJPEG_LIBS} ${OpenCV_LIBS} zgui zimgproc zmatch)
-	set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "test")
+	# 子目录
+	add_subdirectory(modules/kinect)
+	#add_subdirectory(modules/zcore)
+	add_subdirectory(modules/zgui)
+	add_subdirectory(modules/zimgproc)
+	add_subdirectory(modules/zmatch)
 
-	if(UNIX)
-		message("## This is Unix.")
-		set(INSTALL_DIR "D:/zMatrix")
-
-	elseif(WIN32)
-		message("## This is Windows.")
-
-		# set(KINECT_INCLUDE_DIRS $ENV{KINECTSDK20_DIR}/inc CACHE INTERNAL "Kinect include dirs")
-		# set(KINECT_LIB_DIRS $ENV{KINECTSDK20_DIR}/Lib/x86)
-		# set(KINECT_LIBS  "${KINECT_LIB_DIRS}/Kinect20.lib")
-		# target_link_libraries(${PROJECT_NAME} ${KINECT_LIBS})
-
-		set(INSTALL_DIR "D:/zMatrix")
-	endif()
-
-
+	enable_testing()
+	add_subdirectory(test)
 
 	# install
-	
 	# header files
 	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/kinect/ DESTINATION "${INSTALL_DIR}/include/kinect" FILES_MATCHING PATTERN "*.h")
-	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/test/ DESTINATION "${INSTALL_DIR}/include/test" FILES_MATCHING PATTERN "*.h")
 	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zcore/ DESTINATION "${INSTALL_DIR}/include/zcore" FILES_MATCHING PATTERN "*.h")
 	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zgui/ DESTINATION "${INSTALL_DIR}/include/zgui" FILES_MATCHING PATTERN "*.h")
 	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zimgproc/ DESTINATION "${INSTALL_DIR}/include/zimgproc" FILES_MATCHING PATTERN "*.h")
 	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zmatch/ DESTINATION "${INSTALL_DIR}/include/zmatch" FILES_MATCHING PATTERN "*.h")
 
-	install(FILES  ${PROJECT_SOURCE_DIR}/resources/test.jpeg DESTINATION "${INSTALL_DIR}/samples")
-
-	# test
-	enable_testing()
-
 endif(OpenCV_FOUND)
+
+
+
+
+

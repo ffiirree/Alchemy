@@ -1,24 +1,22 @@
-include_directories(${PROJECT_SOURCE_DIR}/modules)
+# --------------------------------------------------------------
+#  CMakeLists.txt for test module
+# --------------------------------------------------------------
 
+link_libraries(${LIBJPEG_LIBS} ${OpenCV_LIBS} zgui zimgproc zmatch)
 
-file(GLOB_RECURSE HEADERS *.h *.hpp)
-source_group("Header Files" FILES ${HEADERS})
+# generate test files
+# test_findContours
+add_executable(test_findContours test_findContours.cpp ${HEADERS})
+add_test(TEST_findContours ${EXECUTABLE_OUTPUT_PATH}/test_findContours)
+set_property(TARGET test_findContours PROPERTY FOLDER "test")
 
-find_package(OpenCV REQUIRED)
-if(OpenCV_FOUND)
-    include_directories(${OpenCV_INCLUDE_DIRS})
+# test_fft
+add_executable(test_fft test_fft.cpp ${HEADERS})
+add_test(TEST_FFT ${EXECUTABLE_OUTPUT_PATH}/test_fft)
+set_property(TARGET test_fft PROPERTY FOLDER "test")
 
-    enable_testing()
+# zMatrix
+aux_source_directory(zMatrix main.cpp)
+add_executable(zMatrix main.cpp)
+set_property(TARGET zMatrix PROPERTY FOLDER "test")
 
-    # generate test files
-    add_executable(test_findContours test_findContours.cpp ${HEADERS})
-    target_link_libraries(test_findContours ${LIBJPEG_LIBS} ${OpenCV_LIBS} zgui zimgproc zmatch)
-    add_test(TEST_findContours ${EXECUTABLE_OUTPUT_PATH}/test_findContours)
-    set_property(TARGET test_findContours PROPERTY FOLDER "test")
-
-
-    add_executable(test_fft test_fft.cpp ${HEADERS})
-    target_link_libraries(test_fft ${LIBJPEG_LIBS} ${OpenCV_LIBS} zgui zimgproc zmatch)
-    add_test(TEST_FFT ${EXECUTABLE_OUTPUT_PATH}/test_fft)
-    set_property(TARGET test_fft PROPERTY FOLDER "test")
-endif()
