@@ -28,7 +28,7 @@ namespace z {
 		return *this; 
 	}
 
-	template <class _type> void cvtColor(_Matrix<_type>&src, _Matrix<_type>&dst, int code)
+	template <class _type> void cvtColor(const _Matrix<_type>&src, _Matrix<_type>&dst, int code)
 	{
 		switch (code) {
 		case BGR2GRAY:
@@ -36,7 +36,7 @@ namespace z {
 			if (!(dst.rows == src.rows && dst.cols == src.cols && dst.chs == 1 && src.chs == 3))
 				dst.create(src.rows, src.cols, 1);
 
-			_type * srcPtr = nullptr;
+			const _type * srcPtr = nullptr;
 
 			for (int i = 0; i < src.rows; ++i) {
 				for (int j = 0; j < src.cols; ++j) {
@@ -191,24 +191,24 @@ namespace z {
 				cnt = 0;
 				for (int ii = 0; ii < size.width; ++ii) {
 					for (int jj = 0; jj < size.height; ++jj) {
+                        auto _i = i - m + ii;
+                        auto _j = j - n + jj;
 
-						ptr = src.ptr(i - m + ii, j - n + jj);
-						if (ptr) {
+						if (_i >= 0  && _i < src.rows && _j >= 0 && _j < src.cols) {
 							for (int k = 0; k < src.chs; ++k) {
-								ker[k][cnt] = ptr[k];
+								ker[k][cnt] = src.ptr(_i, _j)[k];
 							}
 							cnt++;
 						}
 					}
 				}
-				dstPtr = dst.ptr(i, j);
 				if (cnt != area)
 					valindex = cnt / 2;
 				else
 					valindex = valDefault;
 				for (int k = 0; k < src.chs; ++k) {
 					std::sort(ker[k], ker[k] + cnt);  // 占95%以上的时间
-					dstPtr[k] = ker[k][valindex];
+                    dst.ptr(i, j)[k] = ker[k][valindex];
 				}
 
 			} // !for(j)
@@ -246,11 +246,11 @@ namespace z {
 				cnt = 0;
 				for (int ii = 0; ii < size.width; ++ii) {
 					for (int jj = 0; jj < size.height; ++jj) {
-
-						ptr = src.ptr(i - m + ii, j - n + jj);
-						if (ptr) {
+                        auto _i = i - m + ii;
+                        auto _j = j - n + jj;
+						if (_i >= 0 && _i < src.rows && _j >= 0 && _j < src.cols) {
 							for (int k = 0; k < src.chs; ++k) {
-								ker[k][cnt] = ptr[k];
+								ker[k][cnt] = src.ptr(_i, _j)[k];
 							}
 							cnt++;
 						}
@@ -355,7 +355,6 @@ namespace z {
 	 */
 	template <class _type> void spilt(_Matrix<_type> & src, std::vector<_Matrix<_type>> & mv)
 	{
-		_log_("init\n");
 		mv = std::vector<_Matrix<_type>>(src.chs);
 
 		for (int i = 0; i < src.chs; ++i) {
@@ -369,10 +368,6 @@ namespace z {
 				}
 			}
 		}
-
-		//delete[]ch;
-
-		_log_("spilt end\n");
 	}
 	/**
 	 * @berif 合并两个1通道的矩阵

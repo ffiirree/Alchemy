@@ -1,0 +1,6 @@
+#include "zcore\types.h"
+#include "zcore\zmatrix.h"
+#include "zgui\zgui.h"
+#include "zimgproc\transform.h"
+#include "zimgproc\zimgproc.h"
+#include "zmatch\zmatch.h"

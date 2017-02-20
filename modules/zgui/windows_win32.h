@@ -2,7 +2,7 @@
 #define _WINDOWS_WIN32_H
 
 #include <Windows.h>
-#include "zcore\zcore.h"
+#include "zcore\zmatrix.h"
 
 #define CV_WINDOW_MAGIC_VAL     0x00420042
 #define CV_TRACKBAR_MAGIC_VAL   0x00420043

@@ -352,7 +352,7 @@ void ifft(Matrix & src, Matrix & dst)
     std::vector<Matrix> mv;
     _fft(src, IDFT);
     
-    for (int i = 0; i < src.size() * 2; ++i) {
+    for (size_t i = 0; i < src.size() * 2; ++i) {
         *(src.data + i) /= src.size();
     }
     dst = src;

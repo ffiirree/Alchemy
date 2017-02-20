@@ -16,7 +16,7 @@
 
 #include <string>
 #include <vector>
-#include "zcore\zcore.h"
+#include "zcore\zmatrix.h"
 
 #if defined(OPENCV)
 #include <opencv2\core.hpp>
@@ -37,7 +37,7 @@ namespace z{
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Matrix8u Mat2Matrix8u(cv::Mat & mat);
-template <class _type> void cvtColor(_Matrix<_type>&src, _Matrix<_type>&dst, int code);
+template <class _type> void cvtColor(const _Matrix<_type>&src, _Matrix<_type>&dst, int code);
 
 // 多通道分离和混合
 template <class _type> void spilt(_Matrix<_type> & src, std::vector<_Matrix<_type>> & mv);

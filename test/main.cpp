@@ -2,11 +2,7 @@
 #include <opencv2\opencv.hpp>
 #include <fstream>
 
-#include "zcore\zcore.h"
-#include "zimgproc\zimgproc.h"
-#include "zimgproc\transform.h"
-#include "zgui\zgui.h"
-#include "zcore\debug.h"
+#include "zmatrix.h"
 
 int main(int argc, char *argv[])
 {

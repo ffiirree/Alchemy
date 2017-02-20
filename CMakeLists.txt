@@ -44,7 +44,7 @@ if(OpenCV_FOUND)
 
 	# 子目录
 	add_subdirectory(modules/kinect)
-	#add_subdirectory(modules/zcore)
+	add_subdirectory(modules/zcore)
 	add_subdirectory(modules/zgui)
 	add_subdirectory(modules/zimgproc)
 	add_subdirectory(modules/zmatch)
@@ -54,6 +54,7 @@ if(OpenCV_FOUND)
 
 	# install
 	# header files
+	install(FILES  ${PROJECT_SOURCE_DIR}/modules/zmatrix.h DESTINATION "${INSTALL_DIR}/include/")
 	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/kinect/ DESTINATION "${INSTALL_DIR}/include/kinect" FILES_MATCHING PATTERN "*.h")
 	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zcore/ DESTINATION "${INSTALL_DIR}/include/zcore" FILES_MATCHING PATTERN "*.h")
 	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zgui/ DESTINATION "${INSTALL_DIR}/include/zgui" FILES_MATCHING PATTERN "*.h")

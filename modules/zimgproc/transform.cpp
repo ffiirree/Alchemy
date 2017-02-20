@@ -30,9 +30,7 @@ static void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx = 1, int dy
  */
 inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD)
 {
-	unsigned char * srcptr, * srcptr1, *dstptr;
-
-	unsigned char ang;
+	unsigned char * srcptr, *dstptr;
 
 	if (!src.equalSize(srcGD))
 		throw std::runtime_error("src.equalSize(srcGD)!");
@@ -44,69 +42,38 @@ inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD)
 			srcptr = src.ptr(i, j);
 			dstptr = dst.ptr(i, j);
 
-			for (int k = 0; k < src.chs; k++) {
+			for (int k = 0; k < src.chs; ++k) {
 
-				ang = srcGD.ptr(i, j)[k];
+                switch (srcGD.ptr(i, j)[k])
+                {
+                case 0:  // [j - 1 | - | j + 1 ]
+                    if (j - 1 >= 0 && j + 1 < src.cols
+                        && srcptr[k] < src.ptr(i, j - 1)[k]
+                        && srcptr[k] < src.ptr(i, j + 1)[k])
+                        dstptr[k] = 0;
+                    break;
 
-				if (ang == 0) {
+                case 45: 
+                    if ((i - 1 >= 0 && j - 1 >= 0 && i + 1 < src.rows && j + 1 < src.cols) 
+                        && srcptr[k] < src.ptr(i - 1, j + 1)[k] 
+                        && srcptr[k] < src.ptr(i + 1, j - 1)[k])
+                        dstptr[k] = 0;
+                    break;
 
-					srcptr1 = src.ptr(i, j - 1);
-					if (srcptr1 != 0) {
-						if (srcptr[k] < srcptr1[k]) {
-							dstptr[k] = 0;
-						}
-					}
-					srcptr1 = src.ptr(i, j + 1);
-					if (srcptr1 != 0) {
-						if (srcptr[k] < srcptr1[k]) {
-							dstptr[k] = 0;
-						}
-					}
-				}
-				else if (ang == 45) {
-					srcptr1 = src.ptr(i - 1, j + 1);
-					if (srcptr1 != 0) {
-						if (srcptr[k] < srcptr1[k]) {
-							dstptr[k] = 0;
-						}
-					}
-					srcptr1 = src.ptr(i + 1, j - 1);
-					if (srcptr1 != 0) {
-						if (srcptr[k] < srcptr1[k]) {
-							dstptr[k] = 0;
-						}
-					}
-				}
-				else if (ang == 90) {
-					srcptr1 = src.ptr(i - 1, j);
-					if (srcptr1 != 0) {
-						if (srcptr[k] < srcptr1[k]) {
-							dstptr[k] = 0;
-						}
-					}
-					srcptr1 = src.ptr(i + 1, j);
-					if (srcptr1 != 0) {
-						if (srcptr[k] < srcptr1[k]) {
-							dstptr[k] = 0;
-						}
-					}
-				}
-				else if (ang == 135) {
-					srcptr1 = src.ptr(i - 1, j - 1);
-					if (srcptr1 != 0) {
-						if (srcptr[k] < srcptr1[k]) {
-							dstptr[k] = 0;
-						}
-					}
-					srcptr1 = src.ptr(i + 1, j + 1);
-					if (srcptr1 != 0) {
-						if (srcptr[k] < srcptr1[k]) {
-							dstptr[k] = 0;
-						}
-					}
-				}
-				
+                case 90:
+                    if ((i - 1 >= 0 && i + 1 < src.rows)
+                        && srcptr[k] < src.ptr(i - 1, j)[k]
+                        && srcptr[k] < src.ptr(i + 1, j)[k])
+                        dstptr[k] = 0;
+                    break;
 
+                case 135:
+                    if ((i - 1 >= 0 && j - 1 >= 0 && i + 1 < src.rows && j + 1 < src.cols)
+                        && srcptr[k] < src.ptr(i - 1, j - 1)[k]
+                        && srcptr[k] < src.ptr(i + 1, j + 1)[k])
+                        dstptr[k] = 0;
+                    break;
+                }
 			} // for(k)
 		} // for(j)
 	} //  for(i)
@@ -124,21 +91,11 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
 	if (!dst.equalSize(src))
 		dst.create(src.rows, src.cols, src.chs);
 
-	unsigned char *ptr, * ptr1, *ptr2, *ptr3, *ptr4, *ptr5, *ptr6, *ptr7, *ptr8, * dstPtr;
+	unsigned char *ptr, * dstPtr;
 
 	for (int i = 0; i < src.rows; ++i) {
 		for (int j = 0; j < src.cols; ++j) {
 			ptr = src.ptr(i, j);
-
-			ptr1 = src.ptr(i - 1, j);             // 上
-			ptr2 = src.ptr(i, j - 1);             // 左
-			ptr3 = src.ptr(i, j + 1);             // 右
-			ptr4 = src.ptr(i + 1, j);             // 下
-			ptr5 = src.ptr(i - 1, j - 1);         // 上左     
-			ptr6 = src.ptr(i - 1, j + 1);         // 上右
-			ptr7 = src.ptr(i + 1, j + 1);         // 下右
-			ptr8 = src.ptr(i + 1, j - 1);         // 下左
-
 			dstPtr = dst.ptr(i, j);
 
 			for (int k = 0; k < src.chs; ++k) {
@@ -149,14 +106,14 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
 				else if (ptr[k] > maxt) {
 					dstPtr[k] = 255;
 				}
-				else if ((ptr1 != nullptr && ptr1[k] > maxt)
-					|| (ptr2 != nullptr && ptr2[k] > maxt)
-					|| (ptr3 != nullptr && ptr3[k] > maxt)
-					|| (ptr4 != nullptr && ptr4[k] > maxt)
-					|| (ptr5 != nullptr && ptr5[k] > maxt)
-					|| (ptr6 != nullptr && ptr6[k] > maxt)
-					|| (ptr7 != nullptr && ptr7[k] > maxt)
-					|| (ptr8 != nullptr && ptr8[k] > maxt)) {
+				else if ((i - 1 >= 0 && src.ptr(i - 1, j)[k] > maxt)                                    // up
+					|| (j - 1 >= 0 && src.ptr(i, j - 1)[k] > maxt)                                      // left
+					|| (j + 1 < src.cols && src.ptr(i, j + 1)[k] > maxt)                                // right
+					|| (i + 1 < src.rows && src.ptr(i + 1, j)[k] > maxt)                                // down
+					|| (i - 1 >=0  && j - 1 >= 0 && src.ptr(i - 1, j - 1)[k] > maxt)                    // up left
+					|| (i - 1 >= 0 && j + 1 < src.cols && src.ptr(i - 1, j + 1)[k] > maxt)              // up right
+					|| (i + 1 < src.rows && j + 1 < src.cols && src.ptr(i + 1, j + 1)[k] > maxt)        // down right
+					|| (i + 1 < src.rows && j - 1 >= 0 && src.ptr(i + 1, j - 1)[k] > maxt)) {           // down left
 					dstPtr[k] = 255;
 				}
 				else {
@@ -204,13 +161,13 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
 
 			for (int ii = 0; ii < 3; ++ii) {
 				for (int jj = 0; jj < 3; ++jj) {
+                    auto _i = i - 1 + ii;
+                    auto _j = j - 1 + jj;
 
-					srcPtr = src.ptr(i - 1 + ii, j - 1 + jj);
-
-					if (srcPtr) {
+					if (_i >=0  && _i < src.rows && _j >=0 && _j < src.cols) {
 						for (int k = 0; k < src.chs; ++k) {
-							tempGx[k] += srcPtr[k] * Gx[ii][jj];
-							tempGy[k] += srcPtr[k] * Gy[ii][jj];
+							tempGx[k] += src.ptr(_i, _j)[k] * Gx[ii][jj];
+							tempGy[k] += src.ptr(_i, _j)[k] * Gy[ii][jj];
 						}
 					}
 					else {
@@ -238,9 +195,8 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
 				}
 			}
 
-			dstPtr = dst.ptr(i, j);
 			for (int k = 0; k < src.chs; ++k) {
-				dstPtr[k] = (unsigned char)std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]);
+                dst.ptr(i, j)[k] = (unsigned char)std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]);
 			}
 
 
@@ -337,13 +293,12 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 
 			for (int ii = 0; ii < ksize; ++ii) {
 				for (int jj = 0; jj < ksize; ++jj) {
-
-					srcPtr = src.ptr(i - m + ii, j - n + jj);
-
-					if (srcPtr) {
+                    auto _i = i - m + ii;
+                    auto _j = j - n + jj;
+					if (_i >=0  && _i  < src.rows && _j >= 0 && _j < src.cols) {
 						for (int k = 0; k < src.chs; ++k) {
-							tempGx[k] += srcPtr[k] * Gx[ii][jj];
-							tempGy[k] += srcPtr[k] * Gy[ii][jj];
+							tempGx[k] += src.ptr(_i, _j)[k] * Gx[ii][jj];
+							tempGy[k] += src.ptr(_i, _j)[k] * Gy[ii][jj];
 						}
 					}
 					else {
@@ -370,14 +325,12 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 					tempGy[k] /= factor;
 				}
 			}
-			
 
-			dstPtr = dst.ptr(i, j);
 			if (!noGD)
 				dstGDPtr = dstGD.ptr(i, j);
 
 			for (int k = 0; k < src.chs; ++k) {
-				dstPtr[k] = (unsigned char)std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]);
+                dst.ptr(i, j)[k] = (unsigned char)std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]);
 				// 计算梯度
 				if (!noGD) {
 					ang = atan2(tempGy[k],tempGx[k]) * RAD2ANG;
@@ -446,10 +399,9 @@ void translation(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst)
 			srcCoord = { i, j, 1 };
 			dstCoord = srcCoord * kernel;
 
-			for (int k = 0; k < src.chs && (dstCoord[0][0] < dst.rows && dstCoord[0][1] < dst.cols &&  dstCoord[0][0] > 0 && dstCoord[0][1] > 0); ++k) {
+			for (int k = 0; k < src.chs && (dstCoord[0][0] < dst.rows && dstCoord[0][1] < dst.cols &&  dstCoord[0][0] >= 0 && dstCoord[0][1] >= 0); ++k) {
 				dst.ptr(dstCoord[0][0], dstCoord[0][1])[k] = src.ptr(i, j)[k];
 			}
-		
 		}
 	}
 }
@@ -460,7 +412,7 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
 {
     std::vector<Point> middle_res;
     // 二进制化
-    for (int i = src.rows * src.cols; i >= 0; --i)
+    for (int i = src.rows * src.cols - 1; i >= 0; --i)
             if (src.data[i])
                 src.data[i] = 1;
     

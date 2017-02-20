@@ -2,7 +2,7 @@
 #define _ZGUI_H
 
 #include <string>
-#include "zcore\zcore.h"
+#include "zcore\types.h"
 #include "zimgproc\zimgproc.h"
 
 enum

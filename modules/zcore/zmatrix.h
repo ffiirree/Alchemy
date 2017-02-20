@@ -11,8 +11,8 @@
  *
  ******************************************************************************
  */
-#ifndef _ZMATRIX_H
-#define _ZMATRIX_H
+#ifndef _ZCORE_ZMATRIX_H
+#define _ZCORE_ZMATRIX_H
 
 #include <stdint.h>
 #include <iostream>
@@ -42,12 +42,11 @@ typedef _Matrix<unsigned char>      Matrix8u;
 
 template <class _type> class _Matrix {
 public:
-	_Matrix();
-	_Matrix(int rows, int cols);
-	_Matrix(int rows, int cols,  int channelsNum);
-	_Matrix(_Size<int> size);
-	_Matrix(_Size<int> size, int channelsNum);
+	_Matrix() { }
+	_Matrix(int rows, int cols,  int chs = 1);
+	_Matrix(_Size<int> size, int chs = 1);
 	_Matrix(const _Matrix<_type>& m);
+    _Matrix<_type>& operator = (const _Matrix<_type>& m);
 	~_Matrix();
 
 	//! allocates new matrix data unless the matrix already has specified size and type.
@@ -55,20 +54,19 @@ public:
 	void create(int _rows, int _cols, int _chs);
 	//! pointer to the reference counter;
 	// when matrix points to user-allocated data, the pointer is NULL
-	int* refcount;
+	int* refcount = nullptr;
 	void release();
 	int refAdd(int *addr, int delta);
 
 	template<typename _Tp2> operator _Matrix<_Tp2>() const;
 
-	_Matrix<_type>& operator = (const _Matrix<_type>& m);
 	_Matrix<_type>& operator = (std::initializer_list<_type>);
 	_Matrix<_type>& operator += (const _Matrix<_type>& m);
 	_Matrix<_type>& operator -= (const _Matrix<_type>& m);
 
 	// 检查这两个函数是否达到了想要的目的
-	inline _type* operator[](size_t n) { return data + n * step; }
-	inline const _type* operator[](size_t n) const { return data + n * step; }
+	inline _type* operator[](size_t n) { assert(!((unsigned)n >= (unsigned)rows));  return data + n * step; }
+	inline const _type* operator[](size_t n) const { assert(!((unsigned)n >= (unsigned)rows)); return data + n * step; }
 
 
 	//! returns pointer to (i0,i1) submatrix along the dimensions #0 and #1
@@ -118,18 +116,18 @@ public:
 
 	void swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1);
 	
-	int rows, cols;
-	_type *data;
-	_type *datastart, *dataend;
-	int step;
-	int chs;
+    int dims = 0;
+
+    int rows = 0;
+    int cols = 0;
+	_type *data = nullptr;
+    _type *datastart = nullptr;
+    _type *dataend = nullptr;
+	int step = 0;
+	int chs = 0;
 
 private:
-	size_t _size;
-
-	
-
-	void initEmpty();
+	size_t _size = 0;
 };
 
 template <class _type> std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item);
@@ -149,10 +147,10 @@ template <class _type> _Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_typ
 template <class _type> _Matrix<_type> operator-(_Matrix<_type> &m, _type delta);
 template <class _type> _Matrix<_type> operator-(_type delta, _Matrix<_type> &m);
 
-template <class _T1, class _T2> _Matrix<_T1> operator>(_Matrix<_T1> &m, _T2 threshold);
-template <class _T1, class _T2> _Matrix<_T1> operator<(_Matrix<_T1> &m, _T2 threshold);
-template <class _T1, class _T2> _Matrix<_T1> operator>=(_Matrix<_T1> &m, _T2 threshold);
-template <class _T1, class _T2> _Matrix<_T1> operator<=(_Matrix<_T1> &m, _T2 threshold);
+template <class _T1, class _T2> _Matrix<_T1> operator>(const _Matrix<_T1> &m, _T2 threshold);
+template <class _T1, class _T2> _Matrix<_T1> operator<(const _Matrix<_T1> &m, _T2 threshold);
+template <class _T1, class _T2> _Matrix<_T1> operator>=(const _Matrix<_T1> &m, _T2 threshold);
+template <class _T1, class _T2> _Matrix<_T1> operator<=(const _Matrix<_T1> &m, _T2 threshold);
 
 template <class _type> void conv(_Matrix<_type> &src, _Matrix<_type> &dst, Matrix &core);
 
@@ -401,4 +399,4 @@ typedef _Size<int>      Size;
 
 #include "operations.hpp"
 
-#endif  // !_ZMATRIX_H
+#endif  // !_ZCORE_ZMATRIX_H

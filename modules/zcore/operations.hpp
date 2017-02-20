@@ -16,22 +16,7 @@
 
 #include "debug.h"
 
-#ifdef __cplusplus
-
 namespace z{
-
-/**
- * @berif 将矩阵初始化为空矩阵
- */
-template <class _type>
-void _Matrix<_type>::initEmpty()
-{
-	rows = cols = _size = 0;
-	data = datastart = dataend = nullptr;
-	refcount = nullptr;
-	step = 0;
-	chs = 0;
-}
 
 template<class _type>
 inline void _Matrix<_type>::swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1) {
@@ -62,29 +47,14 @@ void _Matrix<_type>::create(int _rows, int _cols, int _chs)
 	release();
 
 	// 分配
-	datastart = data = new _type[_rows * _cols * _chs];
+	datastart = data = new _type[_size * _chs];
+    _log_("_Matrix create.");
 	dataend = data + _size * _chs;
 	refcount = new int(1);
 }
 
-
-
-/**
- * @berif Constructor without params.
- */
-template <class _type> _Matrix<_type>::_Matrix()
-{
-	initEmpty();
-}
-
-template <class _type> _Matrix<_type>::_Matrix(_Size<int> size)
-{
-	initEmpty();
-	create(size.width, size.height, 1);
-}
 template <class _type> _Matrix<_type>::_Matrix(_Size<int> size, int _chs)
 {
-	initEmpty();
 	create(size.width, size.height, _chs);
 }
 /**
@@ -92,15 +62,8 @@ template <class _type> _Matrix<_type>::_Matrix(_Size<int> size, int _chs)
  * @param[in] _rows，行数
  * @param[in] _cols，列数
  */
-template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols)
-{
-	initEmpty();
-	create(_rows, _cols, 1);
-}
-
 template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols, int _chs)
 {
-	initEmpty();
 	create(_rows, _cols, _chs);
 }
 
@@ -109,11 +72,41 @@ template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols, int _chs)
  * @attention 这是一个浅复制
  */
 template <class _type> _Matrix<_type>::_Matrix(const _Matrix<_type>& m)
-	:rows(m.rows), cols(m.cols), data(m.data), refcount(m.refcount),_size(m._size), 
-	step(m.step),datastart(m.datastart), dataend(m.dataend), chs(m.chs)
 {
-	if (refcount)
-		refAdd(refcount, 1);
+    if (this != &m)
+        *this = m;
+}
+
+
+/**
+ * @berif 赋值函数
+ * @attention 这是一个浅复制
+ */
+template <class _type>
+_Matrix<_type>& _Matrix<_type>::operator=(const _Matrix<_type> &m)
+{
+	// 防止出现自己给自己复制时候的问题
+	if (this != &m) {
+		if (m.refcount)
+			refAdd(m.refcount, 1);
+
+		// 释放掉左值的内容
+		release();
+
+		// 赋值
+		chs = m.chs;
+		_size = m.size();
+		data = m.data;
+		refcount = m.refcount;
+		rows = m.rows;
+		cols = m.cols;
+		step = m.step;
+		datastart = m.datastart;
+		dataend = m.dataend;
+        dims = m.dims;
+	}
+
+	return *this;
 }
 
 /**
@@ -134,7 +127,9 @@ int _Matrix<_type>::refAdd(int *addr, int delta)
 template <class _type>
 void _Matrix<_type>::release()
 {
-	if (refcount && refAdd(refcount, -1) == 1) {
+	if (refcount && (refAdd(refcount, -1) == 1)) {
+        _log_("_Matrix release.");
+
 		delete[] data;
 		data = datastart = dataend = nullptr;
 		delete refcount;
@@ -328,38 +323,6 @@ template <class _type> template <class _Tp2> _Matrix<_type>::operator _Matrix<_T
 	return temp;
 }
 
-
-/**
- * @berif 赋值函数
- * @attention 这是一个浅复制
- */
-template <class _type>
-_Matrix<_type>& _Matrix<_type>::operator=(const _Matrix<_type> &m)
-{
-	// 防止出现自己给自己复制时候的问题
-	if (this != &m) {
-		if (m.refcount)
-			refAdd(m.refcount, 1);
-
-		// 释放掉左值的内容
-		release();
-
-		// 赋值
-		chs = m.chs;
-		_size = m.size();
-		data = m.data;
-		refcount = m.refcount;
-		rows = m.rows;
-		cols = m.cols;
-		step = m.step;
-		datastart = m.datastart;
-		dataend = m.dataend;
-	}
-
-	return *this;
-}
-
-
 template <class _type>
 _Matrix<_type>& _Matrix<_type>::operator()(_type * InputArray, size_t _size)
 {
@@ -396,18 +359,14 @@ _Matrix<_type>::operator cv::Mat() const
 #endif
 template <class _type> inline _type* _Matrix<_type>::ptr(int i0)
 {
-	if ((unsigned)i0 >= (unsigned)_size) {
-		return nullptr;
-	}
+    assert(!((unsigned)i0 >= (unsigned)rows));
 	return data + i0 * step;
 }
 
 
 template <class _type> inline const _type* _Matrix<_type>::ptr(int i0) const
 {
-	if ((unsigned)i0 >= (unsigned)_size) {
-		return nullptr;
-	}
+    assert(!((unsigned)i0 >= (unsigned)rows));
 	return data + i0 * step;
 }
 /**
@@ -415,9 +374,7 @@ template <class _type> inline const _type* _Matrix<_type>::ptr(int i0) const
  */
 template <class _type> inline _type* _Matrix<_type>::ptr(int i0, int i1)
 {
-	if ( (unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols) {
-		return nullptr;
-	}
+    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols));
 	return data + i0 * step + i1 * chs;
 }
 /**
@@ -568,13 +525,11 @@ template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&
 
 			for (int ii = 0; ii < kernel.rows; ++ii) {
 				for (int jj = 0; jj < kernel.cols; ++jj) {
-
-					// 获取一个像素的地址
-					srcPtr = this->ptr(i - m + ii, j - n + jj);
-
-					if (srcPtr) {
+                    auto _i = i - m + ii;
+                    auto _j = j - n + jj;
+					if (_i >=0  && _j >=0  && _i < this->rows && _j < this->cols) {
 						for (int k = 0; k < chs; ++k) {
-							tempValue[k] += srcPtr[k] * kernel[ii][jj];
+							tempValue[k] += static_cast<int>(this->ptr(_i, _j)[k] * kernel[ii][jj]);
 						}
 					}
 					else {
@@ -783,7 +738,7 @@ _Matrix<_type> operator-(_type delta, _Matrix<_type> &m)
 	return m * (-1) + delta;
 }
 
-template <class _T1, class _T2> _Matrix<_T1> operator>(_Matrix<_T1> &m, _T2 threshold)
+template <class _T1, class _T2> _Matrix<_T1> operator>(const _Matrix<_T1> &m, _T2 threshold)
 {
     _Matrix<_T1> temp(m.rows, m.cols, m.chs);
     temp.zeros();
@@ -797,7 +752,7 @@ template <class _T1, class _T2> _Matrix<_T1> operator>(_Matrix<_T1> &m, _T2 thre
 }
 
 
-template <class _T1, class _T2> _Matrix<_T1> operator<(_Matrix<_T1> &m, _T2 threshold)
+template <class _T1, class _T2> _Matrix<_T1> operator<(const _Matrix<_T1> &m, _T2 threshold)
 {
     _Matrix<_T1> temp(m.rows, m.cols, m.chs);
     temp.zeros();
@@ -810,7 +765,7 @@ template <class _T1, class _T2> _Matrix<_T1> operator<(_Matrix<_T1> &m, _T2 thre
     return temp;
 }
 
-template <class _T1, class _T2> _Matrix<_T1> operator>=(_Matrix<_T1> &m, _T2 threshold)
+template <class _T1, class _T2> _Matrix<_T1> operator>=(const _Matrix<_T1> &m, _T2 threshold)
 {
     _Matrix<_T1> temp(m.rows, m.cols, m.chs);
     temp.zeros();
@@ -823,7 +778,7 @@ template <class _T1, class _T2> _Matrix<_T1> operator>=(_Matrix<_T1> &m, _T2 thr
     return temp;
 }
 
-template <class _T1, class _T2> _Matrix<_T1> operator<=(_Matrix<_T1> &m, _T2 threshold)
+template <class _T1, class _T2> _Matrix<_T1> operator<=(const _Matrix<_T1> &m, _T2 threshold)
 {
     _Matrix<_T1> temp(m.rows, m.cols, m.chs);
     temp.zeros();
@@ -888,5 +843,3 @@ template <class _Tp> std::ostream & operator<<(std::ostream & os, const _Complex
 }
 
 #endif // ! __cplusplus
-
-#endif

@@ -15,7 +15,7 @@
 #define _TRANSFORM_H
 
 
-#include "zcore\zcore.h"
+#include "zcore\zmatrix.h"
 #include "zmatch\zmatch.h"
 #include "zimgproc.h"
 

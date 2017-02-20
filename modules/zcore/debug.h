@@ -22,7 +22,7 @@
 #if defined(_DEBUG)
 #define _log_(str) st(std::cout<<"[" << __FILE__ << "]" << "<" << __func__ << ">" << "(" << __LINE__ << ") : " << str << std::endl;)
 #else
-#define _log_(str) 
+#define _log_(str) ((void)0)
 #endif
 
 
