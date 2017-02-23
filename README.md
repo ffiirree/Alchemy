@@ -4,6 +4,7 @@ zMatrix 是一个使用C++编写的图像处理库，它的基础是_Matrix矩�
 <br><br>
 
 # 特色
+* 尽可能的提高阅读性<br>
 * zMatrix使用**类模板**来支持各种类型<br>
 * 函数接口尽量和`matlab`和`opencv`类似，zMatrix类可以和openCV中的Mat类转换<br>
 * 使用**引用计数**来达到**自动内存管理**的目的，不需要为内存问题担心
@@ -33,7 +34,7 @@ zMatrix 是一个使用C++编写的图像处理库，它的基础是_Matrix矩�
 ## 图像处理相关
 ### 基础
 * 实现jpeg类图片的读取和写入，以及彩色图片的显示。**(需要其他功能需要使用openCV的函数)**
-* 颜色空间转换，BRG->RGB, GRAY
+* 颜色空间转换，BRG->RGB, BGR->GRAY, BGR->HSI, BGR->HSV
 
 ### 线性滤波
 * 方框滤波函数`boxFilter()`
@@ -61,6 +62,9 @@ zMatrix 是一个使用C++编写的图像处理库，它的基础是_Matrix矩�
 
 ### 图像轮廓
 * 寻找轮廓：`findContours()` 和 `findOutermostContours()`
+
+### 阈值
+* 单通道固定值阈值：`threshold()`
 
 ## Kinect 4 Windows v2 （Events）
 * Kinect获取深度、彩色和红外图像，返回Mat类型的数据
