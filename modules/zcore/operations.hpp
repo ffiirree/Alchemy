@@ -129,6 +129,12 @@ inline void _Matrix<_Tp>::swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1) {
  * @param[in] _cols£¬ÁÐÊý
  */
 template <class _Tp>
+void _Matrix<_Tp> ::create(Size size, int _chs = 1)
+{
+    create(size.height, size.width, _chs);
+}
+
+template <class _Tp>
 void _Matrix<_Tp>::create(int _rows, int _cols, int _chs)
 {
     flags = MatrixType<_Tp>::type;
@@ -254,7 +260,7 @@ _Matrix<_Tp>& _Matrix<_Tp>::operator = (std::initializer_list<_Tp> li)
 	if (rows == 0 || cols == 0)
 		create(1, li.size(), 1);
 
-    int index = 0;
+    size_t index = 0;
     for (const auto&i : li)
         data[index++] = i;
 

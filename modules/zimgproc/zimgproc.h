@@ -44,6 +44,12 @@ template <class _Tp> void spilt(_Matrix<_Tp> & src, std::vector<_Matrix<_Tp>> & 
 template <class _Tp> void merge(_Matrix<_Tp> & src1, _Matrix<_Tp> & src2, _Matrix<_Tp> & dst);
 template <class _Tp> void merge(std::vector<_Matrix<_Tp>> & src, _Matrix<_Tp> & dst);
 
+/**
+ * @berif 上下颠倒图像
+ * @param[in] src
+ * @param[out] dst
+ * @param[in] flags
+ */
 void convertImage(Matrix8u *src, Matrix8u *dst, int flags = 0);
 void copyToArray(Matrix8u &src, char * arr);
 
@@ -84,6 +90,24 @@ template <class _Tp> void dilate(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kerne
 //形态学滤波的高级操作
 template <class _Tp> void morphEx(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, int op, Size kernel);
 template <class _Tp> void open(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel);
+
+
+/**
+ * @breif 单通道固定阈值
+ * @attention 单通道
+ * @param[in] src
+ * @param[out] dst
+ * @param[in] thresh, 阈值
+ * @param[in] maxval
+ * @param[in] type
+ *          \ THRESH_BINARY         src(x, y) > thresh ? src(x, y) = maxval : src(x,y) = 0
+ *          \ THRESH_BINARY_INV     src(x, y) > thresh ? src(x, y) = 0 : src(x,y) = maxval
+ *          \ THRESH_TRUNC          src(x, y) > thresh ? src(x, y) = thresh : src(x,y) = src(x,y)
+ *          \ THRESH_TOZERO         src(x, y) > thresh ? src(x, y) = src(x,y) : src(x,y) = 0
+ *          \ THRESH_TOZERO_INV     src(x, y) > thresh ? src(x, y) = 0 : src(x, y) = src(x,y)
+ * ret None
+ */
+template <typename _Tp> void threshold(_Matrix<_Tp> &src, _Matrix<_Tp>& dst, double thresh, double maxval, int type);
 }
 
 #endif // !__cplusplus

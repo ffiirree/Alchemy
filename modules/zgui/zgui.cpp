@@ -39,6 +39,8 @@ void namedWindow(const std::string & name, int flags)
 
 void imshow(const std::string & name, Matrix8u & mat)
 {
+    assert(mat.cols != 0 && mat.rows != 0 && mat.data != nullptr);
+
 	zShowImage(name.c_str(), &mat);
 }
 

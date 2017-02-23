@@ -443,6 +443,47 @@ namespace z {
 			}
 		}
 	}
+
+
+    template <typename _Tp> void threshold(_Matrix<_Tp> &src, _Matrix<_Tp>& dst, double thresh, double maxval, int type)
+    {
+        assert(src.chs == 1);
+
+        if (!dst.equalSize(src))
+            dst.create(src.size(), src.chs);
+
+        auto srcptr = src.datastart;
+        auto dstptr = dst.datastart;
+
+        switch (type) {
+        case THRESH_BINARY:
+            for (int i = 0; srcptr + i < src.dataend; ++i)
+                srcptr[i] > _Tp(thresh) ? dstptr[i] = _Tp(maxval) : dstptr[i] = _Tp(0);
+            break;
+
+        case THRESH_BINARY_INV:
+            for (int i = 0; srcptr + i < src.dataend; ++i)
+                srcptr[i] > _Tp(thresh) ? dstptr[i] = _Tp(0) : dstptr[i] = _Tp(maxval);
+            break;
+
+        case THRESH_TRUNC:
+            for (int i = 0; srcptr + i < src.dataend; ++i)
+                srcptr[i] > _Tp(thresh) ? dstptr[i] = _Tp(thresh) : dstptr[i] = _Tp(0);
+            break;
+
+        case THRESH_TOZERO:
+            for (int i = 0; srcptr + i < src.dataend; ++i)
+                if(!(srcptr[i] > _Tp(thresh)))
+                    dstptr[i] = _Tp(0);
+            break;
+
+        case THRESH_TOZERO_INV:
+            for (int i = 0; srcptr + i < src.dataend; ++i)
+                if (srcptr[i] > _Tp(thresh))
+                    dstptr[i] = _Tp(0);
+            break;
+        }
+    }
 };
 #endif
 

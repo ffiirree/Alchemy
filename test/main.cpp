@@ -6,41 +6,30 @@
 
 int main(int argc, char *argv[])
 {
-    z::Matrix zm8uc1(3, 3, 1);
-    zm8uc1 = {
-        3, 2, 1,
-        6, 5, 4,
-    };
+    auto test = z::imread("test.jpeg");
 
-    z::Matrix16s zm16sc1(3, 3, 1);
-    zm16sc1 = {
-        3, -2, 1,
-        6, 5, -4,
-        -9, 8, 7
-    };
+    z::imshow("test", test);
 
-    z::Matrix64f zm64fc3(3, 3, 3);
-    zm64fc3 = {
-        3.5, 2, 0.6,    5, 6.2, 3.1,     2.1, 2.5, 2.6,
-        6, 5, 4,    3.6, 4.6, 8.2,      8.9, 5.2, 1.2,
-    };
+    z::Matrix gray;
+    z::cvtColor(test, gray, BGR2GRAY);
 
-    cv::Mat cvm8uc1 = zm8uc1;
-    cv::Mat cvm16sc1 = zm16sc1;
-    cv::Mat cvm64fc3 = zm64fc3;
+    z::imshow("gray", gray);
 
-    z::Matrix16s z8u16sc1;
-    z8u16sc1 = zm8uc1;
-    z::Matrix16s z64f16sc3;
-    z64f16sc3 = zm64fc3;
+    z::Matrix bin, bin_inv, trunc, tozero, tozero_inv;
 
-    auto zm8uc1t = zm8uc1.t();
-    auto zm16sc1t = zm16sc1.t();
-    auto zm64fc3t = zm64fc3.t();
+    z::threshold(gray, bin, 150, 200, THRESH_BINARY);
+    z::threshold(gray, bin_inv, 150, 200, THRESH_BINARY_INV);
+    z::threshold(gray, trunc, 150, 200, THRESH_TRUNC);
+    z::threshold(gray, tozero, 150, 200, THRESH_TOZERO);
+    z::threshold(gray, tozero_inv, 150, 200, THRESH_TOZERO_INV);
 
-    z::Matrix zm8uc2(5, 3, 2);
-    z::Matrix zm(zm8uc2.size(), zm8uc2.chs);
+    z::imshow("bin", bin);
+    z::imshow("bin_inv", bin_inv);
+    z::imshow("trunc", trunc);
+    z::imshow("tozero", tozero);
+    z::imshow("tozero_inv", tozero_inv);
 
-    system("pause");
+    z::waitKey(0);
+    /*system("pause");*/
     return 0;
 }

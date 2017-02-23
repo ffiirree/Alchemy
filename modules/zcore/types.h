@@ -30,4 +30,13 @@ enum {
 	MORP_BLACKHAT,
 	MORP_GRADIENT
 };
+
+
+enum {
+    THRESH_BINARY,
+    THRESH_BINARY_INV,
+    THRESH_TRUNC,
+    THRESH_TOZERO,
+    THRESH_TOZERO_INV,
+};
 #endif // !_TYPES_C_H

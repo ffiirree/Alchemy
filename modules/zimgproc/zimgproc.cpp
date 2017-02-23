@@ -28,24 +28,16 @@ Matrix8u Mat2Matrix8u(cv::Mat & mat)
 	return temp;
 }
 
-/**
-* @berif ÉÏÏÂµßµ¹Í¼Ïñ
-*/
+
 void convertImage(Matrix8u *src, Matrix8u *dst, int flags)
 {
 	if (!dst->equalSize(*src))
 		dst->create(src->rows, src->cols, src->chs);
 
-	int rows = src->rows;
-	int cols = src->cols;
-
-	for (int i = 0; i < rows; ++i) {
-		for (int j = 0; j < cols; ++j) {
-			for (int k = 0; k < src->chs; ++k) {
-				dst->ptr(i, j)[k] = src->ptr(rows - i - 1, j)[k];
-			}
-		}
-	}
+	for (int i = 0; i < src->rows; ++i) 
+		for (int j = 0; j < src->cols; ++j) 
+			for (int k = 0; k < src->chs; ++k) 
+				dst->ptr(i, j)[k] = src->ptr(src->rows - i - 1, j)[k];
 }
 
 void copyToArray(Matrix8u &src, char * arr)

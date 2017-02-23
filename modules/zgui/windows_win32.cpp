@@ -167,9 +167,14 @@ void zShowImage(const char *name, void * arr)
 		_log_("Error\n");
 
 	img = (Matrix8u *)arr;
+    
+    if (window->image)
+        if (getBitmapData(window, &size, &channels, &dst_ptr))
+            return;
 
+    channels = img->chs;
 
-	if (size.cx != img->cols || size.cy != img->rows || channels != channels0)
+	if (size.cx != img->cols || size.cy != img->rows/* || channels != channels0*/)
 	{
 		change_size = true;
 
@@ -181,12 +186,12 @@ void zShowImage(const char *name, void * arr)
 
 		size.cx = img->cols;
 		size.cy = img->rows;
-		channels = channels0;
+		/*channels = channels0;*/
 
 		fillBitmapInfo(binfo, size.cx, size.cy, channels * 8, 1);
 		// CreateDIBSection会根据BITMAPINFOHEADER分配一块内存区域，把这块内存的指针存放在提供的pBits参数里
-		window->image = SelectObject(window->hdc,
-			CreateDIBSection(window->hdc, binfo, DIB_RGB_COLORS, &dst_ptr, 0, 0));
+		window->image = SelectObject(window->hdc, 
+            CreateDIBSection(window->hdc, binfo, DIB_RGB_COLORS, &dst_ptr, 0, 0));
 	}
 	if (change_size) {
 		getBitmapData(window, &size, 0, 0);
