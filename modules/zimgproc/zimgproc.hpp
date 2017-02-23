@@ -473,14 +473,12 @@ namespace z {
 
         case THRESH_TOZERO:
             for (int i = 0; srcptr + i < src.dataend; ++i)
-                if(!(srcptr[i] > _Tp(thresh)))
-                    dstptr[i] = _Tp(0);
+                srcptr[i] > _Tp(thresh) ? dstptr[i] = srcptr[i] : dstptr[i] = _Tp(0);
             break;
 
         case THRESH_TOZERO_INV:
             for (int i = 0; srcptr + i < src.dataend; ++i)
-                if (srcptr[i] > _Tp(thresh))
-                    dstptr[i] = _Tp(0);
+                srcptr[i] > _Tp(thresh) ? dstptr[i] = _Tp(0) : dstptr[i] = srcptr[i];
             break;
         }
     }
