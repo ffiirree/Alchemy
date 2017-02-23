@@ -18,9 +18,103 @@
 
 namespace z{
 
-template<class _type>
-inline void _Matrix<_type>::swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1) {
-	_type temp;
+//////////////////////////////////////////////////////////////////////////
+template<typename _Tp, int n> Vec_<_Tp, n>::Vec_()
+{
+    for (int i = 0; i < n; ++i)
+        data_[i] = _Tp(0);
+}
+template<typename _Tp, int n> Vec_<_Tp, n>::Vec_(_Tp v0)
+{
+    assert(n >= 1);
+    data_[0] = v0;
+}
+template<typename _Tp, int n> Vec_<_Tp, n>::Vec_(_Tp v0, _Tp v1)
+{
+    assert(n >= 2);
+    data_[0] = v0, data_[1] = v1;
+    for (int i = 2; i < n; ++i) data_[2] = _Tp(0);
+} 
+template<typename _Tp, int n> Vec_<_Tp, n>::Vec_(_Tp v0, _Tp v1, _Tp v2)
+{
+    assert(n >= 3);
+    data_[0] = v0, data_[1] = v1, data_[2] = v2;
+    for (int i = 0; i < n; ++i) data_[i] = _Tp(0);
+}
+template<typename _Tp, int n> Vec_<_Tp, n>::Vec_(_Tp v0, _Tp v1, _Tp v2, _Tp v3)
+{
+    assert(n >= 4);
+    data_[0] = v0, data_[1] = v1, data_[2] = v2, data_[3] = v3;
+    for (int i = 0; i < n; ++i) data_[i] = _Tp(0);
+}
+
+template<typename _Tp, int n> Vec_<_Tp, n>::Vec_(const _Tp* vals)
+{
+    for (int i = 0; i < n; ++i)
+        data_[i] = vals[i];
+}
+
+template<typename _Tp, int n> Vec_<_Tp, n>::Vec_(const Vec_<_Tp, n>&v) :Vec_<_Tp, n>(v.data_) {  }
+
+template<typename _Tp, int n> Vec_<_Tp, n>& Vec_<_Tp, n >::operator = (std::initializer_list<_Tp> list)
+{
+    assert(list.size() > n);
+
+    int idx = 0;
+    for (const auto& i : list)
+        data_[idx++] = i;
+
+    for (;idx < n; ++idx)
+        data_[idx] = _Tp(0);
+
+    return *this;
+}
+
+template<typename _Tp, int n> inline const _Tp& Vec_<_Tp, n >::operator[](int i) const
+{
+    assert(((unsigned)i < (unsigned)n));
+    return this->data_[i];
+}
+
+template<typename _Tp, int n> inline _Tp& Vec_<_Tp, n >::operator[](int i)
+{
+    assert(((unsigned)i < (unsigned)n));
+    return this->data_[i];
+}
+
+template<typename _Tp, int n> inline const _Tp& Vec_<_Tp, n >::operator()(int i) const
+{
+    assert(((unsigned)i < (unsigned)n));
+    return this->data_[i];
+}
+
+template<typename _Tp, int n> inline _Tp& Vec_<_Tp, n >::operator()(int i)
+{
+    assert(((unsigned)i < (unsigned)n));
+    return this->data_[i];
+}
+
+template<typename _Tp, int n> inline Vec_<_Tp, n> Vec_<_Tp, n>::all(_Tp val)
+{
+    Vec_<_Tp, n> v;
+    for (int i = 0; i < n; ++i)
+        v.data_[i] = val;
+    return v;
+}
+
+template<typename _Tp, int n> inline Vec_<_Tp, n> Vec_<_Tp, n >::zeros()
+{
+    return all(0);
+}
+template<typename _Tp, int n> inline Vec_<_Tp, n> Vec_<_Tp, n >::ones()
+{
+    return all(1);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+template<class _Tp>
+inline void _Matrix<_Tp>::swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1) {
+	_Tp temp;
 	for (uint8_t k = 0; k < chs; ++k) {
 		temp = ptr(i0, j0)[k];
 		ptr(i0, j0)[k] = ptr(i1, j1)[k];
@@ -34,35 +128,38 @@ inline void _Matrix<_type>::swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1)
  * @param[in] _rows，行数
  * @param[in] _cols，列数
  */
-template <class _type>
-void _Matrix<_type>::create(int _rows, int _cols, int _chs)
+template <class _Tp>
+void _Matrix<_Tp>::create(int _rows, int _cols, int _chs)
 {
+    flags = MatrixType<_Tp>::type;
+    chssize = sizeof(_Tp);
 	chs = _chs;
+
 	rows = _rows;
 	cols = _cols;
-	step = _cols * _chs;
-	_size = _rows * _cols;
+	step = _cols * chs;
+	size_ = _rows * _cols;
 
 	// 
 	release();
 
 	// 分配
-	datastart = data = new _type[_size * _chs];
+	datastart = data = new _Tp[size_ * chs];
     _log_("_Matrix create.");
-	dataend = data + _size * _chs;
+	dataend = data + size_ * chs;
 	refcount = new int(1);
 }
 
-template <class _type> _Matrix<_type>::_Matrix(_Size<int> size, int _chs)
+template <class _Tp> _Matrix<_Tp>::_Matrix(Size size, int _chs)
 {
-	create(size.width, size.height, _chs);
+	create(size.height, size.width, _chs);
 }
 /**
  * @berif Constructor with params.
  * @param[in] _rows，行数
  * @param[in] _cols，列数
  */
-template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols, int _chs)
+template <class _Tp> _Matrix<_Tp>::_Matrix(int _rows, int _cols, int _chs)
 {
 	create(_rows, _cols, _chs);
 }
@@ -71,7 +168,7 @@ template <class _type> _Matrix<_type>::_Matrix(int _rows, int _cols, int _chs)
  * @berif Copying function
  * @attention 这是一个浅复制
  */
-template <class _type> _Matrix<_type>::_Matrix(const _Matrix<_type>& m)
+template <class _Tp> _Matrix<_Tp>::_Matrix(const _Matrix<_Tp>& m)
 {
     if (this != &m)
         *this = m;
@@ -82,8 +179,8 @@ template <class _type> _Matrix<_type>::_Matrix(const _Matrix<_type>& m)
  * @berif 赋值函数
  * @attention 这是一个浅复制
  */
-template <class _type>
-_Matrix<_type>& _Matrix<_type>::operator=(const _Matrix<_type> &m)
+template <class _Tp>
+_Matrix<_Tp>& _Matrix<_Tp>::operator=(const _Matrix<_Tp> &m)
 {
 	// 防止出现自己给自己复制时候的问题
 	if (this != &m) {
@@ -94,8 +191,10 @@ _Matrix<_type>& _Matrix<_type>::operator=(const _Matrix<_type> &m)
 		release();
 
 		// 赋值
+        flags = m.flags;
 		chs = m.chs;
-		_size = m.size();
+        chssize = m.chssize;
+        size_ = m.size_;
 		data = m.data;
 		refcount = m.refcount;
 		rows = m.rows;
@@ -103,7 +202,6 @@ _Matrix<_type>& _Matrix<_type>::operator=(const _Matrix<_type> &m)
 		step = m.step;
 		datastart = m.datastart;
 		dataend = m.dataend;
-        dims = m.dims;
 	}
 
 	return *this;
@@ -112,8 +210,8 @@ _Matrix<_type>& _Matrix<_type>::operator=(const _Matrix<_type> &m)
 /**
  * @berif 控制引用计数的值
  */
-template <class _type>
-int _Matrix<_type>::refAdd(int *addr, int delta)
+template <class _Tp>
+int _Matrix<_Tp>::refAdd(int *addr, int delta)
 {
 	int temp = *addr;
 	*addr += delta;
@@ -124,8 +222,8 @@ int _Matrix<_type>::refAdd(int *addr, int delta)
  * @berif 释放资源
  * @attention 矩阵的资源由该函数控制并释放
  */
-template <class _type>
-void _Matrix<_type>::release()
+template <class _Tp>
+void _Matrix<_Tp>::release()
 {
 	if (refcount && (refAdd(refcount, -1) == 1)) {
         _log_("_Matrix release.");
@@ -140,8 +238,8 @@ void _Matrix<_type>::release()
 /**
  * @berif Destructor
  */
-template <class _type>
-_Matrix<_type>::~_Matrix()
+template <class _Tp>
+_Matrix<_Tp>::~_Matrix()
 {
 	release();
 }
@@ -150,105 +248,96 @@ _Matrix<_type>::~_Matrix()
 /**
  * @berif 形如mat = {1, 2, 3}的赋值方式
  */
-template <class _type>
-_Matrix<_type>& _Matrix<_type>::operator = (std::initializer_list<_type> li)
+template <class _Tp>
+_Matrix<_Tp>& _Matrix<_Tp>::operator = (std::initializer_list<_Tp> li)
 {
-	if (rows == 0 || cols == 0) {
+	if (rows == 0 || cols == 0)
 		create(1, li.size(), 1);
-	}
 
-	auto index = li.begin();
-	auto end = li.end();
-	for (_type * begin = datastart; begin < dataend; ++begin, ++index) {
-		if (index < end) {
-			*begin = *index;
-		}
-		else {
-			*begin = (_type)0;
-		}
-	}
+    int index = 0;
+    for (const auto&i : li)
+        data[index++] = i;
+
+    for (; index < size_; ++index)
+        data[index] = _Tp(0);
+
 	return *this;
 }
 
-template <class _type> _Matrix<_type>& _Matrix<_type>::operator += (const _Matrix<_type>& m)
+template <class _Tp> _Matrix<_Tp>& _Matrix<_Tp>::operator += (const _Matrix<_Tp>& m)
 {
-	for (size_t i = 0; datastart + i < dataend; ++i) {
+	for (size_t i = 0; datastart + i < dataend; ++i)
 		data[i] += m.data[i];
-	}
+
 	return (*this);
 }
-template <class _type> _Matrix<_type>&  _Matrix<_type>::operator -= (const _Matrix<_type>& m)
+template <class _Tp> _Matrix<_Tp>&  _Matrix<_Tp>::operator -= (const _Matrix<_Tp>& m)
 {
-	for (size_t i = 0; datastart + i < dataend; ++i) {
+	for (size_t i = 0; datastart + i < dataend; ++i)
 		data[i] -= m.data[i];
-	}
+
 	return (*this);
 }
 
 /**
  * @berif 将矩阵初始化为0
  */
-template <class _type>
-void _Matrix<_type>::zeros()
+template <class _Tp>
+void _Matrix<_Tp>::zeros()
 {
-	for (size_t i = 0; datastart +i < dataend; ++i) {
-		data[i] = 0;
-	}
+	for (size_t i = 0; datastart + i < dataend; ++i) 
+        data[i] = _Tp(0);
 }
 
 /**
  * @berif 重新分配内存并初始化为0
  */
-template <class _type>
-void _Matrix<_type>::zeros(int _rows, int _cols)
+template <class _Tp>
+void _Matrix<_Tp>::zeros(int _rows, int _cols)
 {
 	create(_rows, _cols, 1);
 
-	for (size_t i = 0; datastart + i < dataend; ++i) {
-		data[i] = 0;
-	}
+	for (size_t i = 0; datastart + i < dataend; ++i)
+		data[i] = _Tp(0);
 }
 
 /**
  * @berif 将矩阵初始化为1
  */
-template <class _type>
-void _Matrix<_type>::ones()
+template <class _Tp>
+void _Matrix<_Tp>::ones()
 {
-	for (size_t i = 0; datastart + i < dataend; ++i) {
-		data[i] = 1;
-	}
+	for (size_t i = 0; datastart + i < dataend; ++i) 
+        data[i] = _Tp(1);
 }
 
 /**
  * @berif 重新分配内存并初始化为1
  */
-template <class _type>
-void _Matrix<_type>::ones(int _rows, int _cols)
+template <class _Tp>
+void _Matrix<_Tp>::ones(int _rows, int _cols)
 {
 	create(_rows, _cols, 1);
 
-	for (size_t i = 0; datastart + i < dataend; ++i) {
-		data[i] = 1;
-	}
+	for (size_t i = 0; datastart + i < dataend; ++i)
+		data[i] = _Tp(1);
 }
 
 
 /**
  * @berif 将矩阵初始化为单位矩阵
  */
-template <class _type>
-void _Matrix<_type>::eye()
+template <class _Tp>
+void _Matrix<_Tp>::eye()
 {
-	if (chs > 1)
-		_log_("channels > 1!!");
+    assert((chs == 1) && (rows == cols));
 
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
-			if (i == j)
-				data[i * cols + j] = 1;
-			else
-				data[i * cols + j] = 0;
+            if (i == j)
+                data[i * cols + j] = _Tp(1);
+            else
+                data[i * cols + j] = _Tp(0);
 		}
 	}
 }
@@ -256,17 +345,19 @@ void _Matrix<_type>::eye()
 /**
  * @berif 重新分配内存并初始化为单位矩阵
  */
-template <class _type>
-void _Matrix<_type>::eye(int _rows, int _cols)
+template <class _Tp>
+void _Matrix<_Tp>::eye(int _rows, int _cols)
 {
+    assert(_rows == _cols);
+
 	create(_rows, _cols, 1);
 
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
 			if (i == j)
-				data[i * cols + j] = 1;
+				data[i * cols + j] = _Tp(1);
 			else
-				data[i * cols + j] = 0;
+				data[i * cols + j] = _Tp(0);
 		}
 	}
 }
@@ -274,67 +365,62 @@ void _Matrix<_type>::eye(int _rows, int _cols)
 /**
  * @berif 将矩阵所有的值初始化为_v
  */
-template <class _type>
-void _Matrix<_type>::init(_type _v)
+template <class _Tp>
+void _Matrix<_Tp>::init(_Tp _v)
 {
 	for (size_t i = 0; datastart + i < dataend; ++i)
-		data[i] = _v;
+		data[i] = _Tp(_v);
 }
 
 /**
  * @berif 深度复制函数
  * @param[out] outputMatrix，复制的目的矩阵，会被重新分配内存并复制数据
  */
-template <class _type>
-void _Matrix<_type>::copyTo(_Matrix<_type> & outputMatrix) const
+template <class _Tp>
+void _Matrix<_Tp>::copyTo(_Matrix<_Tp> & outputMatrix) const
 {
 	outputMatrix.create(rows, cols, chs);
-	memcpy(outputMatrix.data, data, _size * chs * sizeof(_type));
+	memcpy(outputMatrix.data, data, size_ * chs * sizeof(_Tp));
 }
 
 /**
  * @berif 深度复制函数
  * @ret 返回临时矩阵的拷贝
  */
-template <class _type>
-_Matrix<_type> _Matrix<_type>::clone() const
+template <class _Tp>
+_Matrix<_Tp> _Matrix<_Tp>::clone() const
 {
-	_Matrix<_type> m;
+	_Matrix<_Tp> m;
 	copyTo(m);
 	return m;
 }
-template <class _type> template <class _Tp2> _Matrix<_type>::operator _Matrix<_Tp2>() const
+
+template <class _Tp> 
+template <class _Tp2> _Matrix<_Tp>::operator _Matrix<_Tp2>() const
 {
 	_Matrix<_Tp2> temp(rows, cols, chs);
-	const _type * ptr1 = 0;
-	_Tp2 * ptr2 = 0;
 
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols;++j) {
-
-			ptr1 = this->ptr(i, j);
-			ptr2 = temp.ptr(i, j);
-
 			for (int k = 0; k < chs; ++k) {
-				ptr2[k] = (_Tp2)ptr1[k];
+                temp.ptr(i, j)[k] = (_Tp2)this->ptr(i, j)[k];
 			}
 		}
 	}
 	return temp;
 }
 
-template <class _type>
-_Matrix<_type>& _Matrix<_type>::operator()(_type * InputArray, size_t _size)
+template <class _Tp>
+_Matrix<_Tp>& _Matrix<_Tp>::operator()(_Tp * InputArray, z::Size size)
 {
-	create(1, _size, 1);
-	for (size_t i = 0; i < _size; ++i)
-		data[i] = InputArray[i];
-
+	create(size.height, size.width, 1);
+	for (size_t i = 0; i < _size; ++i) 
+        data[i] = InputArray[i];
 	return *this;
 }
 
-template <class _type>
-_Matrix<_type>& _Matrix<_type>::operator()(_type * InputArray, int _rows, int _cols)
+template <class _Tp>
+_Matrix<_Tp>& _Matrix<_Tp>::operator()(_Tp * InputArray, int _rows, int _cols)
 {
 	create(_rows, _cols, 1);
 	for (size_t i = 0; datastart + i < dataend; ++i)
@@ -347,55 +433,105 @@ _Matrix<_type>& _Matrix<_type>::operator()(_type * InputArray, int _rows, int _c
 /**
  * @berif 向openCV中的Mat类转换
  */
-template <class _type>
-_Matrix<_type>::operator cv::Mat() const
+template <class _Tp>
+_Matrix<_Tp>::operator cv::Mat() const
 {
-	cv::Mat temp(rows, cols, CV_8UC(chs));
+	cv::Mat temp(rows, cols, CV_MAKETYPE(flags, chs));
 
-	memcpy(temp.data, data, _size * chs * sizeof(_type));
+	memcpy(temp.data, data, size_ * chs * sizeof(_Tp));
 
 	return temp;
 }
 #endif
-template <class _type> inline _type* _Matrix<_type>::ptr(int i0)
+
+template <class _Tp> inline _Tp* _Matrix<_Tp>::ptr(int i0)
 {
-    assert(!((unsigned)i0 >= (unsigned)rows));
+    assert((unsigned)i0 < (unsigned)rows);
 	return data + i0 * step;
 }
 
 
-template <class _type> inline const _type* _Matrix<_type>::ptr(int i0) const
+template <class _Tp> inline const _Tp* _Matrix<_Tp>::ptr(int i0) const
 {
-    assert(!((unsigned)i0 >= (unsigned)rows));
+    assert((unsigned)i0 < (unsigned)rows);
 	return data + i0 * step;
 }
-/**
- * @berif 获取以像素的指针
- */
-template <class _type> inline _type* _Matrix<_type>::ptr(int i0, int i1)
+
+template <class _Tp> inline _Tp* _Matrix<_Tp>::ptr(int i0, int i1)
 {
     assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols));
 	return data + i0 * step + i1 * chs;
 }
-/**
- * @berif 获取以像素的指针
- */
-template <class _type> inline const _type* _Matrix<_type>::ptr(int i0, int i1) const
+
+template <class _Tp> inline const _Tp* _Matrix<_Tp>::ptr(int i0, int i1) const
 {
-	if ((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols) {
-		return nullptr;
-	}
+    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols));
 	return data + i0 * step + i1 * chs;
+}
+
+
+template <class _Tp> _Tp* _Matrix<_Tp>::ptr(int i0, int i1, int i2)
+{
+    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols || (unsigned)i2 >= (unsigned)chs));
+    return data + i0 * step + i1 * chs + i2;
+}
+
+template <class _Tp> const _Tp* _Matrix<_Tp>::ptr(int i0, int i1, int i2) const
+{
+    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols || (unsigned)i2 >= (unsigned)chs));
+    return data + i0 * step + i1 * chs + i2;
+}
+
+template <class _Tp>
+template<typename _T2> _T2* _Matrix<_Tp>::ptr(int i0)
+{
+    assert(!((unsigned)i0 >= (unsigned)rows));
+    return (_T2 *)(data + i0 * step);
+}
+
+template <class _Tp>
+template<typename _T2> const _T2* _Matrix<_Tp>::ptr(int i0) const
+{
+    assert(!((unsigned)i0 >= (unsigned)rows));
+    return (const _T2 *)(data + i0 * step);
+}
+
+template<typename _Tp>
+template<typename _T2> _T2* _Matrix<_Tp>::ptr(int i0, int i1)
+{
+    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols));
+    return (_T2 *)(data + i0 * step + i1 * chs);
+}
+
+template <class _Tp>
+template<typename _T2> const _T2* _Matrix<_Tp>::ptr(int i0, int i1) const
+{
+    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols));
+    return (const _T2 *)(data + i0 * step + i1 * chs);
+}
+
+template <class _Tp>
+template<typename _T2> _T2* _Matrix<_Tp>::ptr(int i0, int i1, int i2)
+{
+    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols || (unsigned)i2 >= (unsigned)chs));
+    return (_T2 *)(data + i0 * step + i1 * chs + i2);
+}
+
+template <class _Tp>
+template<typename _T2> const _T2* _Matrix<_Tp>::ptr(int i0, int i1, int i2) const 
+{
+    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols || (unsigned)i2 >= (unsigned)chs));
+    return (const _T2 *)(data + i0 * step + i1 * chs + i2);
 }
 
 /**
  * @berif 求矩阵的秩
  * m x n矩阵中min(m, n)矩阵的秩
  */
-template <class _type>
-_type _Matrix<_type>::rank()
+template <class _Tp>
+_Tp _Matrix<_Tp>::rank()
 {
-	_type temp = (_type)0;
+    _Tp temp = (_Tp)0;
 	// do something..
 	return temp;
 }
@@ -406,15 +542,12 @@ _type _Matrix<_type>::rank()
  *            2、由于迹是对角线元素之和，所以对于char、short等可能会发生溢出，所以同一改为double
  * m x n矩阵中min(m, n)矩阵的秩
  */
-template <class _type>
-double _Matrix<_type>::tr()
+template <class _Tp>
+double _Matrix<_Tp>::tr()
 {
-	if (chs != 1)
-		_log_("chs != 1");
-	if (rows != cols)
-		_log_("rows != cols");
+    assert(chs == 1 && rows == cols);
 
-	_type temp = (_type)0;
+    _Tp temp = _Tp(0);
 	for (int i = 0; i < rows; ++i) {
 		temp += (*this)[i][i];
 	}
@@ -425,10 +558,10 @@ double _Matrix<_type>::tr()
 /**
  * @berif 逆
  */
-template <class _type>
-_Matrix<_type> _Matrix<_type>::inv()
+template <class _Tp>
+_Matrix<_Tp> _Matrix<_Tp>::inv()
 {
-	_Matrix<_type> m(cols, rows);
+	_Matrix<_Tp> m(cols, rows);
 	// do something..
 	return m;
 }
@@ -437,10 +570,10 @@ _Matrix<_type> _Matrix<_type>::inv()
 /**
  * @berif 转置
  */
-template <class _type>
-_Matrix<_type>  _Matrix<_type>::t()
+template <class _Tp>
+_Matrix<_Tp>  _Matrix<_Tp>::t()
 {
-	_Matrix<_type> m(cols, rows, chs);
+	_Matrix<_Tp> m(cols, rows, chs);
 
 	for (int i = 0; i < m.rows; ++i) {
 		for (int j = 0; j < m.cols; ++j) {
@@ -455,13 +588,13 @@ _Matrix<_type>  _Matrix<_type>::t()
 /**
  * @berif 点乘
  */
-template <class _type>
-_Matrix<_type> _Matrix<_type>::dot(_Matrix<_type> &m)
+template <class _Tp>
+_Matrix<_Tp> _Matrix<_Tp>::dot(_Matrix<_Tp> &m)
 {
 	if (rows != m.rows || cols != m.cols || chs != chs)
 		_log_("rows != m.rows || cols != m.cols || || chs != chs");
 
-	_Matrix<_type> temp(m.rows, m.cols, m.chs);
+	_Matrix<_Tp> temp(m.rows, m.cols, m.chs);
 
 	for (size_t i = 0; datastart + i < dataend; ++i) {
 		temp.data[i] = data[i] * m.data[i];
@@ -476,13 +609,13 @@ _Matrix<_type> _Matrix<_type>::dot(_Matrix<_type> &m)
  *            A and B.  That is, C = A x B.  A and B must be 3 element
  *            vectors.
  */
-template <class _type>
-_Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
+template <class _Tp>
+_Matrix<_Tp> _Matrix<_Tp>::cross(_Matrix<_Tp> &m)
 {
 	if (rows != 1 || cols != 3 || m.rows != 1 || m.cols != 3 || chs != 0)
 		_log_("rows != 1 || cols != 3 || m.rows != 1 || m.cols != 3 || chs != 0");
 
-	_Matrix<_type> temp(1, 3);
+	_Matrix<_Tp> temp(1, 3);
 
 	temp[0][0] = data[1] * m.data[2] - data[2] * m.data[1];
 	temp[0][1] = data[2] * m.data[0] - data[0] * m.data[2];
@@ -498,7 +631,7 @@ _Matrix<_type> _Matrix<_type>::cross(_Matrix<_type> &m)
  * @param[out] dst，结果
  * @param[in] norm， 是否对卷积结果归一化
  */
-template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&dst, bool norm)
+template <class _Tp> void _Matrix<_Tp>::conv(Matrix64f &kernel, _Matrix<_Tp>&dst, bool norm)
 {
 	if (kernel.rows != kernel.cols || kernel.rows % 2 == 0)
 		_log_("size.width != size.height || size.width % 2 == 0");
@@ -509,11 +642,11 @@ template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&
 	int *tempValue = new int[chs];                            // 保存卷积未归一化前的中间变量
 	int zeros = 0;                                            // 边缘处理，记录边缘卷积过程中的超出图像的像素个数
 	int m = kernel.rows / 2, n = kernel.cols / 2;
-	const _type * srcPtr = nullptr;                           // 指向源图像像素的指针
-	_type * dstPtr = nullptr;                                 // 指向输出图像的像素的指针
+	const _Tp * srcPtr = nullptr;                           // 指向源图像像素的指针
+	_Tp * dstPtr = nullptr;                                 // 指向输出图像的像素的指针
 	int alpha = 0;
 	int delta = 0;
-	for (size_t i = 0; i < kernel.size(); ++i) {
+	for (size_t i = 0; i < kernel.size_; ++i) {
 		delta += (int)kernel.data[i];
 	}
 
@@ -543,9 +676,9 @@ template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&
 
 			for (int k = 0; k < chs; ++k) {
 				if(norm)
-					dstPtr[k] = (_type)(tempValue[k] / alpha);
+					dstPtr[k] = (_Tp)(tempValue[k] / alpha);
 				else
-					dstPtr[k] = (_type)tempValue[k];
+					dstPtr[k] = (_Tp)tempValue[k];
 			}
 
 		} // !for(j)
@@ -554,21 +687,21 @@ template <class _type> void _Matrix<_type>::conv(Matrix &kernel, _Matrix<_type>&
 	delete[] tempValue;
 }
 
-template <class _type> void conv(_Matrix<_type> &src, _Matrix<_type> &dst, Matrix &core)
+template <class _Tp> void conv(_Matrix<_Tp> &src, _Matrix<_Tp> &dst, Matrix64f &core)
 {
 	src.conv(core, dst);
 }
 /**
  * @berif 重载输出运算符
  */
-template <class _type>
-std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item)
+template <class _Tp>
+std::ostream &operator<<(std::ostream & os, const _Matrix<_Tp> &item)
 {
 	os << '[';
 	for (int i = 0; i < item.rows; ++i) {
 		for (int j = 0; j < item.step; ++j) {
 			
-			if(sizeof(_type) == 1)
+			if(sizeof(_Tp) == 1)
 				os << (int)item[i][j];
 			else
 				os << item[i][j];
@@ -587,8 +720,8 @@ std::ostream &operator<<(std::ostream & os, const _Matrix<_type> &item)
  * @berif 比较两个矩阵是否相等
  * @attention 浮点数的比较
  */
-template <class _type>
-bool operator==(const _Matrix<_type> &m1, const _Matrix<_type> &m2)
+template <class _Tp>
+bool operator==(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2)
 {
 	// 1、没有分配内存的矩阵比较，没有经过create()
 	if (m1.data == nullptr && m1.data == m2.data) {
@@ -618,8 +751,8 @@ bool operator==(const _Matrix<_type> &m1, const _Matrix<_type> &m2)
 /**
  * @berif 比较两个矩阵是否不相等
  */
-template <class _type>
-bool operator!=(const _Matrix<_type> &m1, const _Matrix<_type> &m2)
+template <class _Tp>
+bool operator!=(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2)
 {
 	return !(m1 == m2);
 }
@@ -627,15 +760,15 @@ bool operator!=(const _Matrix<_type> &m1, const _Matrix<_type> &m2)
 /**
  * @berif 矩阵乘法，重载*
  */
-template <class _type>
-_Matrix<_type> operator*(_Matrix<_type> &m1, _Matrix<_type> &m2)
+template <class _Tp>
+_Matrix<_Tp> operator*(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
 {
 	if (m1.chs != 1 || m2.chs != 1)
 		_log_("m1.chs != 1 || m2.chs != 1");
 	if (m1.cols != m2.rows)
 		_log_("m1.cols != m2.rows");
 
-	_Matrix<_type> m(m1.rows, m2.cols, 1);
+	_Matrix<_Tp> m(m1.rows, m2.cols, 1);
 	m.zeros();
 
 	for (int i = 0; i < m.rows; ++i) {
@@ -652,13 +785,13 @@ _Matrix<_type> operator*(_Matrix<_type> &m1, _Matrix<_type> &m2)
 /**
  * @berif 矩阵加法，重载+
  */
-template <class _type>
-_Matrix<_type> operator+(_Matrix<_type> &m1, _Matrix<_type> &m2)
+template <class _Tp>
+_Matrix<_Tp> operator+(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
 {
 	if (m1.cols != m2.cols || m1.rows != m2.rows)
 		_log_("m1.cols != m2.cols || m1.rows != m2.rows");
 
-	_Matrix<_type> temp(m1.rows, m1.cols, m1.chs);
+	_Matrix<_Tp> temp(m1.rows, m1.cols, m1.chs);
 
 	for (size_t i = 0; m1.datastart + i < m1.dataend; ++i) {
 		temp.data[i] = m1.data[i] + m2.data[i];
@@ -669,13 +802,13 @@ _Matrix<_type> operator+(_Matrix<_type> &m1, _Matrix<_type> &m2)
 /**
  * @berif 矩阵减法，重载-
  */
-template <class _type>
-_Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_type> &m2)
+template <class _Tp>
+_Matrix<_Tp> operator-(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
 {
 	if (m1.cols != m2.cols || m1.rows != m2.rows)
 		_log_("m1.cols != m2.cols || m1.rows != m2.rows");
 
-	_Matrix<_type> temp(m1.rows, m1.cols, m1.chs);
+	_Matrix<_Tp> temp(m1.rows, m1.cols, m1.chs);
 
 	for (size_t i = 0; m1.datastart + i < m1.dataend; ++i) {
 		temp.data[i] = m1.data[i] - m2.data[i];
@@ -686,10 +819,10 @@ _Matrix<_type> operator-(_Matrix<_type> &m1, _Matrix<_type> &m2)
 /**
  * @berif 矩阵数乘，重载*
  */
-template <class _type>
-_Matrix<_type> operator*(_Matrix<_type> &m, _type delta)
+template <class _Tp>
+_Matrix<_Tp> operator*(_Matrix<_Tp> &m, _Tp delta)
 {
-	_Matrix<_type> temp(m.rows, m.cols, m.chs);
+	_Matrix<_Tp> temp(m.rows, m.cols, m.chs);
 
 	for (size_t i = 0; m.datastart + i < m.dataend; ++i) {
 		temp.data[i] = m.data[i] * delta;
@@ -698,8 +831,8 @@ _Matrix<_type> operator*(_Matrix<_type> &m, _type delta)
 	return temp;
 }
 
-template <class _type>
-_Matrix<_type> operator*(_type delta, _Matrix<_type> &m)
+template <class _Tp>
+_Matrix<_Tp> operator*(_Tp delta, _Matrix<_Tp> &m)
 {
 	return m*delta;
 }
@@ -707,10 +840,10 @@ _Matrix<_type> operator*(_type delta, _Matrix<_type> &m)
 /**
  * @berif 矩阵加法，重载+
  */
-template <class _type>
-_Matrix<_type> operator+(_Matrix<_type> &m, _type delta)
+template <class _Tp>
+_Matrix<_Tp> operator+(_Matrix<_Tp> &m, _Tp delta)
 {
-	_Matrix<_type> temp(m.rows, m.cols, m.chs);
+	_Matrix<_Tp> temp(m.rows, m.cols, m.chs);
 
 	for (size_t i = 0; m.datastart + i < m.dataend; ++i) {
 		temp.data[i] = m.data[i] + delta;
@@ -718,8 +851,8 @@ _Matrix<_type> operator+(_Matrix<_type> &m, _type delta)
 
 	return temp;
 }
-template <class _type>
-_Matrix<_type> operator+(_type delta, _Matrix<_type> &m)
+template <class _Tp>
+_Matrix<_Tp> operator+(_Tp delta, _Matrix<_Tp> &m)
 {
 	return m + delta;
 }
@@ -727,13 +860,13 @@ _Matrix<_type> operator+(_type delta, _Matrix<_type> &m)
 /**
  * @berif 矩阵减法，重载-
  */
-template <class _type>
-_Matrix<_type> operator-(_Matrix<_type> &m, _type delta)
+template <class _Tp>
+_Matrix<_Tp> operator-(_Matrix<_Tp> &m, _Tp delta)
 {
 	return m + (-delta);
 }
-template <class _type>
-_Matrix<_type> operator-(_type delta, _Matrix<_type> &m)
+template <class _Tp>
+_Matrix<_Tp> operator-(_Tp delta, _Matrix<_Tp> &m)
 {
 	return m * (-1) + delta;
 }

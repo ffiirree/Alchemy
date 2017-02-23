@@ -6,11 +6,11 @@
 int main(int argc, char *argv[])
 {
     // 载入原始图像
-    z::Matrix8u test = z::imread("test.jpeg");
+    z::Matrix test = z::imread("test.jpeg");
     cv::imshow("origin image", cv::Mat(test));
 
     // 灰度图
-    z::Matrix8u gray(test.size(), 1);
+    z::Matrix gray(test.size(), 1);
     z::cvtColor(test, gray, BGR2GRAY);
     cv::imshow("gray", cv::Mat(gray));
 
@@ -18,14 +18,14 @@ int main(int argc, char *argv[])
     z::medianFilter(gray, gray, z::Size(3, 3));
 
     // 二值化
-    z::Matrix8u bin_image = gray > 150;
-    z::Matrix8u bin_image_2 = gray > 150;
+    z::Matrix bin_image = gray > 150;
+    z::Matrix bin_image_2 = gray > 150;
     cv::imshow("binary image", cv::Mat(bin_image));
 
 
     // 寻找轮廓
     std::vector<std::vector<z::Point>> contours;
-    z::Matrix8u res(test.rows, test.cols, 3);
+    z::Matrix res(test.rows, test.cols, 3);
     res.zeros();
     z::findContours(bin_image, contours);
 

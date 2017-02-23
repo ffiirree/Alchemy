@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 
 
     //res_image = gray.clone();
-    z::Matrix ker(3, 3);
+    z::Matrix64f ker(3, 3);
     ker = {
         -1, -1, -1,
         -1,  9, -1,
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 
     //gray.conv(ker, res_image);
     cv::imshow("original", cv::Mat(gray));
-    z::Matrix fft_src, fft_dst, ifft_dst;
+    z::Matrix64f fft_src, fft_dst, ifft_dst;
     z::Matrix8u  res;
 
     // ---------------------------------------------------------------------------------------------------------------------------
@@ -37,12 +37,12 @@ int main(int argc, char *argv[])
 
     // ³Ë»ý
     //k_fft
-    z::Matrix ker_;
+    z::Matrix64f ker_;
     copyMakeBorder(ker, ker_, 0, fft_dst.rows - 3, 0, fft_dst.cols - 3);
-    z::Matrix kernel_fft;
+    z::Matrix64f kernel_fft;
     z::fft(ker_, kernel_fft);
 
-    z::Matrix ifft_src(kernel_fft.rows, kernel_fft.cols, 2);
+    z::Matrix64f ifft_src(kernel_fft.rows, kernel_fft.cols, 2);
     for (int i = 0; i < fft_dst.rows; ++i) {
         for (int j = 0; j < fft_dst.cols; ++j) {
             ifft_src.ptr(i, j)[0] = fft_dst.ptr(i, j)[0] * kernel_fft.ptr(i, j)[0] - fft_dst.ptr(i, j)[1] * kernel_fft.ptr(i, j)[1];

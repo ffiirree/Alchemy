@@ -23,7 +23,7 @@ namespace z{
 Matrix8u Mat2Matrix8u(cv::Mat & mat)
 {
 	Matrix8u temp(mat.rows, mat.cols, mat.channels());
-	memcpy(temp.data, mat.data, temp.size()*temp.chs);
+	memcpy(temp.data, mat.data, temp.size_*temp.chs);
 
 	return temp;
 }
@@ -50,7 +50,7 @@ void convertImage(Matrix8u *src, Matrix8u *dst, int flags)
 
 void copyToArray(Matrix8u &src, char * arr)
 {
-	int dataSize = src.size()* src.chs;
+	int dataSize = src.size_ * src.chs;
 	for (int i = 0; i < dataSize; ++i) {
 		arr[i] = src.data[i];
 	}
@@ -58,7 +58,7 @@ void copyToArray(Matrix8u &src, char * arr)
 /**
  * @berif 获取用于进行高斯滤波的高斯核
  */
-Matrix Gassion(z::Size ksize, double sigmaX, double sigmaY)
+Matrix64f Gassion(z::Size ksize, double sigmaX, double sigmaY)
 {
 	if (ksize.width != ksize.height || ksize.width % 2 != 1) {
 		_log_("ksize.width != ksize.height || ksize.width % 2 != 1");
@@ -71,7 +71,7 @@ Matrix Gassion(z::Size ksize, double sigmaX, double sigmaY)
 	int y = ksize.height / 2;
 	double z;
 
-	Matrix kernel(ksize);
+    Matrix64f kernel(ksize);
 
 	for (int i = 0; i < kernel.rows; ++i) {
 		for (int j = 0; j < kernel.cols; ++j) {
@@ -97,10 +97,10 @@ Matrix Gassion(z::Size ksize, double sigmaX, double sigmaY)
  * @param src
  * @param dst
  */
-void _dft(Matrix & src, Matrix & dst, Ft ft)
+void _dft(Matrix64f & src, Matrix64f & dst, Ft ft)
 {
-	Matrix temp(src.rows, src.cols, 2);
-	Matrix end(src.rows, src.cols, 2);
+    Matrix64f temp(src.rows, src.cols, 2);
+    Matrix64f end(src.rows, src.cols, 2);
 
 	// 按层计算
 	const int N = src.cols;
@@ -160,20 +160,20 @@ void _dft(Matrix & src, Matrix & dst, Ft ft)
 /**
  * @berif 1D或2D离散傅里叶变换
  */
-void dft(Matrix & src, Matrix & dst)
+void dft(Matrix64f & src, Matrix64f & dst)
 {
-	Matrix gx, gRe = src;
-	Matrix gIm(src.rows, src.cols, 1);
+    Matrix64f gx, gRe = src;
+    Matrix64f gIm(src.rows, src.cols, 1);
 	gIm.zeros();
 	merge(gRe, gIm, gx);
 
 	_dft(gx, dst, DFT);
 }
 
-void idft(Matrix & src, Matrix & dst)
+void idft(Matrix64f & src, Matrix64f & dst)
 {
-    std::vector<Matrix> mv;
-    Matrix temp;
+    std::vector<Matrix64f> mv;
+    Matrix64f temp;
     _dft(src, temp, IDFT);
     dst = temp;
 }
@@ -205,7 +205,7 @@ int getIdealRows(int rows)
  * @berif 对_Matrix类进行列的二进制反转
  * @param src
  */
-void bitRevCols(Matrix & src)
+void bitRevCols(Matrix64f & src)
 {
 	int32_t HELF_N = src.cols >> 1;
     int32_t k;
@@ -230,7 +230,7 @@ void bitRevCols(Matrix & src)
  * @berif 对_Matrix的类对象进行行二进制反转
  * @param src
  */
-void bitRevRows(Matrix & src)
+void bitRevRows(Matrix64f & src)
 {
     int32_t HELF_N = src.rows >> 1;
     int32_t k;
@@ -256,7 +256,7 @@ void bitRevRows(Matrix & src)
  * @berif 1D or 2D 基2FFT, 就地计算
  * @param src
  */
-void _fft(Matrix & src, Ft ft)
+void _fft(Matrix64f & src, Ft ft)
 {
     // 二进制反转，列反转
     bitRevCols(src);
@@ -325,9 +325,9 @@ void _fft(Matrix & src, Ft ft)
 
 
 
-void fft(Matrix & src, Matrix & dst)
+void fft(Matrix64f & src, Matrix64f & dst)
 {
-	Matrix gRe;
+    Matrix64f gRe;
 	int fft_rows = getIdealRows(src.rows);
 	int fft_cols = getIdealCols(src.cols);
 
@@ -335,11 +335,11 @@ void fft(Matrix & src, Matrix & dst)
 	copyMakeBorder(src, gRe, 0, fft_rows - src.rows, 0, fft_cols - src.cols);
 
     // 虚数部分
-	Matrix gIm(fft_rows, fft_cols, 1);
+    Matrix64f gIm(fft_rows, fft_cols, 1);
     gIm.zeros();
 
     // 虚数和实数部分合成，FFT输入的图像
-	Matrix gx;
+    Matrix64f gx;
 	merge(gRe, gIm, gx);
 
     // 进行快速傅里叶变换
@@ -347,13 +347,13 @@ void fft(Matrix & src, Matrix & dst)
     dst = gx;
 }
 
-void ifft(Matrix & src, Matrix & dst)
+void ifft(Matrix64f & src, Matrix64f & dst)
 {
-    std::vector<Matrix> mv;
+    std::vector<Matrix64f> mv;
     _fft(src, IDFT);
     
-    for (size_t i = 0; i < src.size() * 2; ++i) {
-        *(src.data + i) /= src.size();
+    for (size_t i = 0; i < src.size_ * 2; ++i) {
+        *(src.data + i) /= src.size_;
     }
     dst = src;
 }

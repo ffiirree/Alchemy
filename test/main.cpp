@@ -6,82 +6,41 @@
 
 int main(int argc, char *argv[])
 {
-    z::Matrix8u test = z::imread("test.jpeg");
-    z::Matrix8u gray;
-    z::Matrix8u res_image;
-    TimeStamp timer;
-    
-
-    //res_image = gray.clone();
-    z::Matrix ker(3, 3);
-    ker = {
-        -1, -1, -1,
-        -1,  9, -1,
-        -1, -1, -1
+    z::Matrix zm8uc1(3, 3, 1);
+    zm8uc1 = {
+        3, 2, 1,
+        6, 5, 4,
     };
-    z::cvtColor(test, gray, BGR2GRAY);
-    z::Matrix8u good = gray;
 
-    //gray.conv(ker, res_image);
-    cv::imshow("original", cv::Mat(gray));
-    z::Matrix fft_src, fft_dst, ifft_dst;
-    z::Matrix8u  res;
+    z::Matrix16s zm16sc1(3, 3, 1);
+    zm16sc1 = {
+        3, -2, 1,
+        6, 5, -4,
+        -9, 8, 7
+    };
 
-    // ---------------------------------------------------------------------------------------------------------------------------
-    // 使用fft进行卷积运算
-    // fft
-    fft_src = gray;
+    z::Matrix64f zm64fc3(3, 3, 3);
+    zm64fc3 = {
+        3.5, 2, 0.6,    5, 6.2, 3.1,     2.1, 2.5, 2.6,
+        6, 5, 4,    3.6, 4.6, 8.2,      8.9, 5.2, 1.2,
+    };
 
-    timer.start();
-    z::fft(fft_src, fft_dst);
+    cv::Mat cvm8uc1 = zm8uc1;
+    cv::Mat cvm16sc1 = zm16sc1;
+    cv::Mat cvm64fc3 = zm64fc3;
 
-    // 乘积
-    //k_fft
-    z::Matrix ker_;
-    copyMakeBorder(ker, ker_, 0, fft_dst.rows - 3, 0, fft_dst.cols - 3);
-    z::Matrix ker_i(ker_.rows, ker_.cols, 1);
-    z::Matrix kernel;
-    z::merge(ker_, ker_i, kernel);
-    z::Matrix kernel_fft;
-    z::fft(kernel, kernel_fft);
+    z::Matrix16s z8u16sc1;
+    z8u16sc1 = zm8uc1;
+    z::Matrix16s z64f16sc3;
+    z64f16sc3 = zm64fc3;
 
-    z::Matrix ifft_src(kernel_fft.rows, kernel_fft.cols, 2);
-    for (int i = 0; i < fft_dst.rows; ++i) {
-        for (int j = 0; j < fft_dst.cols; ++j) {
-            ifft_src.ptr(i, j)[0] = fft_dst.ptr(i, j)[0] * kernel_fft.ptr(i, j)[0] - fft_dst.ptr(i, j)[1] * kernel_fft.ptr(i, j)[1];
-            ifft_src.ptr(i, j)[1] = fft_dst.ptr(i, j)[1] * kernel_fft.ptr(i, j)[0] + fft_dst.ptr(i, j)[0] * kernel_fft.ptr(i, j)[1];
-        }
-    }
+    auto zm8uc1t = zm8uc1.t();
+    auto zm16sc1t = zm16sc1.t();
+    auto zm64fc3t = zm64fc3.t();
 
+    z::Matrix zm8uc2(5, 3, 2);
+    z::Matrix zm(zm8uc2.size(), zm8uc2.chs);
 
-
-    // ifft
-    z::ifft(ifft_src, ifft_dst);
-    std::cout << timer.runtime() << std::endl;
-
-    res = ifft_dst;
-    std::vector<z::Matrix8u> mv;
-    z::spilt(res, mv);
-    z::Matrix8u res__(gray.rows, gray.cols, 1);
-    for (int i = 0; i < gray.rows; ++i) {
-        for (int j = 0; j < gray.cols; ++j) {
-            res__.ptr(i, j)[0] = mv.at(0).ptr(i, j)[0];
-        }
-    }
-    cv::imshow("res", cv::Mat(res__));
-    // ---------------------------------------------------------------------------------------------------------------------------
-    
-
-    // ---------------------------------------------------------------------------------------------------------------------------
-    // 普通卷积运算
-    z::Matrix8u res_good;
-    timer.start();
-    gray.conv(ker, res_good);
-    std::cout << timer.runtime() << std::endl;
-    cv::imshow("res_good", cv::Mat(res_good));
-    // ---------------------------------------------------------------------------------------------------------------------------
-
-    cv::waitKey(0);
-
+    system("pause");
     return 0;
 }

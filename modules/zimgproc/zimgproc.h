@@ -37,53 +37,53 @@ namespace z{
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Matrix8u Mat2Matrix8u(cv::Mat & mat);
-template <class _type> void cvtColor(const _Matrix<_type>&src, _Matrix<_type>&dst, int code);
+template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code);
 
 // 多通道分离和混合
-template <class _type> void spilt(_Matrix<_type> & src, std::vector<_Matrix<_type>> & mv);
-template <class _type> void merge(_Matrix<_type> & src1, _Matrix<_type> & src2, _Matrix<_type> & dst);
-template <class _type> void merge(std::vector<_Matrix<_type>> & src, _Matrix<_type> & dst);
+template <class _Tp> void spilt(_Matrix<_Tp> & src, std::vector<_Matrix<_Tp>> & mv);
+template <class _Tp> void merge(_Matrix<_Tp> & src1, _Matrix<_Tp> & src2, _Matrix<_Tp> & dst);
+template <class _Tp> void merge(std::vector<_Matrix<_Tp>> & src, _Matrix<_Tp> & dst);
 
 void convertImage(Matrix8u *src, Matrix8u *dst, int flags = 0);
 void copyToArray(Matrix8u &src, char * arr);
 
-template <class _type> void copyMakeBorder(_Matrix<_type> & src, _Matrix<_type> & dst, int top, int bottom, int left, int right);
+template <class _Tp> void copyMakeBorder(_Matrix<_Tp> & src, _Matrix<_Tp> & dst, int top, int bottom, int left, int right);
 
 // 离散傅里叶DFT
-void _dft(Matrix & src);
-void dft(Matrix & src, Matrix & dst);
-void idft(Matrix & src, Matrix & dst);
+void _dft(Matrix64f & src);
+void dft(Matrix64f & src, Matrix64f & dst);
+void idft(Matrix64f & src, Matrix64f & dst);
 
-void bitRevCols(Matrix & src);
-void bitRevRows(Matrix & src);
+void bitRevCols(Matrix64f & src);
+void bitRevRows(Matrix64f & src);
 
 
 
 // 快速傅里叶变换FFT
-void _fft(Matrix & src, Ft ft);
-void fft(Matrix & src, Matrix & dst);
-void ifft(Matrix & src, Matrix & dst);
+void _fft(Matrix64f & src, Ft ft);
+void fft(Matrix64f & src, Matrix64f & dst);
+void ifft(Matrix64f & src, Matrix64f & dst);
 
 // 线性滤波
-template <class _type> void blur(_Matrix<_type>& src, _Matrix<_type>& dst, Size size);
-template <class _type> void boxFilter(const _Matrix<_type>& src, _Matrix<_type>& dst, Size size, bool normalize);
-template <class _type> void GaussianBlur(_Matrix<_type>&src, _Matrix<_type> & dst, Size size, double sigmaX = 0, double sigmaY = 0);
-template <class _type> _Matrix<_type> embossingFilter(_Matrix<_type> src, Size size, float ang);
-template <class _type> _Matrix<_type> edgeDetection(_Matrix<_type> src, Size size, float ang);
-template <class _type> _Matrix<_type> motionBlur(_Matrix<_type> src, Size size, float ang);
+template <class _Tp> void blur(_Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size);
+template <class _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize);
+template <class _Tp> void GaussianBlur(_Matrix<_Tp>&src, _Matrix<_Tp> & dst, Size size, double sigmaX = 0, double sigmaY = 0);
+template <class _Tp> _Matrix<_Tp> embossingFilter(_Matrix<_Tp> src, Size size, float ang);
+template <class _Tp> _Matrix<_Tp> edgeDetection(_Matrix<_Tp> src, Size size, float ang);
+template <class _Tp> _Matrix<_Tp> motionBlur(_Matrix<_Tp> src, Size size, float ang);
 
 // 非线性滤波
-template <class _type> void medianFilter(_Matrix<_type>&src, _Matrix<_type>& dst, Size size);
-Matrix Gassion(z::Size ksize, double sigmaX, double sigmaY);
+template <class _Tp> void medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, Size size);
+Matrix64f Gassion(z::Size ksize, double sigmaX, double sigmaY);
 
 // 形态学滤波
-template <class _type> void morphOp(int code, _Matrix<_type>& src, _Matrix<_type>&dst, Size kernel);
-template <class _type> void erode(_Matrix<_type>& src, _Matrix<_type>&dst, Size kernel);
-template <class _type> void dilate(_Matrix<_type>& src, _Matrix<_type>&dst, Size kernel);
+template <class _Tp> void morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel);
+template <class _Tp> void erode(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel);
+template <class _Tp> void dilate(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel);
 
 //形态学滤波的高级操作
-template <class _type> void morphEx(_Matrix<_type>& src, _Matrix<_type>&dst, int op, Size kernel);
-template <class _type> void open(_Matrix<_type>& src, _Matrix<_type>&dst, Size kernel);
+template <class _Tp> void morphEx(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, int op, Size kernel);
+template <class _Tp> void open(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel);
 }
 
 #endif // !__cplusplus

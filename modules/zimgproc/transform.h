@@ -47,6 +47,16 @@ void Canny(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2, int
  * @ret None
  */
 void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst);
+
+/**
+ * @berif 提取所有轮廓
+ *      标记 [ 0 | 255 ] 为 2，[ 255 | 0 ]的为 254(-2)，
+ *      如果扫描过2，说明在边界内，进过-2说明在边界外
+ * @attention 该函数会改变输入矩阵的值
+ * @param[in/out] src 输入的二值图像
+ * @param[out] dst, 边界点集的向量
+ * @ret None
+ */
 void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst);
 }
 
