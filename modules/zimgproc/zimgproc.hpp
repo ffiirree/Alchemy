@@ -587,7 +587,7 @@ namespace z {
         for (int i = 0; i < dst.rows; ++i)
             for (int j = 0; j < dst.cols; ++j) 
                 for (int k = 0;k < dst.chs; ++k) 
-                    dst.ptr(i, j)[k] *= 4;
+                    dst.ptr(i, j)[k] = saturate_cast<_Tp>(dst.ptr(i, j)[k] * 4);
     }
 
 
@@ -609,13 +609,10 @@ namespace z {
         int dst_cols = src.cols / 2;
 
         dst.create(dst_rows, dst_cols, src.chs);
-        for (int i = 0; i < dst_rows; ++i) {
-            for (int j = 0;j < dst_cols; ++j) {
-                for (int k = 0; k < src.chs; ++k) {
+        for (int i = 0; i < dst_rows; ++i) 
+            for (int j = 0;j < dst_cols; ++j) 
+                for (int k = 0; k < src.chs; ++k) 
                     dst.ptr(i, j)[k] = src.ptr(2 * i, 2 * j)[k];
-                }
-            }
-        }
     }
 };
 #endif

@@ -14,9 +14,40 @@
 #ifndef _OPERATIONS_HPP
 #define _OPERATIONS_HPP
 
+#include <algorithm>
 #include "debug.h"
 
+// 不使用任何宏定义的max和min
+#ifdef max
+#undef max
+#endif
+
+#ifdef min
+#undef min
+#endif
+
 namespace z{
+//////////////////////////////////////////////////////////////////////////
+template<typename _Tp> static inline _Tp saturate_cast(uint8_t v) { return _Tp(v); }
+template<typename _Tp> static inline _Tp saturate_cast(int8_t v) { return _Tp(v); }
+template<typename _Tp> static inline _Tp saturate_cast(uint16_t v) { return _Tp(v); }
+template<typename _Tp> static inline _Tp saturate_cast(int16_t v) { return _Tp(v); }
+template<typename _Tp> static inline _Tp saturate_cast(uint32_t v) { return _Tp(v); }
+template<typename _Tp> static inline _Tp saturate_cast(int32_t v) { return _Tp(v); }
+template<typename _Tp> static inline _Tp saturate_cast(float v) { return _Tp(v); }
+template<typename _Tp> static inline _Tp saturate_cast(double v) { return _Tp(v); }
+
+// 特化
+// such as: -2 -> 0
+template <> inline uint8_t saturate_cast<uint8_t>(int8_t v) { return (uint8_t)std::max((int)v, 0); }
+template <> inline uint8_t saturate_cast<uint8_t>(uint16_t v) { return (uint8_t)std::min((unsigned)v, (unsigned)(255)); }
+template <> inline uint8_t saturate_cast<uint8_t>(int32_t v) { return (uint8_t)((unsigned)v <= 255 ? v : v > 0 ? 255 : 0 ); }
+template <> inline uint8_t saturate_cast<uint8_t>(int16_t v) { return (uint8_t)(saturate_cast<uint8_t>(int(v))); }
+template <> inline uint8_t saturate_cast<uint8_t>(uint32_t v) { return (uint8_t)(std::min(v, (unsigned)255)); }
+// 这个可能有问题
+template <> inline uint8_t saturate_cast<uint8_t>(float v) { return (uint8_t)(saturate_cast<uint8_t>((int)v)); }
+template <> inline uint8_t saturate_cast<uint8_t>(double v) { return (uint8_t)(saturate_cast<uint8_t>((int)v)); }
+
 
 //////////////////////////////////////////////////////////////////////////
 template<typename _Tp, int n> Vec_<_Tp, n>::Vec_()
@@ -672,7 +703,7 @@ template <class _Tp> void _Matrix<_Tp>::conv(Matrix64f &kernel, _Matrix<_Tp>&dst
 						}
 					}
 					else {
-						zeros++;
+						zeros += static_cast<int>(kernel.ptr(ii, jj)[0]);
 					}
 				} // !for(jj)
 			} // !for(ii)

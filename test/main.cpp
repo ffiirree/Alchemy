@@ -10,7 +10,6 @@ int main(int argc, char *argv[])
     z::Matrix dst1;
     z::pyrDown(test, dst1);
 
-
     z::Matrix dst2;
     z::pyrDown(dst1, dst2);
 
@@ -23,10 +22,6 @@ int main(int argc, char *argv[])
 
     z::Matrix updst2;
     z::pyrUp(updst1, updst2);
-
-    cv::imshow("updst2", cv::Mat(updst2));
-    cv::waitKey(0);
-
 
     return 0;
 }
