@@ -37,6 +37,10 @@ namespace z{
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Matrix8u Mat2Matrix8u(cv::Mat & mat);
+
+/**
+ *
+ */
 template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code);
 
 // 多通道分离和混合

@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <vector>
+//#include <cmath>
 
 
 #ifdef __cplusplus
@@ -30,11 +31,15 @@ namespace z {
 
 	template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code)
 	{
+        bool is_hsv = false;
+
 		switch (code) {
 		case BGR2GRAY:
 		{
+            assert(src.chs == 3);
+
 			if (!(dst.rows == src.rows && dst.cols == src.cols && dst.chs == 1 && src.chs == 3))
-				dst.create(src.rows, src.cols, 1);
+				dst.create(src.size(), 1);
 
 			const _Tp * srcPtr = nullptr;
 
@@ -43,25 +48,94 @@ namespace z {
 
 					srcPtr = src.ptr(i, j);
 
-					dst.ptr(i, j)[0] = _Tp(0.3 * srcPtr[0] + 0.59 * srcPtr[1] + 0.11 * srcPtr[2]);
+					dst.ptr(i, j)[0] = _Tp(0.229 * srcPtr[0] + 0.587 * srcPtr[1] + 0.114 * srcPtr[2]);
 				}
 			}
+            break;
 		}
-			break;
+			
 
 		case BGR2RGB:
-			if (!dst.equalSize(src)) {
-				dst.create(src.rows, src.cols, src.chs);
-			}
+        {
+            assert(src.chs == 3);
 
-			for (int i = 0; i < src.rows; ++i) {
-				for (int j = 0; j < src.cols; ++j) {
-					dst.ptr(i, j)[2] = src.ptr(i, j)[0];
-					dst.ptr(i, j)[1] = src.ptr(i, j)[1];
-					dst.ptr(i, j)[0] = src.ptr(i, j)[2];
-				}
-			}
-			break;
+            if (!dst.equalSize(src)) {
+                dst.create(src.size(), src.chs);
+            }
+
+            for (int i = 0; i < src.rows; ++i) {
+                for (int j = 0; j < src.cols; ++j) {
+                    dst.ptr(i, j)[2] = src.ptr(i, j)[0];
+                    dst.ptr(i, j)[1] = src.ptr(i, j)[1];
+                    dst.ptr(i, j)[0] = src.ptr(i, j)[2];
+                }
+            }
+            break;
+        }
+        
+        // 本hsv转换算法来自opencv官网:http://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html
+        case BGR2HSV:
+            is_hsv = true;
+        case BGR2HSI:
+        {
+            assert(src.chs == 3);
+
+            if (!dst.equalSize(src))
+                dst.create(src.size(), src.chs);
+
+            for (int i = 0; i < src.rows; ++i) {
+                for (int j = 0; j < src.cols; ++j) {
+                    const Vec3u8* src_p = src.ptr<Vec3u8>(i, j);
+                    Vec3u8* dst_p = dst.ptr<Vec3u8>(i, j);
+
+                    _Tp _min, _max;
+                    double H = 0.0, S = 0.0;
+
+                    // min(R, G, B) & max(R, G, B)
+                    (*src_p)[0] > (*src_p)[1] ? (_max = (*src_p)[0], _min = (*src_p)[1]) : (_max = (*src_p)[1], _min = (*src_p)[0]);
+                    
+                    if (_max < (*src_p)[2]) _max = (*src_p)[2];
+                    if (_min > (*src_p)[2]) _min = (*src_p)[2];
+
+                    // V = max(R, G, B)
+                    if (is_hsv)
+                        (*dst_p)[2] = _max;
+                    else
+                        (*dst_p)[2] = _Tp(((*src_p)[0] + (*src_p)[1] + (*src_p)[2]) / 3.0);
+
+                    // V != 0 ? S = (V - min(R,G,B))/V : S = 0;
+                    _max == 0 ? S = 0.0 : S = (_max - _min) / (double)_max;
+
+                    // if V == R : H = 60(G - B)/(V - min)
+                    // if V == G : H = 120 + 60(B - R)/(V - min)
+                    // if V == B : H = 240 + 60(R - G)/(V - min)
+                    if (_max == (*src_p)[0]) {             // B
+                        H = 240.0 + (60.0 * ((*src_p)[2] - (*src_p)[1])) / (_max - _min);
+                    }
+                    else if (_max == (*src_p)[1]) {        // G
+                        H = 120.0 + (60.0 * ((*src_p)[0] - (*src_p)[2])) / (_max - _min);
+                    }
+                    else if (_max == (*src_p)[2]) {        // R
+                        H = (60.0 * ((*src_p)[1] - (*src_p)[0])) / (_max - _min);
+                    }
+                    if (H < 0.0) H += 360;
+
+                    // 根据不同的深度进行处理
+                    if (sizeof(_Tp) == 1) {
+                        (*dst_p)[1] = _Tp(S * 255);
+                        (*dst_p)[0] = _Tp(H / 2);
+                    }
+                    else if (sizeof(_Tp) == 2) {
+                        _log_("no support");
+                    }
+                    else if (sizeof(_Tp) == 4) {
+                        _log_("no support");
+                    }
+                }
+            }
+
+            break;
+        }
 
 		default:
 			break;

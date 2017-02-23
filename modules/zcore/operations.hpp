@@ -129,7 +129,7 @@ inline void _Matrix<_Tp>::swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1) {
  * @param[in] _cols£¬ÁÐÊý
  */
 template <class _Tp>
-void _Matrix<_Tp> ::create(Size size, int _chs = 1)
+void _Matrix<_Tp> ::create(Size size, int _chs)
 {
     create(size.height, size.width, _chs);
 }
