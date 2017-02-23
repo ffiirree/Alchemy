@@ -556,6 +556,67 @@ namespace z {
             break;
         }
     }
+
+
+    template <typename _Tp> void pyrUp(_Matrix<_Tp>& src, _Matrix<_Tp>& dst)
+    {
+        z::Matrix temp;
+
+        z::Matrix64f ker(5, 5, 1);
+        ker = {
+            1, 4, 6, 4, 1,
+            4, 16, 24, 16, 4,
+            6, 24, 36, 24, 6,
+            4, 16, 24, 16, 4,
+            1, 4, 6, 4, 1
+        };
+
+        int dst_rows = src.rows * 2;
+        int dst_cols = src.cols * 2;
+
+        temp.create(dst_rows, dst_cols, src.chs);
+        temp.zeros();
+
+        for (int i = 0; i < src.rows; ++i) 
+            for (int j = 0;j < src.cols; ++j) 
+                for (int k = 0; k < src.chs; ++k) 
+                    temp.ptr(2 * i, 2 * j)[k] = src.ptr(i, j)[k];
+
+
+        temp.conv(ker, dst, true);
+        for (int i = 0; i < dst.rows; ++i)
+            for (int j = 0; j < dst.cols; ++j) 
+                for (int k = 0;k < dst.chs; ++k) 
+                    dst.ptr(i, j)[k] *= 4;
+    }
+
+
+    template <typename _Tp> void pyrDown(_Matrix<_Tp>& src, _Matrix<_Tp>& dst)
+    {
+        z::Matrix temp = src.clone();
+
+        z::Matrix64f ker(5, 5, 1);
+        ker = {
+            1, 4, 6, 4, 1,
+            4, 16, 24, 16, 4,
+            6, 24, 36, 24, 6,
+            4, 16, 24, 16, 4,
+            1, 4, 6, 4, 1
+        };
+        src.conv(ker, temp, true);
+
+        int dst_rows = src.rows / 2;
+        int dst_cols = src.cols / 2;
+
+        dst.create(dst_rows, dst_cols, src.chs);
+        for (int i = 0; i < dst_rows; ++i) {
+            for (int j = 0;j < dst_cols; ++j) {
+                for (int k = 0; k < src.chs; ++k) {
+                    dst.ptr(i, j)[k] = src.ptr(2 * i, 2 * j)[k];
+                }
+            }
+        }
+    }
 };
 #endif
 

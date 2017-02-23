@@ -7,11 +7,26 @@
 int main(int argc, char *argv[])
 {
     auto test = z::imread("test.jpeg");
-    z::Matrix zhsv, zhsi;
-    z::cvtColor(test, zhsv, BGR2HSV);
-    z::cvtColor(test, zhsi, BGR2HSI);
-    z::imshow("zhsv", zhsv);
-    z::imshow("zhsi", zhsi);
-    z::waitKey(0);
+    z::Matrix dst1;
+    z::pyrDown(test, dst1);
+
+
+    z::Matrix dst2;
+    z::pyrDown(dst1, dst2);
+
+    z::Matrix dst3;
+    z::pyrDown(dst2, dst3);
+
+
+    z::Matrix updst1;
+    z::pyrUp(dst3, updst1);
+
+    z::Matrix updst2;
+    z::pyrUp(updst1, updst2);
+
+    cv::imshow("updst2", cv::Mat(updst2));
+    cv::waitKey(0);
+
+
     return 0;
 }

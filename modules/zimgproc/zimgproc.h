@@ -112,6 +112,10 @@ template <class _Tp> void open(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel)
  * ret None
  */
 template <typename _Tp> void threshold(_Matrix<_Tp> &src, _Matrix<_Tp>& dst, double thresh, double maxval, int type);
+
+//image pyramid
+template <typename _Tp> void pyrUp(_Matrix<_Tp>& src, _Matrix<_Tp>& dst);
+template <typename _Tp> void pyrDown(_Matrix<_Tp>& src, _Matrix<_Tp>& dst);
 }
 
 #endif // !__cplusplus

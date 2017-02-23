@@ -33,7 +33,7 @@ static void fillBitmapInfo(BITMAPINFO* bmi, int width, int height, int bpp, int 
 	{
 		RGBQUAD *palette = bmi->bmiColors;
 
-		for (int i = 0; i < 256; ++i) {
+		for (int i = 0; i < 255; ++i) {
 			palette[i].rgbBlue = palette[i].rgbGreen = palette[i].rgbRed = (BYTE)i;
 			palette[i].rgbReserved = 0;
 		}
@@ -150,23 +150,22 @@ void zShowImage(const char *name, void * arr)
 	int channels = 0;
 	void *dst_ptr = 0;
 	const int channels0 = 3;
-	Matrix8u dst, *img;
+	Matrix dst, *img;
 	bool change_size = false;
 
 	if (!name)
 		_log_("NULL name\n");
 
 	window = findWindowByName(name);
-	if (!window) {
-		zNamedWindow(name, WINDOW_AUTOSIZE);
-		window = findWindowByName(name);
-	}
-
+    if (!window) {
+        zNamedWindow(name, WINDOW_AUTOSIZE);
+        window = findWindowByName(name);
+    }
 
 	if (!window)
 		_log_("Error\n");
 
-	img = (Matrix8u *)arr;
+	img = (Matrix *)arr;
     
     if (window->image)
         if (getBitmapData(window, &size, &channels, &dst_ptr))
@@ -174,7 +173,7 @@ void zShowImage(const char *name, void * arr)
 
     channels = img->chs;
 
-	if (size.cx != img->cols || size.cy != img->rows/* || channels != channels0*/)
+	if (size.cx != img->cols || size.cy != img->rows || channels != channels0)
 	{
 		change_size = true;
 
@@ -186,7 +185,7 @@ void zShowImage(const char *name, void * arr)
 
 		size.cx = img->cols;
 		size.cy = img->rows;
-		/*channels = channels0;*/
+		channels = channels0;
 
 		fillBitmapInfo(binfo, size.cx, size.cy, channels * 8, 1);
 		// CreateDIBSection会根据BITMAPINFOHEADER分配一块内存区域，把这块内存的指针存放在提供的pBits参数里
