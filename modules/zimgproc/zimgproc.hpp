@@ -156,58 +156,11 @@ namespace z {
 	 */
 	template <class _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize)
 	{
-		if (size.width != size.height || size.width % 2 == 0)
-			_log_("size.width != size.height || size.width % 2 == 0");
+        assert(size.width == size.height || size.width % 2 != 0);
 
-		if (!src.equalSize(dst))
-			dst.create(src.rows, src.cols, src.chs);
-
-		int *tempValue = new int[src.chs];
-		int zeros = 0;
-		int m = size.width / 2, n = size.height / 2;
-		const _Tp * ptr = nullptr;
-		_Tp * dstPtr = nullptr;
-		int alpha = 0;
-
-		for (int i = 0; i < dst.rows; ++i) {
-			for (int j = 0; j < dst.cols; ++j) {
-
-				memset(tempValue, 0, src.chs * sizeof(int));
-				zeros = 0;
-
-				for (int ii = 0; ii < size.width; ++ii) {
-					for (int jj = 0; jj < size.height; ++jj) {
-
-						// 获取一个像素的地址
-						ptr = src.ptr(i - m + ii, j - n + jj);
-
-						if (ptr) {
-							for (int k = 0; k < src.chs; ++k) {
-								tempValue[k] += ptr[k];
-							}
-						}
-						else {
-							zeros++;
-						}
-					} // !for(jj)
-				} // !for(ii)
-
-				alpha= size.area() - zeros;
-
-				dstPtr = dst.ptr(i,j);
-
-				for (int k = 0; k < src.chs; ++k) {
-					if (normalize)
-						dstPtr[k] = (_Tp)(tempValue[k] / alpha);
-					else
-						dstPtr[k] = (_Tp)tempValue;
-				}
-				
-
-			} // !for(j)
-		} // !for(i)
-
-		delete[] tempValue;
+        z::Matrix64f kernel(size);
+        kernel.ones();
+        src.conv(kernel, dst, normalize);
 	}
 
 	/**

@@ -11,6 +11,7 @@
  *
  ******************************************************************************
  */
+#include <algorithm>
 #include "zimgproc.h"
 #include "zcore\debug.h"
 #include "zmatch\zmatch.h"
@@ -52,31 +53,22 @@ void copyToArray(Matrix8u &src, char * arr)
  */
 Matrix64f Gassion(z::Size ksize, double sigmaX, double sigmaY)
 {
-	if (ksize.width != ksize.height || ksize.width % 2 != 1) {
-		_log_("ksize.width != ksize.height || ksize.width % 2 != 1");
-	}
-
-	if (sigmaX == 0) sigmaX = ksize.width / 2.0;
-	if (sigmaY == 0) sigmaY = ksize.height / 2.0;
+    assert(ksize.width == ksize.height && ksize.width % 2 == 1);
+    
+    if (sigmaX == 0) sigmaX = 0.3 * ((ksize.width - 1) * 0.5 - 1) + 0.8;
+	if (sigmaY == 0) sigmaY = 0.3 * ((ksize.height - 1) * 0.5 - 1) + 0.8;
 
 	int x = ksize.width / 2;
 	int y = ksize.height / 2;
-	double z;
 
     Matrix64f kernel(ksize);
 
-	for (int i = 0; i < kernel.rows; ++i) {
-		for (int j = 0; j < kernel.cols; ++j) {
-			z = (i - x) * (i - x)/sigmaX + (j - y) * (j - y)/sigmaY;
-			kernel[i][j] = exp(-z);
-		}
-	}
-
-	double a = 1.0 / kernel[0][0];
+    double alpha = 2 * Pi * sigmaX * sigmaY;
 
 	for (int i = 0; i < kernel.rows; ++i) {
 		for (int j = 0; j < kernel.cols; ++j) {
-			kernel[i][j] = int(kernel[i][j] * a);
+			auto z = std::pow((i - x), 2)/(2.0*std::pow(sigmaX, 2)) + std::pow((j - y), 2)/(2.0 * std::pow(sigmaY, 2));
+			kernel[i][j] = exp(-z) / alpha;             // SUM(£Çi,j) = 1
 		}
 	}
 	return kernel;

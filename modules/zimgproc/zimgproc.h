@@ -76,7 +76,7 @@ void ifft(Matrix64f & src, Matrix64f & dst);
 
 // ÏßÐÔÂË²¨
 template <class _Tp> void blur(_Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size);
-template <class _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize);
+template <class _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize = true);
 template <class _Tp> void GaussianBlur(_Matrix<_Tp>&src, _Matrix<_Tp> & dst, Size size, double sigmaX = 0, double sigmaY = 0);
 template <class _Tp> _Matrix<_Tp> embossingFilter(_Matrix<_Tp> src, Size size, float ang);
 template <class _Tp> _Matrix<_Tp> edgeDetection(_Matrix<_Tp> src, Size size, float ang);

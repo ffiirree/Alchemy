@@ -4,3 +4,4 @@
 #include "zimgproc\transform.h"
 #include "zimgproc\zimgproc.h"
 #include "zmatch\zmatch.h"
+#include "zfeatures2d\zfeatures2d.h"

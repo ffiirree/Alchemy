@@ -668,56 +668,51 @@ _Matrix<_Tp> _Matrix<_Tp>::cross(_Matrix<_Tp> &m)
  * @param[out] dst，结果
  * @param[in] norm， 是否对卷积结果归一化
  */
-template <class _Tp> void _Matrix<_Tp>::conv(Matrix64f &kernel, _Matrix<_Tp>&dst, bool norm)
+template <class _Tp> void _Matrix<_Tp>::conv(Matrix64f &kernel, _Matrix<_Tp>&dst, bool norm) const
 {
-	if (kernel.rows != kernel.cols || kernel.rows % 2 == 0)
-		_log_("size.width != size.height || size.width % 2 == 0");
+    assert(kernel.cols == kernel.rows && kernel.rows % 2 != 0);
 
 	if (!dst.equalSize(*this))
 		dst.create(rows, cols, chs);
 
-	int *tempValue = new int[chs];                            // 保存卷积未归一化前的中间变量
-	int zeros = 0;                                            // 边缘处理，记录边缘卷积过程中的超出图像的像素个数
+	double *tempValue = new double[chs];                        // 保存卷积未归一化前的中间变量
 	int m = kernel.rows / 2, n = kernel.cols / 2;
-	const _Tp * srcPtr = nullptr;                           // 指向源图像像素的指针
-	_Tp * dstPtr = nullptr;                                 // 指向输出图像的像素的指针
-	int alpha = 0;
-	int delta = 0;
-	for (size_t i = 0; i < kernel.size_; ++i) {
-		delta += (int)kernel.data[i];
-	}
+    double alpha = 0, delta = 0, zeros = 0;                     // 边缘处理和归一化
+
+    if (norm) {
+        for (size_t i = 0; i < kernel.size_; ++i) {
+            delta += kernel.data[i];
+        }
+    }
 
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
 
-			memset(tempValue, 0, chs * sizeof(int));
+			memset(tempValue, 0, chs * sizeof(double));
 			zeros = 0;
 
 			for (int ii = 0; ii < kernel.rows; ++ii) {
 				for (int jj = 0; jj < kernel.cols; ++jj) {
                     auto _i = i - m + ii;
                     auto _j = j - n + jj;
-					if (_i >=0  && _j >=0  && _i < this->rows && _j < this->cols) {
+					if ((unsigned)_i < (unsigned)rows && (unsigned)_j < (unsigned)cols) {
 						for (int k = 0; k < chs; ++k) {
-							tempValue[k] += static_cast<int>(this->ptr(_i, _j)[k] * kernel[ii][jj]);
+							tempValue[k] += this->ptr(_i, _j)[k] * kernel[ii][jj];
 						}
 					}
 					else {
-						zeros += static_cast<int>(kernel.ptr(ii, jj)[0]);
+						zeros += kernel.ptr(ii, jj)[0];
 					}
 				} // !for(jj)
 			} // !for(ii)
 
-			alpha = delta - zeros;
-			dstPtr = dst.ptr(i, j);
-
-			for (int k = 0; k < chs; ++k) {
-				if(norm)
-					dstPtr[k] = (_Tp)(tempValue[k] / alpha);
-				else
-					dstPtr[k] = (_Tp)tempValue[k];
-			}
-
+            if (norm) {
+                alpha = delta - zeros;
+                for (int k = 0; k < chs; ++k) dst.ptr(i, j)[k] = saturate_cast<_Tp>(tempValue[k] / alpha);
+            }
+            else {
+                for (int k = 0; k < chs; ++k) dst.ptr(i, j)[k] = saturate_cast<_Tp>(tempValue[k]);
+            }
 		} // !for(j)
 	} // !for(i)
 
