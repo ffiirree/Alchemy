@@ -797,10 +797,7 @@ bool operator!=(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2)
 template <class _Tp>
 _Matrix<_Tp> operator*(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
 {
-	if (m1.chs != 1 || m2.chs != 1)
-		_log_("m1.chs != 1 || m2.chs != 1");
-	if (m1.cols != m2.rows)
-		_log_("m1.cols != m2.rows");
+    assert(m1.cols == m2.rows && m1.chs == 1 && m2.chs == 1);
 
 	_Matrix<_Tp> m(m1.rows, m2.cols, 1);
 	m.zeros();
@@ -808,7 +805,7 @@ _Matrix<_Tp> operator*(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
 	for (int i = 0; i < m.rows; ++i) {
 		for (int j = 0; j < m.cols; ++j) {
 			for (int k = 0; k < m1.cols; ++k) {
-				m[i][j] += m1[i][k] * m2[k][j];
+				m[i][j] = saturate_cast<_Tp>(m[i][j] + m1[i][k] * m2[k][j]);
 			}
 		}
 	}
@@ -822,13 +819,12 @@ _Matrix<_Tp> operator*(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
 template <class _Tp>
 _Matrix<_Tp> operator+(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
 {
-	if (m1.cols != m2.cols || m1.rows != m2.rows)
-		_log_("m1.cols != m2.cols || m1.rows != m2.rows");
+    assert(m1.cols == m2.cols && m1.rows == m2.rows && m1.chs == m2.chs);
 
 	_Matrix<_Tp> temp(m1.rows, m1.cols, m1.chs);
 
 	for (size_t i = 0; m1.datastart + i < m1.dataend; ++i) {
-		temp.data[i] = m1.data[i] + m2.data[i];
+		temp.data[i] = saturate_cast<_Tp>(m1.data[i] + m2.data[i]);
 	}
 	return temp;
 }
@@ -839,13 +835,12 @@ _Matrix<_Tp> operator+(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
 template <class _Tp>
 _Matrix<_Tp> operator-(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
 {
-	if (m1.cols != m2.cols || m1.rows != m2.rows)
-		_log_("m1.cols != m2.cols || m1.rows != m2.rows");
+    assert(m1.cols == m2.cols && m1.rows == m2.rows && m1.chs == m2.chs);
 
 	_Matrix<_Tp> temp(m1.rows, m1.cols, m1.chs);
 
 	for (size_t i = 0; m1.datastart + i < m1.dataend; ++i) {
-		temp.data[i] = m1.data[i] - m2.data[i];
+		temp.data[i] = saturate_cast<_Tp>(m1.data[i] - m2.data[i]);
 	}
 	return temp;
 }
@@ -880,7 +875,7 @@ _Matrix<_Tp> operator+(_Matrix<_Tp> &m, _Tp delta)
 	_Matrix<_Tp> temp(m.rows, m.cols, m.chs);
 
 	for (size_t i = 0; m.datastart + i < m.dataend; ++i) {
-		temp.data[i] = m.data[i] + delta;
+		temp.data[i] = saturate_cast<_Tp>(m.data[i] + delta);
 	}
 
 	return temp;
