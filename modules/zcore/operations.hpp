@@ -182,7 +182,7 @@ void _Matrix<_Tp>::create(int _rows, int _cols, int _chs)
 
 	// 分配
 	datastart = data = new _Tp[size_ * chs];
-    _log_("_Matrix create.");
+    //_log_("_Matrix create.");
 	dataend = data + size_ * chs;
 	refcount = new int(1);
 }
@@ -263,7 +263,7 @@ template <class _Tp>
 void _Matrix<_Tp>::release()
 {
 	if (refcount && (refAdd(refcount, -1) == 1)) {
-        _log_("_Matrix release.");
+        //_log_("_Matrix release.");
 
 		delete[] data;
 		data = datastart = dataend = nullptr;
@@ -668,16 +668,16 @@ _Matrix<_Tp> _Matrix<_Tp>::cross(_Matrix<_Tp> &m)
  * @param[out] dst，结果
  * @param[in] norm， 是否对卷积结果归一化
  */
-template <class _Tp> void _Matrix<_Tp>::conv(Matrix64f &kernel, _Matrix<_Tp>&dst, bool norm) const
+template <typename _Tp>
+template <typename _T2> _Matrix<_Tp> _Matrix<_Tp>::conv(const _Matrix<_T2> &kernel, bool norm) const
 {
     assert(kernel.cols == kernel.rows && kernel.rows % 2 != 0);
 
-	if (!dst.equalSize(*this))
-		dst.create(rows, cols, chs);
+    z::_Matrix<_Tp> dst(rows, cols, chs);
 
-	double *tempValue = new double[chs];                        // 保存卷积未归一化前的中间变量
-	int m = kernel.rows / 2, n = kernel.cols / 2;
-    double alpha = 0, delta = 0, zeros = 0;                     // 边缘处理和归一化
+    double *tempValue = new double[chs];                        // 保存卷积未归一化前的中间变量
+    int m = kernel.rows / 2, n = kernel.cols / 2;
+    _T2 alpha = 0, delta = 0, zeros = 0;                     // 边缘处理和归一化
 
     if (norm) {
         for (size_t i = 0; i < kernel.size_; ++i) {
@@ -685,26 +685,26 @@ template <class _Tp> void _Matrix<_Tp>::conv(Matrix64f &kernel, _Matrix<_Tp>&dst
         }
     }
 
-	for (int i = 0; i < rows; ++i) {
-		for (int j = 0; j < cols; ++j) {
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
 
-			memset(tempValue, 0, chs * sizeof(double));
-			zeros = 0;
+            memset(tempValue, 0, chs * sizeof(double));
+            zeros = 0;
 
-			for (int ii = 0; ii < kernel.rows; ++ii) {
-				for (int jj = 0; jj < kernel.cols; ++jj) {
+            for (int ii = 0; ii < kernel.rows; ++ii) {
+                for (int jj = 0; jj < kernel.cols; ++jj) {
                     auto _i = i - m + ii;
                     auto _j = j - n + jj;
-					if ((unsigned)_i < (unsigned)rows && (unsigned)_j < (unsigned)cols) {
-						for (int k = 0; k < chs; ++k) {
-							tempValue[k] += this->ptr(_i, _j)[k] * kernel[ii][jj];
-						}
-					}
-					else {
-						zeros += kernel.ptr(ii, jj)[0];
-					}
-				} // !for(jj)
-			} // !for(ii)
+                    if ((unsigned)_i < (unsigned)rows && (unsigned)_j < (unsigned)cols) {
+                        for (int k = 0; k < chs; ++k) {
+                            tempValue[k] += this->ptr(_i, _j)[k] * kernel[ii][jj];
+                        }
+                    }
+                    else {
+                        zeros += kernel.ptr(ii, jj)[0];
+                    }
+                } // !for(jj)
+            } // !for(ii)
 
             if (norm) {
                 alpha = delta - zeros;
@@ -713,10 +713,12 @@ template <class _Tp> void _Matrix<_Tp>::conv(Matrix64f &kernel, _Matrix<_Tp>&dst
             else {
                 for (int k = 0; k < chs; ++k) dst.ptr(i, j)[k] = saturate_cast<_Tp>(tempValue[k]);
             }
-		} // !for(j)
-	} // !for(i)
+        } // !for(j)
+    } // !for(i)
 
-	delete[] tempValue;
+    delete[] tempValue;
+
+    return dst;
 }
 
 template <class _Tp> void conv(_Matrix<_Tp> &src, _Matrix<_Tp> &dst, Matrix64f &core)

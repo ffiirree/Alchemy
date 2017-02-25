@@ -6,11 +6,8 @@ template<typename _Tp> void z::differenceOfGaussian(_Matrix<_Tp>& src, _Matrix<_
     z::Matrix64f ker1 = Gassion(size, g1, g1);
     z::Matrix64f ker2 = Gassion(size, g2, g2);
 
-    z::Matrix temp1;
-    src.conv(ker1, temp1, false);
-
-    z::Matrix temp2;
-    src.conv(ker2, temp2, false);
+    auto temp1 = src.conv(ker1, false);
+    auto temp2 = src.conv(ker2, false);
 
     if (!dst.equalSize(src))
         dst.create(src.size(), src.chs);
@@ -22,6 +19,5 @@ template<typename _Tp> void z::differenceOfGaussian(_Matrix<_Tp>& src, _Matrix<_
             }
         }
     }
-
 }
 #endif // !_ZMATRIX_ZFEATURES2D_HPP

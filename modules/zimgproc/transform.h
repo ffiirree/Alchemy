@@ -32,13 +32,13 @@ namespace z {
 // 平移
 void translation(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst);
 
-
-// 边缘检测技术
+///////////////////////////////////////////////Edge Detector/////////////////////////////////////////////////
+void getSobelKernels(Matrix8s &kx, Matrix8s &ky, int dx, int dy, int ksize);
 void prewitt(Matrix8u&src, Matrix8u&dst);
 void sobel(Matrix8u&src, Matrix8u&dst, int dx = 1, int dy = 1, int ksize = 3);
 void Canny(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2, int apertureSize = 3);
 
-// 图像轮廓
+///////////////////////////////////////////////Contours/////////////////////////////////////////////////
 /**
  * @berif 提取所有轮廓
  * @attention 该函数会改变输入矩阵的值

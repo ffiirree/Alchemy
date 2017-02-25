@@ -222,7 +222,7 @@ namespace z {
 
         _Matrix<_Tp> dot(_Matrix<_Tp> &m);              // µã³Ë
         _Matrix<_Tp> cross(_Matrix<_Tp> &m);            // ²æ»ý
-        void conv(Matrix64f &kernel, _Matrix<_Tp>&dst, bool norm = false) const;
+        template <typename _T2> _Matrix<_Tp> conv(const _Matrix<_T2> &kernel, bool norm = false) const;
 
         inline int channels() { return chs; }
 

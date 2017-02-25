@@ -208,13 +208,6 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
 	delete[] tempG;
 }
 
-/**
- * @berif sobel算子
- * @param[in] ksize, must be 1, 3, 5 or 7.
- * @param[in] dx
- * @param[in] dy
- * @ksize[in] 卷积核的大小
- */
 void sobel(Matrix8u&src, Matrix8u&dst, int dx, int dy, int ksize)
 {
 	Matrix8u temp;
@@ -267,7 +260,7 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 		break;
 
 	default:
-		_log_("Error ksize!");
+		Z_Error("Error ksize!");
 		return;
 	}
 	

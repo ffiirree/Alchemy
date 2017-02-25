@@ -22,7 +22,7 @@
 #ifdef __cplusplus
 namespace z {
 
-	template<class _Tp> inline _Size<_Tp>& _Size<_Tp>::operator = (const _Size& sz)
+	template<typename _Tp> inline _Size<_Tp>& _Size<_Tp>::operator = (const _Size& sz)
 	{
 		width = sz.width;
 		height = sz.height;
@@ -126,10 +126,10 @@ namespace z {
                         (*dst_p)[0] = _Tp(H / 2);
                     }
                     else if (sizeof(_Tp) == 2) {
-                        _log_("no support");
+                        Z_Error("no support");
                     }
                     else if (sizeof(_Tp) == 4) {
-                        _log_("no support");
+                        Z_Error("no support");
                     }
                 }
             }
@@ -145,7 +145,7 @@ namespace z {
 	/**
 	 * @berif 均值滤波
 	 */
-	template <class _Tp> void blur(_Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size)
+	template <typename _Tp> void blur(_Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size)
 	{
 		boxFilter(src, dst, size, true);
 	}
@@ -154,7 +154,7 @@ namespace z {
 	 * @berif 方框滤波
 	 * @param[in] normalize，是否归一化，卷积核各项和不为1时除以和。
 	 */
-	template <class _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize)
+	template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize)
 	{
         assert(size.width == size.height || size.width % 2 != 0);
 
@@ -167,15 +167,15 @@ namespace z {
 	 * @berif 高斯滤波
 	 * @param[in] normalize，是否归一化，卷积核各项和不为1时除以和。
 	 */
-	template <class _Tp> void GaussianBlur(_Matrix<_Tp>&src, _Matrix<_Tp> & dst, Size size, double sigmaX, double sigmaY)
+	template <typename _Tp> void GaussianBlur(_Matrix<_Tp>&src, _Matrix<_Tp> & dst, Size size, double sigmaX, double sigmaY)
 	{
         Matrix64f kernel = Gassion(size, sigmaX, sigmaY);
-		src.conv(kernel, dst, true);
+        dst = src.conv(kernel, false);
 	}
 
-	template <class _Tp> _Matrix<_Tp> embossingFilter(_Matrix<_Tp> src, Size size, float ang)
+	template <typename _Tp> void embossingFilter(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size)
 	{
-		Matrix kernel(size);
+		Matrix64f kernel(size);
 
 		for (int i = 0; i < kernel.rows; ++i) {
 			for (int j = 0; j < kernel.cols; ++j) {
@@ -187,14 +187,10 @@ namespace z {
 					kernel[i][j] = 0;
 			}
 		}
-		return src.conv(kernel);
+		src.conv(kernel, dst, false);
 	}
 	
-
-	/**
-	 * @berif 中值滤波
-	 */
-	template <class _Tp> void medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, Size size)
+	template <typename _Tp> void medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, Size size)
 	{
 		int area = size.area();
 		_Tp ** ker = new _Tp *[src.chs];
@@ -206,8 +202,6 @@ namespace z {
 			dst.create(src.rows, src.cols, src.chs);
 
 		int m = size.width / 2, n = size.height / 2;
-		_Tp * ptr = nullptr;
-		_Tp * dstPtr = nullptr;
 		int cnt = 0;
 		int valindex = 0;
 		int valDefault = area / 2;
@@ -220,7 +214,6 @@ namespace z {
 					for (int jj = 0; jj < size.height; ++jj) {
                         auto _i = i - m + ii;
                         auto _j = j - n + jj;
-
 						if (_i >= 0  && _i < src.rows && _j >= 0 && _j < src.cols) {
 							for (int k = 0; k < src.chs; ++k) {
 								ker[k][cnt] = src.ptr(_i, _j)[k];
@@ -229,10 +222,7 @@ namespace z {
 						}
 					}
 				}
-				if (cnt != area)
-					valindex = cnt / 2;
-				else
-					valindex = valDefault;
+                cnt != area ? (valindex = cnt / 2) : (valindex = valDefault);
 				for (int k = 0; k < src.chs; ++k) {
 					std::sort(ker[k], ker[k] + cnt);  // 占95%以上的时间
                     dst.ptr(i, j)[k] = ker[k][valindex];
@@ -247,9 +237,105 @@ namespace z {
 		delete[] ker;
 	}
 
+    // attention: pix: 1*8 or 3*8 uchar
+    template <typename _Tp> void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int d, double sigmaColor, double sigmaSpace)
+    {
+        if (!dst.equalSize(src))
+            dst.create(src.size(), src.chs);
+
+        int r = 0, max_ofs = 0;
+        //
+        if (sigmaColor <= 0) sigmaColor = 1;
+        if (sigmaSpace <= 0) sigmaSpace = 1;
+
+        double gauss_color_coeff = -0.5 / (sigmaColor * sigmaColor);
+        double gauss_space_coeff = -0.5 / (sigmaSpace * sigmaSpace);
+
+        if (d < 0) r = static_cast<int>(sigmaSpace * 1.5);
+        else r = d / 2;
+
+        d = r * 2 + 1;
+
+        // 牺牲存储来换取时间
+        double * color_weight = new double[src.chs * 256];
+        double * space_weight = new double[d * d];
+        int * space_ofs = new int[d * d];
+
+        // initialize color-related bilateral filter coifficients
+        for (int i = 0; i < src.chs * 256; ++i)
+            color_weight[i] = std::exp(i * i * gauss_color_coeff);
+
+        for (int i = -r; i <= r; ++i) {
+            for (int j = -r; j <= r; ++j) {
+                double r_t = std::sqrt((double)i * i + (double)j * j);
+                if (r_t <= r) {
+                    space_weight[max_ofs] = std::exp(r_t * r_t * gauss_space_coeff);
+                    space_ofs[max_ofs++] = (int)(i * src.step + j * src.chs);
+                }
+            }
+        }
+
+        double *temp_val = new double[src.chs];
+
+        auto ptr = src.data;
+        auto data_len = src.size_ * src.chs;
+
+        for (int i = 0; i < data_len; i += src.chs) {
+            double norm = 0;
+            int mv = 0;
+            for (int k = 0; k < src.chs; ++k) {
+                mv += ptr[i + k];
+            }
+
+            memset(temp_val, 0, sizeof(double) * src.chs);//清零
+
+            for (int j = 0; j < max_ofs; ++j) {
+                double w1 = space_weight[j];
+
+                int cv = 0;
+                int c_pos = i + space_ofs[j];
+                if ((unsigned)c_pos < (unsigned)data_len) {
+                    for (int k = 0; k < src.chs; ++k) {
+                        cv += ptr[c_pos + k];
+                    }
+
+                    double w2 = color_weight[abs(cv - mv)];
+                    double w = w1 * w2;
+                    norm += w;
+                    for (int k = 0; k < src.chs; ++k) {
+                        temp_val[k] += ptr[c_pos + k] * w;
+                    }
+                }
+            }
+            for (int k = 0; k < src.chs; ++k) {
+                dst.data[i + k] = saturate_cast<_Tp>(temp_val[k] / norm);
+            }
+        }
+    }
+
+    template <typename _Tp> void Laplacian(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int ksize)
+    {
+        assert(ksize > 0 && ksize % 2 == 1);
+
+        z::Matrix8s kernel;
+        if (ksize == 1) {
+            kernel.create(3, 3);
+            kernel = { 0, 1, 0, 1, -4, 1, 0, 1, 0 };
+            dst = src.conv(kernel, false);
+        }
+        else if (ksize == 3) {
+            kernel.create(3, 3);
+            kernel = { 2, 0, 2, 0, -8, 0, 2, 0, 2 };
+            dst = src.conv(kernel, false);
+        }
+        else {
+            assert(1 == 0);
+        }
+    }
+
 
 	//////////////////////////////////////形态学滤波//////////////////////////////////////
-	template <class _Tp> void morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size)
+	template <typename _Tp> void morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size)
 	{
 		int area = size.area();
 		_Tp ** ker = new _Tp *[src.chs];
@@ -312,24 +398,24 @@ namespace z {
 		delete[] ker;
 	}
 	
-	template <class _Tp> void erode(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel)
+	template <typename _Tp> void erode(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel)
 	{
 		morphOp(MORP_ERODE, src, dst, kernel);
 	}
 
-	template <class _Tp> void dilate(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel)
+	template <typename _Tp> void dilate(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel)
 	{
 		morphOp(MORP_DILATE, src, dst, kernel);
 	}
 
-	template <class _Tp> void open(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel)
+	template <typename _Tp> void open(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel)
 	{
 		_Matrix<_Tp> _dst;
 		morphOp(MORP_ERODE, src, _dst, kernel);
 		morphOp(MORP_DILATE, _dst, dst, kernel);
 	}
 
-	template <class _Tp> void morphEx(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, int op, Size kernel)
+	template <typename _Tp> void morphEx(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, int op, Size kernel)
 	{
 		_Matrix<_Tp> temp;
 		if (dst.equalSize(src))
@@ -380,7 +466,7 @@ namespace z {
 	/**
 	 * @berif 将多通道矩阵分离称为单通道的矩阵
 	 */
-	template <class _Tp> void spilt(_Matrix<_Tp> & src, std::vector<_Matrix<_Tp>> & mv)
+	template <typename _Tp> void spilt(_Matrix<_Tp> & src, std::vector<_Matrix<_Tp>> & mv)
 	{
 		mv = std::vector<_Matrix<_Tp>>(src.chs);
 
@@ -399,7 +485,7 @@ namespace z {
 	/**
 	 * @berif 合并两个1通道的矩阵
 	 */
-	template <class _Tp> void merge(_Matrix<_Tp> & src1, _Matrix<_Tp> & src2, _Matrix<_Tp> & dst)
+	template <typename _Tp> void merge(_Matrix<_Tp> & src1, _Matrix<_Tp> & src2, _Matrix<_Tp> & dst)
 	{
 		if (!src1.equalSize(src2))
 			_log_("!src1.equalSize(src2)");
@@ -418,7 +504,7 @@ namespace z {
 	/**
 	 * @berif 合并通道，顺序按照src中的顺序
 	 */
-	template <class _Tp> void merge(std::vector<_Matrix<_Tp>> & src, _Matrix<_Tp> & dst)
+	template <typename _Tp> void merge(std::vector<_Matrix<_Tp>> & src, _Matrix<_Tp> & dst)
 	{
 		if (src.size() < 1)
 			_log_("src.size() < 1");
@@ -447,7 +533,7 @@ namespace z {
 		} // !for(i)
 	}
 
-	template <class _Tp> void copyMakeBorder(_Matrix<_Tp> & src, _Matrix<_Tp> & dst, int top, int bottom, int left, int right)
+	template <typename _Tp> void copyMakeBorder(_Matrix<_Tp> & src, _Matrix<_Tp> & dst, int top, int bottom, int left, int right)
 	{
 		dst.create(src.rows + top + bottom, src.cols + left + right, src.chs);
 		dst.init(0);

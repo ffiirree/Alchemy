@@ -25,6 +25,8 @@
 #define _log_(str) ((void)0)
 #endif
 
+#define Z_Error(str) st(std::cout<<"Error: [" << __FILE__ << "]" << "<" << __func__ << ">" << "(" << __LINE__ << ") : " << str << std::endl;)
+
 
 /**
  * @berif 时间戳，测试一段代码的运行时间，单位是ms
