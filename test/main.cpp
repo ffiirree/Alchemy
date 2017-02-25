@@ -7,20 +7,19 @@
 int main(int argc, char *argv[])
 {
     auto test = z::imread("test.jpeg");
-    z::Matrix dst;
+    z::Matrix zgray;
+    z::cvtColor(test, zgray, BGR2GRAY);
+    z::Matrix zldst;
+    z::Laplacian(zgray, zldst, 3);
 
-    TimeStamp timer;
-    timer.start();
-    z::bilateralFilter(test, dst, 25, 50, 15);
-    std::cout << "z: " << timer.runtime() << std::endl;
 
+    //
     cv::Mat cvt = test;
-    cv::Mat cvdst;
 
-    timer.start();
-    cv::bilateralFilter(cvt, cvdst, 25, 50, 15);
-    std::cout << "cv: " << timer.runtime() << std::endl;
+    cv::Mat gray;
+    cv::cvtColor(cvt, gray, CV_BGR2GRAY);
 
-    system("pause");
+    cv::Mat ldst;
+    cv::Laplacian(gray, ldst, 8, 3);
     return 0;
 }

@@ -440,7 +440,7 @@ template <class _Tp2> _Matrix<_Tp>::operator _Matrix<_Tp2>() const
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols;++j) {
 			for (int k = 0; k < chs; ++k) {
-                temp.ptr(i, j)[k] = (_Tp2)this->ptr(i, j)[k];
+                temp.ptr(i, j)[k] = saturate_cast<_Tp2>(this->ptr(i, j)[k]);
 			}
 		}
 	}
