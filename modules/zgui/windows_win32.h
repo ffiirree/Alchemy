@@ -42,9 +42,8 @@ int zNamedWindow(const char *name, int flags = 1);
 int zWaitKey(int delay);
 void zShowImage(const char *name, void * arr);
 
-extern "C" {
-	int initSystem(int argc, char** argv);
-}
+
+int initSystem(int argc, char** argv);
 
 
 

@@ -28,7 +28,6 @@ typedef enum {
 	DFT = -0x01, IDFT = 0x01
 }Ft;
 
-#ifdef __cplusplus
 namespace z{
 Matrix8u Mat2Matrix8u(cv::Mat & mat);
 
@@ -145,11 +144,9 @@ template <typename _Tp> void open(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kern
 template <typename _Tp> void threshold(_Matrix<_Tp> &src, _Matrix<_Tp>& dst, double thresh, double maxval, int type);
 
 ///////////////////////////////////////////////Image Pyramid/////////////////////////////////////////////////////
-template <typename _Tp> void pyrUp(_Matrix<_Tp>& src, _Matrix<_Tp>& dst);
-template <typename _Tp> void pyrDown(_Matrix<_Tp>& src, _Matrix<_Tp>& dst);
+template <typename _Tp> void pyrUp(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst);
+template <typename _Tp> void pyrDown(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst);
 }
-
-#endif // !__cplusplus
 
 #include "zimgproc.hpp"
 

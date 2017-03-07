@@ -5,6 +5,7 @@
 
 #include "zmatrix.h"
 
+// 边界处理还有问题
 int main(int argc, char *argv[])
 {
     z::Matrix8u test = z::imread("test.jpeg");
@@ -44,18 +45,11 @@ int main(int argc, char *argv[])
         for (int j = 0; j < fft_dst.cols; ++j) {
             ifft_src.ptr(i, j)[0] = fft_dst.ptr(i, j)[0] * kernel_fft.ptr(i, j)[0] - fft_dst.ptr(i, j)[1] * kernel_fft.ptr(i, j)[1];
             ifft_src.ptr(i, j)[1] = fft_dst.ptr(i, j)[1] * kernel_fft.ptr(i, j)[0] + fft_dst.ptr(i, j)[0] * kernel_fft.ptr(i, j)[1];
-
-            if (!_finite(ifft_src.ptr(i, j)[0])) {
-                std::cout << "0: " << ifft_src.ptr(i, j)[0] << std::endl;
-            }
-            if (!_finite(ifft_src.ptr(i, j)[1])) {
-                std::cout << "1: " << ifft_src.ptr(i, j)[1] << std::endl;
-            }
         }
     }
 
     // ifft
-    z::ifft(fft_dst, ifft_dst);
+    z::ifft(ifft_src, ifft_dst);
     std::cout << timer.runtime() << std::endl;
 
     res = ifft_dst;
@@ -80,7 +74,7 @@ int main(int argc, char *argv[])
     cv::imshow("res_good", cv::Mat(res_good));
     // ---------------------------------------------------------------------------------------------------------------------------
 
-    cv::waitKey(10);
+    cv::waitKey(0);
 
     return 0;
 }

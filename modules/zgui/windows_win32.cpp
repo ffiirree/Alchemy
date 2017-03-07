@@ -201,7 +201,7 @@ void zShowImage(const char *name, void * arr)
 }
 
 
-extern "C" int initSystem(int argc, char** argv)
+int initSystem(int argc, char** argv)
 {
 	static int wasInitialized = 0;
 

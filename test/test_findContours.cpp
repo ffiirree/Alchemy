@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
     z::medianFilter(gray, gray, z::Size(3, 3));
 
     // 二值化
-    z::Matrix bin_image = gray > 150;
-    z::Matrix bin_image_2 = gray > 150;
+    z::Matrix bin_image = gray > 175;
+    z::Matrix bin_image_2 = gray > 175;
     cv::imshow("binary image", cv::Mat(bin_image));
 
 
@@ -30,12 +30,10 @@ int main(int argc, char *argv[])
     z::findContours(bin_image, contours);
 
     // 显示结果
-    uchar r = 75, g = 150, b = 225;
+    uchar r = 50, g = 100, b = 150;
     for (const auto &c : contours) {
         for (const auto &j : c) {
-            res.ptr(j.x, j.y)[0] = r;
-            res.ptr(j.x, j.y)[1] = g;
-            res.ptr(j.x, j.y)[2] = b;
+            *res.ptr<z::Vec3u8>(j.x, j.y) = { b, g, r };
         }
         r += 25, b += 50, b += 75;
     }
@@ -49,14 +47,12 @@ int main(int argc, char *argv[])
     res.zeros();
     for (const auto &c : contours) {
         for (const auto &j : c) {
-            res.ptr(j.x, j.y)[0] = r;
-            res.ptr(j.x, j.y)[1] = g;
-            res.ptr(j.x, j.y)[2] = b;
+            *res.ptr<z::Vec3u8>(j.x, j.y) = { b, g, r };
         }
         r += 25, b += 50, b += 75;
     }
     cv::imshow("findOutermostContours", cv::Mat(res));
 
-    cv::waitKey(10);
+    cv::waitKey(0);
     return 0;
 }

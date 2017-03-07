@@ -26,7 +26,6 @@ typedef enum {
     ALL_BORDERS,
 }ContourType;
 
-#ifdef __cplusplus
 namespace z {
 // 图像几何变换
 // 平移
@@ -59,9 +58,6 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst);
  */
 void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst);
 }
-
-
-#endif
 
 #include "transform.hpp"
 

@@ -89,7 +89,7 @@ template<typename _Tp, int n> Vec_<_Tp, n>::Vec_(const Vec_<_Tp, n>&v) :Vec_<_Tp
 
 template<typename _Tp, int n> Vec_<_Tp, n>& Vec_<_Tp, n >::operator = (std::initializer_list<_Tp> list)
 {
-    assert(list.size() > n);
+    assert(list.size() >= n);
 
     int idx = 0;
     for (const auto& i : list)
@@ -440,7 +440,7 @@ template <class _Tp2> _Matrix<_Tp>::operator _Matrix<_Tp2>() const
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols;++j) {
 			for (int k = 0; k < chs; ++k) {
-                temp.ptr(i, j)[k] = saturate_cast<_Tp2>(this->ptr(i, j)[k]);
+                temp.ptr(i, j)[k] = saturate_cast<_Tp2>(ptr(i, j)[k]);
 			}
 		}
 	}
@@ -697,7 +697,7 @@ template <typename _T2> _Matrix<_Tp> _Matrix<_Tp>::conv(const _Matrix<_T2> &kern
                     auto _j = j - n + jj;
                     if ((unsigned)_i < (unsigned)rows && (unsigned)_j < (unsigned)cols) {
                         for (int k = 0; k < chs; ++k) {
-                            tempValue[k] += this->ptr(_i, _j)[k] * kernel[ii][jj];
+                            tempValue[k] += ptr(_i, _j)[k] * kernel[ii][jj];
                         }
                     }
                     else {
@@ -1004,4 +1004,4 @@ template <class _Tp> std::ostream & operator<<(std::ostream & os, const _Complex
 
 }
 
-#endif // ! __cplusplus
+#endif // ! _OPERATIONS_HPP

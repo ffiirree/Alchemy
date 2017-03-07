@@ -18,8 +18,6 @@
 #include <vector>
 //#include <cmath>
 
-
-#ifdef __cplusplus
 namespace z {
 
 	template<typename _Tp> inline _Size<_Tp>& _Size<_Tp>::operator = (const _Size& sz)
@@ -48,7 +46,7 @@ namespace z {
 
 					srcPtr = src.ptr(i, j);
 
-					dst.ptr(i, j)[0] = _Tp(0.229 * srcPtr[0] + 0.587 * srcPtr[1] + 0.114 * srcPtr[2]);
+					dst.ptr(i, j)[0] = _Tp(0.114 * srcPtr[0] + 0.587 * srcPtr[1] + 0.299 * srcPtr[2]);
 				}
 			}
             break;
@@ -597,7 +595,7 @@ namespace z {
     }
 
 
-    template <typename _Tp> void pyrUp(_Matrix<_Tp>& src, _Matrix<_Tp>& dst)
+    template <typename _Tp> void pyrUp(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
     {
         z::Matrix temp;
 
@@ -622,7 +620,7 @@ namespace z {
                     temp.ptr(2 * i, 2 * j)[k] = src.ptr(i, j)[k];
 
 
-        temp.conv(ker, dst, true);
+        dst = temp.conv(ker, true);
         for (int i = 0; i < dst.rows; ++i)
             for (int j = 0; j < dst.cols; ++j) 
                 for (int k = 0;k < dst.chs; ++k) 
@@ -630,7 +628,7 @@ namespace z {
     }
 
 
-    template <typename _Tp> void pyrDown(_Matrix<_Tp>& src, _Matrix<_Tp>& dst)
+    template <typename _Tp> void pyrDown(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
     {
         z::Matrix temp = src.clone();
 
@@ -642,7 +640,7 @@ namespace z {
             4, 16, 24, 16, 4,
             1, 4, 6, 4, 1
         };
-        src.conv(ker, temp, true);
+        temp = src.conv(ker, true);
 
         int dst_rows = src.rows / 2;
         int dst_cols = src.cols / 2;
@@ -654,6 +652,5 @@ namespace z {
                     dst.ptr(i, j)[k] = src.ptr(2 * i, 2 * j)[k];
     }
 };
-#endif
 
 #endif // !_ZIMGPROC_HPP 

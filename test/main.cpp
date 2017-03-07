@@ -7,22 +7,34 @@
 int main(int argc, char *argv[])
 {
     auto test = z::imread("test.jpeg");
-    z::Matrix dst;
+    z::Matrix gray;
+    
+    z::cvtColor(test, gray, BGR2GRAY);
+    z::Matrix64f gray64 = gray;
 
-    TimeStamp timer;
+    z::SIFT detector;
+    detector.detect(gray64);
+    cv::waitKey(0);
+    //z::Matrix gray;
+    //z::cvtColor(test, gray, BGR2GRAY);
 
-    timer.start();
-    z::differenceOfGaussian(test, dst, { 5, 5 }, 0.6, 2.5);
-    std::cout << timer.runtime() << std::endl;
+    //z::Matrix64f gray64;
 
+    //z::Matrix64f dst1, dst2;
+    //gray64 = gray;
+    //z::DoG(gray64, dst1, { 5, 5 }, 1.414 * 1, 1);
 
-    // 
-    cv::Mat cvt = cv::imread("test.jpeg");
-    cv::Mat cvdst1, cvdst2, cvres;
-    cv::GaussianBlur(cvt, cvdst1, cv::Size(5, 5), 0.6, 0.6);
-    cv::GaussianBlur(cvt, cvdst2, cv::Size(5, 5), 2.5, 2.5);
+    //// 
+    //cv::Mat cvt = cv::imread("test.jpeg");
+    //cv::Mat cvgray;
+    //cv::cvtColor(cvt, cvgray, CV_BGR2GRAY);
 
-    cvres = cvdst1 - cvdst2;
+    //cv::Mat_<double> cvgray64 = cvgray;
+    //cv::Mat cvdst1, cvdst2, cvres;
+    //cv::GaussianBlur(cvgray64, cvdst1, cv::Size(5, 5),1.414, 1.414);
+    //cv::GaussianBlur(cvgray64, cvdst2, cv::Size(5, 5), 1, 1);
+
+    //cvres = cvdst1 - cvdst2;
 
     return 0;
 }

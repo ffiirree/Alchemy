@@ -23,8 +23,6 @@
 #include <opencv2\opencv.hpp>
 #endif
 
-#ifdef __cplusplus
-
 namespace z {
 
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -485,7 +483,6 @@ namespace z {
     
 
 }
-#endif // !__cplusplus
 
 #include "operations.hpp"
 
