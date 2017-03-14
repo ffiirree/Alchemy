@@ -61,14 +61,19 @@ Matrix64f Gassion(z::Size ksize, double sigmaX, double sigmaY)
 
     Matrix64f kernel(ksize);
 
-    double alpha = 2 * Pi * sigmaX * sigmaY;
+    double alpha = 0;
 
 	for (int i = 0; i < kernel.rows; ++i) {
 		for (int j = 0; j < kernel.cols; ++j) {
 			auto z = std::pow((i - x), 2)/(2.0*std::pow(sigmaX, 2)) + std::pow((j - y), 2)/(2.0 * std::pow(sigmaY, 2));
-			kernel[i][j] = exp(-z) / alpha;             // SUM(£Çi,j) = 1
+            alpha += kernel[i][j] = exp(-z);             
 		}
 	}
+
+    // SUM(Gi,j) = 1
+    for (auto first = kernel.datastart; first != kernel.dataend; ++first) {
+        *first /= alpha;
+    }
 	return kernel;
 }
 

@@ -3,7 +3,7 @@
 
 void z::DoG(Matrix64f& src, Matrix64f& dst, const Size &size, double g1, double g2)
 {
-    dst = src.conv(Gassion(size, g1, g1), true) - src.conv(Gassion(size, g2, g2), true);
+    dst = src.conv(Gassion(size, g1, g1) - Gassion(size, g2, g2));
 }
 
 
@@ -42,7 +42,7 @@ void z::SIFT::octave(const std::vector<z::Matrix64f> &gp)
         std::vector<Matrix64f> oct;
         for (int j = 0; j < 5; ++j) {
             
-            auto temp = gp.at(i).conv(Gassion({ 5, 5 },  g,  g), true);
+            auto temp = gp.at(i).conv(Gassion({ 5, 5 },  g,  g));
             g *= k;
             oct.push_back(temp);
         }
