@@ -21,7 +21,7 @@ zMatrix 是一个使用C++编写的图像处理库，它的基础是_Matrix矩�
 ```
     mkdir build
     cd build
-    cmake ..
+    cmake .. -DCMAKE_INSTALL_PREFIX=D:/zMatrix
 ```
 
 <br><br>

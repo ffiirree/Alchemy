@@ -35,8 +35,7 @@ if(OpenCV_FOUND)
 	set(LIBJPEG_LIBS "${PROJECT_SOURCE_DIR}/3rdparty/libjpeg/lib/libjpeg.lib")
 
 	include_directories(${PROJECT_SOURCE_DIR}/modules)
-	include_directories(${OPENCV_INCLUDE_DIRS})
-	include_directories(${OpenCV_INCLUDES_DIRS})
+	include_directories(${OpenCV_INCLUDE_DIRS})
 	include_directories(${LIBJPEG_INCLUDE_DIRS})
 
 	# 生成不同版本的库
