@@ -52,7 +52,7 @@ KinectSensor::KinectSensor(FrameTypes _type)
 }
 
 /**
- * @berif 初始化Kinect传感器，分别获取source并且打开Reader
+ * @brief 初始化Kinect传感器，分别获取source并且打开Reader
  *		Kinect 获取数据的流程大体遵循：Source->Reader->Frame流程来获取最终的数据
  * @attention 注意获取资源后的释放
  */
@@ -130,7 +130,7 @@ HRESULT KinectSensor::KinectInitialize(FrameTypes _type)
 
 
 /**
- * @berif 更新图形数据
+ * @brief 更新图形数据
  * @attention AcquireLatestFrame()函数不一定会成功返回数据，一定要做好处理，
  *            特别是使用轮询的时候，经常失败；使用event后基本都会成功
  */

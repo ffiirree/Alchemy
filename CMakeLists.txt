@@ -47,7 +47,7 @@ if(OpenCV_FOUND)
 	add_subdirectory(modules/zgui)
 	add_subdirectory(modules/zimgproc)
 	add_subdirectory(modules/zfeatures2d)
-	add_subdirectory(modules/zmatch)
+	add_subdirectory(modules/zmath)
 
 	enable_testing()
 	add_subdirectory(test)
@@ -60,7 +60,7 @@ if(OpenCV_FOUND)
 	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zgui/ DESTINATION "${INSTALL_DIR}/include/zgui" FILES_MATCHING PATTERN "*.h")
 	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zimgproc/ DESTINATION "${INSTALL_DIR}/include/zimgproc" FILES_MATCHING PATTERN "*.h")
 	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zfeatures2d/ DESTINATION "${INSTALL_DIR}/include/zfeatures2d" FILES_MATCHING PATTERN "*.h")
-	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zmatch/ DESTINATION "${INSTALL_DIR}/include/zmatch" FILES_MATCHING PATTERN "*.h")
+	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zmath/ DESTINATION "${INSTALL_DIR}/include/zmath" FILES_MATCHING PATTERN "*.h")
 
 endif(OpenCV_FOUND)
 

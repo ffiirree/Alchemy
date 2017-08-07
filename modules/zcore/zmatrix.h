@@ -15,12 +15,10 @@
 #define _ZCORE_ZMATRIX_H
 
 #include <stdint.h>
-#include <iostream>
 #include "config.h"
-#include "types.h"
 
 #if defined(OPENCV)
-#include <opencv2\opencv.hpp>
+#include "opencv2/opencv.hpp"
 #endif
 
 namespace z {
@@ -44,11 +42,11 @@ namespace z {
         typedef _Tp value_type;
 
         Vec_();
-        Vec_(_Tp v0);
+	    explicit Vec_(_Tp v0);
         Vec_(_Tp v0, _Tp v1);
         Vec_(_Tp v0, _Tp v1, _Tp v2);
         Vec_(_Tp v0, _Tp v1, _Tp v2, _Tp v3);
-        Vec_(const _Tp* vals);
+	    explicit Vec_(const _Tp* vals);
 
         Vec_(const Vec_<_Tp, n>&v);
 
@@ -64,7 +62,7 @@ namespace z {
         const _Tp& operator()(int i) const;
         _Tp& operator()(int i);
 
-        template<typename _T2> operator Vec_<_T2, n>() const;
+//        template<typename _T2> operator Vec_<_T2, n>() const;
 
         //int size_ = n;
 
@@ -111,10 +109,10 @@ namespace z {
 
         _Tp width, height; // the width and the height
     };
-    template<class _Tp> inline _Size<_Tp>::_Size() :width(0), height(0) {}
-    template<class _Tp> inline _Size<_Tp>::_Size(_Tp _width, _Tp _height) : width(_width), height(_height) {}
-    template<class _Tp> inline _Size<_Tp>::_Size(const _Size& sz) : width(sz.width), height(sz.height) {}
-    template<class _Tp> inline _Tp _Size<_Tp>::area() const { return width * height; }
+    template<class _Tp> _Size<_Tp>::_Size() :width(0), height(0) {}
+    template<class _Tp> _Size<_Tp>::_Size(_Tp _width, _Tp _height) : width(_width), height(_height) {}
+    template<class _Tp> _Size<_Tp>::_Size(const _Size& sz) : width(sz.width), height(sz.height) {}
+    template<class _Tp> _Tp _Size<_Tp>::area() const { return width * height; }
 
 
     typedef _Size<int>      Size2i;
@@ -140,7 +138,7 @@ namespace z {
     public:
         _Matrix() { }
         _Matrix(int rows, int cols, int _chs = 1);
-        _Matrix(Size size, int _chs = 1);
+	    explicit _Matrix(Size size, int _chs = 1);
         _Matrix(const _Matrix<_Tp>& m);
         _Matrix<_Tp>& operator = (const _Matrix<_Tp>& m);
         ~_Matrix();
@@ -152,6 +150,9 @@ namespace z {
         //! pointer to the reference counter;
         // when matrix points to user-allocated data, the pointer is NULL
         int* refcount = nullptr;
+	    /**
+         * \brief 
+         */
         void release();
         int refAdd(int *addr, int delta);
 
@@ -162,8 +163,8 @@ namespace z {
         _Matrix<_Tp>& operator -= (const _Matrix<_Tp>& m);
 
         // 检查这两个函数是否达到了想要的目的
-        inline _Tp* operator[](size_t n) { assert(!((unsigned)n >= (unsigned)rows));  return data + n * step; }
-        inline const _Tp* operator[](size_t n) const { assert(!((unsigned)n >= (unsigned)rows)); return data + n * step; }
+        _Tp* operator[](size_t n) { assert(!(static_cast<unsigned>(n) >= static_cast<unsigned>(rows)));  return data + n * step; }
+        const _Tp* operator[](size_t n) const { assert(!(static_cast<unsigned>(n) >= static_cast<unsigned>(rows))); return data + n * step; }
 
 
         //! returns pointer to (i0,i1) submatrix along the dimensions #0 and #1
@@ -191,7 +192,7 @@ namespace z {
 
 #if defined(OPENCV)
         // 类型转换
-        operator cv::Mat() const;
+	    explicit operator cv::Mat() const;
 #endif
 
         //! returns deep copy of the matrix, i.e. the data is copied
@@ -208,9 +209,9 @@ namespace z {
         void init(_Tp _v);
 
         //! returns true if matrix data is NULL
-        inline bool empty() const { return data == nullptr; }
-        inline Size size() const { return{ cols, rows }; }
-        inline bool equalSize(const _Matrix<_Tp> & m) const { return (rows == m.rows && cols == m.cols && chs == m.chs); }
+	    bool empty() const { return data == nullptr; }
+	    Size size() const { return{ cols, rows }; }
+	    bool equalSize(const _Matrix<_Tp> & m) const { return (rows == m.rows && cols == m.cols && chs == m.chs); }
 
         _Matrix<_Tp> inv();                             // 逆
         _Matrix<_Tp> t();                               // 转置
@@ -222,7 +223,7 @@ namespace z {
         _Matrix<_Tp> cross(_Matrix<_Tp> &m);            // 叉积
         template <typename _T2> _Matrix<_Tp> conv(const _Matrix<_T2> &kernel, bool norm = false) const;
 
-        inline int channels() { return chs; }
+	    int channels() const { return chs; }
 
         void swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1);
 
@@ -239,8 +240,6 @@ namespace z {
         int step = 0;
         int chs = 0;
         size_t size_ = 0;
-
-    private:
     };
 
     template <class _Tp> std::ostream &operator<<(std::ostream & os, const _Matrix<_Tp> &item);
@@ -309,18 +308,18 @@ namespace z {
 
         _Tp dot(const _Point& pt) const;                    // 点乘
         double cross(const _Point& pt) const;               // 叉积
-        bool inside(const _Rect<_Tp>& r) const;             // 检查点是否在区域内
+//        bool inside(const _Rect<_Tp>& r) const;             // 检查点是否在区域内
 
         _Tp x, y;
     };
-    template<class _Tp> inline _Point<_Tp>::_Point() : x(0), y(0) { }
-    template<class _Tp> inline _Point<_Tp>::_Point(_Tp _x, _Tp _y) : x(_x), y(_y) { }
-    template<class _Tp> inline _Point<_Tp>::_Point(const _Point& pt) : x(pt.x), y(pt.y) { }
+    template<class _Tp> _Point<_Tp>::_Point() : x(0), y(0) { }
+    template<class _Tp> _Point<_Tp>::_Point(_Tp _x, _Tp _y) : x(_x), y(_y) { }
+    template<class _Tp> _Point<_Tp>::_Point(const _Point& pt) : x(pt.x), y(pt.y) { }
     template<class _Tp> _Point<_Tp>& _Point<_Tp>::operator = (const _Point& pt) { x = pt.x; y = pt.y; return *this; }
-    template<class _Tp> _Tp _Point<_Tp>::dot(const _Point& pt) const { return (_Tp)x*pt.x + (_Tp)y*pt.y; }
-    template<class _Tp> inline double _Point<_Tp>::cross(const _Point<_Tp>& pt) const
+    template<class _Tp> _Tp _Point<_Tp>::dot(const _Point& pt) const { return static_cast<_Tp>(x)*pt.x + static_cast<_Tp>(y)*pt.y; }
+    template<class _Tp> double _Point<_Tp>::cross(const _Point<_Tp>& pt) const
     {
-        return ((double)x*pt.y - (double)y*pt.x);
+        return (static_cast<double>(x)*pt.y - static_cast<double>(y)*pt.x);
     }
     typedef _Point<int>                 Point2i;
     typedef _Point<double>              Point2f;
@@ -340,7 +339,7 @@ namespace z {
     template<typename _T> std::ostream &operator<<(std::ostream &os, _Point<_T> &p)
     {
         if (sizeof(_T) == 1)
-            os << "[" << (int)p.x << ", " << (int)p.y << "]";
+            os << "[" << static_cast<int>(p.x) << ", " << static_cast<int>(p.y) << "]";
         else
             os << "[" << p.x << ", " << p.y << "]";
 
@@ -362,12 +361,12 @@ namespace z {
 
         _Tp x, y, z;
     };
-    template<class _Tp> inline _Point3<_Tp>::_Point3() : x(0), y(0), z(0) { }
-    template<class _Tp> inline _Point3<_Tp>::_Point3(_Tp _x, _Tp _y, _Tp _z) : x(_x), y(_y), z(_z) { }
-    template<class _Tp> inline _Point3<_Tp>::_Point3(const _Point3& pt) : x(pt.x), y(pt.y), z(pt.z) { }
-    template<class _Tp> _Point3<_Tp>& _Point3<_Tp>::operator = (const _Point3& pt) { x = pt.x; y = pt.y; z = pt.z; }
+    template<class _Tp> _Point3<_Tp>::_Point3() : x(0), y(0), z(0) { }
+    template<class _Tp> _Point3<_Tp>::_Point3(_Tp _x, _Tp _y, _Tp _z) : x(_x), y(_y), z(_z) { }
+    template<class _Tp> _Point3<_Tp>::_Point3(const _Point3& pt) : x(pt.x), y(pt.y), z(pt.z) { }
+	template<class _Tp> _Point3<_Tp>& _Point3<_Tp>::operator = (const _Point3& pt) { x = pt.x; y = pt.y; z = pt.z; return *this; }
     template<class _Tp> _Tp _Point3<_Tp>::dot(const _Point3& pt) const { return x*pt.x + y*pt.y + z*pt.z; }
-    template<typename _Tp> inline _Point3<_Tp> _Point3<_Tp>::cross(const _Point3<_Tp>& pt) const
+    template<typename _Tp> _Point3<_Tp> _Point3<_Tp>::cross(const _Point3<_Tp>& pt) const
     {
         return _Point3<_Tp>(y*pt.z - z*pt.y, z*pt.x - x*pt.z, x*pt.y - y*pt.x);
     }
@@ -398,12 +397,12 @@ namespace z {
 
         _Tp x, y, width, height;
     };
-    template<class _Tp> inline _Rect<_Tp>::_Rect() : x(0), y(0), width(0), height(0) { }
-    template<class _Tp> inline _Rect<_Tp>::_Rect(const _Rect& r) : x(r.x), y(r.y), width(r.width), height(r.height) { }
-    template<class _Tp> inline _Rect<_Tp>::_Rect(_Tp _x, _Tp _y, _Tp _width, _Tp _height) : x(_x), y(_y), width(_width), height(_height) { }
-    template<class _Tp> inline _Rect<_Tp>::_Rect(const _Point<_Tp>& org, const _Size<_Tp>& sz) :
+    template<class _Tp> _Rect<_Tp>::_Rect() : x(0), y(0), width(0), height(0) { }
+    template<class _Tp> _Rect<_Tp>::_Rect(const _Rect& r) : x(r.x), y(r.y), width(r.width), height(r.height) { }
+    template<class _Tp> _Rect<_Tp>::_Rect(_Tp _x, _Tp _y, _Tp _width, _Tp _height) : x(_x), y(_y), width(_width), height(_height) { }
+    template<class _Tp> _Rect<_Tp>::_Rect(const _Point<_Tp>& org, const _Size<_Tp>& sz) :
         x(org.x), y(org.y), width(sz.width), height(sz.height) {}
-    template<class _Tp> inline _Rect<_Tp>::_Rect(const _Point<_Tp>& pt1, const _Point<_Tp>& pt2)
+    template<class _Tp> _Rect<_Tp>::_Rect(const _Point<_Tp>& pt1, const _Point<_Tp>& pt2)
     {
         if (pt1.x < pt2.x) {
             x = pt1.x;
@@ -424,12 +423,13 @@ namespace z {
         }
     }
 
-    template<class _Tp> inline _Rect<_Tp>& _Rect<_Tp>:: operator = (const _Rect& r)
+    template<class _Tp> _Rect<_Tp>& _Rect<_Tp>:: operator = (const _Rect& r)
     {
         x = r.x;
         y = r.y;
         width = r.width;
         height = r.height;
+	    return *this;
     }
     typedef _Rect<int>                   Rect32s;
     typedef _Rect<int>                   Rect;
@@ -446,28 +446,28 @@ namespace z {
         _Scalar(_Tp _v0);
         _Scalar(const _Scalar& sr);
 
-        _Scalar<_Tp> init(_Tp _v0);             // 全部初始化为v0
+        void init(_Tp _v0);             // 全部初始化为v0
         _Scalar<_Tp> conj() const;              // 共轭
         bool isReal() const;                    // 是否为实数
         _Tp v[4];
     };
-    template<class _Tp> inline _Scalar<_Tp>::_Scalar() { v[0] = v[1] = v[2] = v[3] = 0; }
-    template<class _Tp> inline _Scalar<_Tp>::_Scalar(_Tp _v0) { v[0] = _v0; v[1] = v[2] = v[3] = 0; }
-    template<class _Tp> inline _Scalar<_Tp>::_Scalar(_Tp _v0, _Tp _v1, _Tp _v2, _Tp _v3)
+    template<class _Tp> _Scalar<_Tp>::_Scalar() { v[0] = v[1] = v[2] = v[3] = 0; }
+    template<class _Tp> _Scalar<_Tp>::_Scalar(_Tp _v0) { v[0] = _v0; v[1] = v[2] = v[3] = 0; }
+    template<class _Tp> _Scalar<_Tp>::_Scalar(_Tp _v0, _Tp _v1, _Tp _v2, _Tp _v3)
     {
         v[0] = _v0;
         v[1] = _v1;
         v[2] = _v2;
         v[3] = _v3;
     }
-    template<class _Tp> inline _Scalar<_Tp>::_Scalar(const _Scalar& sr)
+    template<class _Tp> _Scalar<_Tp>::_Scalar(const _Scalar& sr)
     {
         v[0] = sr.v[0];
         v[1] = sr.v[1];
         v[2] = sr.v[2];
         v[3] = sr.v[3];
     }
-    template<class _Tp> inline _Scalar<_Tp> _Scalar<_Tp>::init(_Tp _v0) { v[0] = v[1] = v[2] = v[3] = _v0; }
+    template<class _Tp> void _Scalar<_Tp>::init(_Tp _v0) { v[0] = v[1] = v[2] = v[3] = _v0; }
     template<class _Tp> _Scalar<_Tp> _Scalar<_Tp>::conj() const { return _Scalar<_Tp>(v[0], -v[1], -v[2], -v[3]); }
     template<class _Tp> bool _Scalar<_Tp>::isReal() const { return (v[1] == 0 && v[2] == 0 && v[3] == 0); }
 

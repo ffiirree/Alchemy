@@ -39,14 +39,14 @@ template<typename _Tp> static inline _Tp saturate_cast(double v) { return _Tp(v)
 
 // 特化
 // such as: -2 -> 0
-template <> inline uint8_t saturate_cast<uint8_t>(int8_t v) { return (uint8_t)std::max((int)v, 0); }
-template <> inline uint8_t saturate_cast<uint8_t>(uint16_t v) { return (uint8_t)std::min((unsigned)v, (unsigned)(255)); }
-template <> inline uint8_t saturate_cast<uint8_t>(int32_t v) { return (uint8_t)((unsigned)v <= 255 ? v : v > 0 ? 255 : 0 ); }
-template <> inline uint8_t saturate_cast<uint8_t>(int16_t v) { return (uint8_t)(saturate_cast<uint8_t>(int(v))); }
-template <> inline uint8_t saturate_cast<uint8_t>(uint32_t v) { return (uint8_t)(std::min(v, (unsigned)255)); }
+template <> inline uint8_t saturate_cast<uint8_t>(int8_t v) { return static_cast<uint8_t>(std::max(static_cast<int>(v), 0)); }
+template <> inline uint8_t saturate_cast<uint8_t>(uint16_t v) { return static_cast<uint8_t>(std::min(static_cast<unsigned>(v), static_cast<unsigned>(255))); }
+template <> inline uint8_t saturate_cast<uint8_t>(int32_t v) { return static_cast<uint8_t>(static_cast<unsigned>(v) <= 255 ? v : v > 0 ? 255 : 0); }
+template <> inline uint8_t saturate_cast<uint8_t>(int16_t v) { return static_cast<uint8_t>(saturate_cast<uint8_t>(int(v))); }
+template <> inline uint8_t saturate_cast<uint8_t>(uint32_t v) { return static_cast<uint8_t>(std::min(v, static_cast<unsigned>(255))); }
 // 这个可能有问题
-template <> inline uint8_t saturate_cast<uint8_t>(float v) { return (uint8_t)(saturate_cast<uint8_t>((int)v)); }
-template <> inline uint8_t saturate_cast<uint8_t>(double v) { return (uint8_t)(saturate_cast<uint8_t>((int)v)); }
+template <> inline uint8_t saturate_cast<uint8_t>(float v) { return static_cast<uint8_t>(saturate_cast<uint8_t>(static_cast<int>(v))); }
+template <> inline uint8_t saturate_cast<uint8_t>(double v) { return static_cast<uint8_t>(saturate_cast<uint8_t>(static_cast<int>(v))); }
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -101,31 +101,36 @@ template<typename _Tp, int n> Vec_<_Tp, n>& Vec_<_Tp, n >::operator = (std::init
     return *this;
 }
 
-template<typename _Tp, int n> inline const _Tp& Vec_<_Tp, n >::operator[](int i) const
+template<typename _Tp, int n>
+const _Tp& Vec_<_Tp, n >::operator[](int i) const
 {
-    assert(((unsigned)i < (unsigned)n));
+    assert((static_cast<unsigned>(i) < static_cast<unsigned>(n)));
     return this->data_[i];
 }
 
-template<typename _Tp, int n> inline _Tp& Vec_<_Tp, n >::operator[](int i)
+template<typename _Tp, int n>
+_Tp& Vec_<_Tp, n >::operator[](int i)
 {
-    assert(((unsigned)i < (unsigned)n));
+    assert((static_cast<unsigned>(i) < static_cast<unsigned>(n)));
     return this->data_[i];
 }
 
-template<typename _Tp, int n> inline const _Tp& Vec_<_Tp, n >::operator()(int i) const
+template<typename _Tp, int n>
+const _Tp& Vec_<_Tp, n >::operator()(int i) const
 {
-    assert(((unsigned)i < (unsigned)n));
+    assert((static_cast<unsigned>(i) < static_cast<unsigned>(n)));
     return this->data_[i];
 }
 
-template<typename _Tp, int n> inline _Tp& Vec_<_Tp, n >::operator()(int i)
+template<typename _Tp, int n>
+_Tp& Vec_<_Tp, n >::operator()(int i)
 {
-    assert(((unsigned)i < (unsigned)n));
+    assert(static_cast<unsigned>(i) < static_cast<unsigned>(n));
     return this->data_[i];
 }
 
-template<typename _Tp, int n> inline Vec_<_Tp, n> Vec_<_Tp, n>::all(_Tp val)
+template<typename _Tp, int n>
+Vec_<_Tp, n> Vec_<_Tp, n>::all(_Tp val)
 {
     Vec_<_Tp, n> v;
     for (int i = 0; i < n; ++i)
@@ -133,28 +138,29 @@ template<typename _Tp, int n> inline Vec_<_Tp, n> Vec_<_Tp, n>::all(_Tp val)
     return v;
 }
 
-template<typename _Tp, int n> inline Vec_<_Tp, n> Vec_<_Tp, n >::zeros()
+template<typename _Tp, int n>
+Vec_<_Tp, n> Vec_<_Tp, n >::zeros()
 {
     return all(0);
 }
-template<typename _Tp, int n> inline Vec_<_Tp, n> Vec_<_Tp, n >::ones()
+template<typename _Tp, int n>
+Vec_<_Tp, n> Vec_<_Tp, n >::ones()
 {
     return all(1);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 template<class _Tp>
-inline void _Matrix<_Tp>::swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1) {
-	_Tp temp;
+void _Matrix<_Tp>::swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1) {
 	for (uint8_t k = 0; k < chs; ++k) {
-		temp = ptr(i0, j0)[k];
+		_Tp temp = ptr(i0, j0)[k];
 		ptr(i0, j0)[k] = ptr(i1, j1)[k];
 		ptr(i1, j1)[k] = temp;
 	}
 }
 
 /**
- * @berif 真正的创建矩阵，分配内存
+ * @brief 真正的创建矩阵，分配内存
  * @attention 所有矩阵数据的分配都应该通过调用该函数实现（调用该函数一般意味着重新创建函数）
  * @param[in] _rows，行数
  * @param[in] _cols，列数
@@ -192,7 +198,7 @@ template <class _Tp> _Matrix<_Tp>::_Matrix(Size size, int _chs)
 	create(size.height, size.width, _chs);
 }
 /**
- * @berif Constructor with params.
+ * @brief Constructor with params.
  * @param[in] _rows，行数
  * @param[in] _cols，列数
  */
@@ -202,7 +208,7 @@ template <class _Tp> _Matrix<_Tp>::_Matrix(int _rows, int _cols, int _chs)
 }
 
 /**
- * @berif Copying function
+ * @brief Copying function
  * @attention 这是一个浅复制
  */
 template <class _Tp> _Matrix<_Tp>::_Matrix(const _Matrix<_Tp>& m)
@@ -213,7 +219,7 @@ template <class _Tp> _Matrix<_Tp>::_Matrix(const _Matrix<_Tp>& m)
 
 
 /**
- * @berif 赋值函数
+ * @brief 赋值函数
  * @attention 这是一个浅复制
  */
 template <class _Tp>
@@ -245,7 +251,7 @@ _Matrix<_Tp>& _Matrix<_Tp>::operator=(const _Matrix<_Tp> &m)
 }
 
 /**
- * @berif 控制引用计数的值
+ * @brief 控制引用计数的值
  */
 template <class _Tp>
 int _Matrix<_Tp>::refAdd(int *addr, int delta)
@@ -256,7 +262,7 @@ int _Matrix<_Tp>::refAdd(int *addr, int delta)
 }
 
 /**
- * @berif 释放资源
+ * @brief 释放资源
  * @attention 矩阵的资源由该函数控制并释放
  */
 template <class _Tp>
@@ -273,7 +279,7 @@ void _Matrix<_Tp>::release()
 }
 
 /**
- * @berif Destructor
+ * @brief Destructor
  */
 template <class _Tp>
 _Matrix<_Tp>::~_Matrix()
@@ -283,7 +289,7 @@ _Matrix<_Tp>::~_Matrix()
 
 
 /**
- * @berif 形如mat = {1, 2, 3}的赋值方式
+ * @brief 形如mat = {1, 2, 3}的赋值方式
  */
 template <class _Tp>
 _Matrix<_Tp>& _Matrix<_Tp>::operator = (std::initializer_list<_Tp> li)
@@ -317,7 +323,7 @@ template <class _Tp> _Matrix<_Tp>&  _Matrix<_Tp>::operator -= (const _Matrix<_Tp
 }
 
 /**
- * @berif 将矩阵初始化为0
+ * @brief 将矩阵初始化为0
  */
 template <class _Tp>
 void _Matrix<_Tp>::zeros()
@@ -327,7 +333,7 @@ void _Matrix<_Tp>::zeros()
 }
 
 /**
- * @berif 重新分配内存并初始化为0
+ * @brief 重新分配内存并初始化为0
  */
 template <class _Tp>
 void _Matrix<_Tp>::zeros(int _rows, int _cols)
@@ -339,7 +345,7 @@ void _Matrix<_Tp>::zeros(int _rows, int _cols)
 }
 
 /**
- * @berif 将矩阵初始化为1
+ * @brief 将矩阵初始化为1
  */
 template <class _Tp>
 void _Matrix<_Tp>::ones()
@@ -349,7 +355,7 @@ void _Matrix<_Tp>::ones()
 }
 
 /**
- * @berif 重新分配内存并初始化为1
+ * @brief 重新分配内存并初始化为1
  */
 template <class _Tp>
 void _Matrix<_Tp>::ones(int _rows, int _cols)
@@ -362,7 +368,7 @@ void _Matrix<_Tp>::ones(int _rows, int _cols)
 
 
 /**
- * @berif 将矩阵初始化为单位矩阵
+ * @brief 将矩阵初始化为单位矩阵
  */
 template <class _Tp>
 void _Matrix<_Tp>::eye()
@@ -380,7 +386,7 @@ void _Matrix<_Tp>::eye()
 }
 
 /**
- * @berif 重新分配内存并初始化为单位矩阵
+ * @brief 重新分配内存并初始化为单位矩阵
  */
 template <class _Tp>
 void _Matrix<_Tp>::eye(int _rows, int _cols)
@@ -400,7 +406,7 @@ void _Matrix<_Tp>::eye(int _rows, int _cols)
 }
 
 /**
- * @berif 将矩阵所有的值初始化为_v
+ * @brief 将矩阵所有的值初始化为_v
  */
 template <class _Tp>
 void _Matrix<_Tp>::init(_Tp _v)
@@ -410,7 +416,7 @@ void _Matrix<_Tp>::init(_Tp _v)
 }
 
 /**
- * @berif 深度复制函数
+ * @brief 深度复制函数
  * @param[out] outputMatrix，复制的目的矩阵，会被重新分配内存并复制数据
  */
 template <class _Tp>
@@ -421,7 +427,7 @@ void _Matrix<_Tp>::copyTo(_Matrix<_Tp> & outputMatrix) const
 }
 
 /**
- * @berif 深度复制函数
+ * @brief 深度复制函数
  * @ret 返回临时矩阵的拷贝
  */
 template <class _Tp>
@@ -451,7 +457,7 @@ template <class _Tp>
 _Matrix<_Tp>& _Matrix<_Tp>::operator()(_Tp * InputArray, z::Size size)
 {
 	create(size.height, size.width, 1);
-	for (size_t i = 0; i < _size; ++i) 
+	for (size_t i = 0; i < size_; ++i) 
         data[i] = InputArray[i];
 	return *this;
 }
@@ -468,7 +474,7 @@ _Matrix<_Tp>& _Matrix<_Tp>::operator()(_Tp * InputArray, int _rows, int _cols)
 
 #if defined(OPENCV)
 /**
- * @berif 向openCV中的Mat类转换
+ * @brief 向openCV中的Mat类转换
  */
 template <class _Tp>
 _Matrix<_Tp>::operator cv::Mat() const
@@ -481,100 +487,128 @@ _Matrix<_Tp>::operator cv::Mat() const
 }
 #endif
 
-template <class _Tp> inline _Tp* _Matrix<_Tp>::ptr(int i0)
+template <class _Tp>
+_Tp* _Matrix<_Tp>::ptr(int i0)
 {
-    assert((unsigned)i0 < (unsigned)rows);
+    assert(static_cast<unsigned>(i0) < static_cast<unsigned>(rows));
+
 	return data + i0 * step;
 }
 
 
-template <class _Tp> inline const _Tp* _Matrix<_Tp>::ptr(int i0) const
+template <class _Tp>
+const _Tp* _Matrix<_Tp>::ptr(int i0) const
 {
-    assert((unsigned)i0 < (unsigned)rows);
+    assert(static_cast<unsigned>(i0) < static_cast<unsigned>(rows));
+
 	return data + i0 * step;
 }
 
-template <class _Tp> inline _Tp* _Matrix<_Tp>::ptr(int i0, int i1)
+template <class _Tp>
+_Tp* _Matrix<_Tp>::ptr(int i0, int i1)
 {
-    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols));
+    assert(!(static_cast<unsigned>(i0) >= static_cast<unsigned>(rows) 
+		|| static_cast<unsigned>(i1) >= static_cast<unsigned>(cols)));
+
 	return data + i0 * step + i1 * chs;
 }
 
-template <class _Tp> inline const _Tp* _Matrix<_Tp>::ptr(int i0, int i1) const
+template <class _Tp>
+const _Tp* _Matrix<_Tp>::ptr(int i0, int i1) const
 {
-    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols));
+    assert(!(static_cast<unsigned>(i0) >= static_cast<unsigned>(rows) 
+		|| static_cast<unsigned>(i1) >= static_cast<unsigned>(cols)));
+
 	return data + i0 * step + i1 * chs;
 }
 
 
 template <class _Tp> _Tp* _Matrix<_Tp>::ptr(int i0, int i1, int i2)
 {
-    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols || (unsigned)i2 >= (unsigned)chs));
+    assert(!(static_cast<unsigned>(i0) >= static_cast<unsigned>(rows)
+		|| static_cast<unsigned>(i1) >= static_cast<unsigned>(cols) 
+		|| static_cast<unsigned>(i2) >= static_cast<unsigned>(chs)));
+
     return data + i0 * step + i1 * chs + i2;
 }
 
 template <class _Tp> const _Tp* _Matrix<_Tp>::ptr(int i0, int i1, int i2) const
 {
-    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols || (unsigned)i2 >= (unsigned)chs));
+    assert(!(static_cast<unsigned>(i0) >= static_cast<unsigned>(rows) 
+		|| static_cast<unsigned>(i1) >= static_cast<unsigned>(cols) 
+		|| static_cast<unsigned>(i2) >= static_cast<unsigned>(chs)));
+
     return data + i0 * step + i1 * chs + i2;
 }
 
 template <class _Tp>
 template<typename _T2> _T2* _Matrix<_Tp>::ptr(int i0)
 {
-    assert(!((unsigned)i0 >= (unsigned)rows));
+    assert(!(static_cast<unsigned>(i0) >= static_cast<unsigned>(rows)));
+
     return (_T2 *)(data + i0 * step);
 }
 
 template <class _Tp>
 template<typename _T2> const _T2* _Matrix<_Tp>::ptr(int i0) const
 {
-    assert(!((unsigned)i0 >= (unsigned)rows));
+    assert(!(static_cast<unsigned>(i0) >= static_cast<unsigned>(rows)));
+
     return (const _T2 *)(data + i0 * step);
 }
 
 template<typename _Tp>
 template<typename _T2> _T2* _Matrix<_Tp>::ptr(int i0, int i1)
 {
-    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols));
+    assert(!(static_cast<unsigned>(i0) >= static_cast<unsigned>(rows) 
+		|| static_cast<unsigned>(i1) >= static_cast<unsigned>(cols)));
+
     return (_T2 *)(data + i0 * step + i1 * chs);
 }
 
 template <class _Tp>
 template<typename _T2> const _T2* _Matrix<_Tp>::ptr(int i0, int i1) const
 {
-    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols));
+    assert(!(static_cast<unsigned>(i0) >= static_cast<unsigned>(rows) 
+		|| static_cast<unsigned>(i1) >= static_cast<unsigned>(cols)));
+
     return (const _T2 *)(data + i0 * step + i1 * chs);
 }
 
 template <class _Tp>
 template<typename _T2> _T2* _Matrix<_Tp>::ptr(int i0, int i1, int i2)
 {
-    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols || (unsigned)i2 >= (unsigned)chs));
+    assert(!(static_cast<unsigned>(i0) >= static_cast<unsigned>(rows) 
+		|| static_cast<unsigned>(i1) >= static_cast<unsigned>(cols) 
+		|| static_cast<unsigned>(i2) >= static_cast<unsigned>(chs)));
+
     return (_T2 *)(data + i0 * step + i1 * chs + i2);
 }
 
 template <class _Tp>
 template<typename _T2> const _T2* _Matrix<_Tp>::ptr(int i0, int i1, int i2) const 
 {
-    assert(!((unsigned)i0 >= (unsigned)rows || (unsigned)i1 >= (unsigned)cols || (unsigned)i2 >= (unsigned)chs));
+    assert(!(static_cast<unsigned>(i0) >= static_cast<unsigned>(rows) 
+		|| static_cast<unsigned>(i1) >= static_cast<unsigned>(cols)
+		|| static_cast<unsigned>(i2) >= static_cast<unsigned>(chs)));
+
     return (const _T2 *)(data + i0 * step + i1 * chs + i2);
 }
 
 /**
- * @berif 求矩阵的秩
+ * @brief 求矩阵的秩
  * m x n矩阵中min(m, n)矩阵的秩
  */
 template <class _Tp>
 _Tp _Matrix<_Tp>::rank()
 {
-    _Tp temp = (_Tp)0;
+    _Tp temp = static_cast<_Tp>(0);
 	// do something..
 	return temp;
 }
 
 /**
- * @berif 求矩阵的迹，即对角线元素之和
+ * @brief 求矩阵的迹，即对角线元素之和
  * @attention 1、矩阵必须是方阵
  *            2、由于迹是对角线元素之和，所以对于char、short等可能会发生溢出，所以同一改为double
  * m x n矩阵中min(m, n)矩阵的秩
@@ -593,7 +627,7 @@ double _Matrix<_Tp>::tr()
 
 
 /**
- * @berif 逆
+ * @brief 逆
  */
 template <class _Tp>
 _Matrix<_Tp> _Matrix<_Tp>::inv()
@@ -605,7 +639,7 @@ _Matrix<_Tp> _Matrix<_Tp>::inv()
 
 
 /**
- * @berif 转置
+ * @brief 转置
  */
 template <class _Tp>
 _Matrix<_Tp>  _Matrix<_Tp>::t()
@@ -623,7 +657,7 @@ _Matrix<_Tp>  _Matrix<_Tp>::t()
 }
 
 /**
- * @berif 点乘
+ * @brief 点乘
  */
 template <class _Tp>
 _Matrix<_Tp> _Matrix<_Tp>::dot(_Matrix<_Tp> &m)
@@ -641,7 +675,7 @@ _Matrix<_Tp> _Matrix<_Tp>::dot(_Matrix<_Tp> &m)
 }
 
 /**
- * @berif 叉乘
+ * @brief 叉乘
  * @attention C = cross(A,B) returns the cross product of the vectors
  *            A and B.  That is, C = A x B.  A and B must be 3 element
  *            vectors.
@@ -662,7 +696,7 @@ _Matrix<_Tp> _Matrix<_Tp>::cross(_Matrix<_Tp> &m)
 }
 
 /**
- * @berif 卷积运算
+ * @brief 卷积运算
  *
  * @param[in] kernel， 卷积核
  * @param[out] dst，结果
@@ -673,9 +707,9 @@ template <typename _T2> _Matrix<_Tp> _Matrix<_Tp>::conv(const _Matrix<_T2> &kern
 {
     assert(kernel.cols == kernel.rows && kernel.rows % 2 != 0);
 
-    z::_Matrix<_Tp> dst(rows, cols, chs);
+    _Matrix<_Tp> dst(rows, cols, chs);
 
-    double *tempValue = new double[chs];                        // 保存卷积未归一化前的中间变量
+	auto tempValue = new double[chs];                        // 保存卷积未归一化前的中间变量
     int m = kernel.rows / 2, n = kernel.cols / 2;
     _T2 alpha = 0, delta = 0, zeros = 0;                     // 边缘处理和归一化
 
@@ -695,7 +729,7 @@ template <typename _T2> _Matrix<_Tp> _Matrix<_Tp>::conv(const _Matrix<_T2> &kern
                 for (int jj = 0; jj < kernel.cols; ++jj) {
                     auto _i = i - m + ii;
                     auto _j = j - n + jj;
-                    if ((unsigned)_i < (unsigned)rows && (unsigned)_j < (unsigned)cols) {
+                    if (static_cast<unsigned>(_i) < static_cast<unsigned>(rows) && static_cast<unsigned>(_j) < static_cast<unsigned>(cols)) {
                         for (int k = 0; k < chs; ++k) {
                             tempValue[k] += ptr(_i, _j)[k] * kernel[ii][jj];
                         }
@@ -726,7 +760,7 @@ template <class _Tp> void conv(_Matrix<_Tp> &src, _Matrix<_Tp> &dst, Matrix64f &
 	src.conv(core, dst);
 }
 /**
- * @berif 重载输出运算符
+ * @brief 重载输出运算符
  */
 template <class _Tp>
 std::ostream &operator<<(std::ostream & os, const _Matrix<_Tp> &item)
@@ -736,7 +770,7 @@ std::ostream &operator<<(std::ostream & os, const _Matrix<_Tp> &item)
 		for (int j = 0; j < item.step; ++j) {
 			
 			if(sizeof(_Tp) == 1)
-				os << (int)item[i][j];
+				os << static_cast<int>(item[i][j]);
 			else
 				os << item[i][j];
 			if (item.cols * item.chs != j + 1)
@@ -751,7 +785,7 @@ std::ostream &operator<<(std::ostream & os, const _Matrix<_Tp> &item)
 }
 
 /**
- * @berif 比较两个矩阵是否相等
+ * @brief 比较两个矩阵是否相等
  * @attention 浮点数的比较
  */
 template <class _Tp>
@@ -783,7 +817,7 @@ bool operator==(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2)
 }
 
 /**
- * @berif 比较两个矩阵是否不相等
+ * @brief 比较两个矩阵是否不相等
  */
 template <class _Tp>
 bool operator!=(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2)
@@ -792,7 +826,7 @@ bool operator!=(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2)
 }
 
 /**
- * @berif 矩阵乘法，重载*
+ * @brief 矩阵乘法，重载*
  */
 template <class _Tp>
 _Matrix<_Tp> operator*(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
@@ -814,7 +848,7 @@ _Matrix<_Tp> operator*(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
 }
 
 /**
- * @berif 矩阵加法，重载+
+ * @brief 矩阵加法，重载+
  */
 template <class _Tp>
 _Matrix<_Tp> operator+(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
@@ -830,7 +864,7 @@ _Matrix<_Tp> operator+(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
 }
 
 /**
- * @berif 矩阵减法，重载-
+ * @brief 矩阵减法，重载-
  */
 template <class _Tp>
 _Matrix<_Tp> operator-(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
@@ -846,7 +880,7 @@ _Matrix<_Tp> operator-(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2)
 }
 
 /**
- * @berif 矩阵数乘，重载*
+ * @brief 矩阵数乘，重载*
  */
 template <class _Tp>
 _Matrix<_Tp> operator*(_Matrix<_Tp> &m, _Tp delta)
@@ -867,7 +901,7 @@ _Matrix<_Tp> operator*(_Tp delta, _Matrix<_Tp> &m)
 }
 
 /**
- * @berif 矩阵加法，重载+
+ * @brief 矩阵加法，重载+
  */
 template <class _Tp>
 _Matrix<_Tp> operator+(_Matrix<_Tp> &m, _Tp delta)
@@ -887,7 +921,7 @@ _Matrix<_Tp> operator+(_Tp delta, _Matrix<_Tp> &m)
 }
 
 /**
- * @berif 矩阵减法，重载-
+ * @brief 矩阵减法，重载-
  */
 template <class _Tp>
 _Matrix<_Tp> operator-(_Matrix<_Tp> &m, _Tp delta)
@@ -954,9 +988,9 @@ template <class _T1, class _T2> _Matrix<_T1> operator<=(const _Matrix<_T1> &m, _
 }
 
 /////////////////////////////////////////_Complex_////////////////////////////////////////////
-template <class _Tp> inline _Complex_<_Tp>::_Complex_() :re(0), im(0) {}
-template <class _Tp> inline _Complex_<_Tp>::_Complex_(_Tp _re, _Tp _im) : re(_re), im(_im) {}
-template <class _Tp> inline _Complex_<_Tp>::_Complex_(const _Complex_&c) : re(c.re), im(c.im) {}
+template <class _Tp> _Complex_<_Tp>::_Complex_() :re(0), im(0) {}
+template <class _Tp> _Complex_<_Tp>::_Complex_(_Tp _re, _Tp _im) : re(_re), im(_im) {}
+template <class _Tp> _Complex_<_Tp>::_Complex_(const _Complex_&c) : re(c.re), im(c.im) {}
 template <class _Tp> _Complex_<_Tp> & _Complex_<_Tp>::operator=(const _Complex_ &c) { re = c.re; im = c.im; return *this; };
 
 template <class _Tp> bool operator ==(const _Complex_<_Tp> & c1, const _Complex_<_Tp> &c2)
@@ -1000,8 +1034,8 @@ template <class _Tp> _Complex_<_Tp>& _Complex_<_Tp>::operator-=(const _Complex_<
 template <class _Tp> std::ostream & operator<<(std::ostream & os, const _Complex_<_Tp> & c)
 {
 	os << "(" << c.re << ", " << c.im << ")";
+	return os;
 }
-
 }
 
 #endif // ! _OPERATIONS_HPP

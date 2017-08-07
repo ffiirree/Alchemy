@@ -1,6 +1,6 @@
 /**
  ******************************************************************************
- * @file    zmatch.cpp
+ * @file    zmath.cpp
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
@@ -11,8 +11,8 @@
  *
  ******************************************************************************
  */
-#ifndef _ZMATCH_H
-#define _ZMATCH_H
+#ifndef _ZMATH_H
+#define _ZMATH_H
 
 
 #define Pi			((double)3.141592653589793238462643383279502884197169399375105820974944)
@@ -28,13 +28,13 @@ int average(int x, int y);
 
 
 /**
- * @berif 求数组中的最大数
+ * @brief 求数组中的最大数
  * @param size，数组的大小 or 需要比较数组前size个
  */
 template <typename _Tp> void _max(_Tp *addr, size_t size, _Tp & _max)
 {
 	_max = *addr;
-	_Tp * begin = addr + 1;
+	_Tp *begin = addr + 1;
 	_Tp *end = addr + size;
 
 	for (; begin < end; ++begin) {
@@ -45,13 +45,13 @@ template <typename _Tp> void _max(_Tp *addr, size_t size, _Tp & _max)
 
 
 /**
- * @berif 求数组中的最大数
+ * @brief 求数组中的最大数
  * @param size，数组的大小 or 需要比较数组前size个
  */
 template <typename _Tp> void _min(_Tp *addr, size_t size, _Tp & _min)
 {
 	_min = *addr;
-	_Tp * begin = addr + 1;
+	_Tp *begin = addr + 1;
 	_Tp *end = addr + size;
 
 	for (; begin < end; ++begin) {
@@ -62,4 +62,4 @@ template <typename _Tp> void _min(_Tp *addr, size_t size, _Tp & _min)
 
 
 
-#endif // !_ZMATCH_H
+#endif // !_ZMATH_H

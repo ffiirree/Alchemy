@@ -1,7 +1,4 @@
-#include <iostream>
-#include <opencv2\opencv.hpp>
-#include <fstream>
-
+#include <opencv2/opencv.hpp>
 #include "zmatrix.h"
 
 int main(int argc, char *argv[])

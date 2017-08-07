@@ -26,7 +26,7 @@ namespace z {
     void drawKeypoints();
 
     /**
-     * @berif DoG: difference of gaussian
+     * @brief DoG: difference of gaussian
      * @param[in]: src
      * @param[out]: dst
      * @param[in]: size

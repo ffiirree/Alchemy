@@ -39,7 +39,7 @@ template <typename _Tp> void merge(_Matrix<_Tp> & src1, _Matrix<_Tp> & src2, _Ma
 template <typename _Tp> void merge(std::vector<_Matrix<_Tp>> & src, _Matrix<_Tp> & dst);
 
 /**
- * @berif 上下颠倒图像
+ * @brief 上下颠倒图像
  * @param[in] src
  * @param[out] dst
  * @param[in] flags
@@ -66,7 +66,7 @@ void ifft(Matrix64f & src, Matrix64f & dst);
 ///////////////////////////////////////////////Image Filtering/////////////////////////////////////////////////
 ///////////////////////////////////////////////Smoothing Images/////////////////////////////////////////////////
 /**
- * @berif 均值滤波
+ * @brief 均值滤波
  * \ kernel:
  * \                / 1 1 1 .. 1 \
  * \       1        | 1 1 1 .. 1 |
@@ -78,7 +78,7 @@ template <typename _Tp> void blur(_Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size siz
 template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize = true);
 
 /**
- * @berif 获取高斯卷积核
+ * @brief 获取高斯卷积核
  * \
  * \ if (sigmaX == 0) sigmaX = 0.3 * ((ksize.width - 1) * 0.5 - 1) + 0.8;
  * \ if (sigmaY == 0) sigmaY = 0.3 * ((ksize.height - 1) * 0.5 - 1) + 0.8;
@@ -86,7 +86,7 @@ template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& ds
 Matrix64f Gassion(z::Size ksize, double sigmaX, double sigmaY);
 
 /**
- * @berif 高斯滤波
+ * @brief 高斯滤波
  * @kernel -> Gassion()
  */
 template <typename _Tp> void GaussianBlur(_Matrix<_Tp>&src, _Matrix<_Tp> & dst, Size size, double sigmaX = 0, double sigmaY = 0);
@@ -96,7 +96,7 @@ template <typename _Tp> void embossingFilter(_Matrix<_Tp>& src, _Matrix<_Tp>&dst
 template <typename _Tp> void medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, Size size);
 
 /**
- * @berif 双边滤波
+ * @brief 双边滤波
  * @param[in] src
  * @param[out] dst
  * @param[in] size, the kernel size, If it is non-positive, it is computed from sigmaSpace

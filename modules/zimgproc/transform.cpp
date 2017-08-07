@@ -26,7 +26,7 @@ static void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, dou
 static void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx = 1, int dy = 1, int ksize = 3, bool noGD = false);
 
 /**
- * @berif Canny中的非极大值抑制
+ * @brief Canny中的非极大值抑制
  */
 inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD)
 {
@@ -81,7 +81,7 @@ inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD)
 
 
 /**
- * @berif Canny中的双阈值
+ * @brief Canny中的双阈值
  */
 void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2)
 {
@@ -130,7 +130,7 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
 //////////////////////////////////////一阶微分算子///////////////////////////////////////////
 
 /**
- * @berif prewitt算子
+ * @brief prewitt算子
  */
 void prewitt(Matrix8u&src, Matrix8u&dst)
 {
@@ -196,7 +196,7 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
 			}
 
 			for (int k = 0; k < src.chs; ++k) {
-                dst.ptr(i, j)[k] = (unsigned char)std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]);
+                dst.ptr(i, j)[k] = static_cast<unsigned char>(std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]));
 			}
 
 
@@ -215,7 +215,7 @@ void sobel(Matrix8u&src, Matrix8u&dst, int dx, int dy, int ksize)
 }
 
 /**
- * @berif sobel算子
+ * @brief sobel算子
  * @param[in] src
  * @param[out] dst
  * @param[out] dstGD，
@@ -268,7 +268,6 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 	int *tempGx = new int[src.chs];
 	int *tempGy = new int[src.chs];
 	int *tempG = new int[src.chs];
-	int zerosx = 0, zerosy = 0;
 	int m = ksize / 2, n = ksize / 2;
 	unsigned char * srcPtr = nullptr;
 	unsigned char * dstPtr = nullptr;
@@ -282,7 +281,8 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 			memset(tempGx, 0, src.chs * sizeof(int));
 			memset(tempGy, 0, src.chs * sizeof(int));
 			memset(tempG, 0, src.chs * sizeof(int));
-			zerosx = zerosy = 0;
+			int zerosx = 0;
+			int zerosy = 0;
 
 			for (int ii = 0; ii < ksize; ++ii) {
 				for (int jj = 0; jj < ksize; ++jj) {
@@ -323,7 +323,7 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 				dstGDPtr = dstGD.ptr(i, j);
 
 			for (int k = 0; k < src.chs; ++k) {
-                dst.ptr(i, j)[k] = (unsigned char)std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]);
+                dst.ptr(i, j)[k] = static_cast<unsigned char>(std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]));
 				// 计算梯度
 				if (!noGD) {
 					ang = atan2(tempGy[k],tempGx[k]) * RAD2ANG;
@@ -352,7 +352,7 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 
 
 /**
- * @berif Canny 边缘检测算法
+ * @brief Canny 边缘检测算法
  *
  * @param[in] src，需要处理的图像
  * @param[out] dst，输出图像

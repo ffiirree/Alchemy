@@ -36,7 +36,7 @@ typedef enum _FrameTypes
 
 /**
  * @KinectSensor class
- * @berif 封装Kinect传感器为类，获取从Kinect中获取的各种数据，并以openCV中Mat类的形式返回
+ * @brief 封装Kinect传感器为类，获取从Kinect中获取的各种数据，并以openCV中Mat类的形式返回
  */
 class KinectSensor {
 public:

@@ -16,6 +16,9 @@
 
 #include <algorithm>
 #include <vector>
+#include "zcore/zmatrix.h"
+#include "zcore/types.h"
+
 //#include <cmath>
 
 namespace z {
@@ -29,7 +32,7 @@ namespace z {
 
 	template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code)
 	{
-        bool is_hsv = false;
+		auto is_hsv = false;
 
 		switch (code) {
 		case BGR2GRAY:
@@ -41,8 +44,8 @@ namespace z {
 
 			const _Tp * srcPtr = nullptr;
 
-			for (int i = 0; i < src.rows; ++i) {
-				for (int j = 0; j < src.cols; ++j) {
+			for (auto i = 0; i < src.rows; ++i) {
+				for (auto j = 0; j < src.cols; ++j) {
 
 					srcPtr = src.ptr(i, j);
 
@@ -61,8 +64,8 @@ namespace z {
                 dst.create(src.size(), src.chs);
             }
 
-            for (int i = 0; i < src.rows; ++i) {
-                for (int j = 0; j < src.cols; ++j) {
+            for (auto i = 0; i < src.rows; ++i) {
+                for (auto j = 0; j < src.cols; ++j) {
                     dst.ptr(i, j)[2] = src.ptr(i, j)[0];
                     dst.ptr(i, j)[1] = src.ptr(i, j)[1];
                     dst.ptr(i, j)[0] = src.ptr(i, j)[2];
@@ -83,8 +86,8 @@ namespace z {
 
             for (int i = 0; i < src.rows; ++i) {
                 for (int j = 0; j < src.cols; ++j) {
-                    const Vec3u8* src_p = src.ptr<Vec3u8>(i, j);
-                    Vec3u8* dst_p = dst.ptr<Vec3u8>(i, j);
+                    const Vec3u8* src_p = src.template ptr<Vec3u8>(i, j);
+                    Vec3u8* dst_p = dst.template ptr<Vec3u8>(i, j);
 
                     _Tp _min, _max;
                     double H = 0.0, S = 0.0;
@@ -141,7 +144,7 @@ namespace z {
 	}
 
 	/**
-	 * @berif 均值滤波
+	 * @brief 均值滤波
 	 */
 	template <typename _Tp> void blur(_Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size)
 	{
@@ -149,7 +152,7 @@ namespace z {
 	}
 
 	/**
-	 * @berif 方框滤波
+	 * @brief 方框滤波
 	 * @param[in] normalize，是否归一化，卷积核各项和不为1时除以和。
 	 */
 	template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize)
@@ -162,7 +165,7 @@ namespace z {
 	}
 
 	/**
-	 * @berif 高斯滤波
+	 * @brief 高斯滤波
 	 * @param[in] normalize，是否归一化，卷积核各项和不为1时除以和。
 	 */
 	template <typename _Tp> void GaussianBlur(_Matrix<_Tp>&src, _Matrix<_Tp> & dst, Size size, double sigmaX, double sigmaY)
@@ -241,13 +244,13 @@ namespace z {
         if (!dst.equalSize(src))
             dst.create(src.size(), src.chs);
 
-        int r = 0, max_ofs = 0;
+	    auto r = 0, max_ofs = 0;
         //
         if (sigmaColor <= 0) sigmaColor = 1;
         if (sigmaSpace <= 0) sigmaSpace = 1;
 
-        double gauss_color_coeff = -0.5 / (sigmaColor * sigmaColor);
-        double gauss_space_coeff = -0.5 / (sigmaSpace * sigmaSpace);
+	    auto gauss_color_coeff = -0.5 / (sigmaColor * sigmaColor);
+	    auto gauss_space_coeff = -0.5 / (sigmaSpace * sigmaSpace);
 
         if (d < 0) r = static_cast<int>(sigmaSpace * 1.5);
         else r = d / 2;
@@ -345,22 +348,22 @@ namespace z {
 			dst.create(src.rows, src.cols, src.chs);
 
 		int m = size.width / 2, n = size.height / 2;
-		_Tp * ptr = nullptr;
+//		_Tp * ptr = nullptr;
 		_Tp * dstPtr = nullptr;
 		int cnt = 0;
 		_Tp maxVal = 0;
 		_Tp minVal = 0;
 
-		for (int i = 0; i < src.rows; ++i) {
-			for (int j = 0; j < src.cols; ++j) {
+		for (auto i = 0; i < src.rows; ++i) {
+			for (auto j = 0; j < src.cols; ++j) {
 
 				cnt = 0;
-				for (int ii = 0; ii < size.width; ++ii) {
-					for (int jj = 0; jj < size.height; ++jj) {
+				for (auto ii = 0; ii < size.width; ++ii) {
+					for (auto jj = 0; jj < size.height; ++jj) {
                         auto _i = i - m + ii;
                         auto _j = j - n + jj;
 						if (_i >= 0 && _i < src.rows && _j >= 0 && _j < src.cols) {
-							for (int k = 0; k < src.chs; ++k) {
+							for (auto k = 0; k < src.chs; ++k) {
 								ker[k][cnt] = src.ptr(_i, _j)[k];
 							}
 							cnt++;
@@ -371,7 +374,7 @@ namespace z {
 				switch (code) {
 					// 腐蚀， 局部最小值
 				case MORP_ERODE:
-					for (int k = 0; k < src.chs; ++k) {
+					for (auto k = 0; k < src.chs; ++k) {
 						_min(ker[k], cnt, minVal);
 						dstPtr[k] = minVal;
 					}
@@ -379,11 +382,12 @@ namespace z {
 
 					// 膨胀，局部最大值
 				case MORP_DILATE:
-					for (int k = 0; k < src.chs; ++k) {
+					for (auto k = 0; k < src.chs; ++k) {
 						_max(ker[k], cnt, maxVal);
 						dstPtr[k] = maxVal;
 					}
 					break;
+				default: ;
 				}
 				
 
@@ -458,11 +462,12 @@ namespace z {
 
 			dst = temp - dst;
 			break;
+		default: ;
 		}
 	}
 
 	/**
-	 * @berif 将多通道矩阵分离称为单通道的矩阵
+	 * @brief 将多通道矩阵分离称为单通道的矩阵
 	 */
 	template <typename _Tp> void spilt(_Matrix<_Tp> & src, std::vector<_Matrix<_Tp>> & mv)
 	{
@@ -481,7 +486,7 @@ namespace z {
 		}
 	}
 	/**
-	 * @berif 合并两个1通道的矩阵
+	 * @brief 合并两个1通道的矩阵
 	 */
 	template <typename _Tp> void merge(_Matrix<_Tp> & src1, _Matrix<_Tp> & src2, _Matrix<_Tp> & dst)
 	{
@@ -500,7 +505,7 @@ namespace z {
 	}
 
 	/**
-	 * @berif 合并通道，顺序按照src中的顺序
+	 * @brief 合并通道，顺序按照src中的顺序
 	 */
 	template <typename _Tp> void merge(std::vector<_Matrix<_Tp>> & src, _Matrix<_Tp> & dst)
 	{
@@ -597,9 +602,9 @@ namespace z {
 
     template <typename _Tp> void pyrUp(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
     {
-        z::Matrix temp;
+        Matrix temp;
 
-        z::Matrix64f ker(5, 5, 1);
+        Matrix64f ker(5, 5, 1);
         ker = {
             1, 4, 6, 4, 1,
             4, 16, 24, 16, 4,
@@ -630,9 +635,9 @@ namespace z {
 
     template <typename _Tp> void pyrDown(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
     {
-        z::Matrix temp = src.clone();
+        Matrix temp = src.clone();
 
-        z::Matrix64f ker(5, 5, 1);
+        Matrix64f ker(5, 5, 1);
         ker = {
             1, 4, 6, 4, 1,
             4, 16, 24, 16, 4,
@@ -646,9 +651,9 @@ namespace z {
         int dst_cols = src.cols / 2;
 
         dst.create(dst_rows, dst_cols, src.chs);
-        for (int i = 0; i < dst_rows; ++i) 
-            for (int j = 0;j < dst_cols; ++j) 
-                for (int k = 0; k < src.chs; ++k) 
+        for (auto i = 0; i < dst_rows; ++i) 
+            for (auto j = 0;j < dst_cols; ++j) 
+                for (auto k = 0; k < src.chs; ++k) 
                     dst.ptr(i, j)[k] = src.ptr(2 * i, 2 * j)[k];
     }
 };

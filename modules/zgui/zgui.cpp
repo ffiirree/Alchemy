@@ -1,7 +1,7 @@
 #include "zgui.h"
-#include "zimgproc\zimgproc.h"
+#include "zimgproc/zimgproc.h"
 #include "windows_win32.h"
-
+#include "zcore\types.h"
 
 
 extern "C" {
@@ -14,7 +14,7 @@ GLOBAL(void) write_JPEG_file(char * filename, z::Matrix8u & img, int quality);
 namespace z{
 
 /**
- * @berif 自己实现的读取jpeg的图片
+ * @brief 自己实现的读取jpeg的图片
  * @attention 本函数暂时只能读取jpeg标准的图片，需要读取其他类型的图片请使用openCV的imread函数
  */
 Matrix8u imread(char *filename)
@@ -56,17 +56,17 @@ void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thic
 	float x = static_cast<float>(pt1.x), y = static_cast<float>(pt1.y);
 	int dx = pt2.x - pt1.x;
 	int dy = pt2.y - pt1.y;
-	float steps = 0, xi, yi;
+	float steps = 0;
 
 	if (abs(dx) > abs(dy))
-		steps = (float)abs(dx);
+		steps = static_cast<float>(abs(dx));
 	else
-		steps = (float)abs(dy);
+		steps = static_cast<float>(abs(dy));
 
-	xi = dx / steps;
-	yi = dy / steps;
+	float xi = dx / steps;
+	float yi = dy / steps;
 
-	for (int i = 0; i < steps;++i) {
+	for (int i = 0; i < steps; ++i) {
 		for (int k = 0; k < img.chs; ++k) {
 			img.ptr(static_cast<int>(x), static_cast<int>(y))[img.chs - k - 1] = color.v[k];
 		}

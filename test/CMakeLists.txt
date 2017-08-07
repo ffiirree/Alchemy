@@ -2,7 +2,7 @@
 #  CMakeLists.txt for test module
 # --------------------------------------------------------------
 
-link_libraries(${LIBJPEG_LIBS} ${OpenCV_LIBS} zgui zimgproc zmatch zfeatures2d)
+link_libraries(${LIBJPEG_LIBS} ${OpenCV_LIBS} zgui zimgproc zmath zfeatures2d)
 
 # generate test files
 # test_findContours

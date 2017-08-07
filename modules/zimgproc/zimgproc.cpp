@@ -13,13 +13,13 @@
  */
 #include <algorithm>
 #include "zimgproc.h"
-#include "zcore\debug.h"
-#include "zmatch\zmatch.h"
+#include "zcore/debug.h"
+#include "zmath/zmath.h"
 
 namespace z{
 
 /**
- * @berif openCV中的Mat类转换为Matrix8u类
+ * @brief openCV中的Mat类转换为Matrix8u类
  */
 Matrix8u Mat2Matrix8u(cv::Mat & mat)
 {
@@ -80,7 +80,7 @@ Matrix64f Gassion(z::Size ksize, double sigmaX, double sigmaY)
 
 
 /**
- * @berif 1D or 2D 离散傅里叶变换
+ * @brief 1D or 2D 离散傅里叶变换
  * @param src
  * @param dst
  */
@@ -90,7 +90,7 @@ void _dft(Matrix64f & src, Matrix64f & dst, Ft ft)
     Matrix64f end(src.rows, src.cols, 2);
 
     // 按层计算
-    const int N = src.cols;
+    const auto N = src.cols;
     for (int i = 0; i < src.rows; ++i) {
         for (int v = 0; v < N; ++v) {
             Complex mt(0, 0);
@@ -145,7 +145,7 @@ void _dft(Matrix64f & src, Matrix64f & dst, Ft ft)
 
 
 /**
- * @berif 1D或2D离散傅里叶变换
+ * @brief 1D或2D离散傅里叶变换
  */
 void dft(Matrix64f & src, Matrix64f & dst)
 {
@@ -167,7 +167,7 @@ void idft(Matrix64f & src, Matrix64f & dst)
 
 
 /**
- * @berif 获取基2FFT理想的矩阵尺寸
+ * @brief 获取基2FFT理想的矩阵尺寸
  * @param cols
  * @return
  */
@@ -189,22 +189,21 @@ int getIdealRows(int rows)
 }
 
 /**
- * @berif 对_Matrix类进行列的二进制反转
+ * @brief 对_Matrix类进行列的二进制反转
  * @param src
  */
 void bitRevCols(Matrix64f & src)
 {
-    int32_t HELF_N = src.cols >> 1;
-    int32_t k;
+	auto HELF_N = src.cols >> 1;
 
-    for (int32_t i = 1, j = HELF_N; i < src.cols - 1; ++i) {
+	for (auto i = 1, j = HELF_N; i < src.cols - 1; ++i) {
         if (i < j) {
-            for (int32_t row = 0; row < src.rows; ++row) {
+            for (auto row = 0; row < src.rows; ++row) {
                 src.swap(row, i, row, j);
             }
         }
 
-        k = HELF_N;
+		auto k = HELF_N;
         while (j >= k) {
             j -= k;
             k >>= 1;
@@ -214,22 +213,21 @@ void bitRevCols(Matrix64f & src)
 }
 
 /**
- * @berif 对_Matrix的类对象进行行二进制反转
+ * @brief 对_Matrix的类对象进行行二进制反转
  * @param src
  */
 void bitRevRows(Matrix64f & src)
 {
-    int32_t HELF_N = src.rows >> 1;
-    int32_t k;
+	auto HELF_N = src.rows >> 1;
 
-    for (int32_t i = 1, j = HELF_N; i < src.rows - 1; ++i) {
+	for (auto i = 1, j = HELF_N; i < src.rows - 1; ++i) {
         if (i < j) {
-            for (int32_t col = 0; col < src.cols; ++col) {
+            for (auto col = 0; col < src.cols; ++col) {
                 src.swap(i, col, j, col);
             }
         }
 
-        k = HELF_N;
+		auto k = HELF_N;
         while (j >= k) {
             j -= k;
             k >>= 1;
@@ -240,7 +238,7 @@ void bitRevRows(Matrix64f & src)
 
 
 /**
- * @berif 1D or 2D 基2FFT, 就地计算
+ * @brief 1D or 2D 基2FFT, 就地计算
  * @param src
  */
 void _fft(Matrix64f & src, Ft ft)
@@ -262,7 +260,7 @@ void _fft(Matrix64f & src, Ft ft)
                     Complex up(src.ptr(i, k + n)[0], src.ptr(i, k + n)[1]);
                     Complex down(src.ptr(i, k + n + l / 2)[0], src.ptr(i, k + n + l / 2)[1]);
 
-                    Complex m = down * W;
+	                auto m = down * W;
                     down = up - m;
                     up = up + m;
 
