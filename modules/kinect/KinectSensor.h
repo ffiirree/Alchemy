@@ -3,7 +3,7 @@
 
 /*
 ***************************************************************************************************************
-* Kinect ´Ó´ò¿ªµ½»ñÈ¡Êı¾İµÄÁ÷³Ì
+* Kinect ä»æ‰“å¼€åˆ°è·å–æ•°æ®çš„æµç¨‹
 *
 *                                         /- Depth:get_DepthFrameSource()->OpenReader()->AcquireLatestFrame()
 *                                         |
@@ -12,11 +12,11 @@
 *                                         |- IR:get_InfraredFrameSource()->OpenReader()->AcquireLatestFrame()
 *                                         \....
 *
-* Kinect Ìá¹©ÁË¡¾ÊÂ¼şµ¼Ïò¡¿(event)ºÍ¡¾ÂÖÑ¯¡¿(polling)Á½ÖÖ²Ù×÷Ä£Ê½
+* Kinect æä¾›äº†ã€äº‹ä»¶å¯¼å‘ã€‘(event)å’Œã€è½®è¯¢ã€‘(polling)ä¸¤ç§æ“ä½œæ¨¡å¼
 ***************************************************************************************************************
 */
 
-#include "zcore\config.h"
+#include "zcore/config.h"
 
 #ifdef USING_KINECT
 #include <Kinect.h>
@@ -36,14 +36,14 @@ typedef enum _FrameTypes
 
 /**
  * @KinectSensor class
- * @brief ·â×°Kinect´«¸ĞÆ÷ÎªÀà£¬»ñÈ¡´ÓKinectÖĞ»ñÈ¡µÄ¸÷ÖÖÊı¾İ£¬²¢ÒÔopenCVÖĞMatÀàµÄĞÎÊ½·µ»Ø
+ * @brief å°è£…Kinectä¼ æ„Ÿå™¨ä¸ºç±»ï¼Œè·å–ä»Kinectä¸­è·å–çš„å„ç§æ•°æ®ï¼Œå¹¶ä»¥openCVä¸­Matç±»çš„å½¢å¼è¿”å›
  */
 class KinectSensor {
 public:
 	KinectSensor();
 	KinectSensor(FrameTypes _type);
-	KinectSensor(const KinectSensor &) = delete;                                                  // ×èÖ¹¿½±´
-	KinectSensor &operator=(const KinectSensor &) = delete;                                       // ×èÖ¹¸³Öµ
+	KinectSensor(const KinectSensor &) = delete;                                                  // é˜»æ­¢æ‹·è´
+	KinectSensor &operator=(const KinectSensor &) = delete;                                       // é˜»æ­¢èµ‹å€¼
 	~KinectSensor();
 
 	//Check for new frame  
@@ -52,7 +52,7 @@ public:
 	// Update data
 	HRESULT update(FrameTypes _type);
 
-	// »ñÈ¡ÒÔopenCVÖĞMatÀà±£´æµÄÍ¼ÏñÊı¾İ
+	// è·å–ä»¥openCVä¸­Matç±»ä¿å­˜çš„å›¾åƒæ•°æ®
 	inline cv::Mat getColorImg() { return colorImg; }
 	inline cv::Mat getDepthImg() { return depthImg; }
 	inline cv::Mat getInfraImg() { return infraImg; }
@@ -65,15 +65,15 @@ public:
 	inline USHORT getDepthMinReliableDistance() { return depthMinReliableDistance; }
 	inline USHORT getDepthMaxReliableDistance() { return depthMaxReliableDistance; }
 
-	// ²ÊÉ«Í¼Ïñ£º1920 x 1080 @ 30 / 15 FPS£¨¸ù¾İ»·¾³ÁÁ¶È£©
+	// å½©è‰²å›¾åƒï¼š1920 x 1080 @ 30 / 15 FPSï¼ˆæ ¹æ®ç¯å¢ƒäº®åº¦ï¼‰
 	const int colorImgHeight = 1080;
 	const int colorImgWidth = 1920;
 
-	// Éî¶ÈÍ¼Ïñ£º512 x 424 @ 30 FPS¡¢16bit ·¶Î§£º 0.5 ~4.5 M
+	// æ·±åº¦å›¾åƒï¼š512 x 424 @ 30 FPSã€16bit èŒƒå›´ï¼š 0.5 ~4.5 M
 	const int depthImgHeight = 424;
 	const int depthImgWidth = 512;
 
-	// ºìÍâÍ¼ĞÎ£º512 x 424 @ 30 FPS¡¢16bit
+	// çº¢å¤–å›¾å½¢ï¼š512 x 424 @ 30 FPSã€16bit
 	const int infraImgHeight = 424;
 	const int infraImgWidth = 512;
 
@@ -96,13 +96,13 @@ private:
 	IInfraredFrameReader * pInfraFrameReader;
 	IMultiSourceFrameReader * pMultiSourceFrameReader;
 
-	// frame event£¬ remember to clear event
+	// frame eventï¼Œ remember to clear event
 	WAITABLE_HANDLE depthFrameEvent;
 	WAITABLE_HANDLE colorFrameEvent;
 	WAITABLE_HANDLE infraFrameEvent;
 	WAITABLE_HANDLE allFramesEvent;
 
-	// image frame time stamp, unit: 10^(-7) s// Ê±¼ä´Á
+	// image frame time stamp, unit: 10^(-7) s// æ—¶é—´æˆ³
 	INT64 depthFrameTimestamp;
 	INT64 infraFrameTimestamp;
 	INT64 colorFrameTimestamp;

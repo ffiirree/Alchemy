@@ -4,7 +4,7 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
- * @brief   ÕºœÒ¥¶¿Ìœ‡πÿƒ£∞Â∫Ø ˝µƒ µœ÷
+ * @brief   ÂõæÂÉèÂ§ÑÁêÜÁõ∏ÂÖ≥Ê®°ÊùøÂáΩÊï∞ÁöÑÂÆûÁé∞
  ******************************************************************************
  * @attention
  *
@@ -16,646 +16,733 @@
 
 #include <algorithm>
 #include <vector>
-#include "zcore/zmatrix.h"
+#include "zcore/zdef.h"
 #include "zcore/types.h"
-
-//#include <cmath>
+#include "zmath/zmath.h"
+#include "zcore/zmatrix.h"
 
 namespace z {
-
-	template<typename _Tp> inline _Size<_Tp>& _Size<_Tp>::operator = (const _Size& sz)
-	{
-		width = sz.width;
-		height = sz.height;
-		return *this; 
-	}
-
-	template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code)
-	{
-		auto is_hsv = false;
-
-		switch (code) {
-		case BGR2GRAY:
-		{
-            assert(src.chs == 3);
-
-			if (!(dst.rows == src.rows && dst.cols == src.cols && dst.chs == 1 && src.chs == 3))
-				dst.create(src.size(), 1);
-
-			const _Tp * srcPtr = nullptr;
-
-			for (auto i = 0; i < src.rows; ++i) {
-				for (auto j = 0; j < src.cols; ++j) {
-
-					srcPtr = src.ptr(i, j);
-
-					dst.ptr(i, j)[0] = _Tp(0.114 * srcPtr[0] + 0.587 * srcPtr[1] + 0.299 * srcPtr[2]);
-				}
-			}
-            break;
-		}
-			
-
-		case BGR2RGB:
-        {
-            assert(src.chs == 3);
-
-            if (!dst.equalSize(src)) {
-                dst.create(src.size(), src.chs);
-            }
-
-            for (auto i = 0; i < src.rows; ++i) {
-                for (auto j = 0; j < src.cols; ++j) {
-                    dst.ptr(i, j)[2] = src.ptr(i, j)[0];
-                    dst.ptr(i, j)[1] = src.ptr(i, j)[1];
-                    dst.ptr(i, j)[0] = src.ptr(i, j)[2];
-                }
-            }
-            break;
-        }
-        
-        // ±æhsv◊™ªªÀ„∑®¿¥◊‘opencvπŸÕ¯:http://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html
-        case BGR2HSV:
-            is_hsv = true;
-        case BGR2HSI:
-        {
-            assert(src.chs == 3);
-
-            if (!dst.equalSize(src))
-                dst.create(src.size(), src.chs);
-
-            for (int i = 0; i < src.rows; ++i) {
-                for (int j = 0; j < src.cols; ++j) {
-                    const Vec3u8* src_p = src.template ptr<Vec3u8>(i, j);
-                    Vec3u8* dst_p = dst.template ptr<Vec3u8>(i, j);
-
-                    _Tp _min, _max;
-                    double H = 0.0, S = 0.0;
-
-                    // min(R, G, B) & max(R, G, B)
-                    (*src_p)[0] > (*src_p)[1] ? (_max = (*src_p)[0], _min = (*src_p)[1]) : (_max = (*src_p)[1], _min = (*src_p)[0]);
-                    
-                    if (_max < (*src_p)[2]) _max = (*src_p)[2];
-                    if (_min > (*src_p)[2]) _min = (*src_p)[2];
-
-                    // V = max(R, G, B)
-                    if (is_hsv)
-                        (*dst_p)[2] = _max;
-                    else
-                        (*dst_p)[2] = _Tp(((*src_p)[0] + (*src_p)[1] + (*src_p)[2]) / 3.0);
-
-                    // V != 0 ? S = (V - min(R,G,B))/V : S = 0;
-                    _max == 0 ? S = 0.0 : S = (_max - _min) / (double)_max;
-
-                    // if V == R : H = 60(G - B)/(V - min)
-                    // if V == G : H = 120 + 60(B - R)/(V - min)
-                    // if V == B : H = 240 + 60(R - G)/(V - min)
-                    if (_max == (*src_p)[0]) {             // B
-                        H = 240.0 + (60.0 * ((*src_p)[2] - (*src_p)[1])) / (_max - _min);
-                    }
-                    else if (_max == (*src_p)[1]) {        // G
-                        H = 120.0 + (60.0 * ((*src_p)[0] - (*src_p)[2])) / (_max - _min);
-                    }
-                    else if (_max == (*src_p)[2]) {        // R
-                        H = (60.0 * ((*src_p)[1] - (*src_p)[0])) / (_max - _min);
-                    }
-                    if (H < 0.0) H += 360;
-
-                    // ∏˘æ›≤ªÕ¨µƒ…Ó∂»Ω¯––¥¶¿Ì
-                    if (sizeof(_Tp) == 1) {
-                        (*dst_p)[1] = _Tp(S * 255);
-                        (*dst_p)[0] = _Tp(H / 2);
-                    }
-                    else if (sizeof(_Tp) == 2) {
-                        Z_Error("no support");
-                    }
-                    else if (sizeof(_Tp) == 4) {
-                        Z_Error("no support");
-                    }
-                }
-            }
-
-            break;
-        }
-
-		default:
-			break;
-		}
-	}
-
-	/**
-	 * @brief æ˘÷µ¬À≤®
-	 */
-	template <typename _Tp> void blur(_Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size)
-	{
-		boxFilter(src, dst, size, true);
-	}
-
-	/**
-	 * @brief ∑ΩøÚ¬À≤®
-	 * @param[in] normalize£¨ «∑ÒπÈ“ªªØ£¨æÌª˝∫À∏˜œÓ∫Õ≤ªŒ™1 ±≥˝“‘∫Õ°£
-	 */
-	template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize)
-	{
-        assert(size.width == size.height || size.width % 2 != 0);
-
-        z::Matrix64f kernel(size);
-        kernel.ones();
-        src.conv(kernel, dst, normalize);
-	}
-
-	/**
-	 * @brief ∏ﬂÀπ¬À≤®
-	 * @param[in] normalize£¨ «∑ÒπÈ“ªªØ£¨æÌª˝∫À∏˜œÓ∫Õ≤ªŒ™1 ±≥˝“‘∫Õ°£
-	 */
-	template <typename _Tp> void GaussianBlur(_Matrix<_Tp>&src, _Matrix<_Tp> & dst, Size size, double sigmaX, double sigmaY)
-	{
-        Matrix64f kernel = Gassion(size, sigmaX, sigmaY);
-        dst = src.conv(kernel, false);
-	}
-
-	template <typename _Tp> void embossingFilter(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size)
-	{
-		Matrix64f kernel(size);
-
-		for (int i = 0; i < kernel.rows; ++i) {
-			for (int j = 0; j < kernel.cols; ++j) {
-				if (j < kernel.rows - i - 1)
-					kernel[i][j] = -1;
-				else if (j > kernel.rows - i - 1)
-					kernel[i][j] = 1;
-				else
-					kernel[i][j] = 0;
-			}
-		}
-		src.conv(kernel, dst, false);
-	}
-	
-	template <typename _Tp> void medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, Size size)
-	{
-		int area = size.area();
-		_Tp ** ker = new _Tp *[src.chs];
-		for (int i = 0; i < src.chs; ++i) {
-			ker[i] = new _Tp[area];
-		}
-
-		if (!src.equalSize(dst))
-			dst.create(src.rows, src.cols, src.chs);
-
-		int m = size.width / 2, n = size.height / 2;
-		int cnt = 0;
-		int valindex = 0;
-		int valDefault = area / 2;
-
-		for (int i = 0; i < src.rows; ++i) {
-			for (int j = 0; j < src.cols; ++j) {
-
-				cnt = 0;
-				for (int ii = 0; ii < size.width; ++ii) {
-					for (int jj = 0; jj < size.height; ++jj) {
-                        auto _i = i - m + ii;
-                        auto _j = j - n + jj;
-						if (_i >= 0  && _i < src.rows && _j >= 0 && _j < src.cols) {
-							for (int k = 0; k < src.chs; ++k) {
-								ker[k][cnt] = src.ptr(_i, _j)[k];
-							}
-							cnt++;
-						}
-					}
-				}
-                cnt != area ? (valindex = cnt / 2) : (valindex = valDefault);
-				for (int k = 0; k < src.chs; ++k) {
-					std::sort(ker[k], ker[k] + cnt);  // ’º95%“‘…œµƒ ±º‰
-                    dst.ptr(i, j)[k] = ker[k][valindex];
-				}
-
-			} // !for(j)
-		} // !for(i)
-
-		for (int i = 0; i < src.chs; ++i) {
-			delete[] ker[i];
-		}
-		delete[] ker;
-	}
-
-    // attention: pix: 1*8 or 3*8 uchar
-    template <typename _Tp> void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int d, double sigmaColor, double sigmaSpace)
-    {
-        if (!dst.equalSize(src))
-            dst.create(src.size(), src.chs);
-
-	    auto r = 0, max_ofs = 0;
-        //
-        if (sigmaColor <= 0) sigmaColor = 1;
-        if (sigmaSpace <= 0) sigmaSpace = 1;
-
-	    auto gauss_color_coeff = -0.5 / (sigmaColor * sigmaColor);
-	    auto gauss_space_coeff = -0.5 / (sigmaSpace * sigmaSpace);
-
-        if (d < 0) r = static_cast<int>(sigmaSpace * 1.5);
-        else r = d / 2;
-
-        d = r * 2 + 1;
-
-        // Œ˛…¸¥Ê¥¢¿¥ªª»° ±º‰
-        double * color_weight = new double[src.chs * 256];
-        double * space_weight = new double[d * d];
-        int * space_ofs = new int[d * d];
-
-        // initialize color-related bilateral filter coifficients
-        for (int i = 0; i < src.chs * 256; ++i)
-            color_weight[i] = std::exp(i * i * gauss_color_coeff);
-
-        for (int i = -r; i <= r; ++i) {
-            for (int j = -r; j <= r; ++j) {
-                double r_t = std::sqrt((double)i * i + (double)j * j);
-                if (r_t <= r) {
-                    space_weight[max_ofs] = std::exp(r_t * r_t * gauss_space_coeff);
-                    space_ofs[max_ofs++] = (int)(i * src.step + j * src.chs);
-                }
-            }
-        }
-
-        double *temp_val = new double[src.chs];
-
-        auto ptr = src.data;
-        auto data_len = src.size_ * src.chs;
-
-        for (int i = 0; i < data_len; i += src.chs) {
-            double norm = 0;
-            int mv = 0;
-            for (int k = 0; k < src.chs; ++k) {
-                mv += ptr[i + k];
-            }
-
-            memset(temp_val, 0, sizeof(double) * src.chs);//«Â¡„
-
-            for (int j = 0; j < max_ofs; ++j) {
-                double w1 = space_weight[j];
-
-                int cv = 0;
-                int c_pos = i + space_ofs[j];
-                if ((unsigned)c_pos < (unsigned)data_len) {
-                    for (int k = 0; k < src.chs; ++k) {
-                        cv += ptr[c_pos + k];
-                    }
-
-                    double w2 = color_weight[abs(cv - mv)];
-                    double w = w1 * w2;
-                    norm += w;
-                    for (int k = 0; k < src.chs; ++k) {
-                        temp_val[k] += ptr[c_pos + k] * w;
-                    }
-                }
-            }
-            for (int k = 0; k < src.chs; ++k) {
-                dst.data[i + k] = saturate_cast<_Tp>(temp_val[k] / norm);
-            }
+template <class _Tp, int n>
+bool operator==(const _Vec<_Tp, n>& v1, const _Vec<_Tp, n>& v2)
+{
+    for (auto i = 0; i < n; ++i) {
+        if (v1[i] != v2[i]) {
+            return false;
         }
     }
+    return true;
+}
 
-    template <typename _Tp> void Laplacian(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int ksize)
+template <class _Tp, int n>
+bool operator!=(const _Vec<_Tp, n>& v1, const _Vec<_Tp, n>& v2)
+{
+    return !(v1 == v2);
+}
+
+template <class _Tp, int n>
+std::ostream& operator<<(std::ostream& os, const _Vec<_Tp, n>& v)
+{
+    os << "[";
+    if (sizeof(_Tp) == 1) {
+        for (auto i = 0; i < n - 1; ++i) {
+            os << static_cast<int>(v[i]) << ", ";
+        }
+        os << static_cast<int>(v[n - 1]) << "]";
+    }
+    else {
+        for (auto i = 0; i < n - 1; ++i) {
+            os << v[i] << ", ";
+        }
+        os << v[n - 1] << "]";
+    }
+
+    return os;
+}
+
+template<typename _Tp>
+_Size<_Tp>& _Size<_Tp>::operator = (const _Size& sz)
+{
+    width = sz.width;
+    height = sz.height;
+    return *this;
+}
+
+template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code)
+{
+    auto is_hsv = false;
+
+    switch (code) {
+    case BGR2GRAY:
     {
-        assert(ksize > 0 && ksize % 2 == 1);
+        assert(src.channels() == 3);
 
-        z::Matrix8s kernel;
-        if (ksize == 1) {
-            kernel.create(3, 3);
-            kernel = { 0, 1, 0, 1, -4, 1, 0, 1, 0 };
-            dst = src.conv(kernel, false);
+        if (!(dst.size() == src.size() && dst.channels() == 1))
+            dst.create(src.size(), 1);
+
+        auto sbegin = src.template begin<_Vec<_Tp, 3>>();
+        auto dbegin = dst.begin();
+        for (; sbegin != src.template end<_Vec<_Tp, 3>>(); ++sbegin, ++dbegin) {
+            auto pixel = *sbegin;
+            *dbegin = saturate_cast<_Tp>(0.114 * pixel[0] + 0.587 * pixel[1] + 0.299 * pixel[2]);
         }
-        else if (ksize == 3) {
-            kernel.create(3, 3);
-            kernel = { 2, 0, 2, 0, -8, 0, 2, 0, 2 };
-            dst = src.conv(kernel, false);
-        }
-        else {
-            assert(1 == 0);
-        }
+        break;
     }
 
 
-	//////////////////////////////////////–ŒÃ¨—ß¬À≤®//////////////////////////////////////
-	template <typename _Tp> void morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size)
-	{
-		int area = size.area();
-		_Tp ** ker = new _Tp *[src.chs];
-		for (int i = 0; i < src.chs; ++i) {
-			ker[i] = new _Tp[area];
-		}
-
-		if (!src.equalSize(dst))
-			dst.create(src.rows, src.cols, src.chs);
-
-		int m = size.width / 2, n = size.height / 2;
-//		_Tp * ptr = nullptr;
-		_Tp * dstPtr = nullptr;
-		int cnt = 0;
-		_Tp maxVal = 0;
-		_Tp minVal = 0;
-
-		for (auto i = 0; i < src.rows; ++i) {
-			for (auto j = 0; j < src.cols; ++j) {
-
-				cnt = 0;
-				for (auto ii = 0; ii < size.width; ++ii) {
-					for (auto jj = 0; jj < size.height; ++jj) {
-                        auto _i = i - m + ii;
-                        auto _j = j - n + jj;
-						if (_i >= 0 && _i < src.rows && _j >= 0 && _j < src.cols) {
-							for (auto k = 0; k < src.chs; ++k) {
-								ker[k][cnt] = src.ptr(_i, _j)[k];
-							}
-							cnt++;
-						}
-					}
-				}
-				dstPtr = dst.ptr(i, j);
-				switch (code) {
-					// ∏Ø ¥£¨ æ÷≤ø◊Ó–°÷µ
-				case MORP_ERODE:
-					for (auto k = 0; k < src.chs; ++k) {
-						_min(ker[k], cnt, minVal);
-						dstPtr[k] = minVal;
-					}
-					break;
-
-					// ≈Ú’Õ£¨æ÷≤ø◊Ó¥Û÷µ
-				case MORP_DILATE:
-					for (auto k = 0; k < src.chs; ++k) {
-						_max(ker[k], cnt, maxVal);
-						dstPtr[k] = maxVal;
-					}
-					break;
-				default: ;
-				}
-				
-
-			} // !for(j)
-		} // !for(i)
-
-		for (int i = 0; i < src.chs; ++i) {
-			delete[] ker[i];
-		}
-		delete[] ker;
-	}
-	
-	template <typename _Tp> void erode(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel)
-	{
-		morphOp(MORP_ERODE, src, dst, kernel);
-	}
-
-	template <typename _Tp> void dilate(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel)
-	{
-		morphOp(MORP_DILATE, src, dst, kernel);
-	}
-
-	template <typename _Tp> void open(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel)
-	{
-		_Matrix<_Tp> _dst;
-		morphOp(MORP_ERODE, src, _dst, kernel);
-		morphOp(MORP_DILATE, _dst, dst, kernel);
-	}
-
-	template <typename _Tp> void morphEx(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, int op, Size kernel)
-	{
-		_Matrix<_Tp> temp;
-		if (dst.equalSize(src))
-			dst.create(src.rows, src.cols, src.chs);
-
-		switch (op) {
-		case MORP_ERODE:
-			erode(src, dst, kernel);
-			break;
-
-		case MORP_DILATE:
-			dilate(src, dst, kernel);
-			break;
-
-		case MORP_OPEN:
-			erode(src, temp, kernel);
-			dilate(temp, dst, kernel);
-			break;
-
-		case MORP_CLOSE:
-			dilate(src, temp, kernel);
-			erode(temp, dst, kernel);
-			break;
-
-		case MORP_BLACKHAT:
-			dilate(src, temp, kernel);
-			erode(temp, dst, kernel);
-
-			dst -= src;
-			break;
-
-		case MORP_TOPHAT:
-			erode(src, temp, kernel);
-			dilate(temp, dst, kernel);
-
-			dst = src - dst;
-			break;
-
-		case MORP_GRADIENT:
-			dilate(src, temp, kernel);
-			erode(temp, dst, kernel);
-
-			dst = temp - dst;
-			break;
-		default: ;
-		}
-	}
-
-	/**
-	 * @brief Ω´∂‡Õ®µ¿æÿ’Û∑÷¿Î≥∆Œ™µ•Õ®µ¿µƒæÿ’Û
-	 */
-	template <typename _Tp> void spilt(_Matrix<_Tp> & src, std::vector<_Matrix<_Tp>> & mv)
-	{
-		mv = std::vector<_Matrix<_Tp>>(src.chs);
-
-		for (int i = 0; i < src.chs; ++i) {
-			mv.at(i).create(src.rows, src.cols, 1);
-		}
-
-		for (int i = 0; i < src.rows; ++i) {
-			for (int j = 0; j < src.cols; ++j) {
-				for (int k = 0; k < src.chs; ++k) {
-					mv.at(k).ptr(i, j)[0] = src.ptr(i, j)[k];
-				}
-			}
-		}
-	}
-	/**
-	 * @brief ∫œ≤¢¡Ω∏ˆ1Õ®µ¿µƒæÿ’Û
-	 */
-	template <typename _Tp> void merge(_Matrix<_Tp> & src1, _Matrix<_Tp> & src2, _Matrix<_Tp> & dst)
-	{
-		if (!src1.equalSize(src2))
-			_log_("!src1.equalSize(src2)");
-
-		if (dst.rows != src1.rows || dst.cols != src1.cols)
-			dst.create(src1.rows, src1.cols, 2);
-
-		for (int i = 0; i < src1.rows; ++i) {
-			for (int j = 0; j < src2.cols; ++j) {
-				dst.ptr(i, j)[0] = src1.ptr(i, j)[0];
-				dst.ptr(i, j)[1] = src2.ptr(i, j)[0];
-			}
-		}
-	}
-
-	/**
-	 * @brief ∫œ≤¢Õ®µ¿£¨À≥–Ú∞¥’’src÷–µƒÀ≥–Ú
-	 */
-	template <typename _Tp> void merge(std::vector<_Matrix<_Tp>> & src, _Matrix<_Tp> & dst)
-	{
-		if (src.size() < 1)
-			_log_("src.size() < 1");
-
-		int rows = src.at(0).rows;
-		int cols = src.at(0).cols;
-		int chs = src.size();
-
-		// ºÏ≤È
-		for (int i = 1; i < chs; ++i) {
-			if(src.at(i).rows != rows || src.at(i).cols != cols)
-				_log_("src.at(i).rows != rows || src.at(i).cols != cols");
-		}
-
-		//  «∑Ò–Ë“™∑÷≈‰ƒ⁄¥Ê
-		if(dst.rows != rows || dst.cols != cols || dst.chs != chs)
-			dst.create(rows, cols, chs);
-
-		// ∫œ≤¢
-		for (int i = 0; i < rows; ++i) {
-			for (int j = 0; j < cols; ++j) {
-				for (int k = 0; k < chs; ++k) {
-					dst.ptr(i, j)[k] = src.at(k).ptr(i, j)[0];
-				} // !for(k)
-			} // !for(j)
-		} // !for(i)
-	}
-
-	template <typename _Tp> void copyMakeBorder(_Matrix<_Tp> & src, _Matrix<_Tp> & dst, int top, int bottom, int left, int right)
-	{
-		dst.create(src.rows + top + bottom, src.cols + left + right, src.chs);
-		dst.init(0);
-		_Tp * srcPtr, *dstPtr;
-
-		for (int i = 0; i < dst.rows; ++i) {
-			for (int j = 0; j < dst.cols; ++j) {
-				dstPtr = dst.ptr(i, j);
-				if (i >= top && j >= left && i < src.rows + top && j < src.cols + left) {
-					srcPtr = src.ptr(i - top, j - left);
-					for (int k = 0; k < dst.chs; ++k) {
-						dstPtr[k] = srcPtr[k];
-					}
-				}
-				else {
-					for (int k = 0; k < dst.chs; ++k) {
-						dstPtr[k] = 0;
-					}
-				}
-			}
-		}
-	}
-
-
-    template <typename _Tp> void threshold(_Matrix<_Tp> &src, _Matrix<_Tp>& dst, double thresh, double maxval, int type)
+    case BGR2RGB:
     {
-        assert(src.chs == 1);
+        assert(src.channels() == 3);
 
         if (!dst.equalSize(src))
-            dst.create(src.size(), src.chs);
+            dst.create(src.size(), src.channels());
 
-        auto srcptr = src.datastart;
-        auto dstptr = dst.datastart;
+        auto sbegin = src.template begin<_Vec<_Tp, 3>>();
+        auto dbegin = dst.template begin<_Vec<_Tp, 3>>();
+        for (; sbegin != src.template end<_Vec<_Tp, 3>>(); ++sbegin, ++dbegin) {
+            (*dbegin)[0] = (*sbegin)[2];
+            (*dbegin)[1] = (*sbegin)[1];
+            (*dbegin)[2] = (*sbegin)[0];
+        }
+        break;
+    }
 
-        switch (type) {
-        case THRESH_BINARY:
-            for (int i = 0; srcptr + i < src.dataend; ++i)
-                srcptr[i] > _Tp(thresh) ? dstptr[i] = _Tp(maxval) : dstptr[i] = _Tp(0);
-            break;
+    // Êú¨hsvËΩ¨Êç¢ÁÆóÊ≥ïÊù•Ëá™opencvÂÆòÁΩë:http://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html
+    case BGR2HSV:
+        is_hsv = true;
+    case BGR2HSI:
+    {
+        assert(src.channels() == 3);
 
-        case THRESH_BINARY_INV:
-            for (int i = 0; srcptr + i < src.dataend; ++i)
-                srcptr[i] > _Tp(thresh) ? dstptr[i] = _Tp(0) : dstptr[i] = _Tp(maxval);
-            break;
+        if (!dst.equalSize(src))
+            dst.create(src.size(), src.channels());
 
-        case THRESH_TRUNC:
-            for (int i = 0; srcptr + i < src.dataend; ++i)
-                srcptr[i] > _Tp(thresh) ? dstptr[i] = _Tp(thresh) : dstptr[i] = _Tp(0);
-            break;
+        for (int i = 0; i < src.rows; ++i) {
+            for (int j = 0; j < src.cols; ++j) {
+                auto spixel = src.template at<_Vec<_Tp, 3>>(i, j);
+                auto&& dpixel = dst.template at<_Vec<_Tp, 3>>(i, j);
 
-        case THRESH_TOZERO:
-            for (int i = 0; srcptr + i < src.dataend; ++i)
-                srcptr[i] > _Tp(thresh) ? dstptr[i] = srcptr[i] : dstptr[i] = _Tp(0);
-            break;
+                _Tp _min, _max;
+                double H = 0.0, S = 0.0;
 
-        case THRESH_TOZERO_INV:
-            for (int i = 0; srcptr + i < src.dataend; ++i)
-                srcptr[i] > _Tp(thresh) ? dstptr[i] = _Tp(0) : dstptr[i] = srcptr[i];
-            break;
+                // min(R, G, B) & max(R, G, B)
+                spixel[0] > spixel[1] ? (_max = spixel[0], _min = spixel[1]) : (_max = spixel[1], _min = spixel[0]);
+
+                if (_max < spixel[2]) _max = spixel[2];
+                if (_min > spixel[2]) _min = spixel[2];
+
+                // V = max(R, G, B)
+                if (is_hsv)
+                    dpixel[2] = _max;
+                else
+                    dpixel[2] = _Tp((spixel[0] + spixel[1] + spixel[2]) / 3.0);
+
+                // V != 0 ? S = (V - min(R,G,B))/V : S = 0;
+                _max == 0 ? S = 0.0 : S = (_max - _min) / (double)_max;
+
+                // if V == R : H = 60(G - B)/(V - min)
+                // if V == G : H = 120 + 60(B - R)/(V - min)
+                // if V == B : H = 240 + 60(R - G)/(V - min)
+                if (_max == spixel[0]) {             // B
+                    H = 240.0 + (60.0 * (spixel[2] - spixel[1])) / (_max - _min);
+                }
+                else if (_max == spixel[1]) {        // G
+                    H = 120.0 + (60.0 * (spixel[0] - spixel[2])) / (_max - _min);
+                }
+                else if (_max == spixel[2]) {        // R
+                    H = (60.0 * (spixel[1] - spixel[0])) / (_max - _min);
+                }
+                if (H < 0.0) H += 360;
+
+                // Ê†πÊçÆ‰∏çÂêåÁöÑÊ∑±Â∫¶ËøõË°åÂ§ÑÁêÜ
+                if (sizeof(_Tp) == 1) {
+                    dpixel[1] = _Tp(S * 255);
+                    dpixel[0] = _Tp(H / 2);
+                }
+                else if (sizeof(_Tp) == 2) {
+                    Z_Error("no support");
+                }
+                else if (sizeof(_Tp) == 4) {
+                    Z_Error("no support");
+                }
+            }
+        }
+
+        break;
+    }
+
+    default:
+        break;
+    }
+}
+
+template <typename _T1, typename _T2>
+void __conv(const _Matrix<_T1>& src, _Matrix<_T1>& dst, const _Matrix<_T2>& kernel, std::function<void(int&, int&)> callback)
+{
+    auto channels = src.channels();
+    dst = _Matrix<_T1>::zeros(src.size(), channels);
+    auto temp = new double[channels];
+    auto temp_size = sizeof(double) * channels;
+
+    for (auto i = 0; i < dst.rows; ++i) {
+        for (auto j = 0; j < dst.cols; ++j) {
+
+            memset(temp, 0, temp_size);
+
+            for (auto ii = 0; ii < kernel.rows; ++ii) {
+                for (auto jj = 0; jj < kernel.cols; ++jj) {
+
+                    auto _i = i - kernel.rows / 2 + ii;
+                    auto _j = j - kernel.cols / 2 + jj;
+
+                    if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows) &&
+                        static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
+                        callback(_i, _j);
+                    }
+
+                    for (auto k = 0; k < channels; ++k) {
+                        temp[k] += src.at(_i, _j, k) * kernel.at(ii, jj);
+                    }
+                }
+            }
+
+            for (auto k = 0; k < channels; ++k) {
+                dst.at(i, j, k) = saturate_cast<_T1>(temp[k]);
+            }
         }
     }
 
+    delete[] temp;
+}
 
-    template <typename _Tp> void pyrUp(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
-    {
-        Matrix temp;
+template <typename _T1, typename _T2>
+void conv(const _Matrix<_T1>& src, _Matrix<_T1>&dst, const _Matrix<_T2>& kernel, int borderType)
+{
+    assert(src.rows >= kernel.rows && src.cols >= kernel.cols);
 
-        Matrix64f ker(5, 5, 1);
-        ker = {
-            1, 4, 6, 4, 1,
-            4, 16, 24, 16, 4,
-            6, 24, 36, 24, 6,
-            4, 16, 24, 16, 4,
-            1, 4, 6, 4, 1
-        };
+    switch (borderType) {
+        //!< `iiiiii|abcdefgh|iiiiiii`  with some specified `i`
+    case BORDER_CONSTANT:
+        //                                    break;
+        //!< `aaaaaa|abcdefgh|hhhhhhh`
+    case BORDER_REPLICATE:
+        __conv(src, dst, kernel, BORDER_REPLICATE_CALLBACK(src));
+        break;
 
-        int dst_rows = src.rows * 2;
-        int dst_cols = src.cols * 2;
+        //!< `fedcba|abcdefgh|hgfedcb`
+    case BORDER_REFLECT:
+        __conv(src, dst, kernel, BORDER_REFLECT_CALLBACK(src));
+        break;
 
-        temp.create(dst_rows, dst_cols, src.chs);
-        temp.zeros();
+        //!< `cdefgh|abcdefgh|abcdefg`
+    case BORDER_WRAP:
+        __conv(src, dst, kernel, BORDER_WRAP_CALLBACK(src));
+        break;
 
-        for (int i = 0; i < src.rows; ++i) 
-            for (int j = 0;j < src.cols; ++j) 
-                for (int k = 0; k < src.chs; ++k) 
-                    temp.ptr(2 * i, 2 * j)[k] = src.ptr(i, j)[k];
+        //!< `gfedcb|abcdefgh|gfedcba`
+    default:
+    case BORDER_REFLECT_101:
+        __conv(src, dst, kernel, BORDER_DEFAULT_CALLBACK(src));
+        break;
+
+        //!< `uvwxyz|absdefgh|ijklmno`
+    case BORDER_TRANSPARENT:
+        _log_("Do not support!");
+        break;
+    }
+}
+
+template <typename _Tp> void blur(_Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, int borderType)
+{
+    boxFilter(src, dst, size, true, borderType);
+}
 
 
-        dst = temp.conv(ker, true);
-        for (int i = 0; i < dst.rows; ++i)
-            for (int j = 0; j < dst.cols; ++j) 
-                for (int k = 0;k < dst.chs; ++k) 
-                    dst.ptr(i, j)[k] = saturate_cast<_Tp>(dst.ptr(i, j)[k] * 4);
+template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize, int borderType)
+{
+    assert(size.width == size.height || size.width % 2 != 0);
+
+    auto kv = 1.0;
+    if (normalize) kv = 1.0 / (size.width * size.height);
+
+    Matrix64f kernel(size, 1, { kv });
+    conv(src, dst, kernel);
+}
+
+template <typename _Tp> void GaussianBlur(_Matrix<_Tp>&src, _Matrix<_Tp> & dst, Size size, double sigmaX, double sigmaY, int borderType)
+{
+    conv(src, dst, Gassion(size, sigmaX, sigmaY), borderType);
+}
+
+template <typename _Tp> void embossingFilter(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size, int borderType)
+{
+    Matrix64f kernel(size);
+
+    for (int i = 0; i < kernel.rows; ++i) {
+        for (int j = 0; j < kernel.cols; ++j) {
+            if (j < kernel.rows - i - 1)
+                kernel[i][j] = -1;
+            else if (j > kernel.rows - i - 1)
+                kernel[i][j] = 1;
+            else
+                kernel[i][j] = 0;
+        }
+    }
+    conv(src, dst, kernel, borderType);
+}
+
+template <typename _Tp> void __medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, Size size, std::function<void(int &i, int& j)> callback)
+{
+    auto area = size.area();
+    _Matrix<_Tp> buffer(src.channels(), area);
+
+    if (!src.equalSize(dst))
+        dst.create(src.size(), src.channels());
+
+    auto m = size.width / 2, n = size.height / 2;
+    int valindex = area / 2;
+
+    for (int i = 0; i < src.rows; ++i) {
+        for (int j = 0; j < src.cols; ++j) {
+
+            for (int ii = 0; ii < size.width; ++ii) {
+                for (int jj = 0; jj < size.height; ++jj) {
+                    auto _i = i - m + ii;
+                    auto _j = j - n + jj;
+
+                    for (auto k = 0; k < src.channels(); ++k) {
+                        if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows) &&
+                            static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
+                            callback(_i, _j);
+                        }
+                        buffer.at(k, ii * size.width + jj) = src.at(_i, _j, k);
+                    }
+                }
+            }
+            for (auto k = 0; k < src.channels(); ++k) {
+                std::sort(buffer.ptr(k), buffer.ptr(k) + area);  // Âç†95%‰ª•‰∏äÁöÑÊó∂Èó¥
+                dst.at(i, j, k) = buffer.at(k, valindex);
+            }
+
+        } // !for(j)
+    } // !for(i)
+}
+
+template <typename _Tp> void medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, Size size, int borderType)
+{
+    switch (borderType) {
+        //!< `iiiiii|abcdefgh|iiiiiii`  with some specified `i`
+    case BORDER_CONSTANT:
+        //                                    break;
+        //!< `aaaaaa|abcdefgh|hhhhhhh`
+    case BORDER_REPLICATE:
+        __medianFilter(src, dst, size, BORDER_REPLICATE_CALLBACK(src));
+        break;
+
+        //!< `fedcba|abcdefgh|hgfedcb`
+    case BORDER_REFLECT:
+        __medianFilter(src, dst, size, BORDER_REFLECT_CALLBACK(src));
+        break;
+
+        //!< `cdefgh|abcdefgh|abcdefg`
+    case BORDER_WRAP:
+        __medianFilter(src, dst, size, BORDER_WRAP_CALLBACK(src));
+        break;
+
+        //!< `gfedcb|abcdefgh|gfedcba`
+    default:
+    case BORDER_REFLECT_101:
+        __medianFilter(src, dst, size, BORDER_DEFAULT_CALLBACK(src));
+        break;
+
+        //!< `uvwxyz|absdefgh|ijklmno`
+    case BORDER_TRANSPARENT:
+        _log_("Do not support!");
+        break;
+    }
+}
+
+// attention: pix: 1*8 or 3*8 uchar
+template <typename _Tp> void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int d, double sigmaColor, double sigmaSpace)
+{
+    if (!dst.equalSize(src))
+        dst.create(src.size(), src.channels());
+
+    auto r = 0, max_ofs = 0;
+    //
+    if (sigmaColor <= 0) sigmaColor = 1;
+    if (sigmaSpace <= 0) sigmaSpace = 1;
+
+    auto gauss_color_coeff = -0.5 / (sigmaColor * sigmaColor);
+    auto gauss_space_coeff = -0.5 / (sigmaSpace * sigmaSpace);
+
+    if (d < 0) r = static_cast<int>(sigmaSpace * 1.5);
+    else r = d / 2;
+
+    d = r * 2 + 1;
+
+    // Áâ∫Áâ≤Â≠òÂÇ®Êù•Êç¢ÂèñÊó∂Èó¥
+    double * color_weight = new double[src.chs * 256];
+    double * space_weight = new double[d * d];
+    int * space_ofs = new int[d * d];
+
+    // initialize color-related bilateral filter coifficients
+    for (int i = 0; i < src.chs * 256; ++i)
+        color_weight[i] = std::exp(i * i * gauss_color_coeff);
+
+    for (int i = -r; i <= r; ++i) {
+        for (int j = -r; j <= r; ++j) {
+            auto r_t = std::sqrt(static_cast<double>(i) * i + static_cast<double>(j) * j);
+            if (r_t <= r) {
+                space_weight[max_ofs] = std::exp(r_t * r_t * gauss_space_coeff);
+                space_ofs[max_ofs++] = static_cast<int>(i * src.step + j * src.channels());
+            }
+        }
     }
 
+    double *temp_val = new double[src.channels()];
 
-    template <typename _Tp> void pyrDown(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
-    {
-        Matrix temp = src.clone();
+    auto ptr = src.ptr();
+    auto data_len = src.size_ * src.channels();
 
-        Matrix64f ker(5, 5, 1);
-        ker = {
-            1, 4, 6, 4, 1,
-            4, 16, 24, 16, 4,
-            6, 24, 36, 24, 6,
-            4, 16, 24, 16, 4,
-            1, 4, 6, 4, 1
-        };
-        temp = src.conv(ker, true);
+    for (int i = 0; i < data_len; i += src.channels()) {
+        double norm = 0;
+        int mv = 0;
+        for (int k = 0; k < src.channels(); ++k) {
+            mv += ptr[i + k];
+        }
 
-        int dst_rows = src.rows / 2;
-        int dst_cols = src.cols / 2;
+        memset(temp_val, 0, sizeof(double) * src.channels());//Ê∏ÖÈõ∂
 
-        dst.create(dst_rows, dst_cols, src.chs);
-        for (auto i = 0; i < dst_rows; ++i) 
-            for (auto j = 0;j < dst_cols; ++j) 
-                for (auto k = 0; k < src.chs; ++k) 
-                    dst.ptr(i, j)[k] = src.ptr(2 * i, 2 * j)[k];
+        for (int j = 0; j < max_ofs; ++j) {
+            double w1 = space_weight[j];
+
+            int cv = 0;
+            int c_pos = i + space_ofs[j];
+            if ((unsigned)c_pos < (unsigned)data_len) {
+                for (int k = 0; k < src.channels(); ++k) {
+                    cv += ptr[c_pos + k];
+                }
+
+                double w2 = color_weight[abs(cv - mv)];
+                double w = w1 * w2;
+                norm += w;
+                for (int k = 0; k < src.channels(); ++k) {
+                    temp_val[k] += ptr[c_pos + k] * w;
+                }
+            }
+        }
+        for (int k = 0; k < src.channels(); ++k) {
+            dst.data[i + k] = saturate_cast<_Tp>(temp_val[k] / norm);
+        }
     }
+
+    delete[] color_weight;
+    delete[] space_weight;
+    delete[] space_ofs;
+    delete[] temp_val;
+}
+
+//////////////////////////////////////ÂΩ¢ÊÄÅÂ≠¶Êª§Ê≥¢//////////////////////////////////////
+template <typename _Tp> void __morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size, std::function<void(int&, int&)> callback)
+{
+    auto area = size.area();
+    _Matrix<_Tp> buffer(src.channels(), area);
+
+    if (!src.equalSize(dst))
+        dst.create(src.rows, src.cols, src.channels());
+
+    for (auto i = 0; i < src.rows; ++i) {
+        for (auto j = 0; j < src.cols; ++j) {
+
+            for (auto ii = 0; ii < size.width; ++ii) {
+                for (auto jj = 0; jj < size.height; ++jj) {
+                    auto _i = i - size.width / 2 + ii;
+                    auto _j = j - size.height / 2 + jj;
+
+                    for (auto k = 0; k < src.channels(); ++k) {
+                        if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows) &&
+                            static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
+                            callback(_i, _j);
+                        }
+
+                        buffer.at(k, ii * size.width + jj) = src.at(_i, _j, k);
+                    }
+                }
+            }
+            switch (code) {
+            case MORP_ERODE:
+                for (auto k = 0; k < src.channels(); ++k) {
+                    _Tp minVal = 0;
+                    z::min(buffer.ptr(k), area, minVal);
+                    dst.at(i, j, k) = minVal;
+                }
+                break;
+
+            case MORP_DILATE:
+                for (auto k = 0; k < src.channels(); ++k) {
+                    _Tp maxVal = 0;
+                    z::max(buffer.ptr(k), area, maxVal);
+                    dst.at(i, j, k) = maxVal;
+                }
+                break;
+
+            default: break;
+            }
+        } // !for(j)
+    } // !for(i)
+}
+template <typename _Tp> void morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size, int borderType)
+{
+    switch (borderType) {
+        //!< `iiiiii|abcdefgh|iiiiiii`  with some specified `i`
+    case BORDER_CONSTANT:
+        //                                    break;
+        //!< `aaaaaa|abcdefgh|hhhhhhh`
+    case BORDER_REPLICATE:
+        __morphOp(code, src, dst, size, BORDER_REPLICATE_CALLBACK(src));
+        break;
+
+        //!< `fedcba|abcdefgh|hgfedcb`
+    case BORDER_REFLECT:
+        __morphOp(code, src, dst, size, BORDER_REFLECT_CALLBACK(src));
+        break;
+
+        //!< `cdefgh|abcdefgh|abcdefg`
+    case BORDER_WRAP:
+        __morphOp(code, src, dst, size, BORDER_WRAP_CALLBACK(src));
+        break;
+
+        //!< `gfedcb|abcdefgh|gfedcba`
+    default:
+    case BORDER_REFLECT_101:
+        __morphOp(code, src, dst, size, BORDER_DEFAULT_CALLBACK(src));
+        break;
+
+        //!< `uvwxyz|absdefgh|ijklmno`
+    case BORDER_TRANSPARENT:
+        _log_("Do not support!");
+        break;
+    }
+}
+
+template <typename _Tp> void erode(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel, int borderType)
+{
+    morphOp(MORP_ERODE, src, dst, kernel, borderType);
+}
+
+template <typename _Tp> void dilate(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel, int borderType)
+{
+    morphOp(MORP_DILATE, src, dst, kernel, borderType);
+}
+
+template <typename _Tp> void open(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel, int borderType)
+{
+    _Matrix<_Tp> _dst;
+    morphOp(MORP_ERODE, src, _dst, kernel, borderType);
+    morphOp(MORP_DILATE, _dst, dst, kernel, borderType);
+}
+
+template <typename _Tp> void morphEx(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, int op, Size kernel, int borderType)
+{
+    _Matrix<_Tp> temp;
+    if (dst.equalSize(src))
+        dst.create(src.rows, src.cols, src.channels());
+
+    switch (op) {
+    case MORP_ERODE:
+        erode(src, dst, kernel, borderType);
+        break;
+
+    case MORP_DILATE:
+        dilate(src, dst, kernel, borderType);
+        break;
+
+    case MORP_OPEN:
+        erode(src, temp, kernel, borderType);
+        dilate(temp, dst, kernel, borderType);
+        break;
+
+    case MORP_CLOSE:
+        dilate(src, temp, kernel, borderType);
+        erode(temp, dst, kernel, borderType);
+        break;
+
+    case MORP_BLACKHAT:
+        dilate(src, temp, kernel, borderType);
+        erode(temp, dst, kernel, borderType);
+
+        dst -= src;
+        break;
+
+    case MORP_TOPHAT:
+        erode(src, temp, kernel, borderType);
+        dilate(temp, dst, kernel, borderType);
+
+        dst = src - dst;
+        break;
+
+    case MORP_GRADIENT:
+        erode(src, temp, kernel, borderType);
+        dilate(src, dst, kernel, borderType);
+
+        dst -= temp;
+        break;
+    default:;
+    }
+}
+
+template <typename _Tp> void spilt(const _Matrix<_Tp> & src, std::vector<_Matrix<_Tp>> & mv)
+{
+    mv = std::vector<_Matrix<_Tp>>(src.channels());
+
+    for (auto i = 0; i < src.channels(); ++i) {
+        mv.at(i).create(src.rows, src.cols, 1);
+    }
+
+    for (auto i = 0; i < src.rows; ++i) {
+        for (auto j = 0; j < src.cols; ++j) {
+            for (auto k = 0; k < src.channels(); ++k) {
+                mv.at(k).at(i, j) = src.ptr(i, j)[k];
+            }
+        }
+    }
+}
+
+template <typename _Tp> void merge(const _Matrix<_Tp> & src1, const _Matrix<_Tp> & src2, _Matrix<_Tp> & dst)
+{
+    if (!src1.equalSize(src2))
+        _log_("!src1.equalSize(src2)");
+
+    if (dst.size() != src1.size())
+        dst.create(src1.rows, src1.cols, 2);
+
+    for (auto i = 0; i < src1.rows; ++i) {
+        for (auto j = 0; j < src2.cols; ++j) {
+            dst.at(i, j, 0) = src1.at(i, j);
+            dst.at(i, j, 1) = src2.at(i, j);
+        }
+    }
+}
+
+template <typename _Tp> void merge(const std::vector<_Matrix<_Tp>> & src, _Matrix<_Tp> & dst)
+{
+    assert(src.size() >= 1);
+    
+#ifndef NDEBUG
+    for(const auto & mat: src) {
+        assert(mat.size() == src.at(0).size() && mat.channels() == 1);
+    }
+#endif
+
+    int rows = src.at(0).rows;
+    int cols = src.at(0).cols;
+    int chs = src.size();
+
+    // Alloc the memory.
+    dst.create(rows, cols, chs);
+
+    // merge
+    for (auto i = 0; i < rows; ++i) {
+        for (auto j = 0; j < cols; ++j) {
+            for (auto k = 0; k < chs; ++k) {
+                dst.at(i, j, k) = src.at(k).at(i, j);
+            }
+        }
+    }
+}
+
+template <typename _Tp> 
+void copyMakeBorder(const _Matrix<_Tp> & src, _Matrix<_Tp> & dst, int top, int bottom, int left, int right)
+{
+    dst = _Matrix<_Tp>::zeros(src.rows + top + bottom, src.cols + left + right, src.channels());
+
+    for (auto i = top; i < src.rows + top; ++i) {
+        for (auto j = left; j < src.cols + left; ++j) {
+            for (auto k = 0; k < dst.channels(); ++k) {
+                dst.at(i, j, k) = src.at(i - top, j - left, k);
+            }
+        }
+    }
+}
+
+
+template <typename _Tp>
+void threshold(_Matrix<_Tp> &src, _Matrix<_Tp>& dst, double thresh, double maxval, int type)
+{
+    assert(src.channels() == 1);
+    dst = src.clone();
+
+    switch (type) {
+    case THRESH_BINARY:
+        for(auto & pixel : dst) {
+            pixel > saturate_cast<_Tp>(thresh) ? pixel = saturate_cast<_Tp>(maxval) : pixel = 0;
+        }
+        break;
+
+    case THRESH_BINARY_INV:
+        for (auto & pixel : dst) {
+            pixel < saturate_cast<_Tp>(thresh) ? pixel = saturate_cast<_Tp>(maxval) : pixel = 0;
+        }
+        break;
+
+    case THRESH_TRUNC:
+        for (auto & pixel : dst) {
+            if(pixel > saturate_cast<_Tp>(thresh)) {
+                pixel = saturate_cast<_Tp>(thresh);
+            }
+        }
+        break;
+
+    case THRESH_TOZERO:
+        for (auto & pixel : dst) {
+            if(pixel <= saturate_cast<_Tp>(thresh)) {
+                pixel = 0;
+            }
+        }
+        break;
+
+    case THRESH_TOZERO_INV:
+        for (auto & pixel : dst) {
+            if (pixel > saturate_cast<_Tp>(thresh)) {
+                pixel = 0;
+            }
+        }
+        break;
+
+    default:break;
+    }
+}
+
+
+template <typename _Tp> void pyrUp(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
+{
+    auto kernel = Gassion({ 5, 5 }, 0, 0);
+    kernel = kernel * 4;
+
+    auto temp = _Matrix<_Tp>::zeros(src.rows * 2, src.cols * 2, src.channels());
+
+    for (auto i = 0; i < src.rows; ++i)
+        for (auto j = 0; j < src.cols; ++j)
+            for (auto k = 0; k < src.channels(); ++k)
+                temp.at(2 * i, 2 * j, k) = src.at(i, j, k);
+
+    conv(temp, dst, kernel);
+}
+
+
+template <typename _Tp> void pyrDown(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
+{
+    conv(src, dst, Gassion({ 5, 5 }, 0, 0));
+
+    int dst_rows = src.rows / 2;
+    int dst_cols = src.cols / 2;
+
+    dst.create(dst_rows, dst_cols, src.channels());
+    for (auto i = 0; i < dst_rows; ++i)
+        for (auto j = 0; j < dst_cols; ++j)
+            for (auto k = 0; k < src.channels(); ++k)
+                dst.at(i, j, k) = src.at(2 * i, 2 * j, k);
+}
 };
 
 #endif // !_ZIMGPROC_HPP 

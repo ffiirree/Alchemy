@@ -4,23 +4,24 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.7
- * @brief   添加调试信息，以及该库的一些默认设置
+ * @brief   
  ******************************************************************************
  * @attention
  *
  *
  ******************************************************************************
  */
-#ifndef _CONFIG_DEFAULT_H
-#define _CONFIG_DEFAULT_H
+#ifndef _ZCORE_CONFIG_H
+#define _ZCORE_CONFIG_H
 
-// !是否使用了openCV
-#ifndef OPENCV
+// !鏄惁浣跨敤浜唎penCV
 #define OPENCV
-#endif
 
-// 是否使用Kinect
+// fftw
+#define FFTW
+
+// 鏄惁浣跨敤Kinect
 //#define USING_KINECT
 
-#endif //!_CONFIG_DEFAULT_H
+#endif // !_ZCORE_CONFIG_H
 

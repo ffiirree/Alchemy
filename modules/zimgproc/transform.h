@@ -4,15 +4,15 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
- * @brief   Í¼Ïñ±ä»»µÄº¯Êı¶¨Òå
+ * @brief   å›¾åƒå˜æ¢çš„å‡½æ•°å®šä¹‰
  ******************************************************************************
  * @attention
  *
  *
  ******************************************************************************
  */
-#ifndef _TRANSFORM_H
-#define _TRANSFORM_H
+#ifndef _ZIMGPROC_TRANSFORM_H
+#define _ZIMGPROC_TRANSFORM_H
 
 
 #include "zcore/zmatrix.h"
@@ -26,36 +26,39 @@ typedef enum {
 }ContourType;
 
 namespace z {
-// Í¼Ïñ¼¸ºÎ±ä»»
-// Æ½ÒÆ
+// å›¾åƒå‡ ä½•å˜æ¢
+// å¹³ç§»
 void translation(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst);
 
 ///////////////////////////////////////////////Edge Detector/////////////////////////////////////////////////
 void getSobelKernels(Matrix8s &kx, Matrix8s &ky, int dx, int dy, int ksize);
+template <typename _Tp> void Laplacian(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int ksize = 1);
 void prewitt(Matrix8u&src, Matrix8u&dst);
-void sobel(Matrix8u&src, Matrix8u&dst, int dx = 1, int dy = 1, int ksize = 3);
+template <typename _Tp> void Sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, int dx = 1, int dy = 1, int ksize = 3, int borderType = BORDER_DEFAULT);
 void Canny(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2, int apertureSize = 3);
 
 ///////////////////////////////////////////////Contours/////////////////////////////////////////////////
 /**
- * @brief ÌáÈ¡ËùÓĞÂÖÀª
- * @attention ¸Ãº¯Êı»á¸Ä±äÊäÈë¾ØÕóµÄÖµ
- * @param[in/out] src ÊäÈëµÄ¶şÖµÍ¼Ïñ
- * @param[out] dst, ±ß½çµã¼¯µÄÏòÁ¿
+ * @brief æå–æ‰€æœ‰è½®å»“
+ * @attention è¯¥å‡½æ•°ä¼šæ”¹å˜è¾“å…¥çŸ©é˜µçš„å€¼
+ * @param[in/out] src è¾“å…¥çš„äºŒå€¼å›¾åƒ
+ * @param[out] dst è¾¹ç•Œç‚¹é›†çš„å‘é‡
  * @ret None
  */
 void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst);
 
 /**
- * @brief ÌáÈ¡ËùÓĞÂÖÀª
- *      ±ê¼Ç [ 0 | 255 ] Îª 2£¬[ 255 | 0 ]µÄÎª 254(-2)£¬
- *      Èç¹ûÉ¨Ãè¹ı2£¬ËµÃ÷ÔÚ±ß½çÄÚ£¬½ø¹ı-2ËµÃ÷ÔÚ±ß½çÍâ
- * @attention ¸Ãº¯Êı»á¸Ä±äÊäÈë¾ØÕóµÄÖµ
- * @param[in/out] src ÊäÈëµÄ¶şÖµÍ¼Ïñ
- * @param[out] dst, ±ß½çµã¼¯µÄÏòÁ¿
+ * @brief æå–æ‰€æœ‰è½®å»“
+ *      æ ‡è®° [ 0 | 255 ] ä¸º 2ï¼Œ[ 255 | 0 ]çš„ä¸º 254(-2)ï¼Œ
+ *      å¦‚æœæ‰«æè¿‡2ï¼Œè¯´æ˜åœ¨è¾¹ç•Œå†…ï¼Œè¿›è¿‡-2è¯´æ˜åœ¨è¾¹ç•Œå¤–
+ * @attention è¯¥å‡½æ•°ä¼šæ”¹å˜è¾“å…¥çŸ©é˜µçš„å€¼
+ * @param[in/out] src è¾“å…¥çš„äºŒå€¼å›¾åƒ
+ * @param[out] dst è¾¹ç•Œç‚¹é›†çš„å‘é‡
  * @ret None
  */
 void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst);
 }
 
-#endif // !_TRANSFORM_H
+#include "transform.hpp"
+
+#endif // !_ZIMGPROC_TRANSFORM_H

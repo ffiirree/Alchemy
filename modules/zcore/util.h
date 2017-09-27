@@ -1,19 +1,19 @@
 /**
  ******************************************************************************
- * @file    black.h
+ * @file    util.h
  * @author  zlq
  * @version V1.0
  * @date    2016.9.17
- * @brief   hack
+ * @brief   
  ******************************************************************************
  */
-#ifndef _BLACK_H
-#define _BLACK_H
+#ifndef _ZCORE_UTIL_H
+#define _ZCORE_UTIL_H
 
-
-#define ARRAY_SIZE(arr)			(1[&arr])					// 求数组的大小
+#define ARRAY_SIZE(arr)			(1[&arr])					// 姹傛暟缁勭殑澶у皬
 
 
 #define st(x)      do { x } while (__LINE__ == -1)
 
-#endif 
+
+#endif  // !_ZCORE_UTIL_H

@@ -248,5 +248,6 @@ ModelManifest.xml
 .vscode/
 .vs
 
+!3rdparty/
 !3rdparty/libjpeg/lib/libjpeg.lib
 !bin/test.jpeg

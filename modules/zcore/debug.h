@@ -4,20 +4,19 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.17
- * @brief   µ÷ÊÔ³ÌĞòÊ¹ÓÃ
+ * @brief   For debug
  ******************************************************************************
  */
-#ifndef _DEBUG_H
-#define _DEBUG_H
+#ifndef _ZCORE_DEBUG_H
+#define _ZCORE_DEBUG_H
 
-
+#ifdef WIN32
 #include <Windows.h>
-#include <iostream>
-#include "black.h"
-#include "config.h"
+#endif
+
 
 /**
- * @brief ´òÓ¡ĞèÒªµÄµ÷ÊÔĞÅÏ¢
+ * @brief æ‰“å°éœ€è¦çš„è°ƒè¯•ä¿¡æ¯
  */
 #if defined(_DEBUG)
 #define _log_(str) st(std::cout<<"[" << __FILE__ << "]" << "<" << __func__ << ">" << "(" << __LINE__ << ") : " << str << std::endl;)
@@ -28,18 +27,19 @@
 #define Z_Error(str) st(std::cout<<"Error: [" << __FILE__ << "]" << "<" << __func__ << ">" << "(" << __LINE__ << ") : " << str << std::endl;)
 
 
+#ifdef WIN32
 /**
- * @brief Ê±¼ä´Á£¬²âÊÔÒ»¶Î´úÂëµÄÔËĞĞÊ±¼ä£¬µ¥Î»ÊÇms
+ * @brief æ—¶é—´æˆ³ï¼Œæµ‹è¯•ä¸€æ®µä»£ç çš„è¿è¡Œæ—¶é—´ï¼Œå•ä½æ˜¯ms
  */
 class TimeStamp {
 public:
 	/**
-	 * @brief ²âÊÔ¿ªÊ¼µÄµØ·½
+	 * @brief æµ‹è¯•å¼€å§‹çš„åœ°æ–¹
 	 */
 	void start() { GetLocalTime(&starttime); }
 
 	/**
-	 * @brief ²âÊÔ½áÊøµÄµØ·½£¬²¢´òÓ¡´Óstart()¿ªÊ¼ÔËĞĞµÄÊ±¼ä²î
+	 * @brief æµ‹è¯•ç»“æŸçš„åœ°æ–¹ï¼Œå¹¶æ‰“å°ä»start()å¼€å§‹è¿è¡Œçš„æ—¶é—´å·®
 	 */
 	int runtime()
 	{
@@ -54,7 +54,7 @@ public:
 private:
 	SYSTEMTIME starttime, endtime;
 };
+#endif
 
-
-#endif // !_DEBUG_H
+#endif // !_ZCORE_DEBUG_H
 

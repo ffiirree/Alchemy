@@ -4,23 +4,23 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
- * @brief   Í¼Ïñ´¦ÀíµÄº¯Êı¶¨Òå
+ * @brief   å›¾åƒå¤„ç†çš„å‡½æ•°å®šä¹‰
  ******************************************************************************
  * @attention
  *
  *
  ******************************************************************************
  */
-#ifndef _ZIMGPROC_H
-#define _ZIMGPROC_H
+#ifndef _ZIMGPROC_ZIMGPROC_H
+#define _ZIMGPROC_ZIMGPROC_H
 
-#include <string>
 #include <vector>
-#include "zcore\zmatrix.h"
+#include "zcore/zdef.h"
+#include "zcore/zmatrix.h"
 
 #if defined(OPENCV)
-#include <opencv2\core.hpp>
-#include <opencv2\highgui\highgui.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #endif
 
 
@@ -29,44 +29,50 @@ typedef enum {
 }Ft;
 
 namespace z{
-Matrix8u Mat2Matrix8u(cv::Mat & mat);
-
 template <typename _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code);
 
-// ¶àÍ¨µÀ·ÖÀëºÍ»ìºÏ
-template <typename _Tp> void spilt(_Matrix<_Tp> & src, std::vector<_Matrix<_Tp>> & mv);
-template <typename _Tp> void merge(_Matrix<_Tp> & src1, _Matrix<_Tp> & src2, _Matrix<_Tp> & dst);
-template <typename _Tp> void merge(std::vector<_Matrix<_Tp>> & src, _Matrix<_Tp> & dst);
+// å¤šé€šé“åˆ†ç¦»å’Œæ··åˆ
+template <typename _Tp> void spilt(const _Matrix<_Tp> & src, std::vector<_Matrix<_Tp>> & mv);
+template <typename _Tp> void merge(const _Matrix<_Tp> & src1, const _Matrix<_Tp> & src2, _Matrix<_Tp> & dst);
+template <typename _Tp> void merge(const std::vector<_Matrix<_Tp>> & src, _Matrix<_Tp> & dst);
 
 /**
- * @brief ÉÏÏÂµßµ¹Í¼Ïñ
+ * @brief ä¸Šä¸‹é¢ å€’å›¾åƒ
  * @param[in] src
  * @param[out] dst
  * @param[in] flags
  */
 void convertImage(Matrix8u *src, Matrix8u *dst, int flags = 0);
-void copyToArray(Matrix8u &src, char * arr);
 
-template <class _Tp> void copyMakeBorder(_Matrix<_Tp> & src, _Matrix<_Tp> & dst, int top, int bottom, int left, int right);
-
-// ÀëÉ¢¸µÀïÒ¶DFT
-void dft(Matrix64f & src, Matrix64f & dst);
-void idft(Matrix64f & src, Matrix64f & dst);
+template <class _Tp> void copyMakeBorder(const _Matrix<_Tp> & src, _Matrix<_Tp> & dst, int top, int bottom, int left, int right);
 
 void bitRevCols(Matrix64f & src);
 void bitRevRows(Matrix64f & src);
 
 
 
-// ¿ìËÙ¸µÀïÒ¶±ä»»FFT
+// å¿«é€Ÿå‚…é‡Œå¶å˜æ¢FFT
 void _fft(Matrix64f & src, Ft ft);
-void fft(Matrix64f & src, Matrix64f & dst);
-void ifft(Matrix64f & src, Matrix64f & dst);
+/**
+ * @berif fft
+ * @param src Real
+ * @param dst Complex
+ */
+void dft(const Matrix64f & src, Matrix64f & dst);
+
+/**
+ * @berif ifft
+ * @param src Complex
+ * @param dst Real
+ */
+void idft(Matrix64f & src, Matrix64f & dst);
 
 ///////////////////////////////////////////////Image Filtering/////////////////////////////////////////////////
 ///////////////////////////////////////////////Smoothing Images/////////////////////////////////////////////////
+template <typename _T1, typename _T2> void conv(const _Matrix<_T1>& src, _Matrix<_T1>& dst, const _Matrix<_T2>& kernel, int borderType=BORDER_DEFAULT);
+
 /**
- * @brief ¾ùÖµÂË²¨
+ * @brief å‡å€¼æ»¤æ³¢
  * \ kernel:
  * \                / 1 1 1 .. 1 \
  * \       1        | 1 1 1 .. 1 |
@@ -74,36 +80,36 @@ void ifft(Matrix64f & src, Matrix64f & dst);
  * \    Kw * Kh     | ....  .. 1 |
  * \                \ 1 1 1 .. 1 /
  */
-template <typename _Tp> void blur(_Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size);
-template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize = true);
+template <typename _Tp> void blur(_Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, int borderType=BORDER_DEFAULT);
+template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize = true, int borderType=BORDER_DEFAULT);
 
 /**
- * @brief »ñÈ¡¸ßË¹¾í»ıºË
+ * @brief è·å–é«˜æ–¯å·ç§¯æ ¸
  * \
  * \ if (sigmaX == 0) sigmaX = 0.3 * ((ksize.width - 1) * 0.5 - 1) + 0.8;
  * \ if (sigmaY == 0) sigmaY = 0.3 * ((ksize.height - 1) * 0.5 - 1) + 0.8;
  */
-Matrix64f Gassion(z::Size ksize, double sigmaX, double sigmaY);
+Matrix64f Gassion(Size ksize, double sigmaX, double sigmaY);
 
 /**
- * @brief ¸ßË¹ÂË²¨
+ * @brief é«˜æ–¯æ»¤æ³¢
  * @kernel -> Gassion()
  */
-template <typename _Tp> void GaussianBlur(_Matrix<_Tp>&src, _Matrix<_Tp> & dst, Size size, double sigmaX = 0, double sigmaY = 0);
+template <typename _Tp> void GaussianBlur(_Matrix<_Tp>&src, _Matrix<_Tp> & dst, Size size, double sigmaX = 0, double sigmaY = 0, int borderType = BORDER_DEFAULT);
 
-template <typename _Tp> void embossingFilter(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size);
+template <typename _Tp> void embossingFilter(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size, int borderType = BORDER_DEFAULT);
 
-template <typename _Tp> void medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, Size size);
+template <typename _Tp> void medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, Size size, int borderType = BORDER_DEFAULT);
 
 /**
- * @brief Ë«±ßÂË²¨
+ * @brief åŒè¾¹æ»¤æ³¢
  * @param[in] src
  * @param[out] dst
- * @param[in] size, the kernel size, If it is non-positive, it is computed from sigmaSpace
- * @param[in] sigmaColor, Filter sigma in the color space. A larger value of the parameter means that 
+ * @param[in] size The kernel size, If it is non-positive, it is computed from sigmaSpace
+ * @param[in] sigmaColor Filter sigma in the color space. A larger value of the parameter means that 
  *      farther colors within the pixel neighborhood (see sigmaSpace ) will be mixed together, 
  *      resulting in larger areas of semi-equal color.
- * @param[in] sigmaSpace, Filter sigma in the coordinate space. A larger value of the parameter means 
+ * @param[in] sigmaSpace Filter sigma in the coordinate space. A larger value of the parameter means 
  *      that farther pixels will influence each other as long as their colors are close enough (see sigmaColor ). 
  *      When d>0 , it specifies the neighborhood size regardless of sigmaSpace . 
  *      Otherwise, d is proportional to sigmaSpace .
@@ -111,27 +117,23 @@ template <typename _Tp> void medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, S
  */
 template <typename _Tp> void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int size, double sigmaColor, double sigmaSpace);
 
-///////////////////////////////////////////////Image Sharpening/////////////////////////////////////////
-template <typename _Tp> void Laplacian(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int ksize = 1);
-
-
 ///////////////////////////////////////////////Morphology Transformations/////////////////////////////////////////
-// ĞÎÌ¬Ñ§ÂË²¨
-template <typename _Tp> void morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel);
-template <typename _Tp> void erode(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel);
-template <typename _Tp> void dilate(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel);
+// å½¢æ€å­¦æ»¤æ³¢
+template <typename _Tp> void morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel, int borderType = BORDER_DEFAULT);
+template <typename _Tp> void erode(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel, int borderType = BORDER_DEFAULT);
+template <typename _Tp> void dilate(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel, int borderType = BORDER_DEFAULT);
 
-// ĞÎÌ¬Ñ§ÂË²¨µÄ¸ß¼¶²Ù×÷
-template <typename _Tp> void morphEx(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, int op, Size kernel);
-template <typename _Tp> void open(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel);
+// å½¢æ€å­¦æ»¤æ³¢çš„é«˜çº§æ“ä½œ
+template <typename _Tp> void morphEx(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, int op, Size kernel, int borderType = BORDER_DEFAULT);
+template <typename _Tp> void open(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kernel, int borderType = BORDER_DEFAULT);
 
 ///////////////////////////////////////////////Threshold/////////////////////////////////////////////////////////
 /**
- * @breif µ¥Í¨µÀ¹Ì¶¨ãĞÖµ
- * @attention µ¥Í¨µÀ
+ * @breif å•é€šé“å›ºå®šé˜ˆå€¼
+ * @attention å•é€šé“
  * @param[in] src
  * @param[out] dst
- * @param[in] thresh, ãĞÖµ
+ * @param[in] thresh é˜ˆå€¼
  * @param[in] maxval
  * @param[in] type
  *          \ THRESH_BINARY         src(x, y) > thresh ? src(x, y) = maxval : src(x,y) = 0
@@ -150,4 +152,4 @@ template <typename _Tp> void pyrDown(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
 
 #include "zimgproc.hpp"
 
-#endif
+#endif // !_ZIMGPROC_ZIMGPROC_H

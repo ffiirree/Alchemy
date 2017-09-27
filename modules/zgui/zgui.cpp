@@ -1,8 +1,13 @@
 #include "zgui.h"
 #include "zimgproc/zimgproc.h"
-#include "windows_win32.h"
-#include "zcore\types.h"
+#include "zcore/zdef.h"
 
+#ifdef WIN32
+#include "windows_win32.h"
+#endif
+#ifdef linux
+#include "linux.h"
+#endif
 
 extern "C" {
 #include <jpeglib.h>
@@ -14,8 +19,8 @@ GLOBAL(void) write_JPEG_file(char * filename, z::Matrix8u & img, int quality);
 namespace z{
 
 /**
- * @brief ×Ô¼ºÊµÏÖµÄ¶ÁÈ¡jpegµÄÍ¼Æ¬
- * @attention ±¾º¯ÊıÔİÊ±Ö»ÄÜ¶ÁÈ¡jpeg±ê×¼µÄÍ¼Æ¬£¬ĞèÒª¶ÁÈ¡ÆäËûÀàĞÍµÄÍ¼Æ¬ÇëÊ¹ÓÃopenCVµÄimreadº¯Êı
+ * @brief è‡ªå·±å®ç°çš„è¯»å–jpegçš„å›¾ç‰‡
+ * @attention æœ¬å‡½æ•°æš‚æ—¶åªèƒ½è¯»å–jpegæ ‡å‡†çš„å›¾ç‰‡ï¼Œéœ€è¦è¯»å–å…¶ä»–ç±»å‹çš„å›¾ç‰‡è¯·ä½¿ç”¨openCVçš„imreadå‡½æ•°
  */
 Matrix8u imread(char *filename)
 {
@@ -40,7 +45,8 @@ void namedWindow(const std::string & name, int flags)
 void imshow(const std::string & name, Matrix8u & mat)
 {
     assert(mat.cols != 0 && mat.rows != 0 && mat.data != nullptr);
-    assert(mat.chs == 1 || mat.chs == 3);
+    assert(mat.channels() == 1 || mat.channels() == 3);
+    assert(!name.empty());
 
 	zShowImage(name.c_str(), &mat);
 }
@@ -51,7 +57,7 @@ int waitKey(int delay)
 }
 
 
-void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thickness)
+void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int thickness)
 {
 	float x = static_cast<float>(pt1.x), y = static_cast<float>(pt1.y);
 	int dx = pt2.x - pt1.x;
@@ -67,21 +73,21 @@ void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thic
 	float yi = dy / steps;
 
 	for (int i = 0; i < steps; ++i) {
-		for (int k = 0; k < img.chs; ++k) {
-			img.ptr(static_cast<int>(x), static_cast<int>(y))[img.chs - k - 1] = color.v[k];
+		for (int k = 0; k < img.channels(); ++k) {
+			img.ptr(static_cast<int>(x), static_cast<int>(y))[img.channels() - k - 1] = color.v[k];
 		}
 		x += xi;
 		y += yi;
 	}
 }
-void lineBresenham(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thickness)
+void lineBresenham(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int thickness)
 {
-	// 1¡¢¼ÆËãÔÚx¡¢y·½ÏòÉÏµÄÎ»ÒÆ
+	// 1ã€è®¡ç®—åœ¨xã€yæ–¹å‘ä¸Šçš„ä½ç§»
 	int dx = pt2.x - pt1.x;
 	int dy = pt2.y - pt1.y;
 	int steps = 0;
 
-	// 1¡¢Ñ­»·´ÎÊı
+	// 1ã€å¾ªç¯æ¬¡æ•°
 	if (abs(dx) > abs(dy)) {
 		steps = abs(dx);
 	}
@@ -93,7 +99,7 @@ void lineBresenham(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, in
 }
 
 
-void line(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thickness)
+void line(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int thickness)
 {
 	lineDDA(img, pt1, pt2, color, thickness);
 }

@@ -1,58 +1,49 @@
-#include <iostream>
-#include <opencv2\opencv.hpp>
+#include "opencv2/opencv.hpp"
 
 #include "zmatrix.h"
+#include "zcore/zdef.h"
 
 int main(int argc, char *argv[])
 {
-    // ÔØÈëÔ­Ê¼Í¼Ïñ
-    z::Matrix test = z::imread("test.jpeg");
-    cv::imshow("origin image", cv::Mat(test));
-
-    // »Ò¶ÈÍ¼
-    z::Matrix gray(test.size(), 1);
-    z::cvtColor(test, gray, BGR2GRAY);
-    cv::imshow("gray", cv::Mat(gray));
-
-    // ÖÐÖµÂË²¨
+    // è½½å…¥åŽŸå§‹å›¾åƒ
+    auto image = z::imread("test3.jpeg");
+    z::Matrix gray;
+    z::cvtColor(image, gray, z::BGR2GRAY);
     z::medianFilter(gray, gray, z::Size(3, 3));
 
-    // ¶þÖµ»¯
-    z::Matrix bin_image = gray > 175;
-    z::Matrix bin_image_2 = gray > 175;
-    cv::imshow("binary image", cv::Mat(bin_image));
+    // äºŒå€¼åŒ–
+    auto bin_image = gray > 135;
+    //auto bin_image_2 = gray > 175;
 
 
-    // Ñ°ÕÒÂÖÀª
+    // å¯»æ‰¾è½®å»“
     std::vector<std::vector<z::Point>> contours;
-    z::Matrix res(test.rows, test.cols, 3);
-    res.zeros();
+    auto res = z::Matrix::zeros(image.rows, image.cols, 3);
     z::findContours(bin_image, contours);
 
-    // ÏÔÊ¾½á¹û
+    // æ˜¾ç¤ºç»“æžœ
     uchar r = 50, g = 100, b = 150;
     for (const auto &c : contours) {
         for (const auto &j : c) {
-            *res.ptr<z::Vec3u8>(j.x, j.y) = { b, g, r };
+            res.at<z::Vec3u8>(j.x, j.y) = { b, g, r };
         }
         r += 25, b += 50, b += 75;
     }
-    cv::imshow("findContours", cv::Mat(res));
 
-    // Ñ°ÕÒ×îÍâÂÖÀª
-    contours.clear();
-    z::findOutermostContours(bin_image_2, contours);
+    //// å¯»æ‰¾æœ€å¤–è½®å»“
+    //contours.clear();
+    //z::findOutermostContours(bin_image_2, contours);
 
-    // ÏÔÊ¾½á¹û
-    res.zeros();
-    for (const auto &c : contours) {
-        for (const auto &j : c) {
-            *res.ptr<z::Vec3u8>(j.x, j.y) = { b, g, r };
-        }
-        r += 25, b += 50, b += 75;
-    }
-    cv::imshow("findOutermostContours", cv::Mat(res));
+    //// æ˜¾ç¤ºç»“æžœ
+    //res.zeros();
+    //for (const auto &c : contours) {
+    //    for (const auto &j : c) {
+    //        *res.ptr<z::Vec3u8>(j.x, j.y) = { b, g, r };
+    //    }
+    //    r += 25, b += 50, b += 75;
+    //}
+    //cv::imshow("findOutermostContours", cv::Mat(res));
 
-    cv::waitKey(0);
+    //cv::waitKey(0);
     return 0;
 }

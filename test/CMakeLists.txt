@@ -2,9 +2,15 @@
 #  CMakeLists.txt for test module
 # --------------------------------------------------------------
 
-link_libraries(${LIBJPEG_LIBS} ${OpenCV_LIBS} zgui zimgproc zmath zfeatures2d)
-
+link_libraries(${FFTW_LIBS} ${LIBJPEG_LIBS} ${OpenCV_LIBS} zgui zimgproc zmath zfeatures2d)
 # generate test files
+
+
+# test_new_zmatrix
+add_executable(test_new_zmatrix test_new_zmatrix.cpp)
+add_test(TEST_NEW_ZMATRIX ${EXECUTABLE_OUTPUT_PATH}/test_new_zmatrix)
+set_property(TARGET test_new_zmatrix PROPERTY FOLDER "test")
+
 # test_findContours
 add_executable(test_findContours test_findContours.cpp ${HEADERS})
 add_test(TEST_findContours ${EXECUTABLE_OUTPUT_PATH}/test_findContours)
@@ -15,8 +21,9 @@ add_executable(test_fft test_fft.cpp ${HEADERS})
 add_test(TEST_FFT ${EXECUTABLE_OUTPUT_PATH}/test_fft)
 set_property(TARGET test_fft PROPERTY FOLDER "test")
 
+
 # zMatrix
-aux_source_directory(zMatrix main.cpp)
 add_executable(zMatrix main.cpp)
+add_test(TEST_ZMATRIX ${EXECUTABLE_OUTPUT_PATH}/zMatrix)
 set_property(TARGET zMatrix PROPERTY FOLDER "test")
 

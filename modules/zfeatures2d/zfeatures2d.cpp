@@ -1,9 +1,9 @@
 #include "zfeatures2d.h"
-#include "zgui\zgui.h"
+#include "zgui/zgui.h"
 
 void z::DoG(Matrix64f& src, Matrix64f& dst, const Size &size, double g1, double g2)
 {
-    dst = src.conv(Gassion(size, g1, g1) - Gassion(size, g2, g2));
+    conv(src, dst, Gassion(size, g1, g1) - Gassion(size, g2, g2));
 }
 
 
@@ -42,7 +42,8 @@ void z::SIFT::octave(const std::vector<z::Matrix64f> &gp)
         std::vector<Matrix64f> oct;
         for (int j = 0; j < 5; ++j) {
             
-            auto temp = gp.at(i).conv(Gassion({ 5, 5 },  g,  g));
+            Matrix64f temp;
+            conv(gp.at(i), temp, Gassion({ 5, 5 }, g, g));
             g *= k;
             oct.push_back(temp);
         }
@@ -58,7 +59,7 @@ void z::SIFT::DoGOctave()
             auto temp = octave_.at(i).at(j + 1) - octave_.at(i).at(j);
             dogs.push_back(temp);
 
-            cv::imshow(std::string("oct") + std::to_string(i) + std::to_string(j), cv::Mat(dogs.back()));
+//            z::imshow(std::string("oct") + std::to_string(i) + std::to_string(j), dogs.back());
         }
         DoGOctave_.push_back(dogs);
     }

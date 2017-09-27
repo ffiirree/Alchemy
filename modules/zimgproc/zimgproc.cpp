@@ -4,7 +4,7 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
- * @brief   ÓëÀàĞÍÎŞ¹ØµÄÍ¼Ïñ´¦Àíº¯ÊıµÄÊµÏÖ
+ * @brief   ä¸ç±»å‹æ— å…³çš„å›¾åƒå¤„ç†å‡½æ•°çš„å®ç°
  ******************************************************************************
  * @attention
  *
@@ -13,43 +13,27 @@
  */
 #include <algorithm>
 #include "zimgproc.h"
+#include "zcore/config.h"
 #include "zcore/debug.h"
 #include "zmath/zmath.h"
+#ifdef FFTW
+#include <fftw3.h>
+#endif
 
 namespace z{
-
-/**
- * @brief openCVÖĞµÄMatÀà×ª»»ÎªMatrix8uÀà
- */
-Matrix8u Mat2Matrix8u(cv::Mat & mat)
-{
-	Matrix8u temp(mat.rows, mat.cols, mat.channels());
-	memcpy(temp.data, mat.data, temp.size_*temp.chs);
-
-	return temp;
-}
-
 
 void convertImage(Matrix8u *src, Matrix8u *dst, int flags)
 {
 	if (!dst->equalSize(*src))
-		dst->create(src->rows, src->cols, src->chs);
+		dst->create(src->rows, src->cols, src->channels());
 
-	for (int i = 0; i < src->rows; ++i) 
-		for (int j = 0; j < src->cols; ++j) 
-			for (int k = 0; k < src->chs; ++k) 
-				dst->ptr(i, j)[k] = src->ptr(src->rows - i - 1, j)[k];
+	for (auto i = 0; i < src->rows; ++i) 
+		for (auto j = 0; j < src->cols; ++j) 
+			for (auto k = 0; k < src->channels(); ++k)
+				dst->at(i, j, k) = src->at(src->rows - i - 1, j, k);
 }
 
-void copyToArray(Matrix8u &src, char * arr)
-{
-	int dataSize = src.size_ * src.chs;
-	for (int i = 0; i < dataSize; ++i) {
-		arr[i] = src.data[i];
-	}
-}
-
-Matrix64f Gassion(z::Size ksize, double sigmaX, double sigmaY)
+Matrix64f Gassion(Size ksize, double sigmaX, double sigmaY)
 {
     assert(ksize.width == ksize.height && ksize.width % 2 == 1);
     
@@ -65,14 +49,14 @@ Matrix64f Gassion(z::Size ksize, double sigmaX, double sigmaY)
 
 	for (int i = 0; i < kernel.rows; ++i) {
 		for (int j = 0; j < kernel.cols; ++j) {
-			auto z = std::pow((i - x), 2)/(2.0*std::pow(sigmaX, 2)) + std::pow((j - y), 2)/(2.0 * std::pow(sigmaY, 2));
-            alpha += kernel[i][j] = exp(-z);             
+			auto z = std::pow((i - x), 2)/(2.0 * std::pow(sigmaX, 2)) + std::pow((j - y), 2)/(2.0 * std::pow(sigmaY, 2));
+            alpha += kernel.at<double>(i, j) = exp(-z);             
 		}
 	}
 
     // SUM(Gi,j) = 1
-    for (auto first = kernel.datastart; first != kernel.dataend; ++first) {
-        *first /= alpha;
+    for(auto& i : kernel) {
+        i /= alpha;
     }
 	return kernel;
 }
@@ -80,7 +64,7 @@ Matrix64f Gassion(z::Size ksize, double sigmaX, double sigmaY)
 
 
 /**
- * @brief 1D or 2D ÀëÉ¢¸µÀïÒ¶±ä»»
+ * @brief 1D or 2D ç¦»æ•£å‚…é‡Œå¶å˜æ¢
  * @param src
  * @param dst
  */
@@ -89,7 +73,7 @@ void _dft(Matrix64f & src, Matrix64f & dst, Ft ft)
     Matrix64f temp(src.rows, src.cols, 2);
     Matrix64f end(src.rows, src.cols, 2);
 
-    // °´²ã¼ÆËã
+    // æŒ‰å±‚è®¡ç®—
     const auto N = src.cols;
     for (int i = 0; i < src.rows; ++i) {
         for (int v = 0; v < N; ++v) {
@@ -101,12 +85,10 @@ void _dft(Matrix64f & src, Matrix64f & dst, Ft ft)
                 mt += w * g;
             }
             if (ft == DFT) {
-                temp.ptr(i, v)[0] = mt.re;
-                temp.ptr(i, v)[1] = mt.im;
+                temp.at<Complex>(i, v) = mt;
             }
             else {
-                temp.ptr(i, v)[0] = mt.re / N;
-                temp.ptr(i, v)[1] = mt.im / N;
+                temp.at<Complex>(i, v) = mt / static_cast<double>(N);
             }
 
         }
@@ -117,7 +99,7 @@ void _dft(Matrix64f & src, Matrix64f & dst, Ft ft)
         return;
     }
 
-    // °´ÁĞ¼ÆËã
+    // æŒ‰åˆ—è®¡ç®—
     const int M = src.rows;
     for (int j = 0; j < src.cols; ++j) {
         for (int u = 0; u < M; ++u) {
@@ -130,12 +112,10 @@ void _dft(Matrix64f & src, Matrix64f & dst, Ft ft)
                 mt += w * g;
             }
             if (ft == DFT) {
-                end.ptr(u, j)[0] = mt.re;
-                end.ptr(u, j)[1] = mt.im;
+                end.at<Complex>(u, j) = mt;
             }
             else {
-                end.ptr(u, j)[0] = mt.re / M;
-                end.ptr(u, j)[1] = mt.im / M;
+                end.at<Complex>(u, j) = mt / static_cast<double>(M);
             }
 
         }
@@ -145,29 +125,7 @@ void _dft(Matrix64f & src, Matrix64f & dst, Ft ft)
 
 
 /**
- * @brief 1D»ò2DÀëÉ¢¸µÀïÒ¶±ä»»
- */
-void dft(Matrix64f & src, Matrix64f & dst)
-{
-    Matrix64f gx, gRe = src;
-    Matrix64f gIm(src.rows, src.cols, 1);
-	gIm.zeros();
-	merge(gRe, gIm, gx);
-
-	_dft(gx, dst, DFT);
-}
-
-void idft(Matrix64f & src, Matrix64f & dst)
-{
-    std::vector<Matrix64f> mv;
-    Matrix64f temp;
-    _dft(src, temp, IDFT);
-    dst = temp;
-}
-
-
-/**
- * @brief »ñÈ¡»ù2FFTÀíÏëµÄ¾ØÕó³ß´ç
+ * @brief è·å–åŸº2FFTç†æƒ³çš„çŸ©é˜µå°ºå¯¸
  * @param cols
  * @return
  */
@@ -189,7 +147,7 @@ int getIdealRows(int rows)
 }
 
 /**
- * @brief ¶Ô_MatrixÀà½øĞĞÁĞµÄ¶ş½øÖÆ·´×ª
+ * @brief å¯¹_Matrixç±»è¿›è¡Œåˆ—çš„äºŒè¿›åˆ¶åè½¬
  * @param src
  */
 void bitRevCols(Matrix64f & src)
@@ -213,7 +171,7 @@ void bitRevCols(Matrix64f & src)
 }
 
 /**
- * @brief ¶Ô_MatrixµÄÀà¶ÔÏó½øĞĞĞĞ¶ş½øÖÆ·´×ª
+ * @brief å¯¹_Matrixçš„ç±»å¯¹è±¡è¿›è¡Œè¡ŒäºŒè¿›åˆ¶åè½¬
  * @param src
  */
 void bitRevRows(Matrix64f & src)
@@ -238,25 +196,25 @@ void bitRevRows(Matrix64f & src)
 
 
 /**
- * @brief 1D or 2D »ù2FFT, ¾ÍµØ¼ÆËã
+ * @brief 1D or 2D åŸº2FFT, å°±åœ°è®¡ç®—
  * @param src
  */
 void _fft(Matrix64f & src, Ft ft)
 {
-    // ¶ş½øÖÆ·´×ª£¬ÁĞ·´×ª
+    // äºŒè¿›åˆ¶åè½¬ï¼Œåˆ—åè½¬
     bitRevCols(src);
 
     for (int i = 0; i < src.rows; ++i) {
 
-        // µûĞÎËã·¨
-        for (int l = 2; l <= src.cols; l <<= 1) {    // ĞèÒªlog2(N)²ã
+        // è¶å½¢ç®—æ³•
+        for (int l = 2; l <= src.cols; l <<= 1) {    // éœ€è¦log2(N)å±‚
             for (int k = 0; k < src.cols; k += l) {
                 for (int n = 0; n < (l >> 1); ++n) {
 
-                    // WnĞı×ªÒò×Ó
+                    // Wnæ—‹è½¬å› å­
                     Complex W(cos((2 * Pi * n) / l), ft * sin((2 * Pi * n) / l));
 
-                    // ÉÏÏÂµû³á
+                    // ä¸Šä¸‹è¶ç¿…
                     Complex up(src.ptr(i, k + n)[0], src.ptr(i, k + n)[1]);
                     Complex down(src.ptr(i, k + n + l / 2)[0], src.ptr(i, k + n + l / 2)[1]);
 
@@ -264,26 +222,23 @@ void _fft(Matrix64f & src, Ft ft)
                     down = up - m;
                     up = up + m;
 
-                    src.ptr(i, k + n)[0] = up.re;
-                    src.ptr(i, k + n)[1] = up.im;
-
-                    src.ptr(i, k + n + l / 2)[0] = down.re;
-                    src.ptr(i, k + n + l / 2)[1] = down.im;
+                    src.at<Complex>(i, k + n) = up;
+                    src.at<Complex>(i, k + n + l / 2) = down;
 
                 } // !for(n)
             } // !for(k)
         } // !for(l)
     } // !for(i)
 
-      // Èç¹ûÊÇ1DµÄ¾ØÕó£¬Ôò·µ»Ø
+      // å¦‚æœæ˜¯1Dçš„çŸ©é˜µï¼Œåˆ™è¿”å›
     if (src.rows < 2) return;
 
-    // ĞĞ·´×ª
+    // è¡Œåè½¬
     bitRevRows(src);
 
     for (int j = 0; j < src.cols; ++j) {
 
-        for (int l = 2; l <= src.rows; l <<= 1) {    // ĞèÒªlog2(N)²ã
+        for (int l = 2; l <= src.rows; l <<= 1) {    // éœ€è¦log2(N)å±‚
             for (int k = 0; k < src.rows; k += l) {
                 for (int n = 0; n < (l >> 1); ++n) {
 
@@ -293,15 +248,12 @@ void _fft(Matrix64f & src, Ft ft)
                     Complex up(src.ptr(k + n, j)[0], src.ptr(k + n, j)[1]);
                     Complex down(src.ptr(k + n + l / 2, j)[0], src.ptr(k + n + l / 2, j)[1]);
 
-                    Complex m = down * W;
+                    auto m = down * W;
                     down = up - m;
                     up = up + m;
 
-                    src.ptr(k + n, j)[0] = up.re;
-                    src.ptr(k + n, j)[1] = up.im;
-
-                    src.ptr(k + n + l / 2, j)[0] = down.re;
-                    src.ptr(k + n + l / 2, j)[1] = down.im;
+                    src.at<Complex>(k + n, j) = up;
+                    src.at<Complex>(k + n + l / 2, j) = down;
                 }
             }
         }
@@ -310,37 +262,56 @@ void _fft(Matrix64f & src, Ft ft)
 
 
 
-void fft(Matrix64f & src, Matrix64f & dst)
+void dft(const Matrix64f & src, Matrix64f & dst)
 {
+#ifdef FFTW
+    dst = Matrix64f::zeros(src.size(), 2);
+
+    auto plan = fftw_plan_dft_r2c_2d(src.rows, src.cols, (double *)src.ptr(), reinterpret_cast<fftw_complex *>(dst.ptr()), FFTW_ESTIMATE);
+    fftw_execute(plan);
+
+    // Destory and cleanup.
+    fftw_destroy_plan(plan);
+    fftw_cleanup();
+#elif
     Matrix64f gRe;
     int fft_rows = getIdealRows(src.rows);
     int fft_cols = getIdealCols(src.cols);
 
-    // À©³äÔ­Í¼Ïñ
+    // æ‰©å……åŸå›¾åƒ
     copyMakeBorder(src, gRe, 0, fft_rows - src.rows, 0, fft_cols - src.cols);
 
-    // ĞéÊı²¿·Ö
+    // è™šæ•°éƒ¨åˆ†
     Matrix64f gIm(fft_rows, fft_cols, 1);
-    gIm.zeros();
+    gIm = 0;
 
-    // ĞéÊıºÍÊµÊı²¿·ÖºÏ³É£¬FFTÊäÈëµÄÍ¼Ïñ
-    Matrix64f gx;
-    merge(gRe, gIm, gx);
+    // è™šæ•°å’Œå®æ•°éƒ¨åˆ†åˆæˆï¼ŒFFTè¾“å…¥çš„å›¾åƒ
+    merge(gRe, gIm, dst);
 
-    // ½øĞĞ¿ìËÙ¸µÀïÒ¶±ä»»
-    _fft(gx, DFT);
-    dst = gx;
+    // è¿›è¡Œå¿«é€Ÿå‚…é‡Œå¶å˜æ¢
+    _fft(dst, DFT);
+#endif
 }
 
-void ifft(Matrix64f & src, Matrix64f & dst)
+void idft(Matrix64f & src, Matrix64f & dst)
 {
-    std::vector<Matrix64f> mv;
-    _fft(src, IDFT);
+#ifdef FFTW
+    dst = Matrix64f::zeros(src.size());
 
-    for (size_t i = 0; i < src.size_ * 2; ++i) {
-        *(src.data + i) /= src.size_;
+    auto p3 = fftw_plan_dft_c2r_2d(src.rows, src.cols, reinterpret_cast<fftw_complex *>(src.ptr()), reinterpret_cast<double *>(dst.ptr()), FFTW_ESTIMATE);
+    fftw_execute(p3);
+    dst /= dst.total();
+
+    fftw_destroy_plan(p3);
+    fftw_cleanup();
+#elif
+    src.copyTo(dst);
+    _fft(dst, IDFT);
+
+    for(auto& pixel : _Matrix<Complex>(dst)) {
+        pixel /= dst.total();
     }
-    dst = src;
+#endif
 }
 
 

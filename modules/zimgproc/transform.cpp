@@ -4,7 +4,7 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
- * @brief   Í¼Ïñ±ä»»µÄº¯ÊıÊµÏÖ
+ * @brief   
  ******************************************************************************
  * @attention
  *
@@ -13,36 +13,34 @@
  */
 #include <cmath>
 #include "transform.h"
-#include "zcore\debug.h"
+#include "zcore/debug.h"
+#include "zcore/util.h"
+#include "zcore/types.h"
 
 namespace z {
 
 /**
- * @declaration º¯ÊıÉùÃ÷
- *              ÄÚ²¿º¯Êı
+ * @declaration å‡½æ•°å£°æ˜
+ *              å†…éƒ¨å‡½æ•°
  */ 
-static inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD);
+static void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD);
 static void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2);
-static void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx = 1, int dy = 1, int ksize = 3, bool noGD = false);
-
 /**
- * @brief CannyÖĞµÄ·Ç¼«´óÖµÒÖÖÆ
+ * @brief Cannyä¸­çš„éæå¤§å€¼æŠ‘åˆ¶
  */
 inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD)
 {
-	unsigned char * srcptr, *dstptr;
-
-	if (!src.equalSize(srcGD))
+    if (!src.equalSize(srcGD))
 		throw std::runtime_error("src.equalSize(srcGD)!");
 
 	dst = src.clone();
 	for (int i = 0; i < src.rows; ++i) {
 		for (int j = 0; j < src.cols; ++j) {
-			
-			srcptr = src.ptr(i, j);
-			dstptr = dst.ptr(i, j);
 
-			for (int k = 0; k < src.chs; ++k) {
+		    auto srcptr = src.ptr(i, j);
+		    auto dstptr = dst.ptr(i, j);
+
+			for (int k = 0; k < src.channels(); ++k) {
 
                 switch (srcGD.ptr(i, j)[k])
                 {
@@ -73,6 +71,7 @@ inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD)
                         && srcptr[k] < src.ptr(i + 1, j + 1)[k])
                         dstptr[k] = 0;
                     break;
+                default: ;
                 }
 			} // for(k)
 		} // for(j)
@@ -81,7 +80,7 @@ inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD)
 
 
 /**
- * @brief CannyÖĞµÄË«ãĞÖµ
+ * @brief Cannyä¸­çš„åŒé˜ˆå€¼
  */
 void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2)
 {
@@ -89,16 +88,14 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
 	double mint = threshold1 < threshold2 ? threshold1 : threshold2;
 
 	if (!dst.equalSize(src))
-		dst.create(src.rows, src.cols, src.chs);
+		dst.create(src.rows, src.cols, src.channels());
 
-	unsigned char *ptr, * dstPtr;
+    for (auto i = 0; i < src.rows; ++i) {
+		for (auto j = 0; j < src.cols; ++j) {
+		    auto ptr = src.ptr(i, j);
+		    auto dstPtr = dst.ptr(i, j);
 
-	for (int i = 0; i < src.rows; ++i) {
-		for (int j = 0; j < src.cols; ++j) {
-			ptr = src.ptr(i, j);
-			dstPtr = dst.ptr(i, j);
-
-			for (int k = 0; k < src.chs; ++k) {
+			for (auto k = 0; k < src.channels(); ++k) {
 
 				if (ptr[k] < mint) {
 					dstPtr[k] = 0;
@@ -125,28 +122,29 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
 	}
 }
 
-//////////////////////////////////////Ò»½×Î¢·ÖËã×Ó///////////////////////////////////////////
-// ÖØÒªÎÊÌâ£ºµÃµ½µÄ±ßÔµÓë»Ò¶È¹ı¶È·¶Î§µÈ¿í£¬Òò´Ë±ßÔµ¿ÉÄÜÎŞ·¨±»¾«È·¶¨Î»
-//////////////////////////////////////Ò»½×Î¢·ÖËã×Ó///////////////////////////////////////////
+//////////////////////////////////////ä¸€é˜¶å¾®åˆ†ç®—å­///////////////////////////////////////////
+// é‡è¦é—®é¢˜ï¼šå¾—åˆ°çš„è¾¹ç¼˜ä¸ç°åº¦è¿‡åº¦èŒƒå›´ç­‰å®½ï¼Œå› æ­¤è¾¹ç¼˜å¯èƒ½æ— æ³•è¢«ç²¾ç¡®å®šä½
+//////////////////////////////////////ä¸€é˜¶å¾®åˆ†ç®—å­///////////////////////////////////////////
 
 /**
- * @brief prewittËã×Ó
+ * @brief prewittç®—å­
  */
 void prewitt(Matrix8u&src, Matrix8u&dst)
 {
 	if (!dst.equalSize(src))
-		dst.create(src.rows, src.cols, src.chs);
+		dst.create(src.rows, src.cols, src.channels());
 
-	Matrix8s Gx(3, 3), Gy(3, 3);
+    Matrix8s Gx(3, 3);
+    Matrix8s Gy(3, 3);
 
-	Gx = { -1, 0, 1, -1, 0, 1, -1, 0, 1 };
+    Gx = { -1, 0, 1, -1, 0, 1, -1, 0, 1 };
 	Gy = { -1, -1, -1, 0, 0, 0, 1, 1, 1 };
 
 	int factor = 6;
 
-	int *tempGx = new int[src.chs];
-	int *tempGy = new int[src.chs];
-	int *tempG = new int[src.chs];
+	int *tempGx = new int[src.channels()];
+	int *tempGy = new int[src.channels()];
+	int *tempG = new int[src.channels()];
 	int zerosx = 0, zerosy = 0;
 	unsigned char * srcPtr = nullptr;
 	unsigned char * dstPtr = nullptr;
@@ -154,9 +152,9 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
 	for (int i = 0; i < dst.rows; ++i) {
 		for (int j = 0; j < dst.cols; ++j) {
 
-			memset(tempGx, 0, src.chs * sizeof(int));
-			memset(tempGy, 0, src.chs * sizeof(int));
-			memset(tempG, 0, src.chs * sizeof(int));
+			memset(tempGx, 0, src.channels() * sizeof(int));
+			memset(tempGy, 0, src.channels() * sizeof(int));
+			memset(tempG, 0, src.channels() * sizeof(int));
 			zerosx = zerosy = 0;
 
 			for (int ii = 0; ii < 3; ++ii) {
@@ -165,7 +163,7 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
                     auto _j = j - 1 + jj;
 
 					if (_i >=0  && _i < src.rows && _j >=0 && _j < src.cols) {
-						for (int k = 0; k < src.chs; ++k) {
+						for (int k = 0; k < src.channels(); ++k) {
 							tempGx[k] += src.ptr(_i, _j)[k] * Gx[ii][jj];
 							tempGy[k] += src.ptr(_i, _j)[k] * Gy[ii][jj];
 						}
@@ -178,8 +176,8 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
 				} // !for(jj)
 			} // !for(ii)
 
-			  // ¾Ö²¿Ìİ¶È·ÖÁ¿µÄµÄ¹À¼Æ£¬Í¨¹ı¸øÂË²¨½á¹û³ËÒÔÊÊµ±µÄ³ß¶ÈÒò×ÓÀ´ÊµÏÖ
-			for (int k = 0; k < src.chs; ++k) {
+			  // å±€éƒ¨æ¢¯åº¦åˆ†é‡çš„çš„ä¼°è®¡ï¼Œé€šè¿‡ç»™æ»¤æ³¢ç»“æœä¹˜ä»¥é€‚å½“çš„å°ºåº¦å› å­æ¥å®ç°
+			for (int k = 0; k < src.channels(); ++k) {
 				if (zerosx != 0) {
 					tempGx[k] /= zerosx;
 				}
@@ -195,148 +193,8 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
 				}
 			}
 
-			for (int k = 0; k < src.chs; ++k) {
-                dst.ptr(i, j)[k] = static_cast<unsigned char>(std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]));
-			}
-
-
-		} // !for(j)
-	} // !for(i)
-
-	delete[] tempGx;
-	delete[] tempGy;
-	delete[] tempG;
-}
-
-void sobel(Matrix8u&src, Matrix8u&dst, int dx, int dy, int ksize)
-{
-	Matrix8u temp;
-	sobel(src, dst, temp, dx, dy, ksize, true);
-}
-
-/**
- * @brief sobelËã×Ó
- * @param[in] src
- * @param[out] dst
- * @param[out] dstGD£¬
- * @param[in] ksize, must be 1, 3, 5 or 7.
- * @param[in] dx
- * @param[in] dy
- * @ksize[in] ¾í»ıºËµÄ´óĞ¡
- * @param[in] noGD£¬ÊÇ·ñ½øĞĞÌİ¶È·Ç¼«´óÖµÒÖÖÆ
- */
-void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize, bool noGD)
-{
-	if (!src.equalSize(dst))
-		dst.create(src.rows, src.cols, src.chs);
-	if (!noGD)
-		if (!dstGD.equalSize(src))
-			dstGD.create(src.rows, src.cols, src.chs);
-
-	Matrix8s Gx(ksize, ksize), Gy(ksize, ksize);
-
-	int factor = 0;
-
-	switch (ksize) {
-	case 1:
-		
-		break;
-
-	case 3:
-		// Ô­Ê¼sobelËã×Ó
-		//Gx = { -1, 0, 1, -2, 0, 2, -1, 0, 1 };
-		//Gy = { -1, -2, -1, 0, 0, 0, 1, 2, 1 };
-		//factor = 8;
-		// ¸Ä½øĞÍ£¬¿ÉÒÔ½«·½ÏòÎó²î¼õµ½×îĞ¡
-		Gx = { -3, 0, 3, -10, 0, 10, -3, 0, 3 };
-		Gy = { -3, -10, -3, 0, 0, 0, 3, 10, 3 };
-		factor = 32;
-		break;
-
-	case 5:
-		break;
-
-	case 7:
-		break;
-
-	default:
-		Z_Error("Error ksize!");
-		return;
-	}
-	
-
-	int *tempGx = new int[src.chs];
-	int *tempGy = new int[src.chs];
-	int *tempG = new int[src.chs];
-	int m = ksize / 2, n = ksize / 2;
-	unsigned char * srcPtr = nullptr;
-	unsigned char * dstPtr = nullptr;
-	unsigned char * dstGDPtr = nullptr;
-	int alpha = 0;
-	double ang = 0;
-
-	for (int i = 0; i < dst.rows; ++i) {
-		for (int j = 0; j < dst.cols; ++j) {
-
-			memset(tempGx, 0, src.chs * sizeof(int));
-			memset(tempGy, 0, src.chs * sizeof(int));
-			memset(tempG, 0, src.chs * sizeof(int));
-			int zerosx = 0;
-			int zerosy = 0;
-
-			for (int ii = 0; ii < ksize; ++ii) {
-				for (int jj = 0; jj < ksize; ++jj) {
-                    auto _i = i - m + ii;
-                    auto _j = j - n + jj;
-					if (_i >=0  && _i  < src.rows && _j >= 0 && _j < src.cols) {
-						for (int k = 0; k < src.chs; ++k) {
-							tempGx[k] += src.ptr(_i, _j)[k] * Gx[ii][jj];
-							tempGy[k] += src.ptr(_i, _j)[k] * Gy[ii][jj];
-						}
-					}
-					else {
-						zerosx += Gx[ii][jj];
-						zerosy += Gy[ii][jj];
-					}
-
-				} // !for(jj)
-			} // !for(ii)
-
-			// ¾Ö²¿Ìİ¶È·ÖÁ¿µÄµÄ¹À¼Æ£¬Í¨¹ı¸øÂË²¨½á¹û³ËÒÔÊÊµ±µÄ³ß¶ÈÒò×ÓÀ´ÊµÏÖ
-			for (int k = 0; k < src.chs; ++k) {
-				if (zerosx != 0) {
-					tempGx[k] /= zerosx;
-				}
-				else {
-					tempGx[k] /= factor;
-				}
-				
-				if (zerosy != 0) {
-					tempGy[k] /= zerosy;
-				}
-				else {
-					tempGy[k] /= factor;
-				}
-			}
-
-			if (!noGD)
-				dstGDPtr = dstGD.ptr(i, j);
-
-			for (int k = 0; k < src.chs; ++k) {
-                dst.ptr(i, j)[k] = static_cast<unsigned char>(std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]));
-				// ¼ÆËãÌİ¶È
-				if (!noGD) {
-					ang = atan2(tempGy[k],tempGx[k]) * RAD2ANG;
-
-					if ((ang > -22.5 && ang < 22.5) || (ang > 157.5 || ang < -157.5))
-						dstGDPtr[k] = 0;
-					else if ((ang > 22.5 && ang < 67.5) || (ang < -112.5 && ang > -157.5))
-						dstGDPtr[k] = 45;
-					else if ((ang > 67.5 && ang < 112.5) || (ang < -67.5 && ang > -112.5))
-						dstGDPtr[k] = 90;
-					else if ((ang < -22.5 && ang > -67.5) || (ang > 112.5 && ang  < 157.5))
-						dstGDPtr[k] = 135;
-				}
+			for (int k = 0; k < src.channels(); ++k) {
+                dst.ptr(i, j)[k] = static_cast<uint8_t>(std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]));
 			}
 
 
@@ -352,70 +210,71 @@ void sobel(Matrix8u&src, Matrix8u&dst, Matrix8u&dstGD, int dx, int dy, int ksize
 
 
 /**
- * @brief Canny ±ßÔµ¼ì²âËã·¨
+ * @brief Canny è¾¹ç¼˜æ£€æµ‹ç®—æ³•
  *
- * @param[in] src£¬ĞèÒª´¦ÀíµÄÍ¼Ïñ
- * @param[out] dst£¬Êä³öÍ¼Ïñ
- * @param[in] threshold1£¬Ë«ãĞÖµµÚÒ»¸öãĞÖµ
- * @param[in] threshold2£¬Ë«ãĞÖµµÚ¶ş¸öãĞÖµ
+ * @param[in] src éœ€è¦å¤„ç†çš„å›¾åƒ
+ * @param[out] dst è¾“å‡ºå›¾åƒ
+ * @param[in] threshold1 åŒé˜ˆå€¼ç¬¬ä¸€ä¸ªé˜ˆå€¼
+ * @param[in] threshold2 åŒé˜ˆå€¼ç¬¬äºŒä¸ªé˜ˆå€¼
  */
 void Canny(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2, int apertureSize)
 {
-	// ÖĞ¼ä±äÁ¿
+	// ä¸­é—´å˜é‡
 	Matrix8u dstGD;
 	Matrix8u temp, temp1, temp2;
 
-	// µÚÒ»²½£¬¸ßË¹ÂË²¨
+	// ç¬¬ä¸€æ­¥ï¼Œé«˜æ–¯æ»¤æ³¢
 	GaussianBlur(src, temp, z::Size(5, 5));
 
-	// µÚ¶ş²½£¬Ê¹ÓÃsobelËã×Ó
-	sobel(temp, temp1, dstGD, 1, 1, apertureSize);
+	// ç¬¬äºŒæ­¥ï¼Œä½¿ç”¨sobelç®—å­
+	__sobel(temp, temp1, dstGD, 1, 1, apertureSize, false, BORDER_DEFAULT_CALLBACK(src));
 
-	// µÚÈı²½,·Ç¼«´óÖµÒÖÖÆ
+	// ç¬¬ä¸‰æ­¥,éæå¤§å€¼æŠ‘åˆ¶
 	only_max(temp1, temp2, dstGD);
 	
-	// µÚËÄ²½£¬Ë«ãĞÖµ
+	// ç¬¬å››æ­¥ï¼ŒåŒé˜ˆå€¼
 	double_threashold(temp2, dst, threshold1, threshold2);
 }
 
 void translation(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst)
 {
-	if (!dst.equalSize(src)) {
-		dst.create(src.rows, src.cols, src.chs);
-	}
-	dst.zeros();
+	//if (!dst.equalSize(src)) {
+	//	dst.create(src.rows, src.cols, src.channels());
+	//}
+ //   dst = 0;
 
-	Matrix32s srcCoord(1,3,1), dstCoord;
+	//Matrix32s srcCoord(1,3,1), dstCoord;
 
-	for (int i = 0; i < src.rows; ++i) {
-		for (int j = 0; j < src.cols; ++j) {
-			srcCoord = { i, j, 1 };
-			dstCoord = srcCoord * kernel;
+	//for (int i = 0; i < src.rows; ++i) {
+	//	for (int j = 0; j < src.cols; ++j) {
+ //           srcCoord = { i, j, 1 };
+	//		dstCoord = srcCoord * kernel;
 
-			for (int k = 0; k < src.chs && (dstCoord[0][0] < dst.rows && dstCoord[0][1] < dst.cols &&  dstCoord[0][0] >= 0 && dstCoord[0][1] >= 0); ++k) {
-				dst.ptr(dstCoord[0][0], dstCoord[0][1])[k] = src.ptr(i, j)[k];
-			}
-		}
-	}
+	//		for (int k = 0; k < src.channels() && (dstCoord[0][0] < dst.rows && dstCoord[0][1] < dst.cols &&  dstCoord[0][0] >= 0 && dstCoord[0][1] >= 0); ++k) {
+	//			dst.ptr(dstCoord[0][0], dstCoord[0][1])[k] = src.ptr(i, j)[k];
+	//		}
+	//	}
+	//}
 }
 
 
-#define _data(x, y) reinterpret_cast<char *>(src.ptr(x, y))[0]
+#define _data(x, y) src.at(x, y)
 void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
 {
     std::vector<Point> middle_res;
-    // ¶ş½øÖÆ»¯
-    for (int i = src.rows * src.cols - 1; i >= 0; --i)
-            if (src.data[i])
-                src.data[i] = 1;
+
+    // Binarization
+    for(auto& p: src) 
+        if (p) p = 1;
+    
     
     int NBD = 1, LNBD = 1;
     Point p1, p2, p3, p4;
 
-    // ±ß½çÉÏÏàÁÚÁ½¸öµãÖ®¼äµÄÏà¶ÔÎ»ÖÃ
+    // è¾¹ç•Œä¸Šç›¸é‚»ä¸¤ä¸ªç‚¹ä¹‹é—´çš„ç›¸å¯¹ä½ç½®
     uint8_t rpos;
-    Point clockwise[8] = { { 0, -1 },{ -1, -1 },{ -1, 0 },{ -1, 1 },{ 0, 1 },{ 1, 1 },{ 1, 0 },{ 1, -1 } };      // Ë³Ê±Õë
-    Point anticlockwise[8] = { { 0, -1 },{ 1, -1 },{ 1, 0 },{ 1, 1 },{ 0, 1 },{ -1, 1 },{ -1, 0 },{ -1, -1 } };  // ÄæÊ±Õë
+    Point clockwise[8] = { { 0, -1 },{ -1, -1 },{ -1, 0 },{ -1, 1 },{ 0, 1 },{ 1, 1 },{ 1, 0 },{ 1, -1 } };      // é¡ºæ—¶é’ˆ
+    Point anticlockwise[8] = { { 0, -1 },{ 1, -1 },{ 1, 0 },{ 1, 1 },{ 0, 1 },{ -1, 1 },{ -1, 0 },{ -1, -1 } };  // é€†æ—¶é’ˆ
 
     for (int i = 0; i < src.rows; ++i) {
         for (int j = 0; j < src.cols; ++j) {
@@ -448,7 +307,8 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             // step (3.1)
             int k = 0;
             for (; k < 8; ++k) {
-                p1 = clockwise[rpos++ & 0x07] + Point(i, j);
+                Point temp_(i, j);
+                p1 = clockwise[rpos++ & 0x07] + temp_;
                 if (p1.x >= 0 && p1.y >= 0 && p1.x < src.rows && p1.y < src.cols && _data(p1.x, p1.y))
                     break;
             }
@@ -466,7 +326,7 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             
             for (;;) {
                 // step (3.3)
-                for (int k = 0; k < 8; ++k) {
+                for (int k2 = 0; k2 < 8; ++k2) {
                     p4 = anticlockwise[++rpos & 0x07] + p3;
                     if (p4.x >= 0 && p4.y >= 0 && p4.x < src.rows && p4.y < src.cols && _data(p4.x, p4.y))
                         break;
@@ -507,15 +367,15 @@ end:
 }
 #undef _data
 
-#define _data(x, y) src.ptr(x, y)[0]
+#define _data(x, y) src.at(x, y)
 void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
 {
     std::vector<Point> middle_res;
     int LNBD = 0;
 
     uint8_t rpos = 0;
-    Point clockwise[8] = { { 0, -1 },{ -1, -1 },{ -1, 0 },{ -1, 1 },{ 0, 1 },{ 1, 1 },{ 1, 0 },{ 1, -1 } };      // Ë³Ê±Õë
-    Point anticlockwise[8] = { { 0, -1 },{ 1, -1 },{ 1, 0 },{ 1, 1 },{ 0, 1 },{ -1, 1 },{ -1, 0 },{ -1, -1 } };  // ÄæÊ±Õë
+    Point clockwise[8] = { { 0, -1 },{ -1, -1 },{ -1, 0 },{ -1, 1 },{ 0, 1 },{ 1, 1 },{ 1, 0 },{ 1, -1 } };      // é¡ºæ—¶é’ˆ
+    Point anticlockwise[8] = { { 0, -1 },{ 1, -1 },{ 1, 0 },{ 1, 1 },{ 0, 1 },{ -1, 1 },{ -1, 0 },{ -1, -1 } };  // é€†æ—¶é’ˆ
 
     Point p1, p2, p3, p4;
 
@@ -528,7 +388,7 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
                 p2 = { i, j - 1 };
             else goto next;
 
-            // Ë³Ê±Õë²éÕÒµÚÒ»¸öµã
+            // é¡ºæ—¶é’ˆæŸ¥æ‰¾ç¬¬ä¸€ä¸ªç‚¹
             int k = 0;
             for (; k < 8; ++k) {
                 p1 = clockwise[k] + Point(i, j);

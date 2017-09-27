@@ -4,62 +4,63 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
- * @brief   ¼òµ¥µÄÊıÑ§º¯Êı¶¨Òå
+ * @brief   ç®€å•çš„æ•°å­¦å‡½æ•°å®šä¹‰
  ******************************************************************************
  * @attention
  *
  *
  ******************************************************************************
  */
-#ifndef _ZMATH_H
-#define _ZMATH_H
+#ifndef _ZMATH_ZMATH_H
+#define _ZMATH_ZMATH_H
 
 
-#define Pi			((double)3.141592653589793238462643383279502884197169399375105820974944)
+#define Pi			((double)3.14159265358979323846)
 
 #define fequ(temp)      (fabs(temp) < 10e-5)
-#define dequ(temp)      (fabs(temp) < 10e-6)  
+#define dequ(temp)      (fabs(temp) < 10e-6)
 
-
-template <typename _Tp> void _min(_Tp *addr, size_t size, _Tp & _min);
-template <typename _Tp> void _max(_Tp *addr, size_t size, _Tp & _max);
+namespace z {
+template <typename _Tp> void min(_Tp *addr, size_t size, _Tp & _min);
+template <typename _Tp> void max(_Tp *addr, size_t size, _Tp & _max);
 
 int average(int x, int y);
 
+};
 
 /**
- * @brief ÇóÊı×éÖĞµÄ×î´óÊı
- * @param size£¬Êı×éµÄ´óĞ¡ or ĞèÒª±È½ÏÊı×éÇ°size¸ö
- */
-template <typename _Tp> void _max(_Tp *addr, size_t size, _Tp & _max)
+* @brief æ±‚æ•°ç»„ä¸­çš„æœ€å¤§æ•°
+* @param size æ•°ç»„çš„å¤§å° or éœ€è¦æ¯”è¾ƒæ•°ç»„å‰sizeä¸ª
+*/
+template <typename _Tp> void z::max(_Tp *addr, size_t size, _Tp & _max)
 {
-	_max = *addr;
-	_Tp *begin = addr + 1;
-	_Tp *end = addr + size;
+    _max = *addr;
+    _Tp *begin = addr + 1;
+    _Tp *end = addr + size;
 
-	for (; begin < end; ++begin) {
-		if (_max < begin[0])
-			_max = begin[0];
-	}
+    for (; begin < end; ++begin) {
+        if (_max < begin[0])
+            _max = begin[0];
+    }
 }
 
 
 /**
- * @brief ÇóÊı×éÖĞµÄ×î´óÊı
- * @param size£¬Êı×éµÄ´óĞ¡ or ĞèÒª±È½ÏÊı×éÇ°size¸ö
- */
-template <typename _Tp> void _min(_Tp *addr, size_t size, _Tp & _min)
+* @brief æ±‚æ•°ç»„ä¸­çš„æœ€å¤§æ•°
+* @param size æ•°ç»„çš„å¤§å° or éœ€è¦æ¯”è¾ƒæ•°ç»„å‰sizeä¸ª
+*/
+template <typename _Tp> void z::min(_Tp *addr, size_t size, _Tp & _min)
 {
-	_min = *addr;
-	_Tp *begin = addr + 1;
-	_Tp *end = addr + size;
+    _min = *addr;
+    _Tp *begin = addr + 1;
+    _Tp *end = addr + size;
 
-	for (; begin < end; ++begin) {
-		if (_min > begin[0])
-			_min = begin[0];
-	}
+    for (; begin < end; ++begin) {
+        if (_min > begin[0])
+            _min = begin[0];
+    }
 }
 
 
 
-#endif // !_ZMATH_H
+#endif // !_ZMATH_ZMATH_H

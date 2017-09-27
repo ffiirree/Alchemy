@@ -2,10 +2,10 @@
 
 
 /**
- * @brief ÇóÁ½¸öÕûÊýµÄ¾ùÖµ
- * @attention ·ÀÖ¹(x + y) / 2³öÏÖÒç³ö
+ * @brief æ±‚ä¸¤ä¸ªæ•´æ•°çš„å‡å€¼
+ * @attention é˜²æ­¢(x + y) / 2å‡ºçŽ°æº¢å‡º
  */
-int average(int x, int y)
+int z::average(int x, int y)
 {
 	return (x & y) + ((x ^ y) >> 1);
 }

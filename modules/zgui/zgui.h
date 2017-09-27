@@ -1,8 +1,8 @@
-#ifndef _ZGUI_H
-#define _ZGUI_H
+#ifndef _ZGUI_ZGUI_H
+#define _ZGUI_ZGUI_H
 
 
-#include "zimgproc\zimgproc.h"
+#include "zimgproc/zimgproc.h"
 
 enum
 {
@@ -33,13 +33,13 @@ void namedWindow(const std::string & name, int flags = 1);
 int waitKey(int delay = 0);
 
 
-// Í¼ÐÎ»æÖÆ
-void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thickness = 1);
-void lineBresenham(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thickness = 1);
-void line(Matrix8u & img, Point pt1, Point pt2, const Scalar& color, int thickness = 1);
-void ellipse(Matrix8u& img, Point center, Size axes, double angle, const Scalar& color, int thickness = 1, int lineType = 8, int shift = 0);
-void rectangle(Matrix8u& img, Rect rec, const Scalar& color, int thickness = 1, int lineType = 8, int shift = 0);
-void circle(Matrix8u& img, Point center, int radius, const Scalar& color, int thickness = 1, int lineType = 8, int shift = 0);
+// å›¾å½¢ç»˜åˆ¶
+void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int thickness = 1);
+void lineBresenham(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int thickness = 1);
+void line(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int thickness = 1);
+void ellipse(Matrix8u& img, Point center, Size axes, double angle, const Scalar8u& color, int thickness = 1, int lineType = 8, int shift = 0);
+void rectangle(Matrix8u& img, Rect rec, const Scalar8u& color, int thickness = 1, int lineType = 8, int shift = 0);
+void circle(Matrix8u& img, Point center, int radius, const Scalar8u& color, int thickness = 1, int lineType = 8, int shift = 0);
 }
 
-#endif
+#endif // !_ZGUI_ZGUI_H
