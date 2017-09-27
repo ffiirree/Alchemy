@@ -130,19 +130,19 @@ template<class _Tp> bool _Scalar<_Tp>::isReal() const { return (v[1] == 0 && v[2
 
 
 template <typename _Tp>
-_Scalar<_Tp> z::operator==(const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
+_Scalar<_Tp> operator==(const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
 {
     return a.v[0] == b.v[0] && a.v[1] == b.v[1] && a.v[2] == b.v[2] && a.v[3] == b.v[3];
 }
 
 template <typename _Tp>
-_Scalar<_Tp> z::operator!=(const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
+_Scalar<_Tp> operator!=(const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
 {
     return !(a == b);
 }
 
 template<typename _Tp>
-_Scalar<_Tp> z::operator += (const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
+_Scalar<_Tp> operator += (const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
 {
     a.v[0] += b.v[0];
     a.v[1] += b.v[1];
@@ -153,7 +153,7 @@ _Scalar<_Tp> z::operator += (const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
 
 
 template <typename _Tp>
-_Scalar<_Tp> z::operator -= (const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
+_Scalar<_Tp> operator -= (const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
 {
     a.v[0] -= b.v[0];
     a.v[1] -= b.v[1];

@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 
     // 1.
     z::Matrix test8u(ROWS, COLS, CHS, z::Scalar(-20, 255, 300));
-    typedef z::Vec_<uchar, CHS> VT;
+    typedef z::_Vec<uint8_t, CHS> VT;
     for(auto it = test8u.begin<VT>(), end = test8u.end<VT>(); it != end; ++it) {
         if(*it != VT(0, 255, 255)) {
             return 10;
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 
     // 2.
     z::Matrix16u test16u(5, 5, 3, z::Scalar(-20, 255, 300));
-    typedef z::Vec_<uint16_t, 3> VT1;
+    typedef z::_Vec<uint16_t, 3> VT1;
     for(auto it = test16u.begin<VT1>(), end = test16u.end<VT1>(); it != end; ++it) {
         if(*it != VT1(0, 255, 300)) {
             std::cout << *it ;
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
     // 3.
     z::Matrix32f test32f(5, 5, 3, z::Scalar(-20, 255, 300));
-    typedef z::Vec_<float, 3> VT2;
+    typedef z::_Vec<float, 3> VT2;
     for (auto it = test32f.begin<VT2>(), end = test32f.end<VT2>(); it != end; ++it) {
         if (*it != VT2(-20, 255, 300)) {
             std::cout << *it;

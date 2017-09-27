@@ -428,7 +428,7 @@ _Matrix<_Tp>& _Matrix<_Tp>::operator()(_Tp * InputArray, int _rows, int _cols)
     return _Matrix<_Tp>::operator()(InputArray, Size(_cols, _rows));
 }
 
-#if defined(OPENCV)
+#if defined(USE_OPENCV)
 /**
 * @brief 向openCV中的Mat类转换
 */
@@ -917,7 +917,7 @@ template <typename _Tp>
 _Matrix<_Tp> operator-=(_Matrix<_Tp>& m1, const _Matrix<_Tp>& m2)
 {
     assert(m1.size() == m2.size());
-    assert(m1.channels() == m2.channels())
+    assert(m1.channels() == m2.channels());
 
     auto _begin_1 = m1.begin();
     auto _begin_2 = m2.begin();
@@ -1094,7 +1094,7 @@ _Matrix<_Tp> operator==(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2)
     auto _begin_3 = rm.begin();
 
     for(; _begin_1 != m1.end(); ++_begin_1, ++_begin_2) {
-        *_begin_1 == *_begin_2 ? *_begin_3 = td::numeric_limits<_Tp>::max() : *_begin_3 = std::numeric_limits<_Tp>::min();
+        *_begin_1 == *_begin_2 ? *_begin_3 = std::numeric_limits<_Tp>::max() : *_begin_3 = std::numeric_limits<_Tp>::min();
     }
     return rm;
 }
@@ -1133,7 +1133,7 @@ _Matrix<_Tp> operator!=(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2)
     auto _begin_3 = rm.begin();
 
     for (; _begin_1 != m1.end(); ++_begin_1, ++_begin_2) {
-        *_begin_1 != *_begin_2 ? *_begin_3 = td::numeric_limits<_Tp>::max() : *_begin_3 = std::numeric_limits<_Tp>::min();
+        *_begin_1 != *_begin_2 ? *_begin_3 = std::numeric_limits<_Tp>::max() : *_begin_3 = std::numeric_limits<_Tp>::min();
     }
     return rm;
 }
@@ -1218,16 +1218,16 @@ const _Tp& _MatrixConstIterator<_Tp>::operator*() const
 }
 
 template <typename _Tp>
-const _Tp& _MatrixConstIterator<_Tp>::operator[](ptrdiff_t i) const
+const _Tp& _MatrixConstIterator<_Tp>::operator[](difference_type i) const
 {
     return *reinterpret_cast<const _Tp *>(*this + i);
 }
 
 template <typename _Tp>
-_MatrixConstIterator<_Tp>& _MatrixConstIterator<_Tp>::operator+=(ptrdiff_t ofs)
+_MatrixConstIterator<_Tp>& _MatrixConstIterator<_Tp>::operator+=(difference_type ofs)
 {
     if (!m_ || !ofs) return *this;
-    ptrdiff_t ofsb = ofs * esize_;
+    difference_type ofsb = ofs * esize_;
     ptr_ += ofsb;
 
     if (ptr_ < start_ || end_ <= ptr_)
@@ -1239,7 +1239,7 @@ _MatrixConstIterator<_Tp>& _MatrixConstIterator<_Tp>::operator+=(ptrdiff_t ofs)
 }
 
 template <typename _Tp>
-_MatrixConstIterator<_Tp>& _MatrixConstIterator<_Tp>::operator-=(ptrdiff_t ofs)
+_MatrixConstIterator<_Tp>& _MatrixConstIterator<_Tp>::operator-=(difference_type ofs)
 {
     return *this += -ofs;
 }
@@ -1293,7 +1293,7 @@ bool _MatrixConstIterator<_Tp>::operator!=(const _MatrixConstIterator<_Tp>& it) 
 }
 
 template <typename _Tp>
-void _MatrixConstIterator<_Tp>::seek(ptrdiff_t ofs, bool relative)
+void _MatrixConstIterator<_Tp>::seek(difference_type ofs, bool relative)
 {
     if (m_->isContinuous()) {
         ptr_ = (relative ? ptr_ : start_) + ofs * esize_;
@@ -1306,9 +1306,9 @@ void _MatrixConstIterator<_Tp>::seek(ptrdiff_t ofs, bool relative)
         return;
     }
 
-    ptrdiff_t row;
+    difference_type row;
     if (relative) {
-        ptrdiff_t ofs0 = ptr_ - m_->template ptr<uint8_t>();
+        difference_type ofs0 = ptr_ - m_->template ptr<uint8_t>();
         row = ofs0 / m_->step;
         ofs += row * m_->cols + (ofs0 - row * m_->step) / esize_;
     }
@@ -1344,20 +1344,20 @@ _Tp& _MatrixIterator<_Tp>::operator*() const
 }
 
 template <typename _Tp>
-_Tp& _MatrixIterator<_Tp>::operator[](ptrdiff_t i) const
+_Tp& _MatrixIterator<_Tp>::operator[](difference_type i) const
 {
     return *(*this + i);
 }
 
 template <typename _Tp>
-_MatrixIterator<_Tp>& _MatrixIterator<_Tp>::operator+=(ptrdiff_t ofs)
+_MatrixIterator<_Tp>& _MatrixIterator<_Tp>::operator+=(difference_type ofs)
 {
     _MatrixConstIterator<_Tp>::operator+=(ofs);
     return *this;
 }
 
 template <typename _Tp>
-_MatrixIterator<_Tp>& _MatrixIterator<_Tp>::operator-=(ptrdiff_t ofs)
+_MatrixIterator<_Tp>& _MatrixIterator<_Tp>::operator-=(difference_type ofs)
 {
     _MatrixConstIterator<_Tp>::operator-=(ofs);
     return *this;

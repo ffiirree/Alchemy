@@ -16,7 +16,8 @@
 #include "zcore/config.h"
 #include "zcore/debug.h"
 #include "zmath/zmath.h"
-#ifdef FFTW
+
+#ifdef USE_FFTW
 #include <fftw3.h>
 #endif
 
@@ -264,7 +265,7 @@ void _fft(Matrix64f & src, Ft ft)
 
 void dft(const Matrix64f & src, Matrix64f & dst)
 {
-#ifdef FFTW
+#ifdef USE_FFTW
     dst = Matrix64f::zeros(src.size(), 2);
 
     auto plan = fftw_plan_dft_r2c_2d(src.rows, src.cols, (double *)src.ptr(), reinterpret_cast<fftw_complex *>(dst.ptr()), FFTW_ESTIMATE);
@@ -273,7 +274,7 @@ void dft(const Matrix64f & src, Matrix64f & dst)
     // Destory and cleanup.
     fftw_destroy_plan(plan);
     fftw_cleanup();
-#elif
+#else
     Matrix64f gRe;
     int fft_rows = getIdealRows(src.rows);
     int fft_cols = getIdealCols(src.cols);
@@ -295,7 +296,7 @@ void dft(const Matrix64f & src, Matrix64f & dst)
 
 void idft(Matrix64f & src, Matrix64f & dst)
 {
-#ifdef FFTW
+#ifdef USE_FFTW
     dst = Matrix64f::zeros(src.size());
 
     auto p3 = fftw_plan_dft_c2r_2d(src.rows, src.cols, reinterpret_cast<fftw_complex *>(src.ptr()), reinterpret_cast<double *>(dst.ptr()), FFTW_ESTIMATE);
@@ -304,7 +305,7 @@ void idft(Matrix64f & src, Matrix64f & dst)
 
     fftw_destroy_plan(p3);
     fftw_cleanup();
-#elif
+#else
     src.copyTo(dst);
     _fft(dst, IDFT);
 

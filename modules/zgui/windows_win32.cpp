@@ -3,13 +3,13 @@
 #include "zgui/zgui.h"
 #include "windows_win32.h"
 #include "zcore/debug.h"
-#include <WinUser.h>
 #include <map>
 #include <algorithm>
-#include <Windowsx.h>
 
 #if defined _WIN32
 
+#include <WinUser.h>
+#include <Windowsx.h>
 #include <commctrl.h>
 #include <stdlib.h>
 #include <string.h>
@@ -230,7 +230,7 @@ static const char* izWindowPosRootKey = "Software\\OpenCV\\HighGUI\\Windows\\";
 // Window positions saving/loading added by Philip Gruebele.
 //<a href="mailto:pgruebele@cox.net">pgruebele@cox.net</a>
 // Restores the window position from the registry saved position.
-static void zLoadWindowPos(const char* name, zRect& rect)
+static void zLoadWindowPos(const char* name, z::Rect& rect)
 {
     HKEY hkey;
     char szKey[1024];
@@ -269,7 +269,7 @@ static void zLoadWindowPos(const char* name, zRect& rect)
 // Window positions saving/loading added by Philip Gruebele.
 //<a href="mailto:pgruebele@cox.net">pgruebele@cox.net</a>
 // philipg.  Saves the window position in the registry
-static void zSaveWindowPos(const char* name, zRect rect)
+static void zSaveWindowPos(const char* name, z::Rect rect)
 {
     static const DWORD MAX_RECORD_COUNT = 100;
     HKEY hkey;
@@ -338,7 +338,7 @@ int zNamedWindow(const char* name, int flags)
 
     HWND mainhWnd;
     DWORD defStyle = WS_VISIBLE | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU;
-    zRect rect;
+    z::Rect rect;
 
     GUIInitSystem(0, 0);
 
@@ -433,7 +433,7 @@ static void zRemoveWindow(zWindow* window)
     if (window->frame)
         GetWindowRect(window->frame, &wrect);
     if (window->name)
-        zSaveWindowPos(window->name, zRect(wrect.left, wrect.top,
+        zSaveWindowPos(window->name, z::Rect(wrect.left, wrect.top,
             wrect.right - wrect.left, wrect.bottom - wrect.top));
 
     if (window->hwnd)

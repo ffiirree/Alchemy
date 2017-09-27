@@ -18,13 +18,9 @@ GLOBAL(void) write_JPEG_file(char * filename, z::Matrix8u & img, int quality);
 
 namespace z{
 
-/**
- * @brief 自己实现的读取jpeg的图片
- * @attention 本函数暂时只能读取jpeg标准的图片，需要读取其他类型的图片请使用openCV的imread函数
- */
-Matrix8u imread(char *filename)
+Matrix imread(char *filename)
 {
-	Matrix8u temp;
+	Matrix temp;
 	read_JPEG_file(filename, temp);
 	return temp;
 }
@@ -74,30 +70,12 @@ void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int th
 
 	for (int i = 0; i < steps; ++i) {
 		for (int k = 0; k < img.channels(); ++k) {
-			img.ptr(static_cast<int>(x), static_cast<int>(y))[img.channels() - k - 1] = color.v[k];
+			img.at(static_cast<int>(x), static_cast<int>(y), img.channels() - k - 1) = color.v[k];
 		}
 		x += xi;
 		y += yi;
 	}
 }
-void lineBresenham(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int thickness)
-{
-	// 1、计算在x、y方向上的位移
-	int dx = pt2.x - pt1.x;
-	int dy = pt2.y - pt1.y;
-	int steps = 0;
-
-	// 1、循环次数
-	if (abs(dx) > abs(dy)) {
-		steps = abs(dx);
-	}
-	else {
-		steps = dy;
-	}
-
-	// 
-}
-
 
 void line(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int thickness)
 {

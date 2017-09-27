@@ -285,7 +285,7 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
                 NBD++;
                 rpos = 0;
 
-                if (NBD == 128) goto end;           // overflow
+                if (NBD == 128) return;           // overflow
 
                 p2 = { i, j - 1 };
             }
@@ -294,14 +294,17 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
                 NBD++;
                 rpos = 4;
 
-                if (NBD == 128) goto end;           // overflow
+                if (NBD == 128) return;           // overflow
 
                 p2 = { i, j + 1 };
                 if (_data(i, j) > 1)
                     LNBD = _data(i, j);
             }
             else {
-                goto next;
+                if (_data(i, j) != 1 && _data(i, j) != 0) {
+                    LNBD = abs(_data(i, j));
+                }
+                continue;
             }
 
             // step (3.1)
@@ -317,7 +320,11 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
                 _data(i, j) = -NBD;
                 dst.push_back(middle_res);
                 middle_res.clear();
-                goto next;
+                
+                if (_data(i, j) != 1 && _data(i, j) != 0) {
+                    LNBD = abs(_data(i, j));
+                }
+                continue;
             }
             rpos = 8 - rpos + 1;
 
@@ -347,7 +354,10 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
                 if (p4.x == i && p4.y == j && p3 == p1) {
                     dst.push_back(middle_res);
                     middle_res.clear();
-                    goto next;
+                    if (_data(i, j) != 1 && _data(i, j) != 0) {
+                        LNBD = abs(_data(i, j));
+                    }
+                    break;
                 }
                 else {
                     p2 = p3;
@@ -356,14 +366,14 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             }
 
             // step (4)
-        next:
-            if (_data(i, j) != 1 && _data(i, j) != 0) {
-                LNBD = abs(_data(i, j));
-            }  
+//        next:
+//            if (_data(i, j) != 1 && _data(i, j) != 0) {
+//                LNBD = abs(_data(i, j));
+//            }  
         }
     }
-end:
-    return;
+//end:
+//    return;
 }
 #undef _data
 
@@ -386,7 +396,12 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             // [ 0 | 1] && LNBD == -2(254)
             if (((j - 1) <= 0 || !_data(i, j - 1)) && _data(i, j) == 255 && (LNBD == 0 || LNBD == 254))
                 p2 = { i, j - 1 };
-            else goto next;
+            else {
+                if (_data(i, j) != 0 && _data(i, j) != 255) {
+                    LNBD = _data(i, j);
+                }
+                continue;
+            }
 
             // 顺时针查找第一个点
             int k = 0;
@@ -400,7 +415,11 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
                 _data(i, j) = 254;
                 dst.push_back(middle_res);
                 middle_res.clear();
-                goto next;
+                
+                if (_data(i, j) != 0 && _data(i, j) != 255) {
+                    LNBD = _data(i, j);
+                }
+                continue;
             }
             rpos = 8 - k + 1;
 
@@ -429,17 +448,15 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
                 if (p4.x == i && p4.y == j && p3 == p1) {
                     dst.push_back(middle_res);
                     middle_res.clear();
-                    goto next;
+                    if (_data(i, j) != 0 && _data(i, j) != 255) {
+                        LNBD = _data(i, j);
+                    }
+                    break;
                 }
                 else {
                     p2 = p3;
                     p3 = p4;
                 }
-            }
-
-        next:
-            if (_data(i, j) != 0 && _data(i, j) != 255) {
-                LNBD = _data(i, j);
             }
         }
     }

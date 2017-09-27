@@ -11,5 +11,5 @@ source_group("Header Files" FILES ${HEADERS})
 aux_source_directory(. ZKINECT_SRCS)
 add_library(zkinect STATIC ${ZKINECT_SRCS} ${HEADERS})
 
-install(TARGETS zkinect ARCHIVE DESTINATION "${INSTALL_DIR}/lib/")
+install(TARGETS zkinect ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/")
 set_property(TARGET zkinect PROPERTY FOLDER "modules")

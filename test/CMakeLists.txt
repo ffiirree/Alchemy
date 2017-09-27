@@ -3,8 +3,13 @@
 # --------------------------------------------------------------
 
 link_libraries(${FFTW_LIBS} ${LIBJPEG_LIBS} ${OpenCV_LIBS} zgui zimgproc zmath zfeatures2d)
-# generate test files
+if(USE_OPENCV)
+    link_libraries(${OpenCV_LIBS})
+endif()
 
+if(USE_FFTW)
+    link_libraries(${FFTW_LIBS})
+endif()
 
 # test_new_zmatrix
 add_executable(test_new_zmatrix test_new_zmatrix.cpp)

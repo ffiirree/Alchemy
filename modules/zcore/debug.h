@@ -18,6 +18,7 @@
 /**
  * @brief 打印需要的调试信息
  */
+#include <iostream>
 #if defined(_DEBUG)
 #define _log_(str) st(std::cout<<"[" << __FILE__ << "]" << "<" << __func__ << ">" << "(" << __LINE__ << ") : " << str << std::endl;)
 #else

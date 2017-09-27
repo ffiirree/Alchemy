@@ -18,7 +18,7 @@
 #include "zcore/zdef.h"
 #include "zcore/zmatrix.h"
 
-#if defined(OPENCV)
+#if defined(USE_OPENCV)
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #endif

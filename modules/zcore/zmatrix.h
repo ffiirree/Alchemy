@@ -15,10 +15,11 @@
 #define _ZCORE_ZMATRIX_H
 
 #include <stdint.h>
+#include <cstring>
 #include "config.h"
 #include "types.h"
 
-#if defined(OPENCV)
+#if defined(USE_OPENCV)
 #include "opencv2/opencv.hpp"
 #endif
 
@@ -338,7 +339,7 @@ public:
     const _Tp* operator[](size_t n) const;
 
 
-#if defined(OPENCV)
+#if defined(USE_OPENCV)
     explicit operator cv::Mat() const;
 #endif
 
@@ -459,7 +460,7 @@ template <class _Tp> std::ostream &operator<<(std::ostream & os, const _Matrix<_
 template<typename _Tp> class _MatrixConstIterator {
 public:
     typedef _Tp value_type;
-    typedef ptrdiff_t difference_type;
+    typedef std::ptrdiff_t difference_type;
     typedef const _Tp* pointer;
     typedef const _Tp& reference;
 
@@ -472,10 +473,10 @@ public:
     _MatrixConstIterator<_Tp>& operator=(const _MatrixConstIterator<_Tp>& it);
 
     const _Tp& operator *() const;
-    const _Tp& operator[](ptrdiff_t i) const;
+    const _Tp& operator[](difference_type i) const;
 
-    _MatrixConstIterator& operator+=(ptrdiff_t ofs);
-    _MatrixConstIterator& operator-=(ptrdiff_t ofs);
+    _MatrixConstIterator& operator+=(difference_type ofs);
+    _MatrixConstIterator& operator-=(difference_type ofs);
 
     _MatrixConstIterator& operator--();
     _MatrixConstIterator& operator--(int);
@@ -485,7 +486,7 @@ public:
     bool operator == (const _MatrixConstIterator<_Tp>& it) const;
     bool operator != (const _MatrixConstIterator<_Tp>& it) const;
 
-    void seek(ptrdiff_t ofs, bool relative = false);
+    void seek(difference_type ofs, bool relative = false);
 
 protected:
     const _Matrix<_Tp>* m_ = nullptr;
@@ -498,6 +499,8 @@ protected:
 template <typename _Tp>
 class _MatrixIterator : public _MatrixConstIterator<_Tp> {
 public:
+    typedef _Tp value_type;
+    typedef std::ptrdiff_t difference_type;
     typedef _Tp* pointer;
     typedef _Tp& reference;
 
@@ -509,10 +512,10 @@ public:
     _MatrixIterator& operator = (const _MatrixIterator<_Tp>& it);
 
     _Tp& operator *() const;
-    _Tp& operator [](ptrdiff_t i) const;
+    _Tp& operator [](difference_type i) const;
 
-    _MatrixIterator& operator += (ptrdiff_t ofs);
-    _MatrixIterator& operator -= (ptrdiff_t ofs);
+    _MatrixIterator& operator += (difference_type ofs);
+    _MatrixIterator& operator -= (difference_type ofs);
     _MatrixIterator& operator --();
     _MatrixIterator operator --(int);
     _MatrixIterator& operator ++();

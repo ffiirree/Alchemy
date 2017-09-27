@@ -7,5 +7,5 @@ source_group("Header Files" FILES ${HEADERS})
 aux_source_directory(. ZIMGPROC_SRCS)
 add_library(zimgproc STATIC ${ZIMGPROC_SRCS} ${HEADERS})
 
-install(TARGETS zimgproc ARCHIVE DESTINATION "${INSTALL_DIR}/lib/")
+install(TARGETS zimgproc ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/")
 set_property(TARGET zimgproc PROPERTY FOLDER "modules")

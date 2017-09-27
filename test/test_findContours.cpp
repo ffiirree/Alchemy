@@ -1,18 +1,16 @@
-#include "opencv2/opencv.hpp"
-
 #include "zmatrix.h"
 #include "zcore/zdef.h"
 
 int main(int argc, char *argv[])
 {
     // 载入原始图像
-    auto image = z::imread("test3.jpeg");
+    auto image = z::imread("test.jpeg");
     z::Matrix gray;
     z::cvtColor(image, gray, z::BGR2GRAY);
     z::medianFilter(gray, gray, z::Size(3, 3));
 
     // 二值化
-    auto bin_image = gray > 135;
+    auto bin_image = gray > 175;
     //auto bin_image_2 = gray > 175;
 
 
@@ -22,7 +20,7 @@ int main(int argc, char *argv[])
     z::findContours(bin_image, contours);
 
     // 显示结果
-    uchar r = 50, g = 100, b = 150;
+    uint8_t r = 50, g = 100, b = 150;
     for (const auto &c : contours) {
         for (const auto &j : c) {
             res.at<z::Vec3u8>(j.x, j.y) = { b, g, r };

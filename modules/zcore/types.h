@@ -114,26 +114,26 @@ typedef _Size<double>   Size2d;
 typedef _Size<float>    Sizef;
 typedef _Size<int>      Size;
 
-template <typename _T> bool operator==(_Size<_T> &p1, _Size<_T> &p2) { return p1.width == p2.width && p1.height == p2.height; }
-template <typename _T> bool operator!=(_Size<_T> &p1, _Size<_T> &p2) { return !(p1 == p2); }
+template <typename _T> bool operator==(const _Size<_T> &p1, const _Size<_T> &p2) { return p1.width == p2.width && p1.height == p2.height; }
+template <typename _T> bool operator!=(const _Size<_T> &p1, const _Size<_T> &p2) { return !(p1 == p2); }
 
 /////////////////////////////////////////_Complex_////////////////////////////////////////////
 
 template <typename _Tp>
-using _Complex = std::complex<_Tp>;
+using __Complex = std::complex<_Tp>;
 
-using Complex8s = _Complex<int8_t>;
-using Complex8u = _Complex<uint8_t>;
-using Complex16s = _Complex<int16_t>;
-using Complex16u = _Complex<uint16_t>;
-using Complex32s = _Complex<int32_t>;
-using Complex32u = _Complex<uint32_t>;
-using Complex32f = _Complex<float>;
-using Complex64f = _Complex<double>;
-using Complex = _Complex<double>;
+using Complex8s = __Complex<int8_t>;
+using Complex8u = __Complex<uint8_t>;
+using Complex16s = __Complex<int16_t>;
+using Complex16u = __Complex<uint16_t>;
+using Complex32s = __Complex<int32_t>;
+using Complex32u = __Complex<uint32_t>;
+using Complex32f = __Complex<float>;
+using Complex64f = __Complex<double>;
+using Complex = __Complex<double>;
 
 
-template <typename _Tp> class MatrixType<_Complex<_Tp>>
+template <typename _Tp> class MatrixType<__Complex<_Tp>>
 {
 public:
     enum

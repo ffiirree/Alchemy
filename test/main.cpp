@@ -6,10 +6,10 @@ int main()
 {
     auto image = z::imread("test.jpeg");
 
-    cv::Mat a(3, 5, CV_32F, cv::Scalar{ 2 });
-    cv::Mat b(5, 2, CV_32F, cv::Scalar{ 3 });
+    //cv::Mat a(5, 5, CV_32F, cv::Scalar{ 6 });
+    //cv::Mat b(5, 5, CV_32F, cv::Scalar{ 1 });
 
-    a *= b;
+    //a |= b;
 
 
     z::Matrix32f a1(2, 3, 1);

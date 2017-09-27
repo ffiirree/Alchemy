@@ -20,6 +20,7 @@
 #include "zcore/types.h"
 #include "zmath/zmath.h"
 #include "zcore/zmatrix.h"
+#include <functional>
 
 namespace z {
 template <class _Tp, int n>
