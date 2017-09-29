@@ -394,7 +394,7 @@ void _Matrix<_Tp>::copyTo(_Matrix<_Tp> & outputMatrix) const
 {
     outputMatrix.create(rows, cols, channels());
     if (isContinuous() && outputMatrix.isContinuous()) {
-        memcpy(outputMatrix.data, data, size_ * channels() * sizeof(_Tp));
+        memcpy(outputMatrix.data, data, size_ * esize_);
         return;
     }
 
@@ -811,40 +811,23 @@ const _Tp* _Matrix<_Tp>::operator[](size_t n) const
 }
 
 
+///////////////////////////////////////// _Matrix Operators ////////////////////////////////////////////
 template <typename _Tp>
 _Matrix<_Tp> operator+(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2)
 {
-    assert(m1.size() == m2.size());
-    assert(m1.channels() == m2.channels());
-
-    auto rm = z::_Matrix<_Tp>(m1.size(), m1.channels());
-
-    auto _begin_1 = m1.begin();
-    auto _begin_2 = m2.begin();
-    auto _begin_3 = rm.begin();
-    for (; _begin_1 != m1.end(); ++_begin_1, ++_begin_2, ++_begin_3) {
-        *_begin_3 = saturate_cast<_Tp>(*_begin_1 + *_begin_2);
-    }
-
-    return rm;
+    return MatrixCompute()(m1, m2, [](auto&& _val_1, auto&& _val_2)
+    {
+        return _val_1 + _val_2;
+    });
 }
 
 template <typename _Tp>
 _Matrix<_Tp> operator+(const _Matrix<_Tp>& m, const Scalar& delta)
 {
-    assert(m.channels() <= 4);
-
-    auto rm = z::_Matrix<_Tp>(m.size(), m.channels());
-
-    for (auto i = 0; i < m.rows; ++i) {
-        for (auto j = 0; j < m.cols; ++j) {
-            for (auto k = 0; k < m.channels(); ++k) {
-                auto&& _value = rm.at(i, j, k);
-                _value = saturate_cast<_Tp>(_value + delta[k]);
-            }
-        }
-    }
-    return rm;
+    return MatrixCompute()(m, delta, [](auto&&_val_1, auto&&_val_2)
+    {
+        return _val_1 + _val_2;
+    });
 }
 
 template <typename _Tp>
@@ -856,49 +839,28 @@ _Matrix<_Tp> operator+(const Scalar& delta, const _Matrix<_Tp>& m)
 template <class _Tp>
 _Matrix<_Tp> operator+=(_Matrix<_Tp>& m1, const _Matrix<_Tp>& m2)
 {
-    assert(m1.rows == m2.rows && m1.cols == m2.cols);
-
-    auto _begin_1 = m1.begin();
-    auto _begin_2 = m2.begin();
-
-    for(; _begin_1 != m1.end(); ++_begin_1, ++_begin_2) {
-        *_begin_1 = saturate_cast<_Tp>(*_begin_1 + *_begin_2);
-    }
-    return m1;
+    return MatrixCompute()(m1, m2, [](auto&& _val_1, auto&& _val_2)
+    {
+        return _val_1 + _val_2;
+    });
 }
 
 template <class _Tp>
 _Matrix<_Tp> operator+=(_Matrix<_Tp>& m, const Scalar& delta)
 {
-    assert(m.channels() <= 4);
-
-    for(auto i = 0; i < m.rows; ++i) {
-        for(auto j = 0; j < m.cols; ++j) {
-            for(auto k = 0; k < m.channels(); ++k) {
-                auto&& _value = m.at(i, j, k);
-                _value = saturate_cast<_Tp>(_value + delta[k]);
-            }
-        }
-    }
-    return m;
+    return MatrixCompute()(m, delta, [](auto&&_val_1, auto&&_val_2)
+    {
+        return _val_1 + _val_2;
+    });
 }
 
 template <typename _Tp>
 _Matrix<_Tp> operator-(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2)
 {
-    assert(m1.size() == m2.size());
-    assert(m1.channels() == m2.channels());
-
-    auto rm = z::_Matrix<_Tp>(m1.size(), m1.channels());
-
-    auto _begin_1 = m1.begin();
-    auto _begin_2 = m2.begin();
-    auto _begin_3 = rm.begin();
-    for(; _begin_1 != m1.end(); ++_begin_1, ++_begin_2, ++_begin_3) {
-        *_begin_3 = saturate_cast<_Tp>(*_begin_1 - *_begin_2);
-    }
-
-    return rm;
+    return MatrixCompute()(m1, m2, [](auto&& _val_1, auto&& _val_2)
+    {
+        return _val_1 - _val_2;
+    });
 }
 
 template <typename _Tp>
@@ -916,32 +878,19 @@ _Matrix<_Tp> operator-(const Scalar& delta, const _Matrix<_Tp>& m)
 template <typename _Tp>
 _Matrix<_Tp> operator-=(_Matrix<_Tp>& m1, const _Matrix<_Tp>& m2)
 {
-    assert(m1.size() == m2.size());
-    assert(m1.channels() == m2.channels());
-
-    auto _begin_1 = m1.begin();
-    auto _begin_2 = m2.begin();
-
-    for (; _begin_1 != m1.end(); ++_begin_1, ++_begin_2) {
-        (*_begin_1) = saturate_cast<_Tp>((*_begin_1) - (*_begin_2));
-    }
-    return m1;
+    return MatrixCompute()(m1, m2, [](auto&& _val_1, auto&& _val_2)
+    {
+        return _val_1 - _val_2;
+    });
 }
 
 template <class _Tp>
 _Matrix<_Tp> operator-=(_Matrix<_Tp>& m, const Scalar& delta)
 {
-    assert(m.channels() <= 4);
-
-    for (auto i = 0; i < m.rows; ++i) {
-        for (auto j = 0; j < m.cols; ++j) {
-            for (auto k = 0; k < m.channels(); ++k) {
-                auto&& _value = m.at(i, j, k);
-                _value = saturate_cast<_Tp>(_value - delta[k]);
-            }
-        }
-    }
-    return m;
+    return MatrixCompute()(m, delta, [](auto&&_val_1, auto&&_val_2)
+    {
+        return _val_1 - _val_2;
+    });
 }
 
 template <class _Tp>
@@ -964,15 +913,10 @@ _Matrix<_Tp> operator*(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2)
 template <typename _Tp>
 _Matrix<_Tp> operator*(const _Matrix<_Tp>& m, double v)
 {
-    auto rm = z::_Matrix<_Tp>(m.size(), m.channels());
-
-    auto _begin_1 = m.begin();
-    auto _begin_2 = rm.begin();
-
-    for(; _begin_1 != m.end(); ++_begin_1, ++_begin_2) {
-        *_begin_2 = saturate_cast<_Tp>((*_begin_1) * v);
-    }
-    return rm;
+    return MatrixCompute()(m, v, [=](auto&& _val)
+    {
+        return _val * v;
+    });
 }
 
 template <typename _Tp>
@@ -991,15 +935,10 @@ _Matrix<_Tp> operator*=(_Matrix<_Tp>& m1, const _Matrix<_Tp>& m2)
 template <class _Tp>
 _Matrix<_Tp> operator*=(_Matrix<_Tp>& m, double v)
 {
-    for(auto&pixel : m) {
-        pixel = saturate_cast<_Tp>(pixel * v);
-    }
-    return m;
-}
-
-template <class _Tp>
-_Matrix<_Tp> operator/(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2)
-{
+    return MatrixCompute()(m, v, [=](auto&& _val)
+    {
+        return _val * v;
+    });
 }
 
 template <class _Tp>
@@ -1024,15 +963,10 @@ _Matrix<_Tp> operator/=(_Matrix<_Tp>& m, double v)
 template <typename _Tp>
 _Matrix<_Tp> operator>(const _Matrix<_Tp>& m, double threshold)
 {
-    auto rm = z::_Matrix<_Tp>(m.size(), m.channels());
-
-    auto _begin_1 = m.begin();
-    auto _begin_2 = rm.begin();
-
-    for(; _begin_1 != m.end(); ++_begin_1, ++_begin_2) {
-        *_begin_1 > threshold ? *_begin_2 = std::numeric_limits<_Tp>::max() : *_begin_2 = std::numeric_limits<_Tp>::min();
-    }
-    return rm;
+    return MatrixCompute()(m, threshold, [=](auto&& _val)
+    {
+        return _val > threshold ? std::numeric_limits<_Tp>::max() : std::numeric_limits<_Tp>::min();
+    });
 }
 
 template <typename _Tp>
@@ -1042,28 +976,27 @@ _Matrix<_Tp> operator>(double threshold, const _Matrix<_Tp>& m)
 }
 
 template <typename _Tp>
-_Matrix<_Tp> operator>=(_Matrix<_Tp>& m, double threshold)
+_Matrix<_Tp> operator>=(const _Matrix<_Tp>& m, double threshold)
 {
-    for (auto&pixel : m) {
-        pixel >= threshold ? pixel = std::numeric_limits<_Tp>::max() : pixel = std::numeric_limits<_Tp>::min();
-    }
-    return m;
+    return MatrixCompute()(m, threshold, [=](auto&& _val)
+    {
+        return _val >= threshold ? std::numeric_limits<_Tp>::max() : std::numeric_limits<_Tp>::min();
+    });
+}
+
+template <class _Tp>
+_Matrix<_Tp> operator>=(double threshold, const _Matrix<_Tp>& m)
+{
+    return m <= threshold;
 }
 
 template <typename _Tp>
 _Matrix<_Tp> operator<(const _Matrix<_Tp>& m, double threshold)
 {
-    auto rm = z::_Matrix<_Tp>(m.size(), m.channels());
-    auto ele_num = m.cols * m.channels();
-
-    for (auto i = 0; i < m.rows; ++i) {
-        auto ptr = rm.template ptr<_Tp>(i);
-        auto mptr = m.template ptr<_Tp>(i);
-        for (auto j = 0; j < ele_num; ++j) {
-            mptr[j] < threshold ? ptr[j] = std::numeric_limits<_Tp>::max() : ptr[j] = std::numeric_limits<_Tp>::min();
-        }
-    }
-    return rm;
+    return MatrixCompute()(m, threshold, [=](auto&& _val)
+    {
+        return _val < threshold ? std::numeric_limits<_Tp>::max() : std::numeric_limits<_Tp>::min();
+    });
 }
 
 template <typename _Tp>
@@ -1073,45 +1006,36 @@ _Matrix<_Tp> operator < (double threshold, const _Matrix<_Tp>& m)
 }
 
 template <typename _Tp>
-_Matrix<_Tp> operator<=(_Matrix<_Tp>& m, double threshold)
+_Matrix<_Tp> operator<=(const _Matrix<_Tp>& m, double threshold)
 {
-    for (auto&pixel : m) {
-        pixel <= threshold ? pixel = std::numeric_limits<_Tp>::max() : pixel = std::numeric_limits<_Tp>::min();
-    }
-    return m;
+    return MatrixCompute()(m, threshold, [=](auto&& _val)
+    {
+        return _val <= threshold ? std::numeric_limits<_Tp>::max() : std::numeric_limits<_Tp>::min();
+    });
+}
+
+template <class _Tp>
+_Matrix<_Tp> operator<=(double threshold, const _Matrix<_Tp>& m)
+{
+    return m >= threshold;
 }
 
 template <typename _Tp>
 _Matrix<_Tp> operator==(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2)
 {
-    assert(m1.size() == m2.size());
-    assert(m1.channels() == m2.channels());
-
-    auto rm = z::_Matrix<_Tp>(m1.size(), m1.channels());
-    
-    auto _begin_1 = m1.begin();
-    auto _begin_2 = m2.begin();
-    auto _begin_3 = rm.begin();
-
-    for(; _begin_1 != m1.end(); ++_begin_1, ++_begin_2) {
-        *_begin_1 == *_begin_2 ? *_begin_3 = std::numeric_limits<_Tp>::max() : *_begin_3 = std::numeric_limits<_Tp>::min();
-    }
-    return rm;
+    return MatrixCompute()(m1, m2, [](auto&& _val_1, auto&& _val_2)
+    {
+        return _val_1 == _val_2 ? std::numeric_limits<_Tp>::max() : std::numeric_limits<_Tp>::min();
+    });
 }
 
 template <typename _Tp>
 _Matrix<_Tp> operator==(const _Matrix<_Tp>& m, double val)
 {
-    auto rm = z::_Matrix<_Tp>(m.size(), m.channels());
-
-    auto _begin_1 = m.begin();
-    auto _begin_2 = rm.begin();
-
-    for(; _begin_1 != m.end(); ++_begin_1, ++_begin_2) {
-        *_begin_1 == val ? *_begin_2 = std::numeric_limits<_Tp>::max() : *_begin_2 = std::numeric_limits<_Tp>::min();
-    }
-
-    return rm;
+    return MatrixCompute()(m, val, [=](auto&& _val)
+    {
+        return _val == val ? std::numeric_limits<_Tp>::max() : std::numeric_limits<_Tp>::min();
+    });
 }
 
 template <typename _Tp>
@@ -1123,34 +1047,19 @@ _Matrix<_Tp> operator==(double val, const _Matrix<_Tp>& m)
 template <typename _Tp>
 _Matrix<_Tp> operator!=(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2)
 {
-    assert(m1.size() == m2.size());
-    assert(m1.channels() == m2.channels());
-
-    auto rm = z::_Matrix<_Tp>(m1.size(), m1.channels());
-
-    auto _begin_1 = m1.begin();
-    auto _begin_2 = m2.begin();
-    auto _begin_3 = rm.begin();
-
-    for (; _begin_1 != m1.end(); ++_begin_1, ++_begin_2) {
-        *_begin_1 != *_begin_2 ? *_begin_3 = std::numeric_limits<_Tp>::max() : *_begin_3 = std::numeric_limits<_Tp>::min();
-    }
-    return rm;
+    return MatrixCompute()(m1, m2, [](auto&& _val_1, auto&& _val_2)
+    {
+        return _val_1 != _val_2 ? std::numeric_limits<_Tp>::max() : std::numeric_limits<_Tp>::min();
+    });
 }
 
 template <typename _Tp>
 _Matrix<_Tp> operator!=(const _Matrix<_Tp>& m, double val)
 {
-    auto rm = z::_Matrix<_Tp>(m.size(), m.channels());
-
-    auto _begin_1 = m.begin();
-    auto _begin_2 = rm.begin();
-
-    for (; _begin_1 != m.end(); ++_begin_1, ++_begin_2) {
-        *_begin_1 != val ? *_begin_2 = std::numeric_limits<_Tp>::max() : *_begin_2 = std::numeric_limits<_Tp>::min();
-    }
-
-    return rm;
+    return MatrixCompute()(m, val, [=](auto&& _val)
+    {
+        return _val != val ? std::numeric_limits<_Tp>::max() : std::numeric_limits<_Tp>::min();
+    });
 }
 
 template <typename _Tp>

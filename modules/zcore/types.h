@@ -117,23 +117,23 @@ typedef _Size<int>      Size;
 template <typename _T> bool operator==(const _Size<_T> &p1, const _Size<_T> &p2) { return p1.width == p2.width && p1.height == p2.height; }
 template <typename _T> bool operator!=(const _Size<_T> &p1, const _Size<_T> &p2) { return !(p1 == p2); }
 
-/////////////////////////////////////////_Complex_////////////////////////////////////////////
-
+/////////////////////////////////////////_Complex2////////////////////////////////////////////
+// '2' make gcc happy.(C99 & C++11: _Complex)
 template <typename _Tp>
-using __Complex = std::complex<_Tp>;
+using _Complex2 = std::complex<_Tp>;
 
-using Complex8s = __Complex<int8_t>;
-using Complex8u = __Complex<uint8_t>;
-using Complex16s = __Complex<int16_t>;
-using Complex16u = __Complex<uint16_t>;
-using Complex32s = __Complex<int32_t>;
-using Complex32u = __Complex<uint32_t>;
-using Complex32f = __Complex<float>;
-using Complex64f = __Complex<double>;
-using Complex = __Complex<double>;
+using Complex8s = _Complex2<int8_t>;
+using Complex8u = _Complex2<uint8_t>;
+using Complex16s = _Complex2<int16_t>;
+using Complex16u = _Complex2<uint16_t>;
+using Complex32s = _Complex2<int32_t>;
+using Complex32u = _Complex2<uint32_t>;
+using Complex32f = _Complex2<float>;
+using Complex64f = _Complex2<double>;
+using Complex = _Complex2<double>;
 
 
-template <typename _Tp> class MatrixType<__Complex<_Tp>>
+template <typename _Tp> class MatrixType<_Complex2<_Tp>>
 {
 public:
     enum

@@ -80,11 +80,13 @@ template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int
         if (!(dst.size() == src.size() && dst.channels() == 1))
             dst.create(src.size(), 1);
 
-        auto sbegin = src.template begin<_Vec<_Tp, 3>>();
-        auto dbegin = dst.begin();
-        for (; sbegin != src.template end<_Vec<_Tp, 3>>(); ++sbegin, ++dbegin) {
-            auto pixel = *sbegin;
-            *dbegin = saturate_cast<_Tp>(0.114 * pixel[0] + 0.587 * pixel[1] + 0.299 * pixel[2]);
+        using Pixel = _Vec<_Tp, 3>;
+
+        auto _begin_1 = src.template begin<Pixel>();
+        auto _begin_2 = dst.begin();
+        for (; _begin_1 != src.template end<Pixel>(); ++_begin_1, ++_begin_2) {
+            auto pixel = *_begin_1;
+            *_begin_2 = saturate_cast<_Tp>(0.114 * pixel[0] + 0.587 * pixel[1] + 0.299 * pixel[2]);
         }
         break;
     }
@@ -97,9 +99,11 @@ template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int
         if (!dst.equalSize(src))
             dst.create(src.size(), src.channels());
 
-        auto sbegin = src.template begin<_Vec<_Tp, 3>>();
-        auto dbegin = dst.template begin<_Vec<_Tp, 3>>();
-        for (; sbegin != src.template end<_Vec<_Tp, 3>>(); ++sbegin, ++dbegin) {
+        using Pixel = _Vec<_Tp, 3>;
+
+        auto sbegin = src.template begin<Pixel>();
+        auto dbegin = dst.template begin<Pixel>();
+        for (; sbegin != src.template end<Pixel>(); ++sbegin, ++dbegin) {
             (*dbegin)[0] = (*sbegin)[2];
             (*dbegin)[1] = (*sbegin)[1];
             (*dbegin)[2] = (*sbegin)[0];

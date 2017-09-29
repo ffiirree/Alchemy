@@ -15,9 +15,12 @@
 #define _ZCORE_ZMATRIX_H
 
 #include <stdint.h>
+#include <functional>
 #include <cstring>
 #include "config.h"
 #include "types.h"
+#include "matrix_compute.h"
+
 
 #if defined(USE_OPENCV)
 #include "opencv2/opencv.hpp"
@@ -393,7 +396,6 @@ typedef _Matrix<signed char>        Matrix8s;
 typedef _Matrix<unsigned char>      Matrix8u;
 typedef _Matrix<unsigned char>      Matrix;
 
-
 template <class _Tp> _Matrix<_Tp> operator+(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
 template <class _Tp> _Matrix<_Tp> operator+(const _Matrix<_Tp> &m, const Scalar& delta);
 template <class _Tp> _Matrix<_Tp> operator+(const Scalar& delta, const _Matrix<_Tp> &m);
@@ -415,34 +417,38 @@ template <class _Tp> _Matrix<_Tp> operator*(double v, const _Matrix<_Tp> &m);
 template <class _Tp> _Matrix<_Tp> operator*=(_Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
 template <class _Tp> _Matrix<_Tp> operator*=(_Matrix<_Tp> &m, double v);
 
-template <class _Tp> _Matrix<_Tp> operator/(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+//template <class _Tp> _Matrix<_Tp> operator/(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
 template <class _Tp> _Matrix<_Tp> operator/(const _Matrix<_Tp> &m, double v);
 template <class _Tp> _Matrix<_Tp> operator/(double v, const _Matrix<_Tp> &m);
 
-template <class _Tp> _Matrix<_Tp> operator/=(_Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+//template <class _Tp> _Matrix<_Tp> operator/=(_Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
 template <class _Tp> _Matrix<_Tp> operator/=(_Matrix<_Tp> &m, double v);
 
-template <class _Tp> _Matrix<_Tp> operator&(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2);
-template <class _Tp> _Matrix<_Tp> operator&(_Matrix<_Tp> &m, const Scalar& delta);
-template <class _Tp> _Matrix<_Tp> operator&(const Scalar& delta, _Matrix<_Tp> &m);
-
-template <class _Tp> _Matrix<_Tp> operator|(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2);
-template <class _Tp> _Matrix<_Tp> operator|(_Matrix<_Tp> &m, const Scalar& delta);
-template <class _Tp> _Matrix<_Tp> operator|(const Scalar& delta, _Matrix<_Tp> &m);
-
-template <class _Tp> _Matrix<_Tp> operator^(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2);
-template <class _Tp> _Matrix<_Tp> operator^(_Matrix<_Tp> &m, const Scalar& delta);
-template <class _Tp> _Matrix<_Tp> operator^(const Scalar& delta, _Matrix<_Tp> &m);
-
-template <class _Tp> _Matrix<_Tp> operator~(_Matrix<_Tp> &m);
+//template <class _Tp> _Matrix<_Tp> operator&(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2);
+//template <class _Tp> _Matrix<_Tp> operator&(_Matrix<_Tp> &m, const Scalar& delta);
+//template <class _Tp> _Matrix<_Tp> operator&(const Scalar& delta, _Matrix<_Tp> &m);
+//
+//template <class _Tp> _Matrix<_Tp> operator|(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2);
+//template <class _Tp> _Matrix<_Tp> operator|(_Matrix<_Tp> &m, const Scalar& delta);
+//template <class _Tp> _Matrix<_Tp> operator|(const Scalar& delta, _Matrix<_Tp> &m);
+//
+//template <class _Tp> _Matrix<_Tp> operator^(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2);
+//template <class _Tp> _Matrix<_Tp> operator^(_Matrix<_Tp> &m, const Scalar& delta);
+//template <class _Tp> _Matrix<_Tp> operator^(const Scalar& delta, _Matrix<_Tp> &m);
+//
+//template <class _Tp> _Matrix<_Tp> operator~(_Matrix<_Tp> &m);
 
 template <class _Tp> _Matrix<_Tp> operator>(const _Matrix<_Tp> &m, double threshold);
 template <class _Tp> _Matrix<_Tp> operator>(double threshold, const _Matrix<_Tp> &m);
-template <class _Tp> _Matrix<_Tp> operator>=(_Matrix<_Tp> &m, double threshold);
+
+template <class _Tp> _Matrix<_Tp> operator>=(const _Matrix<_Tp> &m, double threshold);
+template <class _Tp> _Matrix<_Tp> operator>=(double threshold, const _Matrix<_Tp> &m);
 
 template <class _Tp> _Matrix<_Tp> operator<(const _Matrix<_Tp> &m, double threshold);
 template <class _Tp> _Matrix<_Tp> operator<(double threshold, const _Matrix<_Tp> &m);
-template <class _Tp> _Matrix<_Tp> operator<=(_Matrix<_Tp> &m, double threshold);
+
+template <class _Tp> _Matrix<_Tp> operator<=(const _Matrix<_Tp> &m, double threshold);
+template <class _Tp> _Matrix<_Tp> operator<=(double threshold, const _Matrix<_Tp> &m);
 
 template <class _Tp> _Matrix<_Tp> operator==(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
 template <class _Tp> _Matrix<_Tp> operator==(const _Matrix<_Tp> &m1, double val);
