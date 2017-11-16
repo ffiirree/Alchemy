@@ -28,15 +28,15 @@ template <typename _Tp> void Laplacian(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst,
 
 
 /**
-* @brief sobelËã×Ó
+* @brief sobelç®—å­
 * @param[in] src
 * @param[out] dst
 * @param[out] dstGD
 * @param[in] ksize Must be 1, 3, 5 or 7.
 * @param[in] dx
 * @param[in] dy
-* @ksize[in] ¾í»ıºËµÄ´óĞ¡
-* @param[in] noGD ÊÇ·ñ½øĞĞÌİ¶È·Ç¼«´óÖµÒÖÖÆ
+* @ksize[in] å·ç§¯æ ¸çš„å¤§å°
+* @param[in] noGD æ˜¯å¦è¿›è¡Œæ¢¯åº¦éæå¤§å€¼æŠ‘åˆ¶
 */
 template <typename _Tp>
 void __sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, _Matrix<_Tp>&dstGD, int dx, int dy, int ksize, bool noGD, std::function<void(int&, int&)> callback)
@@ -57,11 +57,11 @@ void __sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, _Matrix<_Tp>&dstGD, int dx, int
         break;
 
     case 3:
-        // Ô­Ê¼sobelËã×Ó
+        // åŸå§‹sobelç®—å­
         //Gx = { -1, 0, 1, -2, 0, 2, -1, 0, 1 };
         //Gy = { -1, -2, -1, 0, 0, 0, 1, 2, 1 };
         //factor = 8;
-        // ¸Ä½øĞÍ£¬¿ÉÒÔ½«·½ÏòÎó²î¼õµ½×îĞ¡
+        // æ”¹è¿›å‹ï¼Œå¯ä»¥å°†æ–¹å‘è¯¯å·®å‡åˆ°æœ€å°
         Gx = {
             -3, 0,  3,
             -10, 0, 10,
@@ -121,7 +121,7 @@ void __sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, _Matrix<_Tp>&dstGD, int dx, int
                 } // !for(jj)
             } // !for(ii)
 
-            // ¾Ö²¿Ìİ¶È·ÖÁ¿µÄµÄ¹À¼Æ£¬Í¨¹ı¸øÂË²¨½á¹û³ËÒÔÊÊµ±µÄ³ß¶ÈÒò×ÓÀ´ÊµÏÖ
+            // å±€éƒ¨æ¢¯åº¦åˆ†é‡çš„çš„ä¼°è®¡ï¼Œé€šè¿‡ç»™æ»¤æ³¢ç»“æœä¹˜ä»¥é€‚å½“çš„å°ºåº¦å› å­æ¥å®ç°
             for (int k = 0; k < src.channels(); ++k) {
                 tempGx[k] /= factor;
                 tempGy[k] /= factor;
@@ -132,7 +132,7 @@ void __sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, _Matrix<_Tp>&dstGD, int dx, int
 
             for (int k = 0; k < src.channels(); ++k) {
                 dst.at(i, j, k) = saturate_cast<uint8_t>(std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]));
-                // ¼ÆËãÌİ¶È
+                // è®¡ç®—æ¢¯åº¦
                 if (!noGD) {
                 	ang = atan2(tempGy[k],tempGx[k]) * RAD2ANG;
 

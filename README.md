@@ -86,8 +86,10 @@ zMatrix 是一个使用C++编写的图像处理库，它的基础是_Matrix矩�
 * Kinect获取深度、彩色和红外图像，返回`cv::Mat`类型的数据
 
 <br><br>
-
 <br>
+
 # VS插件推荐
 `Image Watch`这个插件可以在一个新的窗口显示图片，这里的图片可以是任意矩阵，所以调试起来可以随时直观的看到矩阵类内的数据。
 配置文件和效果图在`resources/ImageWatch`.
+
+`ForceUTF8(no BOM)`文件保存为utf8格式

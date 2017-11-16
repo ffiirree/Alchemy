@@ -14,7 +14,7 @@ public:
     };
 };
 
-// ÌØ»¯
+// ç‰¹åŒ–
 template <> class MatrixType<uint8_t> { public: enum { depth = 0, channels = 1, type = depth << 8 | channels }; };
 template <> class MatrixType<int8_t> { public: enum { depth = 1, channels = 1, type = depth << 8 | channels }; };
 template <> class MatrixType<uint16_t> { public: enum { depth = 2, channels = 1, type = depth << 8 | channels }; };
