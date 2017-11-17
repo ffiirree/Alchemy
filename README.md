@@ -53,6 +53,15 @@ Windows && Linux
 
 <br><br>
 
+## Visual Studio插件推荐
+`Image Watch`:可以在新窗口以图片的形式显示`cv::Mat`类型数据，非常方便调试。<br>
+如果要支持`z::Matrix`类型的显示，使用`resources/ImageWatch/ImageWatchOpenCV.natvis`替换插件的配置文件。<br>
+如果要显示自定义数据结构，Visual studio官网查看natvis文件的配置格式。
+
+`ForceUTF8(no BOM)`:文件保存为utf8格式
+
+<br><br>
+
 ## 已经实现功能
 
 ### 矩阵的基本功能
@@ -86,9 +95,6 @@ Windows && Linux
 * 默认使用`FFTW`来实现
 * 自己实现的基2快速傅里叶变换
 
-#### 仿射变换
-* `translation()`, 平移变换
-
 #### 图像轮廓
 * 寻找轮廓：`findContours()` 和 `findOutermostContours()`
 
@@ -104,9 +110,3 @@ Windows && Linux
 
 <br><br>
 <br>
-
-## VS插件推荐
-`Image Watch`这个插件可以在一个新的窗口显示图片，这里的图片可以是任意矩阵，所以调试起来可以随时直观的看到矩阵类内的数据。
-配置文件和效果图在`resources/ImageWatch`.
-
-`ForceUTF8(no BOM)`文件保存为utf8格式

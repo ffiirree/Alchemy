@@ -21,13 +21,9 @@
 #include "util.h"
 
 // 不使用任何宏定义的max和min
-#ifdef max
-#undef max
-#endif
 
-#ifdef min
+#undef max
 #undef min
-#endif
 
 #define ZMATRIX_CONTINUOUS_MASK (1 << 16)
 #define ZMATRIX_CH_MASK         (0x000000ff)

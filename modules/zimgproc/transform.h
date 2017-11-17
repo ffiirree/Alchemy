@@ -28,7 +28,7 @@ typedef enum {
 namespace z {
 // 图像几何变换
 // 平移
-void translation(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst);
+//void translation(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst);
 
 ///////////////////////////////////////////////Edge Detector/////////////////////////////////////////////////
 void getSobelKernels(Matrix8s &kx, Matrix8s &ky, int dx, int dy, int ksize);

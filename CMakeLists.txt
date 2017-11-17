@@ -11,16 +11,44 @@ include(cmake/CMakeUtils.cmake)
 set(PROJECT_NAME zMatrix)
 project(${PROJECT_NAME})
 
-# 使用项目分组
+# 使用项目分组，Visual studio
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# 编译要求，使用C++11
-set(CMAKE_CXX_STANDARD 14)
-if(MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
+# 检查编译器对C++标准的支持
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
+CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
+if(NOT COMPILER_SUPPORTS_CXX14)
+    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} DO NOT SUPPORT C++14.")
 endif()
 
+# 编译要求，使用C++14
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+if(MSVC)
+	# 源代码为utf-8无BOM编译错误
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
 
+	# 阻止warning C4996，printf->printf_s的警告
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4996")
+
+	# W4，最高编译警告
+	if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+		string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+	else()
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+	endif()
+
+	# 使用内部函数的程序比较快，因为它们没有函数调用系统开销。
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Oi")
+
+	# 允许编译器以打包函数(COMDATs)的形式对各个函数进行打包。
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Gy")
+endif()
+
+# 设置bin和lib目录
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
@@ -28,7 +56,7 @@ SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 option(USE_OPENCV 	"Include OpenCV support" 	OFF)
 option(USE_KINECT 	"Include Kinect support"	OFF)
 option(USE_FFTW		"Include FFTW support"		ON)
-option(USE_LIBJPEG 	"Include JPEG support" 		ON)
+option(USE_JPEG 	"Include JPEG support" 		ON)
 
 # ========================== 3rdparty ==========================
 # fftw
@@ -81,10 +109,9 @@ endif()
 if(NOT CMAKE_GENERATOR MATCHES "Xcode|Visual Studio")
 	log("    Configuration:" ${CMAKE_BUILD_TYPE})
 endif()
-
+log("")
 
 # ========================== C/C++ options ==========================
-log("")
 log("")
 log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ C/C++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 log("")
@@ -93,7 +120,16 @@ if(NOT BUILD_SHARED_LIBS)
 elseif()
 	log("    Built as dynamic libs?:" YES)
 endif()
-log("    C++11:" YES)
+if(COMPILER_SUPPORTS_CXX11)
+	log("    C++11:" YES)
+else()
+	log("    C++11:" NO)
+endif()
+if(COMPILER_SUPPORTS_CXX11)
+	log("    C++14:" YES)
+else()
+	log("    C++14:" NO)
+endif()
 log("    C++ Compiler:"           "${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1} (ver ${CMAKE_CXX_COMPILER_VERSION})")
 log("    C++ flags (Release):"    ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE})
 log("    C++ flags (Debug):"      ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG})
@@ -107,24 +143,17 @@ else()
 	log("    Linker flags (Release):" ${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS_RELEASE})
 	log("    Linker flags (Debug):"   ${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS_DEBUG})
 endif()
-
-
-
-# ========================== Image ==========================
 log("")
+
+
+# ========================== Media ==========================
 log("")
-log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Image ~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Media ~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 log("")
 if(USE_JPEG)
     log("    JPEG:" YES)
 else()
     log("    JPEG:" NO)
-endif()
-
-if(USE_PNG)
-    log("    PNG:" YES)
-else()
-    log("    PNG:" NO)
 endif()
 
 if(USE_FFTW)
@@ -133,11 +162,9 @@ else()
     log("    FFTW:" NO)
 endif()
 log("")
-log("")
 
 
 # ========================== GUI ==========================
-log("")
 log("")
 log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GUI ~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 log("")
@@ -153,4 +180,8 @@ else()
     log("    Gtk+ 2.x:" NO)
 endif()
 log("")
+log("")
+
+log("Install path:" ${CMAKE_INSTALL_PREFIX})
+log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 log("")

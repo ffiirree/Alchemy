@@ -146,8 +146,8 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
 	int *tempGy = new int[src.channels()];
 	int *tempG = new int[src.channels()];
 	int zerosx = 0, zerosy = 0;
-	unsigned char * srcPtr = nullptr;
-	unsigned char * dstPtr = nullptr;
+//	unsigned char * srcPtr = nullptr;
+//	unsigned char * dstPtr = nullptr;
 
 	for (int i = 0; i < dst.rows; ++i) {
 		for (int j = 0; j < dst.cols; ++j) {
@@ -236,26 +236,26 @@ void Canny(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2, int
 	double_threashold(temp2, dst, threshold1, threshold2);
 }
 
-void translation(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst)
-{
-	//if (!dst.equalSize(src)) {
-	//	dst.create(src.rows, src.cols, src.channels());
-	//}
- //   dst = 0;
-
-	//Matrix32s srcCoord(1,3,1), dstCoord;
-
-	//for (int i = 0; i < src.rows; ++i) {
-	//	for (int j = 0; j < src.cols; ++j) {
- //           srcCoord = { i, j, 1 };
-	//		dstCoord = srcCoord * kernel;
-
-	//		for (int k = 0; k < src.channels() && (dstCoord[0][0] < dst.rows && dstCoord[0][1] < dst.cols &&  dstCoord[0][0] >= 0 && dstCoord[0][1] >= 0); ++k) {
-	//			dst.ptr(dstCoord[0][0], dstCoord[0][1])[k] = src.ptr(i, j)[k];
-	//		}
-	//	}
-	//}
-}
+//void translation(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst)
+//{
+//	//if (!dst.equalSize(src)) {
+//	//	dst.create(src.rows, src.cols, src.channels());
+//	//}
+// //   dst = 0;
+//
+//	//Matrix32s srcCoord(1,3,1), dstCoord;
+//
+//	//for (int i = 0; i < src.rows; ++i) {
+//	//	for (int j = 0; j < src.cols; ++j) {
+// //           srcCoord = { i, j, 1 };
+//	//		dstCoord = srcCoord * kernel;
+//
+//	//		for (int k = 0; k < src.channels() && (dstCoord[0][0] < dst.rows && dstCoord[0][1] < dst.cols &&  dstCoord[0][0] >= 0 && dstCoord[0][1] >= 0); ++k) {
+//	//			dst.ptr(dstCoord[0][0], dstCoord[0][1])[k] = src.ptr(i, j)[k];
+//	//		}
+//	//	}
+//	//}
+//}
 
 
 #define _data(x, y) src.at(x, y)
@@ -404,7 +404,7 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             }
 
             // 顺时针查找第一个点
-            int k = 0;
+            uint8_t k = 0;
             for (; k < 8; ++k) {
                 p1 = clockwise[k] + Point(i, j);
                 if (p1.x >= 0 && p1.y >= 0 && p1.x < src.rows && p1.y < src.cols && _data(p1.x, p1.y) != 0)
@@ -427,7 +427,7 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             p2 = p1, p3 = { i, j };
             for (;;) {
                 // step (3.3)
-                for (int k = 0; k < 8; ++k) {
+                for (int kk = 0; kk < 8; ++kk) {
                     p4 = anticlockwise[++rpos & 0x07] + p3;
                     if (p4.x >= 0 && p4.y >= 0 && p4.x < src.rows && p4.y < src.cols && _data(p4.x, p4.y))
                         break;

@@ -225,16 +225,16 @@ static zTrackbar* izTrackbarByHWND(HWND hwnd)
 }
 
 
-static const char* izWindowPosRootKey = "Software\\OpenCV\\HighGUI\\Windows\\";
+static const char* windowPosRootKey = "Software\\OpenCV\\HighGUI\\Windows\\";
 
 // Window positions saving/loading added by Philip Gruebele.
 //<a href="mailto:pgruebele@cox.net">pgruebele@cox.net</a>
 // Restores the window position from the registry saved position.
-static void zLoadWindowPos(const char* name, z::Rect& rect)
+static void loadWindowPos(const char* name, z::Rect& rect)
 {
     HKEY hkey;
     char szKey[1024];
-    strcpy(szKey, izWindowPosRootKey);
+    strcpy(szKey, windowPosRootKey);
     strcat(szKey, name);
 
     rect.x = rect.y = CW_USEDEFAULT;
@@ -269,13 +269,13 @@ static void zLoadWindowPos(const char* name, z::Rect& rect)
 // Window positions saving/loading added by Philip Gruebele.
 //<a href="mailto:pgruebele@cox.net">pgruebele@cox.net</a>
 // philipg.  Saves the window position in the registry
-static void zSaveWindowPos(const char* name, z::Rect rect)
+static void saveWindowPos(const char* name, z::Rect rect)
 {
     static const DWORD MAX_RECORD_COUNT = 100;
     HKEY hkey;
     char szKey[1024];
     char rootKey[1024];
-    strcpy(szKey, izWindowPosRootKey);
+    strcpy(szKey, windowPosRootKey);
     strcat(szKey, name);
 
     if (RegOpenKeyEx(HKEY_CURRENT_USER, szKey, 0, KEY_READ, &hkey) != ERROR_SUCCESS)
@@ -286,7 +286,7 @@ static void zSaveWindowPos(const char* name, z::Rect rect)
         char oldestKey[1024];
         char currentKey[1024];
 
-        strcpy(rootKey, izWindowPosRootKey);
+        strcpy(rootKey, windowPosRootKey);
         rootKey[strlen(rootKey) - 1] = '\0';
         if (RegCreateKeyEx(HKEY_CURRENT_USER, rootKey, 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_READ + KEY_WRITE, 0, &hroot, nullptr) != ERROR_SUCCESS)
             //RegOpenKeyEx( HKEY_CURRENT_USER,rootKey,0,KEY_READ,&hroot) != ERROR_SUCCESS )
@@ -357,7 +357,7 @@ int zNamedWindow(const char* name, int flags)
         defStyle |= WS_SIZEBOX;
 
 
-    zLoadWindowPos(name, rect);
+    loadWindowPos(name, rect);
 
     mainhWnd = CreateWindow(
         "Main HighGUI class", 
@@ -433,7 +433,7 @@ static void zRemoveWindow(zWindow* window)
     if (window->frame)
         GetWindowRect(window->frame, &wrect);
     if (window->name)
-        zSaveWindowPos(window->name, z::Rect(wrect.left, wrect.top,
+        saveWindowPos(window->name, z::Rect(wrect.left, wrect.top,
             wrect.right - wrect.left, wrect.bottom - wrect.top));
 
     if (window->hwnd)
@@ -502,7 +502,7 @@ static void zScreenToClient(HWND hwnd, RECT* rect)
 
 
 /* Calculatess the window coordinates relative to the upper left corner of the mainhWnd window */
-static RECT zCalcWindowRect(zWindow* window)
+static RECT calcWindowRect(zWindow* window)
 {
     const auto gutter = 1;
     RECT crect, trect, rect;
@@ -574,7 +574,7 @@ static void zUpdateWindowPos(zWindow* window)
         // toolbar may resize too
         for (i = 0; i < (window->toolbar.toolbar ? 2 : 1); i++)
         {
-            RECT rmw, rw = zCalcWindowRect(window);
+            RECT rmw, rw = calcWindowRect(window);
             MoveWindow(window->hwnd, rw.left, rw.top,
                 rw.right - rw.left + 1, rw.bottom - rw.top + 1, FALSE);
             GetClientRect(window->hwnd, &rw);
@@ -586,7 +586,7 @@ static void zUpdateWindowPos(zWindow* window)
         }
     }
 
-    rect = zCalcWindowRect(window);
+    rect = calcWindowRect(window);
     MoveWindow(window->hwnd, rect.left, rect.top,
         rect.right - rect.left + 1,
         rect.bottom - rect.top + 1, TRUE);
@@ -595,20 +595,20 @@ static void zUpdateWindowPos(zWindow* window)
 void cpy(z::Matrix8u &src, char * arr)
 {
     auto step = (src.cols * src.channels() + 3) & -4;
-    for(int j  =0; j < src.rows; ++j) {
-        for (int i = 0; i < src.cols * src.channels(); ++i) {
-            arr[j * step + i] = src.data[j * src.cols * src.channels() + i];
-        }
-    }
+	for(auto i = 0; i < src.rows; ++i) {
+		for(auto j = 0; j < src.cols; ++j) {
+			for(auto k = 0; k < src.channels(); ++k) {
+				arr[i * step + j * src.channels() + k] = src.at(i, j, k);
+			}
+		}
+	}
 }
 
 void zShowImage(const char* name, void* arr)
 {
-    zWindow* window;
-    SIZE size = { 0, 0 };
+	SIZE size = { 0, 0 };
     int channels = 0;
-    void* dst_ptr = 0;
-    const int channels0 = 3;
+    void* dst_ptr = nullptr;
     int origin = 0;
     z::Matrix dst;
     bool changed_size = false; // philipg
@@ -616,7 +616,7 @@ void zShowImage(const char* name, void* arr)
     if (!name)
         _log_("NULL name");
 
-    window = zFindWindowByName(name);
+	auto window = zFindWindowByName(name);
     if (!window) {
         zNamedWindow(name, Z_WINDOW_AUTOSIZE);
         window = zFindWindowByName(name);
@@ -632,19 +632,19 @@ void zShowImage(const char* name, void* arr)
         if (zGetBitmapData(window, &size, &channels, &dst_ptr))
             return;
 
-    if (size.cx != image->cols || size.cy != image->rows || channels != channels0)
+    if (size.cx != image->cols || size.cy != image->rows || channels != image->channels())
     {
         changed_size = true;
 
         uint8_t buffer[sizeof(BITMAPINFO) + 255 * sizeof(RGBQUAD)];
-        auto binfo = (BITMAPINFO*)buffer;
+        auto binfo = reinterpret_cast<BITMAPINFO*>(buffer);
 
         DeleteObject(SelectObject(window->dc, window->image));
         window->image = 0;
 
         size.cx = image->cols;
         size.cy = image->rows;
-        channels = channels0;
+        channels = image->channels();
 
         FillBitmapInfo(binfo, size.cx, size.cy, channels * 8, 1);
 
@@ -652,7 +652,7 @@ void zShowImage(const char* name, void* arr)
             DIB_RGB_COLORS, &dst_ptr, 0, 0));
     }
 
-    auto c = (size.cx * channels + 3) & -4;
+    auto c = (size.cx * image->channels() + 3) & -4;
     convertImage(image, &dst);
     cpy(dst, reinterpret_cast<char *>(dst_ptr));
 
@@ -663,7 +663,7 @@ void zShowImage(const char* name, void* arr)
 }
 
 
-void cvResizeWindow(const char* name, int width, int height)
+void resizeWindow(const char* name, int width, int height)
 {
     RECT rmw, rw;
 
@@ -678,7 +678,7 @@ void cvResizeWindow(const char* name, int width, int height)
     // toolbar may resize too
     for (int i = 0; i < (window->toolbar.toolbar ? 2 : 1); i++)
     {
-        rw = zCalcWindowRect(window);
+        rw = calcWindowRect(window);
         MoveWindow(window->hwnd, rw.left, rw.top,
             rw.right - rw.left + 1, rw.bottom - rw.top + 1, FALSE);
         GetClientRect(window->hwnd, &rw);
@@ -689,7 +689,7 @@ void cvResizeWindow(const char* name, int width, int height)
             rmw.bottom - rmw.top + height - rw.bottom + rw.top, TRUE);
     }
 
-    RECT rect = zCalcWindowRect(window);
+    RECT rect = calcWindowRect(window);
     MoveWindow(window->hwnd, rect.left, rect.top,
         rect.right - rect.left + 1, rect.bottom - rect.top + 1, TRUE);
 }
@@ -987,7 +987,7 @@ static LRESULT CALLBACK HighGUIProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
     case WM_WINDOWPOSCHANGING:
     {
         LPWINDOWPOS pos = (LPWINDOWPOS)lParam;
-        RECT rect = zCalcWindowRect(window);
+        RECT rect = calcWindowRect(window);
         pos->x = rect.left;
         pos->y = rect.top;
         pos->cx = rect.right - rect.left + 1;
