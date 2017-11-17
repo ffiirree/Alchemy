@@ -251,6 +251,7 @@ ModelManifest.xml
 cmake-build-debug
 lib
 bin
+modules/zcore/config.h
 
 !3rdparty/
 !3rdparty/libjpeg/lib/libjpeg.lib

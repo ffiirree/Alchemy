@@ -3,7 +3,7 @@
 #include "zcore/zdef.h"
 
 #ifdef WIN32
-#include "windows_win32.h"
+#include "window_win32.h"
 #endif
 #ifdef linux
 #ifdef USE_GTK2
