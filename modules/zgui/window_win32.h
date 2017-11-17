@@ -16,4 +16,4 @@ int zWaitKey(int delay);
 void zShowImage(const char* name, void* arr);
 int GUIInitSystem(int argc, char** argv);
 
-#endif // !_ZGUI_WINDOWS_WIN32_H
+#endif //!_ZGUI_WINDOWS_WIN32_H

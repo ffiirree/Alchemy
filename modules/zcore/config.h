@@ -2,6 +2,9 @@
 #define __ZCORE_CONFIG_H
 
 /* #undef USE_OPENCV */
-#define USE_FFTW
+/* #undef USE_FFTW */
+
+/* #undef USE_WIN32 */
+#define USE_GTK2
 
 #endif // !__ZCORE_CONFIG_H

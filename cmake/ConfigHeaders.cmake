@@ -1,0 +1,1 @@
+configure_file ("${PROJECT_SOURCE_DIR}/cmake/config.h.in" "${PROJECT_SOURCE_DIR}/modules/zcore/config.h")

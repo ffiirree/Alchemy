@@ -1,0 +1,18 @@
+if(NOT DEFINED CMAKE_INSTALL_PREFIX)
+    if(UNIX)
+        set(CMAKE_INSTALL_PREFIX "/usr/zMatrix" CACHE PATH "Installation Directory")
+    elseif(WIN32)
+        set(CMAKE_INSTALL_PREFIX "D:/zMatrix" CACHE PATH "Installation Directory")
+    endif()
+endif()
+
+# header files
+install(FILES  ${PROJECT_SOURCE_DIR}/modules/zmatrix.h DESTINATION "${CMAKE_INSTALL_PREFIX}/include/")
+if(USE_KINECT)
+    install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/kinect/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/kinect" FILES_MATCHING PATTERN "*.h")
+endif(USE_KINECT)
+install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zcore/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/zcore" FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zgui/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/zgui" FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zimgproc/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/zimgproc" FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zfeatures2d/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/zfeatures2d" FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zmath/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/zmath" FILES_MATCHING PATTERN "*.h")

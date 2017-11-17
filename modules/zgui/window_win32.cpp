@@ -1,13 +1,13 @@
 // attention: Do not support x64.
 
 #include "zgui/zgui.h"
-#include "windows_win32.h"
-#include "zcore/debug.h"
-#include <map>
-#include <algorithm>
+#include "window_win32.h"
 
 #if defined _WIN32
 
+#include "zcore/debug.h"
+#include <map>
+#include <algorithm>
 #include <WinUser.h>
 #include <Windowsx.h>
 #include <commctrl.h>
@@ -1756,4 +1756,4 @@ const char* cvGetWindowName(void* window_handle)
     return window_name;
 }
 
-#endif //_WIN32
+#endif//!_WIN32

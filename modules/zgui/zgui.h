@@ -4,25 +4,6 @@
 
 #include "zimgproc/zimgproc.h"
 
-enum
-{
-	//These 3 flags are used by cvSet/GetWindowProperty
-	WND_PROP_FULLSCREEN = 0, //to change/get window's fullscreen property
-	WND_PROP_AUTOSIZE = 1, //to change/get window's autosize property
-	WND_PROP_ASPECTRATIO = 2, //to change/get window's aspectratio property
-	WND_PROP_OPENGL = 3, //to change/get window's opengl support
-
-	//These 2 flags are used by cvNamedWindow and cvSet/GetWindowProperty
-	WINDOW_NORMAL = 0x00000000, //the user can resize the window (no constraint)  / also use to switch a fullscreen window to a normal size
-	WINDOW_AUTOSIZE = 0x00000001, //the user cannot resize the window, the size is constrainted by the image displayed
-	WINDOW_OPENGL = 0x00001000, //window with opengl support
-
-	//These 3 flags are used by cvNamedWindow and cvSet/GetWindowProperty
-	WINDOW_FULLSCREEN = 1,//change the window to fullscreen
-	WINDOW_FREERATIO = 0x00000100,//the image expends as much as it can (no ratio constraint)
-	WINDOW_KEEPRATIO = 0x00000000//the ration image is respected.
-};
-
 namespace z {
 
 Matrix imread(char *filename);
@@ -38,4 +19,4 @@ void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int th
 void line(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int thickness = 1);
 }
 
-#endif // !_ZGUI_ZGUI_H
+#endif //!_ZGUI_ZGUI_H

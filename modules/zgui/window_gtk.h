@@ -1,7 +1,10 @@
 #ifndef __ZGUI_LINUX_H
 #define __ZGUI_LINUX_H
 
+#include "zcore/config.h"
 #include "zcore/types.h"
+
+#ifdef USE_GTK2
 
 #define Z_WINDOW_MAGIC_VAL     0x00420042
 #define Z_TRACKBAR_MAGIC_VAL   0x00420043
@@ -16,5 +19,5 @@ int zNamedWindow(const char* name, int flags = 1);
 int zWaitKey(int delay);
 void zShowImage(const char* name, void* arr);
 int GUIInitSystem(int argc, char** argv);
-
-#endif // !__ZGUI_LINUX_H
+#endif //!USE_GTK2
+#endif //!__ZGUI_LINUX_H

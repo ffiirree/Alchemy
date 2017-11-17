@@ -4,4 +4,7 @@
 #cmakedefine USE_OPENCV
 #cmakedefine USE_FFTW
 
+#cmakedefine USE_WIN32
+#cmakedefine USE_GTK2
+
 #endif // !__ZCORE_CONFIG_H

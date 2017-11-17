@@ -6,6 +6,8 @@
 # --------------------------------------------------------------
 cmake_minimum_required(VERSION 3.5)
 
+include(cmake/CMakeUtils.cmake)
+
 set(PROJECT_NAME zMatrix)
 project(${PROJECT_NAME})
 
@@ -13,46 +15,39 @@ project(${PROJECT_NAME})
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # 编译要求，使用C++11
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 if(MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
 endif()
 
+
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-
-# ========================== configuration ==========================
-configure_file ("${PROJECT_SOURCE_DIR}/cmake/config.h.in" "${PROJECT_SOURCE_DIR}/modules/zcore/config.h")
 
 # ========================== Options ==========================
 option(USE_OPENCV 	"Include OpenCV support" 	OFF)
 option(USE_KINECT 	"Include Kinect support"	OFF)
 option(USE_FFTW		"Include FFTW support"		ON)
-option(USE_FFMPEG 	"Include FFMPEG support" 	ON)
 option(USE_LIBJPEG 	"Include JPEG support" 		ON)
 
-find_package(OpenCV)
-
-if(USE_OPENCV AND OpenCV_FOUND)
-	include_directories(${OpenCV_INCLUDE_DIRS})
-endif()
-
 # ========================== 3rdparty ==========================
-# libjpeg
-set(LIBJPEG_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/3rdparty/libjpeg/include")
-set(LIBJPEG_LIBS "${PROJECT_SOURCE_DIR}/3rdparty/libjpeg/lib/libjpeg.lib")
-
 # fftw
-if(USE_FFTW)
+if(WIN32)
 	set(FFTW_ROOT_DIR "${PROJECT_SOURCE_DIR}/3rdparty/fftw")
 	set(FFTW_INCLUDE_DIRS ${FFTW_ROOT_DIR})
 	set(FFTW_LIBS  "${FFTW_ROOT_DIR}/libfftw3-3.lib" "${FFTW_ROOT_DIR}/libfftw3f-3.lib" "${FFTW_ROOT_DIR}/libfftw3l-3.lib")
 
 	include_directories(${FFTW_INCLUDE_DIRS})
-endif(USE_FFTW)
+else()
+    set(USE_FFTW OFF)
+endif()
 
-# Include header files
-include_directories(${LIBJPEG_INCLUDE_DIRS})
+include(cmake/FindGUI.cmake)
+include(cmake/FindImage.cmake)
+include(cmake/FindOCV.cmake)
+
+# ========================== configuration ==========================
+include(cmake/ConfigHeaders.cmake)
 
 # ========================== Debug ==========================
 set(CMAKE_DEBUG_POSTFIX "d")
@@ -73,26 +68,8 @@ enable_testing()
 add_subdirectory(test)
 
 # ========================== Install ==========================
-if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-	if(UNIX)
-		set(CMAKE_INSTALL_PREFIX "/usr/zMatrix" CACHE PATH "Installation Directory")
-	elseif(WIN32)
-		set(CMAKE_INSTALL_PREFIX "D:/zMatrix" CACHE PATH "Installation Directory")
-	endif()
-endif()
+include(cmake/Install.cmake)
 
-# header files
-install(FILES  ${PROJECT_SOURCE_DIR}/modules/zmatrix.h DESTINATION "${CMAKE_INSTALL_PREFIX}/include/")
-if(USE_KINECT)
-	install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/kinect/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/kinect" FILES_MATCHING PATTERN "*.h")
-endif(USE_KINECT)
-install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zcore/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/zcore" FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zgui/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/zgui" FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zimgproc/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/zimgproc" FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zfeatures2d/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/zfeatures2d" FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY  ${PROJECT_SOURCE_DIR}/modules/zmath/ DESTINATION "${CMAKE_INSTALL_PREFIX}/include/zmath" FILES_MATCHING PATTERN "*.h")
-
-include(cmake/CMakeUtils.cmake)
 
 # ========================== Build platform ==========================
 log("")
@@ -139,6 +116,42 @@ else()
 endif()
 
 
-if(HAVE_WIN32UI)
-log("    Win32 UI:"  YES)
+
+# ========================== Image ==========================
+log("")
+log("")
+log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Image ~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+log("")
+if(USE_JPEG)
+    log("    JPEG:" YES)
+else()
+    log("    JPEG:" NO)
 endif()
+
+if(USE_PNG)
+    log("    PNG:" YES)
+else()
+    log("    PNG:" NO)
+endif()
+log("")
+log("")
+
+
+# ========================== GUI ==========================
+log("")
+log("")
+log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ GUI ~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+log("")
+if(USE_WIN32)
+    log("    WIN32:" YES)
+else()
+    log("    WIN32:" NO)
+endif()
+
+if(USE_GTK2)
+    log("    Gtk+ 2.x:" YES)
+else()
+    log("    Gtk+ 2.x:" NO)
+endif()
+log("")
+log("")

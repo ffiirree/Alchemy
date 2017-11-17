@@ -6,7 +6,9 @@
 #include "windows_win32.h"
 #endif
 #ifdef linux
-#include "linux.h"
+#ifdef USE_GTK2
+#include "window_gtk.h"
+#endif //!USE_GTK2
 #endif
 
 extern "C" {

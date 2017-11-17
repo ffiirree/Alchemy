@@ -245,8 +245,12 @@ ModelManifest.xml
 .fake/
 
 
-.vscode/
+.vscode
 .vs
+.idea
+cmake-build-debug
+lib
+bin
 
 !3rdparty/
 !3rdparty/libjpeg/lib/libjpeg.lib

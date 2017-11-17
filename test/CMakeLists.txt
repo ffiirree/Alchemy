@@ -2,7 +2,7 @@
 #  CMakeLists.txt for test module
 # --------------------------------------------------------------
 
-link_libraries(${FFTW_LIBS} ${LIBJPEG_LIBS} ${OpenCV_LIBS} zgui zimgproc zmath zfeatures2d)
+link_libraries(zgui zimgproc zmath zfeatures2d ${FFTW_LIBS} ${JPEG_LIBRARIES} ${OpenCV_LIBS} ${GTK2_LIBRARIES} )
 if(USE_OPENCV)
     link_libraries(${OpenCV_LIBS})
 endif()
