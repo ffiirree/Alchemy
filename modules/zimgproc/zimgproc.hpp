@@ -386,12 +386,12 @@ template <typename _Tp> void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp
     d = r * 2 + 1;
 
     // 牺牲存储来换取时间
-    double * color_weight = new double[src.chs * 256];
-    double * space_weight = new double[d * d];
-    int * space_ofs = new int[d * d];
+    auto color_weight = new double[src.channels() * 256];
+    auto space_weight = new double[d * d];
+    auto space_ofs = new int[d * d];
 
     // initialize color-related bilateral filter coifficients
-    for (int i = 0; i < src.chs * 256; ++i)
+    for (int i = 0; i < src.channels() * 256; ++i)
         color_weight[i] = std::exp(i * i * gauss_color_coeff);
 
     for (int i = -r; i <= r; ++i) {
@@ -399,15 +399,15 @@ template <typename _Tp> void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp
             auto r_t = std::sqrt(static_cast<double>(i) * i + static_cast<double>(j) * j);
             if (r_t <= r) {
                 space_weight[max_ofs] = std::exp(r_t * r_t * gauss_space_coeff);
-                space_ofs[max_ofs++] = static_cast<int>(i * src.step + j * src.channels());
+                space_ofs[max_ofs++] = i * src.step + j * src.channels();
             }
         }
     }
 
-    double *temp_val = new double[src.channels()];
+    auto temp_val = new double[src.channels()];
 
     auto ptr = src.ptr();
-    auto data_len = src.size_ * src.channels();
+    auto data_len = src.total() * src.channels();
 
     for (int i = 0; i < data_len; i += src.channels()) {
         double norm = 0;
