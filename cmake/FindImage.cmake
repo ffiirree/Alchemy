@@ -1,32 +1,52 @@
 if(WIN32)
-    set(HAVE_JPEG ON)
-    set(USE_JPEG ON)
+    # libjpeg
     set(JPEG_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/3rdparty/libjpeg/include")
     set(JPEG_LIBRARIES "${PROJECT_SOURCE_DIR}/3rdparty/libjpeg/lib/libjpeg.lib")
+    
+    set(HAVE_JPEG ON)
+    set(USE_JPEG ON)
     include_directories(${JPEG_INCLUDE_DIR})
-elseif(UNIX)
 
+    # fftw3
+    set(FFTW_ROOT_DIR "${PROJECT_SOURCE_DIR}/3rdparty/fftw")
+    set(FFTW_INCLUDES ${FFTW_ROOT_DIR})
+    set(FFTW_LIBRARIES  "${FFTW_ROOT_DIR}/libfftw3-3.lib" "${FFTW_ROOT_DIR}/libfftw3f-3.lib" "${FFTW_ROOT_DIR}/libfftw3l-3.lib")
+
+    include_directories(${FFTW_INCLUDES})
+elseif(UNIX)
     # libjpeg
     find_package(JPEG)
     if(JPEG_FOUND)
         set(HAVE_JPEG ON)
         set(USE_JPEG ON)
+
         include_directories(${JPEG_INCLUDE_DIR})
     else(JPEG_FOUND)
-        message(NOT FOUND JPEG)
+    set(USE_JPEG OFF)
     endif(JPEG_FOUND)
 
-    # libpng
-    find_package(PNG)
-    if(PNG_FOUND)
-        set(HAVE_PNG ON)
+    # FFTW3
+    find_package(FFTW)
+    if(FFTW_FOUND)
+        set(HAVE_FFTW ON)
+        set(USE_FFTW ON)
+
+        include_directories(${FFTW_INCLUDES})
+    else()
+        set(USE_FFTW OFF)
     endif()
 
-    # libzib
-    find_package(ZLIB)
-    if(ZLIB_FOUND)
-        set(HAVE_ZLIB ON)
-    endif()
+    # # libpng
+    # find_package(PNG)
+    # if(PNG_FOUND)
+    #     set(HAVE_PNG ON)
+    # endif()
+
+    # # libzib
+    # find_package(ZLIB)
+    # if(ZLIB_FOUND)
+    #     set(HAVE_ZLIB ON)
+    # endif()
 endif(WIN32)
 
 

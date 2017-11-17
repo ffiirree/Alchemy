@@ -32,15 +32,8 @@ option(USE_LIBJPEG 	"Include JPEG support" 		ON)
 
 # ========================== 3rdparty ==========================
 # fftw
-if(WIN32)
-	set(FFTW_ROOT_DIR "${PROJECT_SOURCE_DIR}/3rdparty/fftw")
-	set(FFTW_INCLUDE_DIRS ${FFTW_ROOT_DIR})
-	set(FFTW_LIBS  "${FFTW_ROOT_DIR}/libfftw3-3.lib" "${FFTW_ROOT_DIR}/libfftw3f-3.lib" "${FFTW_ROOT_DIR}/libfftw3l-3.lib")
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_MODULE_PATH}")
 
-	include_directories(${FFTW_INCLUDE_DIRS})
-else()
-    set(USE_FFTW OFF)
-endif()
 
 include(cmake/FindGUI.cmake)
 include(cmake/FindImage.cmake)
@@ -132,6 +125,12 @@ if(USE_PNG)
     log("    PNG:" YES)
 else()
     log("    PNG:" NO)
+endif()
+
+if(USE_FFTW)
+    log("    FFTW:" YES)
+else()
+    log("    FFTW:" NO)
 endif()
 log("")
 log("")

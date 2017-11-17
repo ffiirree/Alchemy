@@ -31,6 +31,8 @@ int main(int argc, char *argv[])
     z::idft(BackImage, DstImage);
 
     z::Matrix res = DstImage;
+    z::imshow("res", res);
+    z::waitKey(0);
 
     return 0;
 }

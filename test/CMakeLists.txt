@@ -2,15 +2,7 @@
 #  CMakeLists.txt for test module
 # --------------------------------------------------------------
 
-link_libraries(zgui zimgproc zmath zfeatures2d ${FFTW_LIBS} ${JPEG_LIBRARIES} ${OpenCV_LIBS} ${GTK2_LIBRARIES} )
-if(USE_OPENCV)
-    link_libraries(${OpenCV_LIBS})
-endif()
-
-if(USE_FFTW)
-    link_libraries(${FFTW_LIBS})
-endif()
-
+link_libraries(zgui zimgproc zmath zfeatures2d ${FFTW_LIBRARIES} ${JPEG_LIBRARIES} ${OpenCV_LIBS} ${GTK2_LIBRARIES} )
 # test_new_zmatrix
 add_executable(test_new_zmatrix test_new_zmatrix.cpp)
 add_test(TEST_NEW_ZMATRIX ${EXECUTABLE_OUTPUT_PATH}/test_new_zmatrix)
