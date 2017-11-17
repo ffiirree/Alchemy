@@ -1,15 +1,12 @@
 #include "zgui.h"
-#include "zimgproc/zimgproc.h"
-#include "zcore/zdef.h"
 
-#ifdef WIN32
-#include "window_win32.h"
-#endif
-#ifdef linux
-#ifdef USE_GTK2
-#include "window_gtk.h"
-#endif //!USE_GTK2
-#endif
+#ifdef __unix__
+    #ifdef USE_GTK2
+    #include "window_gtk.h"
+    #endif //! USE_GTK2
+#elif defined(_WIN32) || defined(WIN32)
+    #include "window_win32.h"
+#endif //! __unix__
 
 extern "C" {
 #include <jpeglib.h>

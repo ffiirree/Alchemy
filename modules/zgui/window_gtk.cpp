@@ -103,7 +103,7 @@ gboolean on_darea_expose (GtkWidget *widget, GdkEventExpose *event, gpointer use
                             0, 0, image->cols, image->rows,
                             GDK_RGB_DITHER_MAX, image->data, image->cols * 3);
     }
-
+    return true;
 }
 
 void zShowImage(const char* name, void* arr)

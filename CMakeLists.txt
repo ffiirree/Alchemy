@@ -46,6 +46,15 @@ if(MSVC)
 
 	# 允许编译器以打包函数(COMDATs)的形式对各个函数进行打包。
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Gy")
+elseif(CMAKE_COMPILER_IS_GNUCXX)
+    # enable extra warning
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
+    # warn all, 所有警告
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Werror=non-virtual-dtor \
+        -Werror=address -Werror=sequence-point -Wformat -Werror=format-security \
+        -Wmissing-declarations -Wundef -Wuninitialized -Winit-self")
 endif()
 
 # 设置bin和lib目录
