@@ -153,6 +153,10 @@ static void destroy()
 
 int zWaitKey(int delay)
 {
+    if(delay != 0) {
+        g_timeout_add(static_cast<guint>(delay), (GSourceFunc)gtk_main_quit, nullptr);
+    }
+
     gtk_main();
 
     return key;

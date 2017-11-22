@@ -1,16 +1,20 @@
-#include "zmatrix.h"
+//#include "zmatrix.h"
+#include <zmatrix.h>
 
 
 int main(int argc, char * argv[])
 {
-    auto image = z::imread(const_cast<char *>("test.jpeg"));
-    z::Matrix gray = image;
-    z::cvtColor(image, gray, z::BGR2GRAY);
+    z::VideoCapture camera(0);
 
+    if(camera.isOpened()) {
+        z::Matrix frame;
 
-    z::imshow("hello", gray);
-    z::imshow("original", image);
-    z::waitKey(0);
+        while(z::waitKey(20) != 'q') {
+            camera >> frame;
+
+            z::imshow("frame", frame);
+        }
+    }
 
     return 0;
 }

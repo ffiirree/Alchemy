@@ -3,6 +3,7 @@
 
 #cmakedefine USE_OPENCV
 #cmakedefine USE_FFTW
+#cmakedefine USE_FFMPEG
 
 #cmakedefine USE_WIN32
 #cmakedefine USE_GTK2

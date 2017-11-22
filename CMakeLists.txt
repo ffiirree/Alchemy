@@ -74,6 +74,7 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_MODULE_PATH}")
 
 include(cmake/FindGUI.cmake)
 include(cmake/FindImage.cmake)
+include(cmake/FindLibsVideo.cmake)
 include(cmake/FindOCV.cmake)
 
 # ========================== configuration ==========================
@@ -169,6 +170,12 @@ if(USE_FFTW)
     log("    FFTW:" YES)
 else()
     log("    FFTW:" NO)
+endif()
+
+if(USE_FFMPEG)
+    log("    FFMPEG:" YES)
+else()
+    log("    FFMPEG:" NO)
 endif()
 log("")
 
