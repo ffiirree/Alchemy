@@ -253,6 +253,6 @@ lib
 bin
 modules/zcore/config.h
 
-!3rdparty/
+!3rdparty/ffmpeg/*
 !3rdparty/libjpeg/lib/libjpeg.lib
 !bin/test.jpeg
