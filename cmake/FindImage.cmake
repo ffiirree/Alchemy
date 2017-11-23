@@ -12,16 +12,6 @@ if(WIN32)
     set(FFTW_INCLUDES ${FFTW_ROOT_DIR})
     set(FFTW_LIBRARIES  "${FFTW_ROOT_DIR}/libfftw3-3.lib" "${FFTW_ROOT_DIR}/libfftw3f-3.lib" "${FFTW_ROOT_DIR}/libfftw3l-3.lib")
 
-    # Copy *.dll files
-    file(GLOB FFTW_DLIBS "${FFTW_ROOT_DIR}/*.dll")
-    add_custom_command(
-        TARGET COPY_DLL_FILES
-        POST_BUILD 
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${EXECUTABLE_OUTPUT_PATH}/$<CONFIG>/"
-        COMMAND "${CMAKE_COMMAND}" -E copy_if_different ${FFTW_DLIBS} "${PROJECT_SOURCE_DIR}/bin/$<CONFIG>/"
-    )
-
-    # headers
     include_directories(${FFTW_INCLUDES})
 elseif(UNIX)
     # libjpeg

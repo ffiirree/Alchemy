@@ -70,9 +70,7 @@ option(USE_JPEG 	"Include JPEG support" 		ON)
 # ========================== 3rdparty ==========================
 # fftw
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_MODULE_PATH}")
-if(WIN32)
-	add_custom_target(COPY_DLL_FILES ALL)
-endif()
+
 
 include(cmake/FindGUI.cmake)
 include(cmake/FindImage.cmake)
@@ -101,7 +99,7 @@ enable_testing()
 add_subdirectory(test)
 
 # ========================== Install ==========================
-# include(cmake/Install.cmake)
+include(cmake/Install.cmake)
 
 
 # ========================== Build platform ==========================
@@ -200,6 +198,6 @@ endif()
 log("")
 log("")
 
-# log("Install path:" ${CMAKE_INSTALL_PREFIX})
+log("Install path:" ${CMAKE_INSTALL_PREFIX})
 log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 log("")
