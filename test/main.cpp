@@ -9,7 +9,7 @@ int main(int argc, char * argv[])
     if(camera.isOpened()) {
         z::Matrix frame;
 
-        while(z::waitKey(20) != 'q') {
+        while(z::waitKey(10) != 'q') {
             camera >> frame;
 
             z::imshow("frame", frame);
