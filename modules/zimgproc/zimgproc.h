@@ -29,6 +29,8 @@ typedef enum {
 }Ft;
 
 namespace z{
+template <typename _Tp> void addWeighted(const _Matrix<_Tp>&src1, double alpha, const _Matrix<_Tp>&src2, double beta, double gamma, _Matrix<_Tp>&dst);
+
 template <typename _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code);
 
 // 多通道分离和混合

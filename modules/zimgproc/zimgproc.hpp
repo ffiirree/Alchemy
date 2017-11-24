@@ -68,6 +68,28 @@ _Size<_Tp>& _Size<_Tp>::operator = (const _Size& sz)
     return *this;
 }
 
+
+template <typename _Tp>
+void addWeighted(const _Matrix<_Tp>&src1, double alpha, const _Matrix<_Tp>&src2, double beta, double gamma, _Matrix<_Tp>&dst)
+{
+    assert(src1.size() == src2.size());
+    assert(src1.channels() == src1.channels());
+
+    if(dst.size() != src1.size() || dst.channels() != src1.channels()){
+        dst.create(src1.size(), src1.channels());
+    }
+
+    auto _len = src1.channels() * src1.cols;
+    for (auto i = 0; i < src1.rows; ++i) {
+        auto _ptr_1 = src1.ptr(i);
+        auto _ptr_2 = src2.ptr(i);
+        auto _ptr_3 = dst.ptr(i);
+        for (auto j = 0; j < _len; ++j) {
+            _ptr_3[j] = saturate_cast<_Tp>(_ptr_1[j] * alpha + _ptr_2[j] * beta + gamma);
+        }
+    }
+}
+
 template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code)
 {
     auto is_hsv = false;
@@ -369,6 +391,8 @@ template <typename _Tp> void medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, S
 // attention: pix: 1*8 or 3*8 uchar
 template <typename _Tp> void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int d, double sigmaColor, double sigmaSpace)
 {
+    assert(src.isContinuous());
+
     if (!dst.equalSize(src))
         dst.create(src.size(), src.channels());
 

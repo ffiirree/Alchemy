@@ -14,7 +14,7 @@
 #ifndef _ZCORE_ZMATRIX_H
 #define _ZCORE_ZMATRIX_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <functional>
 #include <cstring>
 #include "config.h"
@@ -45,7 +45,7 @@ public:
     /**
      * @overload
      * @param rows Number of rows in a 2D array.
-     * @param cols Bumber of columns in a 2D array.
+     * @param cols Number of columns in a 2D array.
      * @Param _chs Number of channels. Default: 1.
      */
     _Matrix(int rows, int cols, int _chs = 1);
@@ -60,7 +60,7 @@ public:
     /**
      * @overload
      * @param rows Number of rows in a 2D array.
-     * @param cols Bumber of columns in a 2D array.
+     * @param cols Number of columns in a 2D array.
      * @Param _chs Number of channels.
      * @Param s An optional value to initialize each matrix element with.
      */
@@ -141,9 +141,14 @@ public:
     _Matrix<_Tp> inv();
 
     /**
+     * @brief Performs an element-wise multiplication or division of the two matrices.
+     */
+    _Matrix<_Tp> mul(const _Matrix<_Tp>& m, double scale=1) const;
+
+    /**
      * @brief Computes a dot-product of two vectors.
      */
-    _Matrix<_Tp> dot(_Matrix<_Tp> &m);
+    double dot(const _Matrix<_Tp> &m);
 
     /**
      * @brief Computes a cross-product of two 3-element vectors.
@@ -348,13 +353,6 @@ public:
 
     void swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1);
 
-    /**
-     * - continuity flag: 1 bits
-     * - type: 8 bits
-     * - number of channels: 8 bits
-     */
-    int flags = 0;
-
     // Number of rows.
     int rows = 0;
     // Number of columns.
@@ -363,15 +361,22 @@ public:
     // Data area
     uint8_t *data = nullptr;
 
+    // Length of rows. 
+    int step = 0;
+
+private:
+    /**
+    * - continuity flag: 1 bits
+    * - type: 8 bits
+    * - number of channels: 8 bits
+    */
+    int flags = 0;
+
     // The start address of the Matrix's data area.
     uint8_t *datastart = nullptr;
     // The end address of the Matrix's data area.
     uint8_t *dataend = nullptr;
 
-    // Length of rows. 
-    int step = 0;
-
-private:
     // The size of element.
     size_t esize_ = 0;
 
@@ -527,8 +532,8 @@ public:
     _MatrixIterator& operator ++();
     _MatrixIterator operator ++(int);
 };
-}
+} //! namespace z
 
 #include "operations.hpp"
 
-#endif  // !_ZCORE_ZMATRIX_H
+#endif  //! _ZCORE_ZMATRIX_H

@@ -9,11 +9,7 @@ namespace z
 #ifdef USE_FFMPEG
 VideoCapture::VideoCapture(int32_t index)
 {
-    if((opened_ = open(index)) != false) {
-		avpicture_alloc(&picture_, AV_PIX_FMT_BGR24, codec_context_->width, codec_context_->height);
-
-		frame_ = av_frame_alloc();
-    }
+    opened_ = open(index);
 }
 
 bool VideoCapture::open(int32_t index)
@@ -41,7 +37,12 @@ bool VideoCapture::open(int32_t index)
         return false;
 
     codec_context_ = format_context_->streams[video_stream_index_]->codec;
-    return avcodec_open2(codec_context_, codec, nullptr) >= 0;
+    if(avcodec_open2(codec_context_, codec, nullptr) < 0) return false;
+
+    avpicture_alloc(&picture_, AV_PIX_FMT_BGR24, codec_context_->width, codec_context_->height);
+    frame_ = av_frame_alloc();
+
+    return true;
 }
 
 VideoCapture::~VideoCapture()

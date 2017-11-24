@@ -8,8 +8,6 @@
 #include <zmatrix.h>
 #include "gtk/gtk.h"
 
-static void destroy();
-
 class zWindow
 {
 public:
@@ -24,6 +22,11 @@ public:
     GtkWidget * area = nullptr;
     z::Matrix image;
 };
+
+static void destroy();
+static zWindow * findWindow(const std::string& name);
+static gboolean on_darea_expose (GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
+static void keyboard_callback(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
 
 static zWindow * window_head = nullptr;
 

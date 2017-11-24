@@ -13,23 +13,20 @@
  */
 #include <algorithm>
 #include "zimgproc.h"
-#include "zcore/config.h"
-#include "zcore/debug.h"
-#include "zmath/zmath.h"
 
 #ifdef USE_FFTW
 #include <fftw3.h>
 #endif
 
-namespace z{
+namespace z {
 
 void convertImage(Matrix8u *src, Matrix8u *dst, int flags)
 {
 	if (!dst->equalSize(*src))
 		dst->create(src->rows, src->cols, src->channels());
 
-	for (auto i = 0; i < src->rows; ++i) 
-		for (auto j = 0; j < src->cols; ++j) 
+	for (auto i = 0; i < src->rows; ++i)
+		for (auto j = 0; j < src->cols; ++j)
 			for (auto k = 0; k < src->channels(); ++k)
 				dst->at(i, j, k) = src->at(src->rows - i - 1, j, k);
 }
@@ -62,7 +59,9 @@ Matrix64f Gassion(Size ksize, double sigmaX, double sigmaY)
 	return kernel;
 }
 
-
+///////////////////////////////////////////// DFT ///////////////////////////////////////////////////
+static int getIdealRows(int rows);
+static int getIdealCols(int cols);
 
 /**
  * @brief 1D or 2D 离散傅里叶变换
@@ -123,7 +122,6 @@ void _dft(Matrix64f & src, Matrix64f & dst, Ft ft)
     }
     dst = end;
 }
-
 
 /**
  * @brief 获取基2FFT理想的矩阵尺寸

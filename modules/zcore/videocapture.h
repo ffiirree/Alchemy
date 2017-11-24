@@ -17,11 +17,13 @@ extern "C" {
 #include "libavcodec/avcodec.h"
 };
 
-namespace z{
+namespace z {
+
 class VideoCapture {
 public:
     explicit VideoCapture(int32_t index);
-
+    VideoCapture(const VideoCapture&) = delete;
+    VideoCapture& operator=(const VideoCapture&) = delete;
     ~VideoCapture();
 
     bool isOpened() const { return opened_; }

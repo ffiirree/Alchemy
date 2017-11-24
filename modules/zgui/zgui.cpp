@@ -11,25 +11,25 @@
 extern "C" {
 #include <jpeglib.h>
 #include <setjmp.h>
-GLOBAL(int) read_JPEG_file(char * filename, z::Matrix8u & img);
-GLOBAL(void) write_JPEG_file(char * filename, z::Matrix8u & img, int quality);
+GLOBAL(int) read_JPEG_file(const char * filename, z::Matrix8u & img);
+GLOBAL(void) write_JPEG_file(const char * filename, z::Matrix8u & img, int quality);
 }
 
 namespace z{
 
-Matrix imread(char *filename)
+Matrix imread(const std::string& filename)
 {
 	Matrix temp;
-	read_JPEG_file(filename, temp);
+	read_JPEG_file(filename.c_str(), temp);
 	return temp;
 }
 
-void imwrite(char *filename, Matrix8u & img, int quality)
+void imwrite(const std::string& filename, Matrix8u & img, int quality)
 {
 	Matrix8u rgbimg;
 	cvtColor(img, rgbimg, BGR2RGB);
 
-	write_JPEG_file(filename, rgbimg, quality);
+	write_JPEG_file(filename.c_str(), rgbimg, quality);
 }
 
 void namedWindow(const std::string & name, int flags)
@@ -54,7 +54,7 @@ int waitKey(int delay)
 
 void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int thickness)
 {
-	float x = static_cast<float>(pt1.x), y = static_cast<float>(pt1.y);
+	auto x = static_cast<float>(pt1.x), y = static_cast<float>(pt1.y);
 	int dx = pt2.x - pt1.x;
 	int dy = pt2.y - pt1.y;
 	float steps = 0;
@@ -91,7 +91,7 @@ extern "C"{
  * and a compression quality factor are passed in.
  */
 
-GLOBAL(void) write_JPEG_file (char * filename, z::Matrix8u & img, int quality)
+GLOBAL(void) write_JPEG_file (const char * filename, z::Matrix8u & img, int quality)
 {
   /* This struct contains the JPEG compression parameters and pointers to
    * working space (which is allocated as needed by the JPEG library).
@@ -230,7 +230,7 @@ my_error_exit(j_common_ptr cinfo)
 * Sample routine for JPEG decompression.  We assume that the source file name
 * is passed in.  We want to return 1 on success, 0 on error.
 */
-GLOBAL(int) read_JPEG_file(char * filename, z::Matrix8u & img)
+GLOBAL(int) read_JPEG_file(const char * filename, z::Matrix8u & img)
 {
 	/* This struct contains the JPEG decompression parameters and pointers to
 	* working space (which is allocated as needed by the JPEG library).

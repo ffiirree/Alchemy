@@ -259,7 +259,7 @@ void Canny(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2, int
 
 
 #define _data(x, y) src.at(x, y)
-void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
+void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
 {
     std::vector<Point> middle_res;
 
@@ -378,7 +378,7 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
 #undef _data
 
 #define _data(x, y) src.at(x, y)
-void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
+void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
 {
     std::vector<Point> middle_res;
     int LNBD = 0;

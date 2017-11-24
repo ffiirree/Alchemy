@@ -16,23 +16,23 @@ enum BorderTypes {
 
 // Method of boundary processing.
 #define BORDER_REPLICATE_CALLBACK(src)  [&](int &_i, int &_j) { \
-        _i < 0 ? _i = 0 : _i >= src.rows ? _i = src.rows - 1 : 0;   \
-        _j < 0 ? _j = 0 : _j >= src.cols ? _j = src.cols - 1 : 0;   \
+        _i < 0 ? _i = 0 : _i >= (src).rows ? _i = (src).rows - 1 : 0;   \
+        _j < 0 ? _j = 0 : _j >= (src).cols ? _j = (src).cols - 1 : 0;   \
     }
 
 #define BORDER_REFLECT_CALLBACK(src) [&](int &_i, int &_j) {\
-        _i < 0 ? _i = -_i - 1 : _i >= src.rows ? _i = src.rows - 1 - (_i - src.rows) : 0;\
-        _j < 0 ? _j = -_j - 1 : _j >= src.cols ? _j = src.cols - 1 - (_j - src.cols) : 0;\
+        _i < 0 ? _i = -_i - 1 : _i >= (src).rows ? _i = (src).rows - 1 - (_i - (src).rows) : 0;\
+        _j < 0 ? _j = -_j - 1 : _j >= (src).cols ? _j = (src).cols - 1 - (_j - (src).cols) : 0;\
     }
 
 #define BORDER_WRAP_CALLBACK(src) [&](int &_i, int &_j) {\
-        _i < 0 ? _i = src.rows + _i : _i >= src.rows ? _i = _i - src.rows : 0;\
-        _j < 0 ? _j = src.cols + _j : _j >= src.cols ? _j = _j - src.cols : 0;\
+        _i < 0 ? _i = (src).rows + _i : _i >= (src).rows ? _i = _i - (src).rows : 0;\
+        _j < 0 ? _j = (src).cols + _j : _j >= (src).cols ? _j = _j - (src).cols : 0;\
     }
 
 #define BORDER_DEFAULT_CALLBACK(src) [&](int &_i, int &_j) {\
-        _i < 0 ? _i = -_i : _i >= src.rows ? _i = src.rows - 2 - (_i - src.rows) : 0;\
-        _j < 0 ? _j = -_j : _j >= src.cols ? _j = src.cols - 2 - (_j - src.cols) : 0;\
+        _i < 0 ? _i = -_i : _i >= (src).rows ? _i = (src).rows - 2 - (_i - (src).rows) : 0;\
+        _j < 0 ? _j = -_j : _j >= (src).cols ? _j = (src).cols - 2 - (_j - (src).cols) : 0;\
     }
 
 /**

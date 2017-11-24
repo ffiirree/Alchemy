@@ -90,10 +90,7 @@ void __sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, _Matrix<_Tp>&dstGD, int dx, int
     int *tempGy = new int[src.channels()];
     int *tempG = new int[src.channels()];
     int m = ksize / 2, n = ksize / 2;
-    unsigned char * srcPtr = nullptr;
-    unsigned char * dstPtr = nullptr;
     unsigned char * dstGDPtr = nullptr;
-    int alpha = 0;
     double ang = 0;
 
     for (int i = 0; i < dst.rows; ++i) {

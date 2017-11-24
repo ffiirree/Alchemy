@@ -289,7 +289,6 @@ _Matrix<_Tp>& _Matrix<_Tp>::operator=(std::initializer_list<_Tp> list)
 
     if (list.size() == 0) return *this;
 
-    auto count = std::min(total(), list.size());
     auto data_ptr = ptr<_Tp>();
 
     if (isContinuous()) {
@@ -752,18 +751,36 @@ _Matrix<_Tp> _Matrix<_Tp>::t()
 }
 
 template <typename _Tp>
-_Matrix<_Tp> _Matrix<_Tp>::dot(_Matrix<_Tp> &m)
+_Matrix<_Tp> _Matrix<_Tp>::mul(const _Matrix<_Tp> &m, double scale) const {
+    return MatrixCompute()(*this, m, [scale](auto&& _val_1, auto&& _val_2)
+    {
+        return (_val_1 * _val_2) * scale;
+    });
+}
+
+
+template <typename _Tp>
+double _Matrix<_Tp>::dot(const _Matrix<_Tp> &m)
 {
-    if (rows != m.rows || cols != m.cols || channels() != m.channels())
-        _log_("rows != m.rows || cols != m.cols || || chs != m.chs");
+    assert(size() == m.size() && channels() == m.channels());
 
-    _Matrix<_Tp> temp(m.rows, m.cols, m.channels());
+    auto _r = 0.0;
 
-    for (size_t i = 0; datastart + i < dataend; ++i) {
-        temp.data[i] = data[i] * m.data[i];
+    if(isContinuous() && m.isContinuous()){
+        for (size_t i = 0; datastart + i < dataend; ++i) {
+            _r += data[i] * m.data[i];
+        }
+    }
+    else {
+        auto begin_1 = begin<_Tp>(), end_1 = end<_Tp>();
+        auto begin_2 = m.begin<_Tp>();
+
+        for(; begin_1 != end_1; ++begin_1, ++begin_2) {
+            _r += (*begin_1) * (*begin_2);
+        }
     }
 
-    return temp;
+    return _r;
 }
 
 template <typename _Tp>
@@ -793,7 +810,7 @@ void _Matrix<_Tp>::swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1) {
 template <typename _Tp>
 _Tp* _Matrix<_Tp>::operator[](size_t n)
 {
-    assert(!(static_cast<unsigned>(n) >= static_cast<unsigned>(rows)));
+    assert(static_cast<unsigned>(n) < static_cast<unsigned>(rows));
 
     return reinterpret_cast<_Tp *>(data + n * step);
 }
@@ -801,11 +818,10 @@ _Tp* _Matrix<_Tp>::operator[](size_t n)
 template <typename _Tp>
 const _Tp* _Matrix<_Tp>::operator[](size_t n) const
 {
-    assert(!(static_cast<unsigned>(n) >= static_cast<unsigned>(rows)));
+    assert(static_cast<unsigned>(n) < static_cast<unsigned>(rows));
 
     return reinterpret_cast<const _Tp*>(data + n * step);
 }
-
 
 ///////////////////////////////////////// _Matrix Operators ////////////////////////////////////////////
 template <typename _Tp>

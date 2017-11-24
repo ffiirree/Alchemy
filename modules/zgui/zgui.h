@@ -6,8 +6,8 @@
 
 namespace z {
 
-Matrix imread(char *filename);
-void imwrite(char *filename, Matrix8u & img, int quality = 95);
+Matrix imread(const std::string& filename);
+void imwrite(const std::string& filename, Matrix8u & img, int quality = 95);
 
 void imshow(const std::string & name, Matrix8u & mat);
 void namedWindow(const std::string & name, int flags = 1);
