@@ -19,7 +19,7 @@
 #include "zcore/zdef.h"
 #include "zcore/types.h"
 #include "zmath/zmath.h"
-#include "zcore/zmatrix.h"
+#include "zcore/matrix.h"
 #include <functional>
 
 namespace z {
@@ -66,28 +66,6 @@ _Size<_Tp>& _Size<_Tp>::operator = (const _Size& sz)
     width = sz.width;
     height = sz.height;
     return *this;
-}
-
-
-template <typename _Tp>
-void addWeighted(const _Matrix<_Tp>&src1, double alpha, const _Matrix<_Tp>&src2, double beta, double gamma, _Matrix<_Tp>&dst)
-{
-    assert(src1.size() == src2.size());
-    assert(src1.channels() == src1.channels());
-
-    if(dst.size() != src1.size() || dst.channels() != src1.channels()){
-        dst.create(src1.size(), src1.channels());
-    }
-
-    auto _len = src1.channels() * src1.cols;
-    for (auto i = 0; i < src1.rows; ++i) {
-        auto _ptr_1 = src1.ptr(i);
-        auto _ptr_2 = src2.ptr(i);
-        auto _ptr_3 = dst.ptr(i);
-        for (auto j = 0; j < _len; ++j) {
-            _ptr_3[j] = saturate_cast<_Tp>(_ptr_1[j] * alpha + _ptr_2[j] * beta + gamma);
-        }
-    }
 }
 
 template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code)
@@ -297,7 +275,7 @@ template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& ds
 
 template <typename _Tp> void GaussianBlur(_Matrix<_Tp>&src, _Matrix<_Tp> & dst, Size size, double sigmaX, double sigmaY, int borderType)
 {
-    conv(src, dst, Gassion(size, sigmaX, sigmaY), borderType);
+    conv(src, dst, Gaussian(size, sigmaX, sigmaY), borderType);
 }
 
 template <typename _Tp> void embossingFilter(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size, int borderType)
@@ -452,7 +430,7 @@ template <typename _Tp> void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp
                     cv += ptr[c_pos + k];
                 }
 
-                double w2 = color_weight[abs(cv - mv)];
+                double w2 = color_weight[std::abs(cv - mv)];
                 double w = w1 * w2;
                 norm += w;
                 for (int k = 0; k < src.channels(); ++k) {
@@ -745,7 +723,7 @@ void threshold(_Matrix<_Tp> &src, _Matrix<_Tp>& dst, double thresh, double maxva
 
 template <typename _Tp> void pyrUp(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
 {
-    auto kernel = Gassion({ 5, 5 }, 0, 0);
+    auto kernel = Gaussian({5, 5}, 0, 0);
     kernel = kernel * 4;
 
     auto temp = _Matrix<_Tp>::zeros(src.rows * 2, src.cols * 2, src.channels());
@@ -761,7 +739,7 @@ template <typename _Tp> void pyrUp(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
 
 template <typename _Tp> void pyrDown(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
 {
-    conv(src, dst, Gassion({ 5, 5 }, 0, 0));
+    conv(src, dst, Gaussian({5, 5}, 0, 0));
 
     int dst_rows = src.rows / 2;
     int dst_cols = src.cols / 2;

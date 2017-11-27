@@ -6,7 +6,7 @@
 #define _ZCORE_VIDEOCAPTURE_H
 
 #include <string>
-#include "zmatrix.h"
+#include "matrix.h"
 
 #ifdef USE_FFMPEG
 

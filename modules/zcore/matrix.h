@@ -18,8 +18,8 @@
 #include <functional>
 #include <cstring>
 #include "config.h"
+#include "traits.h"
 #include "types.h"
-#include "matrix_compute.h"
 
 
 #if defined(USE_OPENCV)
@@ -134,6 +134,11 @@ public:
      *  @brief Transposes a matrix.
      */
     _Matrix<_Tp> t();
+
+    /**
+     * @brief Trace of the matrix.
+     */
+    Scalar trace() const;
 
     /**
      * @brief Inverses a matrix.
@@ -337,8 +342,9 @@ public:
     template<typename _T2> _MatrixIterator<_T2> end();
     template<typename _T2> _MatrixConstIterator<_T2> end() const;
 
-    _Matrix<_Tp>& operator()(_Tp * InputArray, Size size);
-    _Matrix<_Tp>& operator()(_Tp * InputArray, int rows, int cols);
+
+    template<typename _Tp2, class Func> void forEach(const Func& callback);
+    template<class Func> void forEach(const Func& callback);
 
     /**
      * @brief
@@ -404,68 +410,105 @@ typedef _Matrix<unsigned char>      Matrix;
 template <class _Tp> _Matrix<_Tp> operator+(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
 template <class _Tp> _Matrix<_Tp> operator+(const _Matrix<_Tp> &m, const Scalar& delta);
 template <class _Tp> _Matrix<_Tp> operator+(const Scalar& delta, const _Matrix<_Tp> &m);
+template <class _Tp> _Matrix<_Tp> operator+(const _Matrix<_Tp> &m, double delta);
+template <class _Tp> _Matrix<_Tp> operator+(double delta, const _Matrix<_Tp> &m);
 
 template <class _Tp> _Matrix<_Tp> operator+=(_Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
 template <class _Tp> _Matrix<_Tp> operator+=(_Matrix<_Tp> &m, const Scalar& delta);
+template <class _Tp> _Matrix<_Tp> operator+=(_Matrix<_Tp> &m, double delta);
 
 template <class _Tp> _Matrix<_Tp> operator-(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
 template <class _Tp> _Matrix<_Tp> operator-(const _Matrix<_Tp> &m, const Scalar& delta);
 template <class _Tp> _Matrix<_Tp> operator-(const Scalar& delta, const _Matrix<_Tp> &m);
+template <class _Tp> _Matrix<_Tp> operator-(const _Matrix<_Tp> &m, double delta);
+template <class _Tp> _Matrix<_Tp> operator-(double delta, const _Matrix<_Tp> &m);
 
 template <class _Tp> _Matrix<_Tp> operator-=(_Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
 template <class _Tp> _Matrix<_Tp> operator-=(_Matrix<_Tp> &m, const Scalar& delta);
+template <class _Tp> _Matrix<_Tp> operator-=(_Matrix<_Tp> &m, double delta);
 
 template <class _Tp> _Matrix<_Tp> operator*(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+template <class _Tp> _Matrix<_Tp> operator*(const _Matrix<_Tp> &m, const Scalar& v);
+template <class _Tp> _Matrix<_Tp> operator*(const Scalar& v, const _Matrix<_Tp> &m);
 template <class _Tp> _Matrix<_Tp> operator*(const _Matrix<_Tp> &m, double v);
 template <class _Tp> _Matrix<_Tp> operator*(double v, const _Matrix<_Tp> &m);
 
 template <class _Tp> _Matrix<_Tp> operator*=(_Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+template <class _Tp> _Matrix<_Tp> operator*=(_Matrix<_Tp> &m, const Scalar& v);
 template <class _Tp> _Matrix<_Tp> operator*=(_Matrix<_Tp> &m, double v);
 
-//template <class _Tp> _Matrix<_Tp> operator/(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+template <class _Tp> _Matrix<_Tp> operator/(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+template <class _Tp> _Matrix<_Tp> operator/(const _Matrix<_Tp> &m, const Scalar& v);
+template <class _Tp> _Matrix<_Tp> operator/(const Scalar& v, const _Matrix<_Tp> &m);
 template <class _Tp> _Matrix<_Tp> operator/(const _Matrix<_Tp> &m, double v);
 template <class _Tp> _Matrix<_Tp> operator/(double v, const _Matrix<_Tp> &m);
 
-//template <class _Tp> _Matrix<_Tp> operator/=(_Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+template <class _Tp> _Matrix<_Tp> operator/=(_Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+template <class _Tp> _Matrix<_Tp> operator/=(_Matrix<_Tp> &m, const Scalar& v);
 template <class _Tp> _Matrix<_Tp> operator/=(_Matrix<_Tp> &m, double v);
 
-//template <class _Tp> _Matrix<_Tp> operator&(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2);
-//template <class _Tp> _Matrix<_Tp> operator&(_Matrix<_Tp> &m, const Scalar& delta);
-//template <class _Tp> _Matrix<_Tp> operator&(const Scalar& delta, _Matrix<_Tp> &m);
-//
-//template <class _Tp> _Matrix<_Tp> operator|(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2);
-//template <class _Tp> _Matrix<_Tp> operator|(_Matrix<_Tp> &m, const Scalar& delta);
-//template <class _Tp> _Matrix<_Tp> operator|(const Scalar& delta, _Matrix<_Tp> &m);
-//
-//template <class _Tp> _Matrix<_Tp> operator^(_Matrix<_Tp> &m1, _Matrix<_Tp> &m2);
-//template <class _Tp> _Matrix<_Tp> operator^(_Matrix<_Tp> &m, const Scalar& delta);
-//template <class _Tp> _Matrix<_Tp> operator^(const Scalar& delta, _Matrix<_Tp> &m);
-//
-//template <class _Tp> _Matrix<_Tp> operator~(_Matrix<_Tp> &m);
-
+template <class _Tp> _Matrix<_Tp> operator>(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+template <class _Tp> _Matrix<_Tp> operator>(const _Matrix<_Tp> &m, const Scalar& threshold);
+template <class _Tp> _Matrix<_Tp> operator>(const Scalar& threshold, const _Matrix<_Tp> &m);
 template <class _Tp> _Matrix<_Tp> operator>(const _Matrix<_Tp> &m, double threshold);
 template <class _Tp> _Matrix<_Tp> operator>(double threshold, const _Matrix<_Tp> &m);
 
+template <class _Tp> _Matrix<_Tp> operator>=(const _Matrix<_Tp> &m1, const _Matrix<_Tp>& m2);
+template <class _Tp> _Matrix<_Tp> operator>=(const _Matrix<_Tp> &m, const Scalar& threshold);
+template <class _Tp> _Matrix<_Tp> operator>=(const Scalar& threshold, const _Matrix<_Tp> &m);
 template <class _Tp> _Matrix<_Tp> operator>=(const _Matrix<_Tp> &m, double threshold);
 template <class _Tp> _Matrix<_Tp> operator>=(double threshold, const _Matrix<_Tp> &m);
 
+template <class _Tp> _Matrix<_Tp> operator<(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+template <class _Tp> _Matrix<_Tp> operator<(const _Matrix<_Tp> &m, const Scalar& threshold);
+template <class _Tp> _Matrix<_Tp> operator<(const Scalar& threshold, const _Matrix<_Tp> &m);
 template <class _Tp> _Matrix<_Tp> operator<(const _Matrix<_Tp> &m, double threshold);
 template <class _Tp> _Matrix<_Tp> operator<(double threshold, const _Matrix<_Tp> &m);
 
+template <class _Tp> _Matrix<_Tp> operator<=(const _Matrix<_Tp> &m1, const _Matrix<_Tp>& m2);
+template <class _Tp> _Matrix<_Tp> operator<=(const _Matrix<_Tp> &m, const Scalar& threshold);
+template <class _Tp> _Matrix<_Tp> operator<=(const Scalar& threshold, const _Matrix<_Tp> &m);
 template <class _Tp> _Matrix<_Tp> operator<=(const _Matrix<_Tp> &m, double threshold);
 template <class _Tp> _Matrix<_Tp> operator<=(double threshold, const _Matrix<_Tp> &m);
 
 template <class _Tp> _Matrix<_Tp> operator==(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+template <class _Tp> _Matrix<_Tp> operator==(const _Matrix<_Tp> &m1, const Scalar& s);
+template <class _Tp> _Matrix<_Tp> operator==(const Scalar& s, const _Matrix<_Tp>& m);
 template <class _Tp> _Matrix<_Tp> operator==(const _Matrix<_Tp> &m1, double val);
 template <class _Tp> _Matrix<_Tp> operator==(double val, const _Matrix<_Tp> &m1);
 
 template <class _Tp> _Matrix<_Tp> operator!=(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+template <class _Tp> _Matrix<_Tp> operator!=(const _Matrix<_Tp> &m, const Scalar& s);
+template <class _Tp> _Matrix<_Tp> operator!=(const Scalar& s, const _Matrix<_Tp> &m);
 template <class _Tp> _Matrix<_Tp> operator!=(const _Matrix<_Tp> &m1, double val);
 template <class _Tp> _Matrix<_Tp> operator!=(double val, const _Matrix<_Tp> &m2);
 
-
 template <class _Tp> std::ostream &operator<<(std::ostream & os, const _Matrix<_Tp> &item);
 
+///////////////////////////////////////// operations ////////////////////////////////////////////
+template<typename _Tp, class Functor> void traverse(_Matrix<_Tp>& m1, std::ptrdiff_t diff, const Functor& callback);
+template<typename _Tp, class Functor> void traverse(const _Matrix<_Tp>& m1, std::ptrdiff_t diff, const Functor& callback);
+
+template<typename _Tp, class Functor> void traverse(_Matrix<_Tp>& m1, _Matrix<_Tp>& m2, std::ptrdiff_t diff, const Functor& callback);
+template<typename _Tp, class Functor> void traverse(const _Matrix<_Tp>& m1, _Matrix<_Tp>& m2, std::ptrdiff_t diff, const Functor& callback);
+
+template<typename _Tp, class Functor> void traverse(_Matrix<_Tp>& m1, _Matrix<_Tp>& m2, _Matrix<_Tp>& m3, std::ptrdiff_t diff, const Functor& callback);
+template<typename _Tp, class Functor> void traverse(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2, _Matrix<_Tp>& m3, std::ptrdiff_t diff, const Functor& callback);
+
+template<typename _Tp, class Functor> void traverse(_Matrix<_Tp>& m1, _Matrix<_Tp>& m2, _Matrix<_Tp>& m3, _Matrix<_Tp>& m4, std::ptrdiff_t diff, const Functor& callback);
+template<typename _Tp, class Functor> void traverse(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2, const _Matrix<_Tp>& m3, _Matrix<_Tp>& m4, std::ptrdiff_t diff, const Functor& callback);
+
+template<typename _Tp> Scalar trace(const _Matrix<_Tp>& m);
+
+template<typename _Tp> _Matrix<_Tp> abs(const _Matrix<_Tp>& m);
+
+template<typename _Tp> void absdiff(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2, _Matrix<_Tp>& dst);
+template<typename _Tp> void absdiff(const Scalar& value, const _Matrix<_Tp>& m2, _Matrix<_Tp>& dst);
+template<typename _Tp> void absdiff(const _Matrix<_Tp>& m1, const Scalar& value, _Matrix<_Tp>& dst);
+
+template<typename _Tp> void add(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2, _Matrix<_Tp>& dst, const Matrix& mask=Matrix());
+
+template <typename _Tp> void addWeighted(const _Matrix<_Tp>&src1, double alpha, const _Matrix<_Tp>&src2, double beta, double gamma, _Matrix<_Tp>&dst);
 
 /////////////////////////////////////////_MatrixConstIterator////////////////////////////////////////////
 template<typename _Tp> class _MatrixConstIterator {
@@ -534,6 +577,6 @@ public:
 };
 } //! namespace z
 
-#include "operations.hpp"
+#include "matrix.hpp"
 
 #endif  //! _ZCORE_ZMATRIX_H

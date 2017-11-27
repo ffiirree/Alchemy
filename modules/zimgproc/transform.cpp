@@ -302,7 +302,7 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             }
             else {
                 if (_data(i, j) != 1 && _data(i, j) != 0) {
-                    LNBD = abs(_data(i, j));
+                    LNBD = static_cast<int>(std::abs(_data(i, j)));
                 }
                 continue;
             }
@@ -322,7 +322,7 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
                 middle_res.clear();
                 
                 if (_data(i, j) != 1 && _data(i, j) != 0) {
-                    LNBD = abs(_data(i, j));
+                    LNBD = static_cast<int>(std::abs(_data(i, j)));
                 }
                 continue;
             }
@@ -355,7 +355,7 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
                     dst.push_back(middle_res);
                     middle_res.clear();
                     if (_data(i, j) != 1 && _data(i, j) != 0) {
-                        LNBD = abs(_data(i, j));
+                        LNBD = static_cast<int>(std::abs(_data(i, j)));
                     }
                     break;
                 }

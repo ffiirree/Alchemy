@@ -47,6 +47,8 @@ if(MSVC)
 	# 允许编译器以打包函数(COMDATs)的形式对各个函数进行打包。
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Gy")
 elseif(CMAKE_COMPILER_IS_GNUCXX)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsigned-char")
+
     # enable extra warning
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
     # warn all, 所有警告
@@ -62,10 +64,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 # ========================== Options ==========================
-option(USE_OPENCV 	"Include OpenCV support" 	OFF)
 option(USE_KINECT 	"Include Kinect support"	OFF)
-option(USE_FFTW		"Include FFTW support"		ON)
-option(USE_JPEG 	"Include JPEG support" 		ON)
 
 # ========================== 3rdparty ==========================
 # fftw

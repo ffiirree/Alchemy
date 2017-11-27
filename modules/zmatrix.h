@@ -1,7 +1,7 @@
 #include "zcore/config.h"
 #include "zcore/zdef.h"
 #include "zcore/types.h"
-#include "zcore/zmatrix.h"
+#include "zcore/matrix.h"
 #include "zcore/videocapture.h"
 #include "zgui/zgui.h"
 #include "zimgproc/transform.h"

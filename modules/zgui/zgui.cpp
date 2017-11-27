@@ -59,10 +59,10 @@ void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int th
 	int dy = pt2.y - pt1.y;
 	float steps = 0;
 
-	if (abs(dx) > abs(dy))
-		steps = static_cast<float>(abs(dx));
+	if (std::abs(dx) > std::abs(dy))
+		steps = std::abs(dx);
 	else
-		steps = static_cast<float>(abs(dy));
+		steps = std::abs(dy);
 
 	float xi = dx / steps;
 	float yi = dy / steps;

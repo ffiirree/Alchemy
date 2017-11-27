@@ -1,7 +1,7 @@
 #ifndef _ZMATRIX_ZFEATURES2D_H
 #define _ZMATRIX_ZFEATURES2D_H
 
-#include <zcore/zmatrix.h>
+#include <zcore/matrix.h>
 #include "zimgproc/zimgproc.h"
 
 namespace z {

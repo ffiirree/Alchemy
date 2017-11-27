@@ -30,7 +30,7 @@ template <> inline uint8_t saturate_cast<uint8_t>(uint64_t v)   { return static_
 
 template <> inline int8_t saturate_cast<int8_t>(int8_t v)   { return static_cast<int8_t>(std::min(v, static_cast<int8_t>(INT8_MAX))); }
 template <> inline int8_t saturate_cast<int8_t>(uint16_t v) { return static_cast<int8_t>(std::min(v, static_cast<uint16_t>(INT8_MAX))); }
-template <> inline int8_t saturate_cast<int8_t>(int32_t v)  { return static_cast<int8_t>(static_cast<unsigned>(v - INT8_MIN) <= static_cast<unsigned>(INT8_MAX) ? v : v > 0 ? INT8_MAX : INT8_MIN);}
+template <> inline int8_t saturate_cast<int8_t>(int32_t v)  { return static_cast<int8_t>(static_cast<unsigned>(v - INT8_MIN) <= static_cast<unsigned>(UINT8_MAX) ? v : v > 0 ? INT8_MAX : INT8_MIN);}
 template <> inline int8_t saturate_cast<int8_t>(int16_t v)  { return saturate_cast<int8_t>(int(v)); }
 template <> inline int8_t saturate_cast<int8_t>(uint32_t v) { return static_cast<int8_t>(std::min(v, static_cast<unsigned>(INT8_MAX))); }
 template <> inline int8_t saturate_cast<int8_t>(float v)    { return saturate_cast<int8_t>(static_cast<int>(v)); }

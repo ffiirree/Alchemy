@@ -31,7 +31,7 @@ void convertImage(Matrix8u *src, Matrix8u *dst, int flags)
 				dst->at(i, j, k) = src->at(src->rows - i - 1, j, k);
 }
 
-Matrix64f Gassion(Size ksize, double sigmaX, double sigmaY)
+Matrix64f Gaussian(Size ksize, double sigmaX, double sigmaY)
 {
     assert(ksize.width == ksize.height && ksize.width % 2 == 1);
     
@@ -60,9 +60,13 @@ Matrix64f Gassion(Size ksize, double sigmaX, double sigmaY)
 }
 
 ///////////////////////////////////////////// DFT ///////////////////////////////////////////////////
+#ifndef USE_FFTW
+void bitRevCols(Matrix64f & src);
+void bitRevRows(Matrix64f & src);
+
 static int getIdealRows(int rows);
 static int getIdealCols(int cols);
-
+static void _dft(Matrix64f & src, Matrix64f & dst, Ft ft);
 /**
  * @brief 1D or 2D 离散傅里叶变换
  * @param src
@@ -258,8 +262,7 @@ void _fft(Matrix64f & src, Ft ft)
         }
     }
 }
-
-
+#endif //! USE_FFTW
 
 void dft(const Matrix64f & src, Matrix64f & dst)
 {
@@ -291,6 +294,7 @@ void dft(const Matrix64f & src, Matrix64f & dst)
     _fft(dst, DFT);
 #endif
 }
+
 
 void idft(Matrix64f & src, Matrix64f & dst)
 {

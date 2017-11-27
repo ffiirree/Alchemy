@@ -23,6 +23,7 @@ test(split_merge)
 test(filter)
 test(morp)
 test(threshold)
+test(operations)
 
 test(find_contours)
 

@@ -15,7 +15,7 @@
 #define _ZIMGPROC_TRANSFORM_H
 
 
-#include "zcore/zmatrix.h"
+#include "zcore/matrix.h"
 #include "zimgproc.h"
 
 #define RAD2ANG			((double)(57.296))

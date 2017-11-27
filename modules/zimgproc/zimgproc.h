@@ -16,7 +16,7 @@
 
 #include <vector>
 #include "zcore/zdef.h"
-#include "zcore/zmatrix.h"
+#include "zcore/matrix.h"
 
 #if defined(USE_OPENCV)
 #include <opencv2/core.hpp>
@@ -29,8 +29,6 @@ typedef enum {
 }Ft;
 
 namespace z{
-template <typename _Tp> void addWeighted(const _Matrix<_Tp>&src1, double alpha, const _Matrix<_Tp>&src2, double beta, double gamma, _Matrix<_Tp>&dst);
-
 template <typename _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code);
 
 // 多通道分离和混合
@@ -48,13 +46,6 @@ void convertImage(Matrix8u *src, Matrix8u *dst, int flags = 0);
 
 template <class _Tp> void copyMakeBorder(const _Matrix<_Tp> & src, _Matrix<_Tp> & dst, int top, int bottom, int left, int right);
 
-void bitRevCols(Matrix64f & src);
-void bitRevRows(Matrix64f & src);
-
-
-
-// 快速傅里叶变换FFT
-void _fft(Matrix64f & src, Ft ft);
 /**
  * @berif fft
  * @param src Real
@@ -91,7 +82,7 @@ template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& ds
  * \ if (sigmaX == 0) sigmaX = 0.3 * ((ksize.width - 1) * 0.5 - 1) + 0.8;
  * \ if (sigmaY == 0) sigmaY = 0.3 * ((ksize.height - 1) * 0.5 - 1) + 0.8;
  */
-Matrix64f Gassion(Size ksize, double sigmaX, double sigmaY);
+Matrix64f Gaussian(Size ksize, double sigmaX, double sigmaY);
 
 /**
  * @brief 高斯滤波

@@ -16,12 +16,13 @@
 
 #include <initializer_list>
 #include <complex>
-#include "traits.hpp"
+#include "traits.h"
 
 namespace z
 {
 /////////////////////////////////////////_Vec////////////////////////////////////////////
-template <class _Tp, int n> class _Vec {
+template <class _Tp, int n>
+class _Vec {
 public:
     typedef _Tp value_type;
 
@@ -76,19 +77,19 @@ typedef _Vec<double, 2> Vec2f64;
 typedef _Vec<double, 3> Vec3f64;
 typedef _Vec<double, 4> Vec4f64;
 
-template <typename _Tp, int n> class MatrixType< _Vec<_Tp, n> >
-{
-public:
-    enum
-    {
-        depth = MatrixType<_Tp>::depth,
+
+template <typename _Tp, int n>
+struct DataType<_Vec<_Tp, n>> {
+    enum {
+        depth = DataType<_Tp>::depth,
         channels = n,
-        type = depth << 8 | channels
+        value = depth << 8 | n
     };
 };
 
 /////////////////////////////////////////////_Size/////////////////////////////////////////////
-template<class _Tp> class _Size
+template<class _Tp>
+class _Size
 {
 public:
     typedef _Tp value_Tp;
@@ -103,16 +104,20 @@ public:
 
     _Tp width, height; // the width and the height
 };
-template<class _Tp> _Size<_Tp>::_Size() :width(0), height(0) {}
-template<class _Tp> _Size<_Tp>::_Size(_Tp _width, _Tp _height) : width(_width), height(_height) {}
-template<class _Tp> _Size<_Tp>::_Size(const _Size& sz) : width(sz.width), height(sz.height) {}
-template<class _Tp> _Tp _Size<_Tp>::area() const { return width * height; }
-
 
 typedef _Size<int>      Size2i;
 typedef _Size<double>   Size2d;
 typedef _Size<float>    Sizef;
 typedef _Size<int>      Size;
+
+template <typename _Tp>
+struct DataType<_Size<_Tp>> {
+    enum {
+        depth = DataType<_Tp>::depth,
+        channels = 2,
+        value = depth << 8 | channels
+    };
+};
 
 template <typename _T> bool operator==(const _Size<_T> &p1, const _Size<_T> &p2) { return p1.width == p2.width && p1.height == p2.height; }
 template <typename _T> bool operator!=(const _Size<_T> &p1, const _Size<_T> &p2) { return !(p1 == p2); }
@@ -132,19 +137,14 @@ using Complex32f = _Complex2<float>;
 using Complex64f = _Complex2<double>;
 using Complex = _Complex2<double>;
 
-
-template <typename _Tp> class MatrixType<_Complex2<_Tp>>
-{
-public:
-    enum
-    {
-        depth = MatrixType<_Tp>::depth,
+template <typename _Tp>
+struct DataType<_Complex2<_Tp>> {
+    enum {
+        depth = DataType<_Tp>::depth,
         channels = 2,
-        type = depth << 8 | channels
+        value = depth << 8 | channels
     };
 };
-
-
 
 /////////////////////////////////////////_Point////////////////////////////////////////////
 template<class _Tp> class _Point
@@ -162,19 +162,20 @@ public:
 
     _Tp x, y;
 };
-template<class _Tp> _Point<_Tp>::_Point() : x(0), y(0) { }
-template<class _Tp> _Point<_Tp>::_Point(_Tp _x, _Tp _y) : x(_x), y(_y) { }
-template<class _Tp> _Point<_Tp>::_Point(const _Point& pt) : x(pt.x), y(pt.y) { }
-template<class _Tp> _Point<_Tp>& _Point<_Tp>::operator = (const _Point& pt) { x = pt.x; y = pt.y; return *this; }
-template<class _Tp> _Tp _Point<_Tp>::dot(const _Point& pt) const { return static_cast<_Tp>(x)*pt.x + static_cast<_Tp>(y)*pt.y; }
-template<class _Tp> double _Point<_Tp>::cross(const _Point<_Tp>& pt) const
-{
-    return (static_cast<double>(x)*pt.y - static_cast<double>(y)*pt.x);
-}
+
 typedef _Point<int>                 Point2i;
 typedef _Point<double>              Point2f;
 typedef _Point<float>               Point2d;
 typedef _Point<int>                 Point;
+
+template <typename _Tp>
+struct DataType<_Point<_Tp>> {
+    enum {
+        depth = DataType<_Tp>::depth,
+        channels = 2,
+        value = depth << 8 | channels
+    };
+};
 
 // ！没有做溢出处理，之后加上，类似opencv的saturate_cast函数
 template <typename _T> _Point<_T> operator+(const _Point<_T> &p1, const _Point<_T> &p2) { return{ p1.x + p2.x, p1.y + p2.y }; }
@@ -186,15 +187,7 @@ template <typename _T> bool operator<(const _Point<_T> &p1, const  _Point<_T> &p
 template <typename _T> bool operator<=(const _Point<_T> &p1, const  _Point<_T> &p2) { return p1.x <= p2.x && p1.y <= p2.y; }
 
 
-template<typename _T> std::ostream &operator<<(std::ostream &os, _Point<_T> &p)
-{
-    if (sizeof(_T) == 1)
-        os << "[" << static_cast<int>(p.x) << ", " << static_cast<int>(p.y) << "]";
-    else
-        os << "[" << p.x << ", " << p.y << "]";
-
-    return os;
-}
+template<typename _T> std::ostream &operator<<(std::ostream &os, _Point<_T> &p);
 
 /////////////////////////////////////////_Point3////////////////////////////////////////////
 template<class _Tp> class _Point3
@@ -211,20 +204,19 @@ public:
 
     _Tp x, y, z;
 };
-template<class _Tp> _Point3<_Tp>::_Point3() : x(0), y(0), z(0) { }
-template<class _Tp> _Point3<_Tp>::_Point3(_Tp _x, _Tp _y, _Tp _z) : x(_x), y(_y), z(_z) { }
-template<class _Tp> _Point3<_Tp>::_Point3(const _Point3& pt) : x(pt.x), y(pt.y), z(pt.z) { }
-template<class _Tp> _Point3<_Tp>& _Point3<_Tp>::operator = (const _Point3& pt) { x = pt.x; y = pt.y; z = pt.z; return *this; }
-template<class _Tp> _Tp _Point3<_Tp>::dot(const _Point3& pt) const { return x*pt.x + y*pt.y + z*pt.z; }
-template<typename _Tp> _Point3<_Tp> _Point3<_Tp>::cross(const _Point3<_Tp>& pt) const
-{
-    return _Point3<_Tp>(y*pt.z - z*pt.y, z*pt.x - x*pt.z, x*pt.y - y*pt.x);
-}
-
 
 typedef _Point3<int>                 Point3i;
 typedef _Point3<float>               Point3f;
 typedef _Point3<double>              Point3d;
+
+template <typename _Tp>
+struct DataType<_Point3<_Tp>> {
+    enum {
+        depth = DataType<_Tp>::depth,
+        channels = 3,
+        value = depth << 8 | channels
+    };
+};
 
 ///////////////////////////////////////_Rect//////////////////////////////////////////////
 template<class _Tp> class _Rect
@@ -247,45 +239,20 @@ public:
 
     _Tp x, y, width, height;
 };
-template<class _Tp> _Rect<_Tp>::_Rect() : x(0), y(0), width(0), height(0) { }
-template<class _Tp> _Rect<_Tp>::_Rect(const _Rect& r) : x(r.x), y(r.y), width(r.width), height(r.height) { }
-template<class _Tp> _Rect<_Tp>::_Rect(_Tp _x, _Tp _y, _Tp _width, _Tp _height) : x(_x), y(_y), width(_width), height(_height) { }
-template<class _Tp> _Rect<_Tp>::_Rect(const _Point<_Tp>& org, const _Size<_Tp>& sz) :
-    x(org.x), y(org.y), width(sz.width), height(sz.height) {}
-template<class _Tp> _Rect<_Tp>::_Rect(const _Point<_Tp>& pt1, const _Point<_Tp>& pt2)
-{
-    if (pt1.x < pt2.x) {
-        x = pt1.x;
-        width = pt2.x - pt1.x;
-    }
-    else {
-        x = pt2.x;
-        width = pt1.x - pt2.x;
-    }
 
-    if (pt1.y < pt2.y) {
-        y = pt1.y;
-        height = pt2.y - pt1.y;
-    }
-    else {
-        y = pt2.y;
-        height = pt1.y - pt2.y;
-    }
-}
-
-template<class _Tp> _Rect<_Tp>& _Rect<_Tp>:: operator = (const _Rect& r)
-{
-    x = r.x;
-    y = r.y;
-    width = r.width;
-    height = r.height;
-    return *this;
-}
 typedef _Rect<int>                   Rect32s;
 typedef _Rect<int>                   Rect;
 typedef _Rect<float>                 Rect32f;
 typedef _Rect<double>                Rect64f;
 
+template <typename _Tp>
+struct DataType<_Rect<_Tp>> {
+    enum {
+        depth = DataType<_Tp>::depth,
+        channels = 4,
+        value = depth << 8 | channels
+    };
+};
 
 ///////////////////////////////////////_Scalar//////////////////////////////////////////////
 template<class _Tp> class _Scalar
@@ -312,8 +279,17 @@ typedef _Scalar<float>             Scalar32f;
 typedef _Scalar<double>            Scalar64f;
 typedef Scalar64f                  Scalar;
 
-template<typename _Tp> _Scalar<_Tp> operator == (const _Scalar<_Tp>& a, const _Scalar<_Tp>& b);
-template<typename _Tp> _Scalar<_Tp> operator != (const _Scalar<_Tp>& a, const _Scalar<_Tp>& b);
+template <typename _Tp>
+struct DataType<_Scalar<_Tp>> {
+    enum {
+        depth = DataType<_Tp>::depth,
+        channels = 4,
+        value = depth << 8 | channels
+    };
+};
+
+template<typename _Tp> bool operator == (const _Scalar<_Tp>& a, const _Scalar<_Tp>& b);
+template<typename _Tp> bool operator != (const _Scalar<_Tp>& a, const _Scalar<_Tp>& b);
 
 template<typename _Tp> _Scalar<_Tp> operator += (const _Scalar<_Tp>& a, const _Scalar<_Tp>& b);
 template<typename _Tp> _Scalar<_Tp> operator -= (const _Scalar<_Tp>& a, const _Scalar<_Tp>& b);
@@ -325,6 +301,8 @@ template<typename _Tp> _Scalar<_Tp> operator * (const _Scalar<_Tp>& a, _Tp v);
 template<typename _Tp> _Scalar<_Tp> operator * (_Tp v, const _Scalar<_Tp>& a);
 
 template<typename _Tp> _Scalar<_Tp> operator - (const _Scalar<_Tp>& s);
+
+template<typename _Tp> std::ostream &operator<<(std::ostream & os, const _Scalar<_Tp> &item);
 } // ! namespace z
 
 #include "types.hpp"

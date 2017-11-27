@@ -1,7 +1,7 @@
 #ifndef _TRANSFORM_HPP
 #define _TRANSFORM_HPP
 #include <cassert>
-#include "zcore/zmatrix.h"
+#include "zcore/matrix.h"
 
 namespace z
 {

@@ -113,6 +113,82 @@ _Vec<_Tp, n> _Vec<_Tp, n >::ones()
     return all(1);
 }
 
+/////////////////////////////////////////_Size////////////////////////////////////////////
+template<class _Tp> _Size<_Tp>::_Size() :width(0), height(0) {}
+template<class _Tp> _Size<_Tp>::_Size(_Tp _width, _Tp _height) : width(_width), height(_height) {}
+template<class _Tp> _Size<_Tp>::_Size(const _Size& sz) : width(sz.width), height(sz.height) {}
+template<class _Tp> _Tp _Size<_Tp>::area() const { return width * height; }
+
+
+/////////////////////////////////////////_Point////////////////////////////////////////////
+template<class _Tp> _Point<_Tp>::_Point() : x(0), y(0) { }
+template<class _Tp> _Point<_Tp>::_Point(_Tp _x, _Tp _y) : x(_x), y(_y) { }
+template<class _Tp> _Point<_Tp>::_Point(const _Point& pt) : x(pt.x), y(pt.y) { }
+template<class _Tp> _Point<_Tp>& _Point<_Tp>::operator = (const _Point& pt) { x = pt.x; y = pt.y; return *this; }
+template<class _Tp> _Tp _Point<_Tp>::dot(const _Point& pt) const { return static_cast<_Tp>(x)*pt.x + static_cast<_Tp>(y)*pt.y; }
+template<class _Tp> double _Point<_Tp>::cross(const _Point<_Tp>& pt) const
+{
+    return (static_cast<double>(x)*pt.y - static_cast<double>(y)*pt.x);
+}
+
+template<typename _T> std::ostream &operator<<(std::ostream &os, _Point<_T> &p)
+{
+    if (sizeof(_T) == 1)
+        os << "[" << static_cast<int>(p.x) << ", " << static_cast<int>(p.y) << "]";
+    else
+        os << "[" << p.x << ", " << p.y << "]";
+
+    return os;
+}
+
+/////////////////////////////////////////_Point3////////////////////////////////////////////
+template<class _Tp> _Point3<_Tp>::_Point3() : x(0), y(0), z(0) { }
+template<class _Tp> _Point3<_Tp>::_Point3(_Tp _x, _Tp _y, _Tp _z) : x(_x), y(_y), z(_z) { }
+template<class _Tp> _Point3<_Tp>::_Point3(const _Point3& pt) : x(pt.x), y(pt.y), z(pt.z) { }
+template<class _Tp> _Point3<_Tp>& _Point3<_Tp>::operator = (const _Point3& pt) { x = pt.x; y = pt.y; z = pt.z; return *this; }
+template<class _Tp> _Tp _Point3<_Tp>::dot(const _Point3& pt) const { return x*pt.x + y*pt.y + z*pt.z; }
+template<typename _Tp> _Point3<_Tp> _Point3<_Tp>::cross(const _Point3<_Tp>& pt) const
+{
+    return _Point3<_Tp>(y*pt.z - z*pt.y, z*pt.x - x*pt.z, x*pt.y - y*pt.x);
+}
+
+/////////////////////////////////////////_Rect////////////////////////////////////////////
+template<class _Tp> _Rect<_Tp>::_Rect() : x(0), y(0), width(0), height(0) { }
+template<class _Tp> _Rect<_Tp>::_Rect(const _Rect& r) : x(r.x), y(r.y), width(r.width), height(r.height) { }
+template<class _Tp> _Rect<_Tp>::_Rect(_Tp _x, _Tp _y, _Tp _width, _Tp _height) : x(_x), y(_y), width(_width), height(_height) { }
+template<class _Tp> _Rect<_Tp>::_Rect(const _Point<_Tp>& org, const _Size<_Tp>& sz) :
+        x(org.x), y(org.y), width(sz.width), height(sz.height) {}
+template<class _Tp> _Rect<_Tp>::_Rect(const _Point<_Tp>& pt1, const _Point<_Tp>& pt2)
+{
+    if (pt1.x < pt2.x) {
+        x = pt1.x;
+        width = pt2.x - pt1.x;
+    }
+    else {
+        x = pt2.x;
+        width = pt1.x - pt2.x;
+    }
+
+    if (pt1.y < pt2.y) {
+        y = pt1.y;
+        height = pt2.y - pt1.y;
+    }
+    else {
+        y = pt2.y;
+        height = pt1.y - pt2.y;
+    }
+}
+
+template<class _Tp> _Rect<_Tp>& _Rect<_Tp>:: operator = (const _Rect& r)
+{
+    x = r.x;
+    y = r.y;
+    width = r.width;
+    height = r.height;
+    return *this;
+}
+
+
 /////////////////////////////////////////_Scalar////////////////////////////////////////////
 template<class _Tp> _Scalar<_Tp>::_Scalar() { v[0] = v[1] = v[2] = v[3] = 0; }
 template<class _Tp> _Scalar<_Tp>::_Scalar(_Tp _v0) { v[0] = _v0; v[1] = v[2] = v[3] = 0; }
@@ -130,13 +206,13 @@ template<class _Tp> bool _Scalar<_Tp>::isReal() const { return (v[1] == 0 && v[2
 
 
 template <typename _Tp>
-_Scalar<_Tp> operator==(const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
+bool operator==(const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
 {
     return a.v[0] == b.v[0] && a.v[1] == b.v[1] && a.v[2] == b.v[2] && a.v[3] == b.v[3];
 }
 
 template <typename _Tp>
-_Scalar<_Tp> operator!=(const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
+bool operator!=(const _Scalar<_Tp>& a, const _Scalar<_Tp>& b)
 {
     return !(a == b);
 }
@@ -218,6 +294,13 @@ _Scalar<_Tp> operator - (const _Scalar<_Tp>& s)
         saturate_cast<_Tp>(-s.v[1]),
         saturate_cast<_Tp>(-s.v[2]),
         saturate_cast<_Tp>(-s.v[3]));
+}
+
+template <typename _Tp>
+std::ostream &operator<<(std::ostream & os, const _Scalar<_Tp> &item)
+{
+    os << "[" << item[0] << ", " << item[1] << ", " << item[2] << ", " << item[3] << "]";
+    return os;
 }
 
 };
