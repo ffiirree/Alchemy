@@ -77,8 +77,8 @@ template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int
     {
         assert(src.channels() == 3);
 
-        if (!(dst.size() == src.size() && dst.channels() == 1))
-            dst.create(src.size(), 1);
+        if (!(dst.rows == src.rows && dst.cols == src.cols && dst.channels() == 1))
+            dst.create(src.rows, src.cols, 1);
 
         using Pixel = _Vec<_Tp, 3>;
 
@@ -96,8 +96,8 @@ template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int
     {
         assert(src.channels() == 3);
 
-        if (!dst.equalSize(src))
-            dst.create(src.size(), src.channels());
+        if (dst.shape() != src.shape())
+            dst.create(src.shape());
 
         using Pixel = _Vec<_Tp, 3>;
 
@@ -118,8 +118,8 @@ template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int
     {
         assert(src.channels() == 3);
 
-        if (!dst.equalSize(src))
-            dst.create(src.size(), src.channels());
+        if (dst.shape() != src.shape())
+            dst.create(src.shape());
 
         for (int i = 0; i < src.rows; ++i) {
             for (int j = 0; j < src.cols; ++j) {
@@ -184,7 +184,7 @@ template <typename _T1, typename _T2>
 void __conv(const _Matrix<_T1>& src, _Matrix<_T1>& dst, const _Matrix<_T2>& kernel, std::function<void(int&, int&)> callback)
 {
     auto channels = src.channels();
-    dst = _Matrix<_T1>::zeros(src.size(), channels);
+    dst = _Matrix<_T1>::zeros(src.shape());
     auto temp = new double[channels];
     auto temp_size = sizeof(double) * channels;
 
@@ -250,8 +250,9 @@ void conv(const _Matrix<_T1>& src, _Matrix<_T1>&dst, const _Matrix<_T2>& kernel,
         break;
 
         //!< `uvwxyz|absdefgh|ijklmno`
+		// Do not support!
     case BORDER_TRANSPARENT:
-        _log_("Do not support!");
+		assert(false);
         break;
     }
 }
@@ -269,7 +270,7 @@ template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& ds
     auto kv = 1.0;
     if (normalize) kv = 1.0 / (size.width * size.height);
 
-    Matrix64f kernel(size, 1, { kv });
+    Matrix64f kernel(size, 1,  kv);
     conv(src, dst, kernel);
 }
 
@@ -300,8 +301,8 @@ template <typename _Tp> void __medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst,
     auto area = size.area();
     _Matrix<_Tp> buffer(src.channels(), area);
 
-    if (!src.equalSize(dst))
-        dst.create(src.size(), src.channels());
+    if (dst.shape() != src.shape())
+        dst.create(src.shape());
 
     auto m = size.width / 2, n = size.height / 2;
     int valindex = area / 2;
@@ -371,8 +372,8 @@ template <typename _Tp> void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp
 {
     assert(src.isContinuous());
 
-    if (!dst.equalSize(src))
-        dst.create(src.size(), src.channels());
+    if (dst.shape() != src.shape())
+        dst.create(src.shape());
 
     auto r = 0, max_ofs = 0;
     //
@@ -455,8 +456,8 @@ template <typename _Tp> void __morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>
     auto area = size.area();
     _Matrix<_Tp> buffer(src.channels(), area);
 
-    if (!src.equalSize(dst))
-        dst.create(src.rows, src.cols, src.channels());
+    if (dst.shape() != src.shape())
+        dst.create(src.shape());
 
     for (auto i = 0; i < src.rows; ++i) {
         for (auto j = 0; j < src.cols; ++j) {
@@ -552,7 +553,7 @@ template <typename _Tp> void open(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size kern
 template <typename _Tp> void morphEx(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, int op, Size kernel, int borderType)
 {
     _Matrix<_Tp> temp;
-    if (dst.equalSize(src))
+    if (dst.shape() != src.shape())
         dst.create(src.rows, src.cols, src.channels());
 
     switch (op) {
@@ -617,10 +618,9 @@ template <typename _Tp> void spilt(const _Matrix<_Tp> & src, std::vector<_Matrix
 
 template <typename _Tp> void merge(const _Matrix<_Tp> & src1, const _Matrix<_Tp> & src2, _Matrix<_Tp> & dst)
 {
-    if (!src1.equalSize(src2))
-        _log_("!src1.equalSize(src2)");
+    assert(src1.shape() == src2.shape());
 
-    if (dst.size() != src1.size())
+    if (dst.rows != src1.rows || dst.cols != src1.cols)
         dst.create(src1.rows, src1.cols, 2);
 
     for (auto i = 0; i < src1.rows; ++i) {
@@ -634,12 +634,6 @@ template <typename _Tp> void merge(const _Matrix<_Tp> & src1, const _Matrix<_Tp>
 template <typename _Tp> void merge(const std::vector<_Matrix<_Tp>> & src, _Matrix<_Tp> & dst)
 {
     assert(src.size() >= 1);
-    
-#ifndef NDEBUG
-    for(const auto & mat: src) {
-        assert(mat.size() == src.at(0).size() && mat.channels() == 1);
-    }
-#endif
 
     int rows = src.at(0).rows;
     int cols = src.at(0).cols;

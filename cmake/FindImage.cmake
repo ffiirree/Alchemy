@@ -23,6 +23,7 @@ if(WIN32)
 
     # headers
     include_directories(${FFTW_INCLUDES})
+    set(USE_FFTW ON)
 elseif(UNIX)
     # libjpeg
     find_package(JPEG)

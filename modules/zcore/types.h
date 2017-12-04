@@ -303,6 +303,16 @@ template<typename _Tp> _Scalar<_Tp> operator * (_Tp v, const _Scalar<_Tp>& a);
 template<typename _Tp> _Scalar<_Tp> operator - (const _Scalar<_Tp>& s);
 
 template<typename _Tp> std::ostream &operator<<(std::ostream & os, const _Scalar<_Tp> &item);
+
+///////////////////////////////////////_Scalar//////////////////////////////////////////////
+struct MatrixShape
+{
+    int rows = 0;
+    int cols = 0;
+    int chs = 0;
+};
+inline bool operator==(const MatrixShape& s1, const MatrixShape& s2) { return s1.rows == s2.rows && s1.cols == s2.cols && s1.chs == s2.chs; }
+inline bool operator!=(const MatrixShape& s1, const MatrixShape& s2) { return !(s1 == s2); }
 } // ! namespace z
 
 #include "types.hpp"

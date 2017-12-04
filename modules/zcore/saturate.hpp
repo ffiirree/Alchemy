@@ -5,6 +5,8 @@
 
 namespace z {
 //////////////////////////////////////////////////////////////////////////
+template<typename _T1, typename _T2> static _T1 saturate_cast(_T2 v) { return _T1(v); }
+
 template<typename _Tp> static _Tp saturate_cast(uint8_t v)  { return _Tp(v); }
 template<typename _Tp> static _Tp saturate_cast(int8_t v)   { return _Tp(v); }
 template<typename _Tp> static _Tp saturate_cast(uint16_t v) { return _Tp(v); }

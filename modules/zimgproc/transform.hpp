@@ -41,11 +41,11 @@ template <typename _Tp> void Laplacian(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst,
 template <typename _Tp>
 void __sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, _Matrix<_Tp>&dstGD, int dx, int dy, int ksize, bool noGD, std::function<void(int&, int&)> callback)
 {
-    if (!src.equalSize(dst))
-        dst.create(src.rows, src.cols, src.channels());
+    if (dst.shape() != src.shape())
+        dst.create(src.shape());
     if (!noGD)
-    	if (!dstGD.equalSize(src))
-    		dstGD.create(src.rows, src.cols, src.channels());
+    	if (dstGD.shape() != src.shape())
+    		dstGD.create(src.shape());
 
     Matrix8s Gx(ksize, ksize), Gy(ksize, ksize);
 

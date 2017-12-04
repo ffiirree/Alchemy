@@ -18,6 +18,7 @@ zMatrix 是一个使用C++编写的图像处理库，它的基础是_Matrix矩�
 ```
 必须: jpeg fftw gtk+2.x(Linux 必须) WIN32(Windows 必须)
         FFmpeg(libavdevice libavutil libavcodec libavformat libswscale)
+        Boost
 可选: Kinect opencv
 ```
 ### OpenCV
@@ -122,6 +123,9 @@ Ubuntu的一些开发软件配置安装，可以参照一下我博客[Ubuntu 16.
 #### 图像金字塔
 * 对图像上采样函数：`pyrUp()`
 * 对图形下采样函数：`pyrDown()`
+
+### 机器学习
+#### 使用3层BP神经网络识别手写数字
 
 ### Kinect 4 Windows v2 （Events）
 * Kinect获取深度、彩色和红外图像，返回`cv::Mat`类型的数据

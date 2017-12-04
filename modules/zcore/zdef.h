@@ -3,6 +3,28 @@
 
 namespace z {
 
+// Type value
+#define TYPE_DEFAULT    -1
+#define TYPE_UINT8      0
+#define TYPE_INT8       1
+#define TYPE_UINT16     2
+#define TYPE_INT16      3
+#define TYPE_UINT32     4
+#define TYPE_INT32      5
+#define TYPE_UINT64     6
+#define TYPE_INT64      7
+#define TYPE_FLOAT      8
+#define TYPE_DOUBLE     9
+
+#define TYPE_COMPLEX    10
+#define TYPE_POINT      11
+#define TYPE_POINT3     12
+#define TYPE_RECT       13
+#define TYPE_VEC        14
+#define TYPE_SIZE       15
+#define TYPE_MATRIX     16
+#define TYPE_SCALAR     17
+
 // Type of boundary processing.
 enum BorderTypes {
     BORDER_CONSTANT,                        //!< `iiiiii|abcdefgh|iiiiiii`  with some specified `i`

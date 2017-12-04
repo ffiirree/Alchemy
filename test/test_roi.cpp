@@ -6,7 +6,7 @@ int main()
     auto logo = z::imread("logo.jpeg");
 
     auto roi = image(z::Rect(50, 50, logo.cols, logo.rows));
-    roi = z::Scalar(-5, 6, 7);
+    roi.fill(z::Scalar(-5, 6, 7));
 
 //    z::addWeighted(roi, 0.2, logo, 0.7, 0.0, roi);
 //    // 测试

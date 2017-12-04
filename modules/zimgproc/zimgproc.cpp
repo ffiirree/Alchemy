@@ -22,8 +22,8 @@ namespace z {
 
 void convertImage(Matrix8u *src, Matrix8u *dst, int flags)
 {
-	if (!dst->equalSize(*src))
-		dst->create(src->rows, src->cols, src->channels());
+	if (dst->shape() != src->shape())
+		dst->create(src->shape());
 
 	for (auto i = 0; i < src->rows; ++i)
 		for (auto j = 0; j < src->cols; ++j)
@@ -267,9 +267,9 @@ void _fft(Matrix64f & src, Ft ft)
 void dft(const Matrix64f & src, Matrix64f & dst)
 {
 #ifdef USE_FFTW
-    dst = Matrix64f::zeros(src.size(), 2);
+    dst = Matrix64f::zeros(src.rows, src.cols, 2);
 
-    auto plan = fftw_plan_dft_r2c_2d(src.rows, src.cols, (double *)src.ptr(), reinterpret_cast<fftw_complex *>(dst.ptr()), FFTW_ESTIMATE);
+    const auto plan = fftw_plan_dft_r2c_2d(src.rows, src.cols, const_cast<double *>(src.ptr()), reinterpret_cast<fftw_complex *>(dst.ptr()), FFTW_ESTIMATE);
     fftw_execute(plan);
 
     // Destory and cleanup.
@@ -299,9 +299,9 @@ void dft(const Matrix64f & src, Matrix64f & dst)
 void idft(Matrix64f & src, Matrix64f & dst)
 {
 #ifdef USE_FFTW
-    dst = Matrix64f::zeros(src.size());
+    dst = Matrix64f::zeros(src.rows, src.cols, 1);
 
-    auto p3 = fftw_plan_dft_c2r_2d(src.rows, src.cols, reinterpret_cast<fftw_complex *>(src.ptr()), reinterpret_cast<double *>(dst.ptr()), FFTW_ESTIMATE);
+    const auto p3 = fftw_plan_dft_c2r_2d(src.rows, src.cols, reinterpret_cast<fftw_complex *>(src.ptr()), reinterpret_cast<double *>(dst.ptr()), FFTW_ESTIMATE);
     fftw_execute(p3);
     dst /= dst.total();
 

@@ -30,8 +30,7 @@ static void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, dou
  */
 inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD)
 {
-    if (!src.equalSize(srcGD))
-		throw std::runtime_error("src.equalSize(srcGD)!");
+    assert(src.shape() == srcGD.shape());
 
 	dst = src.clone();
 	for (int i = 0; i < src.rows; ++i) {
@@ -87,8 +86,8 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
 	double maxt = threshold1 > threshold2 ? threshold1 : threshold2;
 	double mint = threshold1 < threshold2 ? threshold1 : threshold2;
 
-	if (!dst.equalSize(src))
-		dst.create(src.rows, src.cols, src.channels());
+	if (src.shape() != dst.shape())
+		dst.create(src.shape());
 
     for (auto i = 0; i < src.rows; ++i) {
 		for (auto j = 0; j < src.cols; ++j) {
@@ -131,8 +130,8 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
  */
 void prewitt(Matrix8u&src, Matrix8u&dst)
 {
-	if (!dst.equalSize(src))
-		dst.create(src.rows, src.cols, src.channels());
+	if (dst.shape() != src.shape())
+		dst.create(src.shape());
 
     Matrix8s Gx(3, 3);
     Matrix8s Gy(3, 3);
@@ -235,28 +234,6 @@ void Canny(Matrix8u&src, Matrix8u&dst, double threshold1, double threshold2, int
 	// 第四步，双阈值
 	double_threashold(temp2, dst, threshold1, threshold2);
 }
-
-//void translation(Matrix8u &src, Matrix32s &kernel, Matrix8u &dst)
-//{
-//	//if (!dst.equalSize(src)) {
-//	//	dst.create(src.rows, src.cols, src.channels());
-//	//}
-// //   dst = 0;
-//
-//	//Matrix32s srcCoord(1,3,1), dstCoord;
-//
-//	//for (int i = 0; i < src.rows; ++i) {
-//	//	for (int j = 0; j < src.cols; ++j) {
-// //           srcCoord = { i, j, 1 };
-//	//		dstCoord = srcCoord * kernel;
-//
-//	//		for (int k = 0; k < src.channels() && (dstCoord[0][0] < dst.rows && dstCoord[0][1] < dst.cols &&  dstCoord[0][0] >= 0 && dstCoord[0][1] >= 0); ++k) {
-//	//			dst.ptr(dstCoord[0][0], dstCoord[0][1])[k] = src.ptr(i, j)[k];
-//	//		}
-//	//	}
-//	//}
-//}
-
 
 #define _data(x, y) src.at(x, y)
 void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)

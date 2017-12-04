@@ -16,9 +16,8 @@
 
 #include <cstdint>
 #include <functional>
-#include <cstring>
-#include "config.h"
 #include "traits.h"
+#include "config.h"
 #include "types.h"
 
 
@@ -32,103 +31,114 @@ template<typename _Tp> class _MatrixConstIterator;
 template<typename _Tp> class _MatrixIterator;
 
 /**
-* @brief
-*/
+ * @brief
+ */
 template <typename _Tp> class _Matrix {
 public:
     typedef _Tp value_type;
     typedef _MatrixIterator<_Tp> iterator;
     typedef _MatrixConstIterator<_Tp> const_iterator;
 
+	/**
+	 * @brief Constructor
+	 */
     _Matrix() = default;
 
     /**
      * @overload
      * @param rows Number of rows in a 2D array.
      * @param cols Number of columns in a 2D array.
-     * @Param _chs Number of channels. Default: 1.
+     * @Param chs Number of channels. Default: 1.
      */
-    _Matrix(int rows, int cols, int _chs = 1);
+    _Matrix(int rows, int cols, int chs = 1);
 
     /**
      * @overload
      * @param size 2D array size: Size(cols, rows).
-     * @Param _chs Number of channels. Default: 1.
+     * @Param chs Number of channels. Default: 1.
      */
-    explicit _Matrix(Size size, int _chs = 1);
+    explicit _Matrix(Size size, int chs = 1);
 
-    /**
-     * @overload
-     * @param rows Number of rows in a 2D array.
-     * @param cols Number of columns in a 2D array.
-     * @Param _chs Number of channels.
-     * @Param s An optional value to initialize each matrix element with.
-     */
-    _Matrix(int rows, int cols, int _chs, const Scalar& s);
+    _Matrix(const MatrixShape& shape);
 
-    /**
-     * @overload
-     * @param size 2D array size: Size(cols, rows).
-     * @Param _chs Number of channels.
-     * @Param s An optional value to initialize each matrix element with.
-     */
-    _Matrix(Size size, int _chs, const Scalar& s);
+	/** 
+	 * @overload 
+	 * @Param v An optional value to initialize each matrix element with.
+	 */
+	template<typename _T2> _Matrix(int rows, int cols, int chs, const _T2& v);
+	template<typename _T2> _Matrix(Size size, int chs,          const _T2& v);
+    template<typename _T2> _Matrix(const MatrixShape& shape,    const _T2& v);
+
+    /** @overload */
+    _Matrix(int rows, int cols, int chs, const Scalar& s);
+	_Matrix(Size size, int chs,          const Scalar& s);
+
+	/** 
+	 * @overload
+	 * @brief Initialize by random number.
+	 * @code 
+	 *      default_random_engine random_engine(time(nullptr));
+     *      uniform_real_distribution<double> real_distribution(-1.0, 1.0);
+     *      
+     *      auto m = _Matrix<double>(4, 4, 1, std::make_pair(random_engine, real_distribution));
+	 */
+	template<typename _T2, typename _T3> _Matrix(int rows, int cols, int chs, std::pair<_T2, _T3>&& initor);
+	template<typename _T2, typename _T3> _Matrix(Size size, int chs, std::pair<_T2, _T3>&& initor);
+
+	/** @overload */
+	_Matrix<_Tp>(std::initializer_list<_Tp> list);
 
     /**
      * @overload
      * @param m Array that (as a whole or partly) is assigned to the constructed matrix. No data is copied
-     * by these constructors. Instead, the header pointing to m data or its sub-array is constructed and
-     * associated with it. The reference counter, if any, is incremented. So, when you modify the matrix
-     * formed using such a constructor, you also modify the corresponding elements of m . If you want to
-     * have an independent copy of the sub-array, use zMatrix::clone() .
+     * by these constructors. If you want to have an independent copy of the sub-array, use zMatrix::clone() .
      */
     _Matrix(const _Matrix& m);
 
-    /**
-     * @brief Cast ctor.
-     */
-    template<class _T2> _Matrix(const _Matrix<_T2>& m);
+	/**
+	 * @brief assignment operator
+	 * @param m Assigned, right-hand-side matrix.
+	 */
+	_Matrix<_Tp>& operator= (const _Matrix& m);
 
-    _Matrix(const _Matrix<_Tp>& m, const Rect& roi);
+	/** @overload */
+	_Matrix<_Tp>& operator= (std::initializer_list<_Tp> list);
 
-    /** @overload */
-    _Matrix<_Tp>(std::initializer_list<_Tp> list);
-
-    /**
-     * @brief assignment operator
-     * @param m Assigned, right-hand-side matrix.
-     */
-    _Matrix<_Tp>& operator = (const _Matrix& m);
-    template<class _T2> _Matrix<_Tp>& operator = (const _Matrix<_T2>& m);
-
-    /** @overload */
-    _Matrix<_Tp>& operator = (std::initializer_list<_Tp> list);
+	/**
+	 * @brief Cast ctor.
+	 */
+	template<typename _T2> _Matrix(const _Matrix<_T2>& m);
+	template<typename _T2> _Matrix<_Tp>& operator= (const _Matrix<_T2>& m);
 
     ~_Matrix();
 
     /**
-     *  @brief Creates a full copy of the array and the underlying data.
+     * @brief Set each matrix element with 'value'.
      */
-    _Matrix<_Tp> clone() const;
+    template<typename _T2> void fill(const _T2& value);
 
-    /**
-     * @brief Copies the matrix to another one.
-     */
-    void copyTo(_Matrix<_Tp> & outputMatrix) const;
+    void fill(const Scalar& value);
+    template<typename _T2> void fill(const _Matrix<_T2>& value);
 
-    /**
-     * @brief Sets all or some of the array elements to the specified value.
-     * @param s Assigned scalar converted to the actual array type.
-     */
-    _Matrix<_Tp>& operator=(const Scalar& s);
+	/**
+	 * @brief Set ROI.
+	 */
+	_Matrix(const _Matrix<_Tp>& m, const Rect& roi);
 
-    /** @overload */
-    _Matrix<_Tp>& operator=(const _Tp& val);
+	/**
+	 *  @brief Creates a full copy of the array and the underlying data.
+	 */
+	_Matrix<_Tp> clone() const;
+
+	/**
+	 * @brief Copies the matrix to another one.
+	 */
+	void copyTo(_Matrix<_Tp> & outputMatrix) const;
 
     _Matrix<_Tp> reshape(int cn) const;
+	_Matrix<_Tp> reshape(int cn, int rows) const;
 
-    Size size() const { return{ cols, rows }; }
-    bool equalSize(const _Matrix<_Tp> & m) const { return (rows == m.rows && cols == m.cols && channels() == m.channels()); }
+//    size_t size() const { return size_; }
 
     /**
      *  @brief Transposes a matrix.
@@ -143,12 +153,14 @@ public:
     /**
      * @brief Inverses a matrix.
      */
-    _Matrix<_Tp> inv();
+//    _Matrix<_Tp> inv();
 
     /**
      * @brief Performs an element-wise multiplication or division of the two matrices.
      */
     _Matrix<_Tp> mul(const _Matrix<_Tp>& m, double scale=1) const;
+
+    _Matrix<_Matrix<_Tp>> mul(const _Matrix<_Matrix<_Tp>>& m, double scale = 1) const;
 
     /**
      * @brief Computes a dot-product of two vectors.
@@ -179,6 +191,8 @@ public:
      */
     static _Matrix<_Tp> zeros(Size size, int _chs = 1);
 
+    static _Matrix<_Tp> zeros(const MatrixShape& shape);
+
     /**
      * @brief Returns an array of all 1's of the specified size and type.
      */
@@ -204,12 +218,14 @@ public:
      * @brief allocates new matrix data unless the matrix already has specified size and type.
      * previous data is unreferenced if needed.
      */
-    void create(int _rows, int _cols, int _chs = 1);
+    void create(int rows, int cols, int chs = 1);
 
     /**
      * @overload
      */
-    void create(Size size, int _chs = 1);
+    void create(Size size, int chs = 1);
+
+    void create(const MatrixShape& shape);
 
     /**
      * @brief Returns the number of matrix channels.
@@ -248,6 +264,9 @@ public:
      * @brief Returns the total number of array elements.
      */
     size_t total() const { return size_; }
+    size_t size() const { return size_; }
+
+    MatrixShape shape() const { return { rows, cols, channels() }; }
 
     /**
      * @brief Returns the size of the array element.
@@ -371,6 +390,9 @@ public:
     int step = 0;
 
 private:
+	int refAdd(int *addr, int delta);
+	void release();
+
     /**
     * - continuity flag: 1 bits
     * - type: 8 bits
@@ -392,9 +414,6 @@ private:
     //! pointer to the reference counter;
     // when matrix points to user-allocated data, the pointer is NULL
     int* refcount = nullptr;
-
-    int refAdd(int *addr, int delta);
-    void release();
 };
 
 typedef _Matrix<double>             Matrix64f;
@@ -406,6 +425,8 @@ typedef _Matrix<unsigned short>     Matrix16u;
 typedef _Matrix<signed char>        Matrix8s;
 typedef _Matrix<unsigned char>      Matrix8u;
 typedef _Matrix<unsigned char>      Matrix;
+
+template <typename _Tp> struct Type<_Matrix<_Tp>> { enum { value = TYPE_MATRIX }; };
 
 template <class _Tp> _Matrix<_Tp> operator+(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
 template <class _Tp> _Matrix<_Tp> operator+(const _Matrix<_Tp> &m, const Scalar& delta);
@@ -428,6 +449,8 @@ template <class _Tp> _Matrix<_Tp> operator-=(_Matrix<_Tp> &m, const Scalar& delt
 template <class _Tp> _Matrix<_Tp> operator-=(_Matrix<_Tp> &m, double delta);
 
 template <class _Tp> _Matrix<_Tp> operator*(const _Matrix<_Tp> &m1, const _Matrix<_Tp> &m2);
+template <class _Tp> _Matrix<_Matrix<_Tp>> operator*(const _Matrix<_Tp> &m1, const _Matrix<_Matrix<_Tp>> &m2);
+template <class _Tp> _Matrix<_Matrix<_Tp>> operator*(const _Matrix<_Matrix<_Tp>> &m1, const _Matrix<_Tp> &m2);
 template <class _Tp> _Matrix<_Tp> operator*(const _Matrix<_Tp> &m, const Scalar& v);
 template <class _Tp> _Matrix<_Tp> operator*(const Scalar& v, const _Matrix<_Tp> &m);
 template <class _Tp> _Matrix<_Tp> operator*(const _Matrix<_Tp> &m, double v);
@@ -491,9 +514,13 @@ template<typename _Tp, class Functor> void traverse(const _Matrix<_Tp>& m1, std:
 
 template<typename _Tp, class Functor> void traverse(_Matrix<_Tp>& m1, _Matrix<_Tp>& m2, std::ptrdiff_t diff, const Functor& callback);
 template<typename _Tp, class Functor> void traverse(const _Matrix<_Tp>& m1, _Matrix<_Tp>& m2, std::ptrdiff_t diff, const Functor& callback);
+template<typename _Tp, typename _T2, class Functor> void traverse(_Matrix<_Tp>& m1, _Matrix<_T2>& m2, std::ptrdiff_t diff, const Functor& callback);
+template<typename _Tp, typename _T2, class Functor> void traverse(const _Matrix<_Tp>& m1, _Matrix<_T2>& m2, std::ptrdiff_t diff, const Functor& callback);
 
 template<typename _Tp, class Functor> void traverse(_Matrix<_Tp>& m1, _Matrix<_Tp>& m2, _Matrix<_Tp>& m3, std::ptrdiff_t diff, const Functor& callback);
 template<typename _Tp, class Functor> void traverse(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2, _Matrix<_Tp>& m3, std::ptrdiff_t diff, const Functor& callback);
+template<typename _Tp, typename _T2, typename _T3, class Functor> void traverse(_Matrix<_Tp>& m1, _Matrix<_T2>& m2, _Matrix<_T3>& m3, std::ptrdiff_t diff, const Functor& callback);
+template<typename _Tp, typename _T2, typename _T3, class Functor> void traverse(const _Matrix<_Tp>& m1, const _Matrix<_T2>& m2, _Matrix<_T3>& m3, std::ptrdiff_t diff, const Functor& callback);
 
 template<typename _Tp, class Functor> void traverse(_Matrix<_Tp>& m1, _Matrix<_Tp>& m2, _Matrix<_Tp>& m3, _Matrix<_Tp>& m4, std::ptrdiff_t diff, const Functor& callback);
 template<typename _Tp, class Functor> void traverse(const _Matrix<_Tp>& m1, const _Matrix<_Tp>& m2, const _Matrix<_Tp>& m3, _Matrix<_Tp>& m4, std::ptrdiff_t diff, const Functor& callback);
@@ -533,12 +560,15 @@ public:
     _MatrixConstIterator& operator-=(difference_type ofs);
 
     _MatrixConstIterator& operator--();
-    _MatrixConstIterator& operator--(int);
+    _MatrixConstIterator  operator--(int);
     _MatrixConstIterator& operator++();
-    _MatrixConstIterator& operator++(int);
+    _MatrixConstIterator  operator++(int);
 
     bool operator == (const _MatrixConstIterator<_Tp>& it) const;
     bool operator != (const _MatrixConstIterator<_Tp>& it) const;
+
+	bool operator < (const _MatrixConstIterator<_Tp>& it) const;
+	bool operator > (const _MatrixConstIterator<_Tp>& it) const;
 
     void seek(difference_type ofs, bool relative = false);
 
@@ -570,10 +600,11 @@ public:
 
     _MatrixIterator& operator += (difference_type ofs);
     _MatrixIterator& operator -= (difference_type ofs);
+
     _MatrixIterator& operator --();
-    _MatrixIterator operator --(int);
+    _MatrixIterator  operator --(int);
     _MatrixIterator& operator ++();
-    _MatrixIterator operator ++(int);
+    _MatrixIterator  operator ++(int);
 };
 } //! namespace z
 

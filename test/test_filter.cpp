@@ -16,13 +16,13 @@ int main()
     z::bilateralFilter(image, b_image, 25, 25 * 2, 25/2);
 
 
-    z::imshow("原图", image);
-    z::imshow("方框滤波", box_image);
-    z::imshow("均值滤波", blur_image);
-    z::imshow("高斯滤波", g_image);
+    z::imshow("original", image);
+    z::imshow("boxFilter", box_image);
+    z::imshow("blur", blur_image);
+    z::imshow("gaussianBlur", g_image);
 
-    z::imshow("中值滤波", median_image);
-    z::imshow("双边滤波", b_image);
+    z::imshow("medianFilter", median_image);
+    z::imshow("bilateralFilter", b_image);
 
     z::waitKey(0);
 

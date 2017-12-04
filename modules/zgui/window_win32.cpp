@@ -342,8 +342,7 @@ int zNamedWindow(const char* name, int flags)
 
     GUIInitSystem(0, 0);
 
-    if (!name)
-        _log_("NULL name string");
+	assert(name);
 
     // Check the name in the storage
     auto window = zFindWindowByName(name);
@@ -367,8 +366,7 @@ int zNamedWindow(const char* name, int flags)
         rect.width, rect.height,
         0, 0, hg_hinstance, 0);
 
-    if (!mainhWnd)
-        _log_("Frame window can not be created");
+	assert(mainhWnd);
 
     ShowWindow(mainhWnd, SW_SHOW);
 
@@ -381,8 +379,7 @@ int zNamedWindow(const char* name, int flags)
         rect.width, rect.height, 
         mainhWnd, 0, hg_hinstance, 0);
 
-    if (!hWnd)
-        _log_("Frame window can not be created");
+	assert(hWnd);
 
     ShowWindow(hWnd, SW_SHOW);
 
@@ -477,8 +474,7 @@ static void zRemoveWindow(zWindow* window)
 
 void zDestroyWindow(const char* name)
 {
-    if (!name)
-        _log_("NULL name string");
+	assert(name);
 
     auto window = zFindWindowByName(name);
     if (!window)
@@ -606,15 +602,13 @@ void cpy(z::Matrix8u &src, char * arr)
 
 void zShowImage(const char* name, void* arr)
 {
+	assert(name);
+
 	SIZE size = { 0, 0 };
     int channels = 0;
     void* dst_ptr = nullptr;
-    int origin = 0;
     z::Matrix dst;
     bool changed_size = false; // philipg
-
-    if (!name)
-        _log_("NULL name");
 
 	auto window = zFindWindowByName(name);
     if (!window) {
@@ -652,7 +646,6 @@ void zShowImage(const char* name, void* arr)
             DIB_RGB_COLORS, &dst_ptr, 0, 0));
     }
 
-    auto c = (size.cx * image->channels() + 3) & -4;
     convertImage(image, &dst);
     cpy(dst, reinterpret_cast<char *>(dst_ptr));
 
@@ -665,10 +658,9 @@ void zShowImage(const char* name, void* arr)
 
 void resizeWindow(const char* name, int width, int height)
 {
-    RECT rmw, rw;
+	assert(name);
 
-    if (!name)
-        _log_("NULL name");
+    RECT rmw, rw;
 
     auto window = zFindWindowByName(name);
     if (!window)
@@ -697,10 +689,9 @@ void resizeWindow(const char* name, int width, int height)
 
 void zMoveWindow(const char* name, int x, int y)
 {
-    RECT rect;
+	assert(name);
 
-    if (!name)
-        _log_("NULL name");
+    RECT rect;
 
     zWindow * window = zFindWindowByName(name);
     if (!window)
@@ -1428,11 +1419,8 @@ static int zCreateTrackbar(const char* trackbar_name, const char* window_name,
     zTrackbar* trackbar = 0;
     int pos = 0;
 
-    if (!window_name || !trackbar_name)
-        _log_("NULL window or trackbar name");
-
-    if (count < 0)
-        _log_("Bad trackbar maximal value");
+	assert(window_name && trackbar_name);
+	assert(count >= 0);
 
     window = zFindWindowByName(window_name);
     if (!window)
@@ -1744,12 +1732,11 @@ void* zGetWindowHandle(const char* window_name)
 
 const char* cvGetWindowName(void* window_handle)
 {
-    const char* window_name = "";
+	assert(window_handle != 0);
 
-    if (window_handle == 0)
-        _log_("NULL window");
+	auto window_name = "";
 
-    auto window = zWindowByHWND((HWND)window_handle);
+	const auto window = zWindowByHWND(static_cast<HWND>(window_handle));
     if (window)
         window_name = window->name;
 

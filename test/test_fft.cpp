@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     z::copyMakeBorder(ker, kernelR, 0, image.rows - 3, 0, image.cols - 3);
     z::dft(kernelR, OutputKernel);
 
-    z::Matrix64f BackImage(image.size(), 2, { 0, 0 });
+    z::Matrix64f BackImage(image.rows, image.cols, 2, z::Scalar{ 0, 0 });
     for (auto i = 0; i < image.rows; ++i) {
         for (auto j = 0; j < image.cols; ++j) {
             BackImage.at<z::Complex>(i, j) = OutputImage.at<z::Complex>(i, j) * OutputKernel.at<z::Complex>(i, j);
