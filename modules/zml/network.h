@@ -21,18 +21,18 @@ private:
     void feedforward(const Pair& pair);
     void backpropagation(const Pair& pair, _Matrix<_Matrix<double>>& nabla_b, _Matrix<_Matrix<_Matrix<double>>>& nabla_w);
 
-	std::vector<std::vector<Pair>> split(const std::vector<Pair>& training_data, int size) const;
+    std::vector<std::vector<Pair>> split(const std::vector<Pair>& training_data, int size) const;
     void training(const std::vector<Pair>& batch, double alpha);
 
-	double alpha_ = 0.0;
-	std::vector<int> layers_;
+    double alpha_ = 0.0;
+    std::vector<int> layers_;
 
     // Biases
-	_Matrix<_Matrix<double>> bs_;
+    _Matrix<_Matrix<double>> bs_;
     // Weights
-	_Matrix<_Matrix<_Matrix<double>>> ws_;
+    _Matrix<_Matrix<_Matrix<double>>> ws_;
     // z = \sum wx + b
-	_Matrix<_Matrix<double>> zs_;
+    _Matrix<_Matrix<double>> zs_;
     // Outputs: o = \sigma(z)
     _Matrix<_Matrix<double>> os_;
 };

@@ -4,7 +4,7 @@
 #include <string>
 #include <cstring>
 #include <zcore/debug.h>
-#include <zcore/util.h>
+#include <util/util.h>
 #include <zmatrix.h>
 #include "gtk/gtk.h"
 

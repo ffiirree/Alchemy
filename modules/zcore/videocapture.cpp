@@ -14,22 +14,22 @@ VideoCapture::VideoCapture(int32_t index)
 
 bool VideoCapture::open(int32_t index)
 {
-	index_ = index;
+    index_ = index;
 
     avcodec_register_all();
     avdevice_register_all();
-    
-	format_context_ = avformat_alloc_context();
+
+    format_context_ = avformat_alloc_context();
 
 #if defined _WIN32
     device_name_ = std::to_string(index);
 	if ((input_format_ = av_find_input_format("vfwcap")) == nullptr) return false;
 #elif  __unix__
-	device_name_ = "/dev/video" + std::to_string(index);
-	if ((input_format_ = av_find_input_format("v4l2")) == nullptr) return false;
+    device_name_ = "/dev/video" + std::to_string(index);
+    if ((input_format_ = av_find_input_format("v4l2")) == nullptr) return false;
 #endif
 
-	if (avformat_open_input(&format_context_, device_name_.c_str(), input_format_, nullptr) < 0) return false;
+    if (avformat_open_input(&format_context_, device_name_.c_str(), input_format_, nullptr) < 0) return false;
     if(avformat_find_stream_info(format_context_, nullptr) < 0) return false;
 
     AVCodec *codec;
@@ -47,7 +47,7 @@ bool VideoCapture::open(int32_t index)
 
 VideoCapture::~VideoCapture()
 {
-	av_packet_unref(&packet_);
+    av_packet_unref(&packet_);
     avcodec_close(codec_context_);
     av_free(frame_);
     avpicture_free(&picture_);

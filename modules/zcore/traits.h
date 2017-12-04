@@ -39,7 +39,7 @@ template <> struct DataType<int32_t>   { enum { depth = DEPTH_INT32,     channel
 template <> struct DataType<float>     { enum { depth = DEPTH_FLOAT,     channels = 1, value = depth << 8 | channels }; };
 template <> struct DataType<double>    { enum { depth = DEPTH_DOUBLE,    channels = 1, value = depth << 8 | channels }; };
 
-    
+
 //////////////////////////////////////////////////////////////////////////////////////////
 template <typename _Tp> struct Type { enum { value = TYPE_DEFAULT };};
 

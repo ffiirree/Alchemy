@@ -73,110 +73,110 @@ template <class _Tp> void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int
     auto is_hsv = false;
 
     switch (code) {
-    case BGR2GRAY:
-    {
-        assert(src.channels() == 3);
+        case BGR2GRAY:
+        {
+            assert(src.channels() == 3);
 
-        if (!(dst.rows == src.rows && dst.cols == src.cols && dst.channels() == 1))
-            dst.create(src.rows, src.cols, 1);
+            if (!(dst.rows == src.rows && dst.cols == src.cols && dst.channels() == 1))
+                dst.create(src.rows, src.cols, 1);
 
-        using Pixel = _Vec<_Tp, 3>;
+            using Pixel = _Vec<_Tp, 3>;
 
-        auto _begin_1 = src.template begin<Pixel>();
-        auto _begin_2 = dst.begin();
-        for (; _begin_1 != src.template end<Pixel>(); ++_begin_1, ++_begin_2) {
-            auto pixel = *_begin_1;
-            *_begin_2 = saturate_cast<_Tp>(0.114 * pixel[0] + 0.587 * pixel[1] + 0.299 * pixel[2]);
+            auto _begin_1 = src.template begin<Pixel>();
+            auto _begin_2 = dst.begin();
+            for (; _begin_1 != src.template end<Pixel>(); ++_begin_1, ++_begin_2) {
+                auto pixel = *_begin_1;
+                *_begin_2 = saturate_cast<_Tp>(0.114 * pixel[0] + 0.587 * pixel[1] + 0.299 * pixel[2]);
+            }
+            break;
         }
-        break;
-    }
 
 
-    case BGR2RGB:
-    {
-        assert(src.channels() == 3);
+        case BGR2RGB:
+        {
+            assert(src.channels() == 3);
 
-        if (dst.shape() != src.shape())
-            dst.create(src.shape());
+            if (dst.shape() != src.shape())
+                dst.create(src.shape());
 
-        using Pixel = _Vec<_Tp, 3>;
+            using Pixel = _Vec<_Tp, 3>;
 
-        auto sbegin = src.template begin<Pixel>();
-        auto dbegin = dst.template begin<Pixel>();
-        for (; sbegin != src.template end<Pixel>(); ++sbegin, ++dbegin) {
-            (*dbegin)[0] = (*sbegin)[2];
-            (*dbegin)[1] = (*sbegin)[1];
-            (*dbegin)[2] = (*sbegin)[0];
+            auto sbegin = src.template begin<Pixel>();
+            auto dbegin = dst.template begin<Pixel>();
+            for (; sbegin != src.template end<Pixel>(); ++sbegin, ++dbegin) {
+                (*dbegin)[0] = (*sbegin)[2];
+                (*dbegin)[1] = (*sbegin)[1];
+                (*dbegin)[2] = (*sbegin)[0];
+            }
+            break;
         }
-        break;
-    }
 
-    // 本hsv转换算法来自opencv官网:http://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html
-    case BGR2HSV:
-        is_hsv = true;
-    case BGR2HSI:
-    {
-        assert(src.channels() == 3);
+            // 本hsv转换算法来自opencv官网:http://docs.opencv.org/2.4/modules/imgproc/doc/miscellaneous_transformations.html
+        case BGR2HSV:
+            is_hsv = true;
+        case BGR2HSI:
+        {
+            assert(src.channels() == 3);
 
-        if (dst.shape() != src.shape())
-            dst.create(src.shape());
+            if (dst.shape() != src.shape())
+                dst.create(src.shape());
 
-        for (int i = 0; i < src.rows; ++i) {
-            for (int j = 0; j < src.cols; ++j) {
-                auto spixel = src.template at<_Vec<_Tp, 3>>(i, j);
-                auto&& dpixel = dst.template at<_Vec<_Tp, 3>>(i, j);
+            for (int i = 0; i < src.rows; ++i) {
+                for (int j = 0; j < src.cols; ++j) {
+                    auto spixel = src.template at<_Vec<_Tp, 3>>(i, j);
+                    auto&& dpixel = dst.template at<_Vec<_Tp, 3>>(i, j);
 
-                _Tp _min, _max;
-                double H = 0.0, S = 0.0;
+                    _Tp _min, _max;
+                    double H = 0.0, S = 0.0;
 
-                // min(R, G, B) & max(R, G, B)
-                spixel[0] > spixel[1] ? (_max = spixel[0], _min = spixel[1]) : (_max = spixel[1], _min = spixel[0]);
+                    // min(R, G, B) & max(R, G, B)
+                    spixel[0] > spixel[1] ? (_max = spixel[0], _min = spixel[1]) : (_max = spixel[1], _min = spixel[0]);
 
-                if (_max < spixel[2]) _max = spixel[2];
-                if (_min > spixel[2]) _min = spixel[2];
+                    if (_max < spixel[2]) _max = spixel[2];
+                    if (_min > spixel[2]) _min = spixel[2];
 
-                // V = max(R, G, B)
-                if (is_hsv)
-                    dpixel[2] = _max;
-                else
-                    dpixel[2] = _Tp((spixel[0] + spixel[1] + spixel[2]) / 3.0);
+                    // V = max(R, G, B)
+                    if (is_hsv)
+                        dpixel[2] = _max;
+                    else
+                        dpixel[2] = _Tp((spixel[0] + spixel[1] + spixel[2]) / 3.0);
 
-                // V != 0 ? S = (V - min(R,G,B))/V : S = 0;
-                _max == 0 ? S = 0.0 : S = (_max - _min) / (double)_max;
+                    // V != 0 ? S = (V - min(R,G,B))/V : S = 0;
+                    _max == 0 ? S = 0.0 : S = (_max - _min) / (double)_max;
 
-                // if V == R : H = 60(G - B)/(V - min)
-                // if V == G : H = 120 + 60(B - R)/(V - min)
-                // if V == B : H = 240 + 60(R - G)/(V - min)
-                if (_max == spixel[0]) {             // B
-                    H = 240.0 + (60.0 * (spixel[2] - spixel[1])) / (_max - _min);
-                }
-                else if (_max == spixel[1]) {        // G
-                    H = 120.0 + (60.0 * (spixel[0] - spixel[2])) / (_max - _min);
-                }
-                else if (_max == spixel[2]) {        // R
-                    H = (60.0 * (spixel[1] - spixel[0])) / (_max - _min);
-                }
-                if (H < 0.0) H += 360;
+                    // if V == R : H = 60(G - B)/(V - min)
+                    // if V == G : H = 120 + 60(B - R)/(V - min)
+                    // if V == B : H = 240 + 60(R - G)/(V - min)
+                    if (_max == spixel[0]) {             // B
+                        H = 240.0 + (60.0 * (spixel[2] - spixel[1])) / (_max - _min);
+                    }
+                    else if (_max == spixel[1]) {        // G
+                        H = 120.0 + (60.0 * (spixel[0] - spixel[2])) / (_max - _min);
+                    }
+                    else if (_max == spixel[2]) {        // R
+                        H = (60.0 * (spixel[1] - spixel[0])) / (_max - _min);
+                    }
+                    if (H < 0.0) H += 360;
 
-                // 根据不同的深度进行处理
-                if (sizeof(_Tp) == 1) {
-                    dpixel[1] = _Tp(S * 255);
-                    dpixel[0] = _Tp(H / 2);
-                }
-                else if (sizeof(_Tp) == 2) {
-                    Z_Error("no support");
-                }
-                else if (sizeof(_Tp) == 4) {
-                    Z_Error("no support");
+                    // 根据不同的深度进行处理
+                    if (sizeof(_Tp) == 1) {
+                        dpixel[1] = _Tp(S * 255);
+                        dpixel[0] = _Tp(H / 2);
+                    }
+                    else if (sizeof(_Tp) == 2) {
+                        Z_Error("no support");
+                    }
+                    else if (sizeof(_Tp) == 4) {
+                        Z_Error("no support");
+                    }
                 }
             }
+
+            break;
         }
 
-        break;
-    }
-
-    default:
-        break;
+        default:
+            break;
     }
 }
 
@@ -200,7 +200,7 @@ void __conv(const _Matrix<_T1>& src, _Matrix<_T1>& dst, const _Matrix<_T2>& kern
                     auto _j = j - kernel.cols / 2 + jj;
 
                     if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows) &&
-                        static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
+                          static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
                         callback(_i, _j);
                     }
 
@@ -226,34 +226,34 @@ void conv(const _Matrix<_T1>& src, _Matrix<_T1>&dst, const _Matrix<_T2>& kernel,
 
     switch (borderType) {
         //!< `iiiiii|abcdefgh|iiiiiii`  with some specified `i`
-    case BORDER_CONSTANT:
-        //                                    break;
-        //!< `aaaaaa|abcdefgh|hhhhhhh`
-    case BORDER_REPLICATE:
-        __conv(src, dst, kernel, BORDER_REPLICATE_CALLBACK(src));
-        break;
+        case BORDER_CONSTANT:
+            //                                    break;
+            //!< `aaaaaa|abcdefgh|hhhhhhh`
+        case BORDER_REPLICATE:
+            __conv(src, dst, kernel, BORDER_REPLICATE_CALLBACK(src));
+            break;
 
-        //!< `fedcba|abcdefgh|hgfedcb`
-    case BORDER_REFLECT:
-        __conv(src, dst, kernel, BORDER_REFLECT_CALLBACK(src));
-        break;
+            //!< `fedcba|abcdefgh|hgfedcb`
+        case BORDER_REFLECT:
+            __conv(src, dst, kernel, BORDER_REFLECT_CALLBACK(src));
+            break;
 
-        //!< `cdefgh|abcdefgh|abcdefg`
-    case BORDER_WRAP:
-        __conv(src, dst, kernel, BORDER_WRAP_CALLBACK(src));
-        break;
+            //!< `cdefgh|abcdefgh|abcdefg`
+        case BORDER_WRAP:
+            __conv(src, dst, kernel, BORDER_WRAP_CALLBACK(src));
+            break;
 
-        //!< `gfedcb|abcdefgh|gfedcba`
-    default:
-    case BORDER_REFLECT_101:
-        __conv(src, dst, kernel, BORDER_DEFAULT_CALLBACK(src));
-        break;
+            //!< `gfedcb|abcdefgh|gfedcba`
+        default:
+        case BORDER_REFLECT_101:
+            __conv(src, dst, kernel, BORDER_DEFAULT_CALLBACK(src));
+            break;
 
-        //!< `uvwxyz|absdefgh|ijklmno`
-		// Do not support!
-    case BORDER_TRANSPARENT:
-		assert(false);
-        break;
+            //!< `uvwxyz|absdefgh|ijklmno`
+            // Do not support!
+        case BORDER_TRANSPARENT:
+            assert(false);
+            break;
     }
 }
 
@@ -317,7 +317,7 @@ template <typename _Tp> void __medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst,
 
                     for (auto k = 0; k < src.channels(); ++k) {
                         if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows) &&
-                            static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
+                              static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
                             callback(_i, _j);
                         }
                         buffer.at(k, ii * size.width + jj) = src.at(_i, _j, k);
@@ -337,33 +337,33 @@ template <typename _Tp> void medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, S
 {
     switch (borderType) {
         //!< `iiiiii|abcdefgh|iiiiiii`  with some specified `i`
-    case BORDER_CONSTANT:
-        //                                    break;
-        //!< `aaaaaa|abcdefgh|hhhhhhh`
-    case BORDER_REPLICATE:
-        __medianFilter(src, dst, size, BORDER_REPLICATE_CALLBACK(src));
-        break;
+        case BORDER_CONSTANT:
+            //                                    break;
+            //!< `aaaaaa|abcdefgh|hhhhhhh`
+        case BORDER_REPLICATE:
+            __medianFilter(src, dst, size, BORDER_REPLICATE_CALLBACK(src));
+            break;
 
-        //!< `fedcba|abcdefgh|hgfedcb`
-    case BORDER_REFLECT:
-        __medianFilter(src, dst, size, BORDER_REFLECT_CALLBACK(src));
-        break;
+            //!< `fedcba|abcdefgh|hgfedcb`
+        case BORDER_REFLECT:
+            __medianFilter(src, dst, size, BORDER_REFLECT_CALLBACK(src));
+            break;
 
-        //!< `cdefgh|abcdefgh|abcdefg`
-    case BORDER_WRAP:
-        __medianFilter(src, dst, size, BORDER_WRAP_CALLBACK(src));
-        break;
+            //!< `cdefgh|abcdefgh|abcdefg`
+        case BORDER_WRAP:
+            __medianFilter(src, dst, size, BORDER_WRAP_CALLBACK(src));
+            break;
 
-        //!< `gfedcb|abcdefgh|gfedcba`
-    default:
-    case BORDER_REFLECT_101:
-        __medianFilter(src, dst, size, BORDER_DEFAULT_CALLBACK(src));
-        break;
+            //!< `gfedcb|abcdefgh|gfedcba`
+        default:
+        case BORDER_REFLECT_101:
+            __medianFilter(src, dst, size, BORDER_DEFAULT_CALLBACK(src));
+            break;
 
-        //!< `uvwxyz|absdefgh|ijklmno`
-    case BORDER_TRANSPARENT:
-        _log_("Do not support!");
-        break;
+            //!< `uvwxyz|absdefgh|ijklmno`
+        case BORDER_TRANSPARENT:
+            _log_("Do not support!");
+            break;
     }
 }
 
@@ -469,7 +469,7 @@ template <typename _Tp> void __morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>
 
                     for (auto k = 0; k < src.channels(); ++k) {
                         if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows) &&
-                            static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
+                              static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
                             callback(_i, _j);
                         }
 
@@ -478,23 +478,23 @@ template <typename _Tp> void __morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>
                 }
             }
             switch (code) {
-            case MORP_ERODE:
-                for (auto k = 0; k < src.channels(); ++k) {
-                    _Tp minVal = 0;
-                    z::min(buffer.ptr(k), area, minVal);
-                    dst.at(i, j, k) = minVal;
-                }
-                break;
+                case MORP_ERODE:
+                    for (auto k = 0; k < src.channels(); ++k) {
+                        _Tp minVal = 0;
+                        z::min(buffer.ptr(k), area, minVal);
+                        dst.at(i, j, k) = minVal;
+                    }
+                    break;
 
-            case MORP_DILATE:
-                for (auto k = 0; k < src.channels(); ++k) {
-                    _Tp maxVal = 0;
-                    z::max(buffer.ptr(k), area, maxVal);
-                    dst.at(i, j, k) = maxVal;
-                }
-                break;
+                case MORP_DILATE:
+                    for (auto k = 0; k < src.channels(); ++k) {
+                        _Tp maxVal = 0;
+                        z::max(buffer.ptr(k), area, maxVal);
+                        dst.at(i, j, k) = maxVal;
+                    }
+                    break;
 
-            default: break;
+                default: break;
             }
         } // !for(j)
     } // !for(i)
@@ -503,33 +503,33 @@ template <typename _Tp> void morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>&d
 {
     switch (borderType) {
         //!< `iiiiii|abcdefgh|iiiiiii`  with some specified `i`
-    case BORDER_CONSTANT:
-        //                                    break;
-        //!< `aaaaaa|abcdefgh|hhhhhhh`
-    case BORDER_REPLICATE:
-        __morphOp(code, src, dst, size, BORDER_REPLICATE_CALLBACK(src));
-        break;
+        case BORDER_CONSTANT:
+            //                                    break;
+            //!< `aaaaaa|abcdefgh|hhhhhhh`
+        case BORDER_REPLICATE:
+            __morphOp(code, src, dst, size, BORDER_REPLICATE_CALLBACK(src));
+            break;
 
-        //!< `fedcba|abcdefgh|hgfedcb`
-    case BORDER_REFLECT:
-        __morphOp(code, src, dst, size, BORDER_REFLECT_CALLBACK(src));
-        break;
+            //!< `fedcba|abcdefgh|hgfedcb`
+        case BORDER_REFLECT:
+            __morphOp(code, src, dst, size, BORDER_REFLECT_CALLBACK(src));
+            break;
 
-        //!< `cdefgh|abcdefgh|abcdefg`
-    case BORDER_WRAP:
-        __morphOp(code, src, dst, size, BORDER_WRAP_CALLBACK(src));
-        break;
+            //!< `cdefgh|abcdefgh|abcdefg`
+        case BORDER_WRAP:
+            __morphOp(code, src, dst, size, BORDER_WRAP_CALLBACK(src));
+            break;
 
-        //!< `gfedcb|abcdefgh|gfedcba`
-    default:
-    case BORDER_REFLECT_101:
-        __morphOp(code, src, dst, size, BORDER_DEFAULT_CALLBACK(src));
-        break;
+            //!< `gfedcb|abcdefgh|gfedcba`
+        default:
+        case BORDER_REFLECT_101:
+            __morphOp(code, src, dst, size, BORDER_DEFAULT_CALLBACK(src));
+            break;
 
-        //!< `uvwxyz|absdefgh|ijklmno`
-    case BORDER_TRANSPARENT:
-        _log_("Do not support!");
-        break;
+            //!< `uvwxyz|absdefgh|ijklmno`
+        case BORDER_TRANSPARENT:
+            _log_("Do not support!");
+            break;
     }
 }
 
@@ -557,45 +557,45 @@ template <typename _Tp> void morphEx(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, int op
         dst.create(src.rows, src.cols, src.channels());
 
     switch (op) {
-    case MORP_ERODE:
-        erode(src, dst, kernel, borderType);
-        break;
+        case MORP_ERODE:
+            erode(src, dst, kernel, borderType);
+            break;
 
-    case MORP_DILATE:
-        dilate(src, dst, kernel, borderType);
-        break;
+        case MORP_DILATE:
+            dilate(src, dst, kernel, borderType);
+            break;
 
-    case MORP_OPEN:
-        erode(src, temp, kernel, borderType);
-        dilate(temp, dst, kernel, borderType);
-        break;
+        case MORP_OPEN:
+            erode(src, temp, kernel, borderType);
+            dilate(temp, dst, kernel, borderType);
+            break;
 
-    case MORP_CLOSE:
-        dilate(src, temp, kernel, borderType);
-        erode(temp, dst, kernel, borderType);
-        break;
+        case MORP_CLOSE:
+            dilate(src, temp, kernel, borderType);
+            erode(temp, dst, kernel, borderType);
+            break;
 
-    case MORP_BLACKHAT:
-        dilate(src, temp, kernel, borderType);
-        erode(temp, dst, kernel, borderType);
+        case MORP_BLACKHAT:
+            dilate(src, temp, kernel, borderType);
+            erode(temp, dst, kernel, borderType);
 
-        dst -= src;
-        break;
+            dst -= src;
+            break;
 
-    case MORP_TOPHAT:
-        erode(src, temp, kernel, borderType);
-        dilate(temp, dst, kernel, borderType);
+        case MORP_TOPHAT:
+            erode(src, temp, kernel, borderType);
+            dilate(temp, dst, kernel, borderType);
 
-        dst = src - dst;
-        break;
+            dst = src - dst;
+            break;
 
-    case MORP_GRADIENT:
-        erode(src, temp, kernel, borderType);
-        dilate(src, dst, kernel, borderType);
+        case MORP_GRADIENT:
+            erode(src, temp, kernel, borderType);
+            dilate(src, dst, kernel, borderType);
 
-        dst -= temp;
-        break;
-    default:;
+            dst -= temp;
+            break;
+        default:;
     }
 }
 
@@ -652,7 +652,7 @@ template <typename _Tp> void merge(const std::vector<_Matrix<_Tp>> & src, _Matri
     }
 }
 
-template <typename _Tp> 
+template <typename _Tp>
 void copyMakeBorder(const _Matrix<_Tp> & src, _Matrix<_Tp> & dst, int top, int bottom, int left, int right)
 {
     dst = _Matrix<_Tp>::zeros(src.rows + top + bottom, src.cols + left + right, src.channels());
@@ -674,43 +674,43 @@ void threshold(_Matrix<_Tp> &src, _Matrix<_Tp>& dst, double thresh, double maxva
     dst = src.clone();
 
     switch (type) {
-    case THRESH_BINARY:
-        for(auto & pixel : dst) {
-            pixel > saturate_cast<_Tp>(thresh) ? pixel = saturate_cast<_Tp>(maxval) : pixel = 0;
-        }
-        break;
-
-    case THRESH_BINARY_INV:
-        for (auto & pixel : dst) {
-            pixel < saturate_cast<_Tp>(thresh) ? pixel = saturate_cast<_Tp>(maxval) : pixel = 0;
-        }
-        break;
-
-    case THRESH_TRUNC:
-        for (auto & pixel : dst) {
-            if(pixel > saturate_cast<_Tp>(thresh)) {
-                pixel = saturate_cast<_Tp>(thresh);
+        case THRESH_BINARY:
+            for(auto & pixel : dst) {
+                pixel > saturate_cast<_Tp>(thresh) ? pixel = saturate_cast<_Tp>(maxval) : pixel = 0;
             }
-        }
-        break;
+            break;
 
-    case THRESH_TOZERO:
-        for (auto & pixel : dst) {
-            if(pixel <= saturate_cast<_Tp>(thresh)) {
-                pixel = 0;
+        case THRESH_BINARY_INV:
+            for (auto & pixel : dst) {
+                pixel < saturate_cast<_Tp>(thresh) ? pixel = saturate_cast<_Tp>(maxval) : pixel = 0;
             }
-        }
-        break;
+            break;
 
-    case THRESH_TOZERO_INV:
-        for (auto & pixel : dst) {
-            if (pixel > saturate_cast<_Tp>(thresh)) {
-                pixel = 0;
+        case THRESH_TRUNC:
+            for (auto & pixel : dst) {
+                if(pixel > saturate_cast<_Tp>(thresh)) {
+                    pixel = saturate_cast<_Tp>(thresh);
+                }
             }
-        }
-        break;
+            break;
 
-    default:break;
+        case THRESH_TOZERO:
+            for (auto & pixel : dst) {
+                if(pixel <= saturate_cast<_Tp>(thresh)) {
+                    pixel = 0;
+                }
+            }
+            break;
+
+        case THRESH_TOZERO_INV:
+            for (auto & pixel : dst) {
+                if (pixel > saturate_cast<_Tp>(thresh)) {
+                    pixel = 0;
+                }
+            }
+            break;
+
+        default:break;
     }
 }
 
@@ -746,4 +746,4 @@ template <typename _Tp> void pyrDown(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
 }
 };
 
-#endif // !_ZIMGPROC_HPP 
+#endif // !_ZIMGPROC_HPP

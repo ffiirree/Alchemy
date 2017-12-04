@@ -39,9 +39,9 @@ public:
     typedef _MatrixIterator<_Tp> iterator;
     typedef _MatrixConstIterator<_Tp> const_iterator;
 
-	/**
-	 * @brief Constructor
-	 */
+    /**
+     * @brief Constructor
+     */
     _Matrix() = default;
 
     /**
@@ -61,32 +61,32 @@ public:
 
     _Matrix(const MatrixShape& shape);
 
-	/** 
-	 * @overload 
-	 * @Param v An optional value to initialize each matrix element with.
-	 */
-	template<typename _T2> _Matrix(int rows, int cols, int chs, const _T2& v);
-	template<typename _T2> _Matrix(Size size, int chs,          const _T2& v);
+    /**
+     * @overload
+     * @Param v An optional value to initialize each matrix element with.
+     */
+    template<typename _T2> _Matrix(int rows, int cols, int chs, const _T2& v);
+    template<typename _T2> _Matrix(Size size, int chs,          const _T2& v);
     template<typename _T2> _Matrix(const MatrixShape& shape,    const _T2& v);
 
     /** @overload */
     _Matrix(int rows, int cols, int chs, const Scalar& s);
-	_Matrix(Size size, int chs,          const Scalar& s);
+    _Matrix(Size size, int chs,          const Scalar& s);
 
-	/** 
-	 * @overload
-	 * @brief Initialize by random number.
-	 * @code 
-	 *      default_random_engine random_engine(time(nullptr));
+    /**
+     * @overload
+     * @brief Initialize by random number.
+     * @code
+     *      default_random_engine random_engine(time(nullptr));
      *      uniform_real_distribution<double> real_distribution(-1.0, 1.0);
-     *      
+     *
      *      auto m = _Matrix<double>(4, 4, 1, std::make_pair(random_engine, real_distribution));
-	 */
-	template<typename _T2, typename _T3> _Matrix(int rows, int cols, int chs, std::pair<_T2, _T3>&& initor);
-	template<typename _T2, typename _T3> _Matrix(Size size, int chs, std::pair<_T2, _T3>&& initor);
+     */
+    template<typename _T2, typename _T3> _Matrix(int rows, int cols, int chs, std::pair<_T2, _T3>&& initor);
+    template<typename _T2, typename _T3> _Matrix(Size size, int chs, std::pair<_T2, _T3>&& initor);
 
-	/** @overload */
-	_Matrix<_Tp>(std::initializer_list<_Tp> list);
+    /** @overload */
+    _Matrix<_Tp>(std::initializer_list<_Tp> list);
 
     /**
      * @overload
@@ -95,20 +95,20 @@ public:
      */
     _Matrix(const _Matrix& m);
 
-	/**
-	 * @brief assignment operator
-	 * @param m Assigned, right-hand-side matrix.
-	 */
-	_Matrix<_Tp>& operator= (const _Matrix& m);
+    /**
+     * @brief assignment operator
+     * @param m Assigned, right-hand-side matrix.
+     */
+    _Matrix<_Tp>& operator= (const _Matrix& m);
 
-	/** @overload */
-	_Matrix<_Tp>& operator= (std::initializer_list<_Tp> list);
+    /** @overload */
+    _Matrix<_Tp>& operator= (std::initializer_list<_Tp> list);
 
-	/**
-	 * @brief Cast ctor.
-	 */
-	template<typename _T2> _Matrix(const _Matrix<_T2>& m);
-	template<typename _T2> _Matrix<_Tp>& operator= (const _Matrix<_T2>& m);
+    /**
+     * @brief Cast ctor.
+     */
+    template<typename _T2> _Matrix(const _Matrix<_T2>& m);
+    template<typename _T2> _Matrix<_Tp>& operator= (const _Matrix<_T2>& m);
 
     ~_Matrix();
 
@@ -120,23 +120,23 @@ public:
     void fill(const Scalar& value);
     template<typename _T2> void fill(const _Matrix<_T2>& value);
 
-	/**
-	 * @brief Set ROI.
-	 */
-	_Matrix(const _Matrix<_Tp>& m, const Rect& roi);
+    /**
+     * @brief Set ROI.
+     */
+    _Matrix(const _Matrix<_Tp>& m, const Rect& roi);
 
-	/**
-	 *  @brief Creates a full copy of the array and the underlying data.
-	 */
-	_Matrix<_Tp> clone() const;
+    /**
+     *  @brief Creates a full copy of the array and the underlying data.
+     */
+    _Matrix<_Tp> clone() const;
 
-	/**
-	 * @brief Copies the matrix to another one.
-	 */
-	void copyTo(_Matrix<_Tp> & outputMatrix) const;
+    /**
+     * @brief Copies the matrix to another one.
+     */
+    void copyTo(_Matrix<_Tp> & outputMatrix) const;
 
     _Matrix<_Tp> reshape(int cn) const;
-	_Matrix<_Tp> reshape(int cn, int rows) const;
+    _Matrix<_Tp> reshape(int cn, int rows) const;
 
 //    size_t size() const { return size_; }
 
@@ -386,12 +386,12 @@ public:
     // Data area
     uint8_t *data = nullptr;
 
-    // Length of rows. 
+    // Length of rows.
     int step = 0;
 
 private:
-	int refAdd(int *addr, int delta);
-	void release();
+    int refAdd(int *addr, int delta);
+    void release();
 
     /**
     * - continuity flag: 1 bits
@@ -567,8 +567,8 @@ public:
     bool operator == (const _MatrixConstIterator<_Tp>& it) const;
     bool operator != (const _MatrixConstIterator<_Tp>& it) const;
 
-	bool operator < (const _MatrixConstIterator<_Tp>& it) const;
-	bool operator > (const _MatrixConstIterator<_Tp>& it) const;
+    bool operator < (const _MatrixConstIterator<_Tp>& it) const;
+    bool operator > (const _MatrixConstIterator<_Tp>& it) const;
 
     void seek(difference_type ofs, bool relative = false);
 

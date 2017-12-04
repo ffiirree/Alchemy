@@ -4,7 +4,7 @@
  * @author  zlq
  * @version V1.0
  * @date    2016.9.14
- * @brief   
+ * @brief
  ******************************************************************************
  * @attention
  *
@@ -158,7 +158,7 @@ public:
 
     _Tp dot(const _Point& pt) const;                    // 点乘
     double cross(const _Point& pt) const;               // 叉积
-                                                        //        bool inside(const _Rect<_Tp>& r) const;             // 检查点是否在区域内
+    //        bool inside(const _Rect<_Tp>& r) const;             // 检查点是否在区域内
 
     _Tp x, y;
 };
@@ -234,7 +234,7 @@ public:
 
     _Size<_Tp> size() const { return _Size<_Tp>(width, height); }                  // 矩形的大小
 
-                                                                                   // 检查点是否在范围内
+    // 检查点是否在范围内
     bool contains(const _Point<_Tp>& pt) const { return (x < pt.x && (x + width) > pt.x && y < pt.y && (y + height) > pt.y); }
 
     _Tp x, y, width, height;

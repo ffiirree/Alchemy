@@ -22,41 +22,41 @@ namespace z {
 
 void convertImage(Matrix8u *src, Matrix8u *dst, int flags)
 {
-	if (dst->shape() != src->shape())
-		dst->create(src->shape());
+    if (dst->shape() != src->shape())
+        dst->create(src->shape());
 
-	for (auto i = 0; i < src->rows; ++i)
-		for (auto j = 0; j < src->cols; ++j)
-			for (auto k = 0; k < src->channels(); ++k)
-				dst->at(i, j, k) = src->at(src->rows - i - 1, j, k);
+    for (auto i = 0; i < src->rows; ++i)
+        for (auto j = 0; j < src->cols; ++j)
+            for (auto k = 0; k < src->channels(); ++k)
+                dst->at(i, j, k) = src->at(src->rows - i - 1, j, k);
 }
 
 Matrix64f Gaussian(Size ksize, double sigmaX, double sigmaY)
 {
     assert(ksize.width == ksize.height && ksize.width % 2 == 1);
-    
-    if (sigmaX == 0) sigmaX = 0.3 * ((ksize.width - 1) * 0.5 - 1) + 0.8;
-	if (sigmaY == 0) sigmaY = 0.3 * ((ksize.height - 1) * 0.5 - 1) + 0.8;
 
-	int x = ksize.width / 2;
-	int y = ksize.height / 2;
+    if (sigmaX == 0) sigmaX = 0.3 * ((ksize.width - 1) * 0.5 - 1) + 0.8;
+    if (sigmaY == 0) sigmaY = 0.3 * ((ksize.height - 1) * 0.5 - 1) + 0.8;
+
+    int x = ksize.width / 2;
+    int y = ksize.height / 2;
 
     Matrix64f kernel(ksize);
 
     double alpha = 0;
 
-	for (int i = 0; i < kernel.rows; ++i) {
-		for (int j = 0; j < kernel.cols; ++j) {
-			auto z = std::pow((i - x), 2)/(2.0 * std::pow(sigmaX, 2)) + std::pow((j - y), 2)/(2.0 * std::pow(sigmaY, 2));
-            alpha += kernel.at<double>(i, j) = exp(-z);             
-		}
-	}
+    for (int i = 0; i < kernel.rows; ++i) {
+        for (int j = 0; j < kernel.cols; ++j) {
+            auto z = std::pow((i - x), 2)/(2.0 * std::pow(sigmaX, 2)) + std::pow((j - y), 2)/(2.0 * std::pow(sigmaY, 2));
+            alpha += kernel.at<double>(i, j) = exp(-z);
+        }
+    }
 
     // SUM(Gi,j) = 1
     for(auto& i : kernel) {
         i /= alpha;
     }
-	return kernel;
+    return kernel;
 }
 
 ///////////////////////////////////////////// DFT ///////////////////////////////////////////////////

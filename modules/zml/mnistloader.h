@@ -30,7 +30,7 @@ private:
     bool loadImages(const std::string &path);
     bool loadLabels(const std::string &path);
 
-	static uint32_t reverse(uint32_t x);
+    static uint32_t reverse(uint32_t x);
 
     uint32_t rows_ = 0;
     uint32_t cols_ = 0;

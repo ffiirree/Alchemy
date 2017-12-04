@@ -41,7 +41,7 @@ void z::SIFT::octave(const std::vector<z::Matrix64f> &gp)
         g = sigma;
         std::vector<Matrix64f> oct;
         for (int j = 0; j < 5; ++j) {
-            
+
             Matrix64f temp;
             conv(gp.at(i), temp, Gaussian({5, 5}, g, g));
             g *= k;

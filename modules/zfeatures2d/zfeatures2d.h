@@ -13,7 +13,7 @@ class KeyPoint {
 public:
     KeyPoint() {  }
     KeyPoint(Point2f pos, float size, float ang = -1, int oct = 0, int ci = -1)
-        :pos_(pos), size_(size), angle_(ang), octave_(oct), class_id_(ci) { }
+            :pos_(pos), size_(size), angle_(ang), octave_(oct), class_id_(ci) { }
 
     Point2f pos_{ 0, 0 };
     float size_ = 0.0;

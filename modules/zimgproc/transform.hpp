@@ -44,45 +44,45 @@ void __sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, _Matrix<_Tp>&dstGD, int dx, int
     if (dst.shape() != src.shape())
         dst.create(src.shape());
     if (!noGD)
-    	if (dstGD.shape() != src.shape())
-    		dstGD.create(src.shape());
+        if (dstGD.shape() != src.shape())
+            dstGD.create(src.shape());
 
     Matrix8s Gx(ksize, ksize), Gy(ksize, ksize);
 
     int factor = 0;
 
     switch (ksize) {
-    case 1:
+        case 1:
 
-        break;
+            break;
 
-    case 3:
-        // 原始sobel算子
-        //Gx = { -1, 0, 1, -2, 0, 2, -1, 0, 1 };
-        //Gy = { -1, -2, -1, 0, 0, 0, 1, 2, 1 };
-        //factor = 8;
-        // 改进型，可以将方向误差减到最小
-        Gx = {
-            -3, 0,  3,
-            -10, 0, 10,
-            -3, 0,  3 };
-        Gy = {
-            -3, -10, -3,
-            0,   0,  0,
-            3,  10,  3 };
+        case 3:
+            // 原始sobel算子
+            //Gx = { -1, 0, 1, -2, 0, 2, -1, 0, 1 };
+            //Gy = { -1, -2, -1, 0, 0, 0, 1, 2, 1 };
+            //factor = 8;
+            // 改进型，可以将方向误差减到最小
+            Gx = {
+                    -3, 0,  3,
+                    -10, 0, 10,
+                    -3, 0,  3 };
+            Gy = {
+                    -3, -10, -3,
+                    0,   0,  0,
+                    3,  10,  3 };
 
-        factor = 32;
-        break;
+            factor = 32;
+            break;
 
-    case 5:
-        break;
+        case 5:
+            break;
 
-    case 7:
-        break;
+        case 7:
+            break;
 
-    default:
-        Z_Error("Error ksize!");
-        return;
+        default:
+            Z_Error("Error ksize!");
+            return;
     }
 
 
@@ -106,7 +106,7 @@ void __sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, _Matrix<_Tp>&dstGD, int dx, int
                     auto _j = j - n + jj;
 
                     if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows) &&
-                        static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
+                          static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
                         callback(_i, _j);
                     }
 
@@ -124,23 +124,23 @@ void __sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, _Matrix<_Tp>&dstGD, int dx, int
                 tempGy[k] /= factor;
             }
 
-              if (!noGD)
-              	dstGDPtr = dstGD.ptr(i, j);
+            if (!noGD)
+                dstGDPtr = dstGD.ptr(i, j);
 
             for (int k = 0; k < src.channels(); ++k) {
                 dst.at(i, j, k) = saturate_cast<uint8_t>(std::sqrt(tempGx[k] * tempGx[k] + tempGy[k] * tempGy[k]));
                 // 计算梯度
                 if (!noGD) {
-                	ang = atan2(tempGy[k],tempGx[k]) * RAD2ANG;
+                    ang = atan2(tempGy[k],tempGx[k]) * RAD2ANG;
 
-                	if ((ang > -22.5 && ang < 22.5) || (ang > 157.5 || ang < -157.5))
-                		dstGDPtr[k] = 0;
-                	else if ((ang > 22.5 && ang < 67.5) || (ang < -112.5 && ang > -157.5))
-                		dstGDPtr[k] = 45;
-                	else if ((ang > 67.5 && ang < 112.5) || (ang < -67.5 && ang > -112.5))
-                		dstGDPtr[k] = 90;
-                	else if ((ang < -22.5 && ang > -67.5) || (ang > 112.5 && ang  < 157.5))
-                		dstGDPtr[k] = 135;
+                    if ((ang > -22.5 && ang < 22.5) || (ang > 157.5 || ang < -157.5))
+                        dstGDPtr[k] = 0;
+                    else if ((ang > 22.5 && ang < 67.5) || (ang < -112.5 && ang > -157.5))
+                        dstGDPtr[k] = 45;
+                    else if ((ang > 67.5 && ang < 112.5) || (ang < -67.5 && ang > -112.5))
+                        dstGDPtr[k] = 90;
+                    else if ((ang < -22.5 && ang > -67.5) || (ang > 112.5 && ang  < 157.5))
+                        dstGDPtr[k] = 135;
                 }
             }
 
@@ -160,33 +160,33 @@ void Sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, int dx, int dy, int ksize, int bo
 
     switch (borderType) {
         //!< `iiiiii|abcdefgh|iiiiiii`  with some specified `i`
-    case BORDER_CONSTANT:
-        //                                    break;
-        //!< `aaaaaa|abcdefgh|hhhhhhh`
-    case BORDER_REPLICATE:
-        __sobel(src, dst, temp, dx, dy, ksize, true, BORDER_REPLICATE_CALLBACK(src));
-        break;
+        case BORDER_CONSTANT:
+            //                                    break;
+            //!< `aaaaaa|abcdefgh|hhhhhhh`
+        case BORDER_REPLICATE:
+            __sobel(src, dst, temp, dx, dy, ksize, true, BORDER_REPLICATE_CALLBACK(src));
+            break;
 
-        //!< `fedcba|abcdefgh|hgfedcb`
-    case BORDER_REFLECT:
-        __sobel(src, dst, temp, dx, dy, ksize, true, BORDER_REFLECT_CALLBACK(src));
-        break;
+            //!< `fedcba|abcdefgh|hgfedcb`
+        case BORDER_REFLECT:
+            __sobel(src, dst, temp, dx, dy, ksize, true, BORDER_REFLECT_CALLBACK(src));
+            break;
 
-        //!< `cdefgh|abcdefgh|abcdefg`
-    case BORDER_WRAP:
-        __sobel(src, dst, temp, dx, dy, ksize, true, BORDER_WRAP_CALLBACK(src));
-        break;
+            //!< `cdefgh|abcdefgh|abcdefg`
+        case BORDER_WRAP:
+            __sobel(src, dst, temp, dx, dy, ksize, true, BORDER_WRAP_CALLBACK(src));
+            break;
 
-        //!< `gfedcb|abcdefgh|gfedcba`
-    default:
-    case BORDER_REFLECT_101:
-        __sobel(src, dst, temp, dx, dy, ksize, true, BORDER_DEFAULT_CALLBACK(src));
-        break;
+            //!< `gfedcb|abcdefgh|gfedcba`
+        default:
+        case BORDER_REFLECT_101:
+            __sobel(src, dst, temp, dx, dy, ksize, true, BORDER_DEFAULT_CALLBACK(src));
+            break;
 
-        //!< `uvwxyz|absdefgh|ijklmno`
-    case BORDER_TRANSPARENT:
-        _log_("Do not support!");
-        break;
+            //!< `uvwxyz|absdefgh|ijklmno`
+        case BORDER_TRANSPARENT:
+            _log_("Do not support!");
+            break;
     }
 }
 
