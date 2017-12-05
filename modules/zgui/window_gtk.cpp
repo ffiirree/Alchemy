@@ -49,6 +49,9 @@ int GUIInitSystem(int argc, char** argv)
 static int key = 0;
 void keyboard_callback(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 {
+    __unused_parameter__(widget);
+    __unused_parameter__(user_data);
+
     key = event->keyval;
     gtk_main_quit();
 }
@@ -64,6 +67,8 @@ zWindow * findWindow(const std::string& name)
 
 int zNamedWindow(const char* name, int flags)
 {
+    __unused_parameter__(flags);
+
     GUIInitSystem(0, 0);
 
     auto window = findWindow(name);
@@ -93,8 +98,10 @@ int zNamedWindow(const char* name, int flags)
 
 gboolean on_darea_expose (GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 {
+    __unused_parameter__(event);
+
     auto image = reinterpret_cast<z::Matrix *>(user_data);
-    if(image->channels() == 1){
+    if(image->channels() == 1) {
         gdk_draw_gray_image(widget->window,
                             widget->style->fg_gc[GTK_STATE_NORMAL],
                             0, 0, image->cols, image->rows,

@@ -22,6 +22,8 @@ namespace z {
 
 void convertImage(Matrix8u *src, Matrix8u *dst, int flags)
 {
+    __unused_parameter__(flags);
+
     if (dst->shape() != src->shape())
         dst->create(src->shape());
 

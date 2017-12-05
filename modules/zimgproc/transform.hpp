@@ -41,6 +41,10 @@ template <typename _Tp> void Laplacian(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst,
 template <typename _Tp>
 void __sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, _Matrix<_Tp>&dstGD, int dx, int dy, int ksize, bool noGD, std::function<void(int&, int&)> callback)
 {
+    __unused_parameter__(dx);
+    __unused_parameter__(dy);
+    __unused_parameter__(ksize);
+
     if (dst.shape() != src.shape())
         dst.create(src.shape());
     if (!noGD)

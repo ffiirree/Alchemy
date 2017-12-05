@@ -54,6 +54,8 @@ int waitKey(int delay)
 
 void lineDDA(Matrix8u & img, Point pt1, Point pt2, const Scalar8u& color, int thickness)
 {
+	__unused_parameter__(thickness);
+
 	auto x = static_cast<float>(pt1.x), y = static_cast<float>(pt1.y);
 	int dx = pt2.x - pt1.x;
 	int dy = pt2.y - pt1.y;

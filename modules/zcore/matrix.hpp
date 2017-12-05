@@ -68,32 +68,27 @@ _Matrix<_Tp>::_Matrix(const MatrixShape& shape, const _T2& v)
 {}
 
 template <typename _Tp>
-_Matrix<_Tp>::_Matrix(int rows, int cols, int chs, const Scalar&s)
-{
-    create(rows, cols, chs);
-    fill(s);
-}
-
-template <typename _Tp>
-_Matrix<_Tp>::_Matrix(Size size, int chs, const Scalar& s)
-        : _Matrix(size.height, size.width, chs, s)
-{}
-
-template <typename _Tp>
 template<typename _T2, typename _T3>
-_Matrix<_Tp>::_Matrix(int rows, int cols, int chs, std::pair<_T2, _T3>&& initor)
+_Matrix<_Tp>::_Matrix(int rows, int cols, int chs, const std::pair<_T2, _T3>& initor)
 {
     create(rows, cols, chs);
 
-    for(size_t i = 0; i < size_; ++i) {
-        reinterpret_cast<_Tp *>(data)[i] = saturate_cast<_Tp>(initor.second(initor.first));
+    int _len = rows * cols * chs;
+    for(auto i = 0; i < _len; ++i) {
+        reinterpret_cast<_Tp *>(data)[i] = saturate_cast<_Tp>(const_cast<_T3&>(initor.second)(const_cast<_T2&>(initor.first)));
     }
 }
 
 template <typename _Tp>
 template<typename _T2, typename _T3>
-_Matrix<_Tp>::_Matrix(Size size, int chs, std::pair<_T2, _T3>&& initor)
+_Matrix<_Tp>::_Matrix(Size size, int chs, const std::pair<_T2, _T3>& initor)
         : _Matrix(size.height, size.width, chs, initor)
+{}
+
+template <typename _Tp>
+template <typename _T2, typename _T3>
+_Matrix<_Tp>::_Matrix(const MatrixShape& shape, const std::pair<_T2, _T3>& initor)
+        : _Matrix(shape.rows, shape.cols, shape.chs, initor)
 {}
 
 template <typename _Tp>
@@ -138,9 +133,9 @@ _Matrix<_Tp>::_Matrix(std::initializer_list<_Tp> list)
     if (list.size() == 0) return;
 
     create(static_cast<int>(list.size()), 1, 1);
-    *this = 0;
+    fill(0);
 
-    auto begin = reinterpret_cast<_Tp *>(data);
+    auto begin = ptr();
     for (const auto&i : list) {
         *begin++ = i;
     }
@@ -208,7 +203,7 @@ _Matrix<_Tp>& _Matrix<_Tp>::operator=(std::initializer_list<_Tp> list)
 
     if (list.size() == 0) return *this;
 
-    auto data_ptr = ptr<_Tp>();
+    auto data_ptr = ptr();
 
     if (isContinuous()) {
         for (const auto&e : list) {
@@ -219,7 +214,7 @@ _Matrix<_Tp>& _Matrix<_Tp>::operator=(std::initializer_list<_Tp> list)
 
     auto i = 0;
     for (const auto&e : list) {
-        data_ptr = ptr<_Tp>(i / (cols * channels()));
+        data_ptr = ptr(i / (cols * channels()));
         data_ptr[(i++) % (cols * channels())] = e;
     }
     return *this;
@@ -393,41 +388,38 @@ _Matrix<_Tp> _Matrix<_Tp>::reshape(int cn, int _rows) const
 template <typename _Tp>
 _Matrix<_Tp> _Matrix<_Tp>::zeros(int _rows, int _cols, int _chs)
 {
-    return _Matrix<_Tp>(_rows, _cols, _chs, Scalar(0));
+    return _Matrix<_Tp>(_rows, _cols, _chs, 0);
 }
 
 template <typename _Tp>
 _Matrix<_Tp> _Matrix<_Tp>::zeros(Size size, int _chs)
 {
-    return  _Matrix<_Tp>::zeros(size.height, size.width, _chs);
+    return  _Matrix<_Tp>(size.height, size.width, _chs, 0);
 }
 
 template <typename _Tp>
 _Matrix<_Tp> _Matrix<_Tp>::zeros(const MatrixShape& shape)
 {
-    return  _Matrix<_Tp>::zeros(shape.rows, shape.cols, shape.chs);
+    return  _Matrix<_Tp>(shape.rows, shape.cols, shape.chs, 0);
 }
 
 template <typename _Tp>
 _Matrix<_Tp> _Matrix<_Tp>::ones(int _rows, int _cols, int _chs)
 {
-    _Matrix<_Tp> temp(_rows, _cols, _chs);
-    for (auto i = 0; i < temp.channels(); ++i) {
-        reinterpret_cast<_Tp *>(temp.data)[i] = 1;
-    }
-    for (auto i = 0; i < temp.total(); ++i) {
-        memcpy(temp.data + i * temp.esize(), temp.data, temp.esize());
-    }
-
-    return temp;
+    return _Matrix<_Tp>(_rows, _cols, _chs, 1);
 }
 
 template <typename _Tp>
 _Matrix<_Tp> _Matrix<_Tp>::ones(Size size, int _chs)
 {
-    return _Matrix<_Tp>::ones(size.height, size.width, _chs);
+    return _Matrix<_Tp>(size.height, size.width, _chs, 1);
 }
 
+template <typename _Tp>
+_Matrix<_Tp> _Matrix<_Tp>::ones(const MatrixShape& shape)
+{
+    return _Matrix<_Tp>(shape.rows, shape.cols, shape.chs, 1);
+}
 
 template <typename _Tp>
 _Matrix<_Tp> _Matrix<_Tp>::eye(int _rows, int _cols, int _chs)
@@ -446,6 +438,12 @@ template <typename _Tp>
 _Matrix<_Tp> _Matrix<_Tp>::eye(Size size, int _chs)
 {
     return _Matrix<_Tp>::eye(size.height, size.width, _chs);
+}
+
+template <typename _Tp>
+_Matrix<_Tp> _Matrix<_Tp>::eye(const MatrixShape& shape)
+{
+    return _Matrix<_Tp>::eye(shape.rows, shape.cols, shape.chs);
 }
 
 template <typename _Tp>
@@ -707,6 +705,57 @@ const _T2& _Matrix<_Tp>::at(int row, int col, int ch) const
 
     return *reinterpret_cast<const _T2 *>(data + row * step + col * esize() + ch * sizeof(_Tp));
 }
+template <typename _Tp>
+_Tp& _Matrix<_Tp>::operator()(int row)
+{
+    assert(static_cast<unsigned>(row) < static_cast<unsigned>(rows));
+    return *reinterpret_cast<_Tp *>(data + row * step);
+}
+
+template <typename _Tp>
+const _Tp& _Matrix<_Tp>::operator()(int row) const
+{
+    assert(static_cast<unsigned>(row) < static_cast<unsigned>(rows));
+    return *reinterpret_cast<const _Tp *>(data + row * step);
+}
+
+template <typename _Tp>
+_Tp& _Matrix<_Tp>::operator()(int row, int col)
+{
+    assert(!(static_cast<unsigned>(row) >= static_cast<unsigned>(rows)
+             || static_cast<unsigned>(col) >= static_cast<unsigned>(cols)));
+
+    return *reinterpret_cast<_Tp *>(data + row * step + col * esize());
+}
+
+template <typename _Tp>
+const _Tp& _Matrix<_Tp>::operator()(int row, int col) const
+{
+    assert(!(static_cast<unsigned>(row) >= static_cast<unsigned>(rows)
+             || static_cast<unsigned>(col) >= static_cast<unsigned>(cols)));
+
+    return *reinterpret_cast<const _Tp *>(data + row * step + col * esize());
+}
+
+template <typename _Tp>
+_Tp& _Matrix<_Tp>::operator()(int row, int col, int ch)
+{
+    assert(!(static_cast<unsigned>(row) >= static_cast<unsigned>(rows)
+             || static_cast<unsigned>(col) >= static_cast<unsigned>(cols)
+             || static_cast<unsigned>(ch) >= static_cast<unsigned>(channels())));
+
+    return *reinterpret_cast<_Tp *>(data + row * step + col * esize() + ch * sizeof(_Tp));
+}
+
+template <typename _Tp>
+const _Tp& _Matrix<_Tp>::operator()(int row, int col, int ch) const
+{
+    assert(!(static_cast<unsigned>(row) >= static_cast<unsigned>(rows)
+             || static_cast<unsigned>(col) >= static_cast<unsigned>(cols)
+             || static_cast<unsigned>(ch) >= static_cast<unsigned>(channels())));
+
+    return *reinterpret_cast<const _Tp *>(data + row * step + col * esize() + ch * sizeof(_Tp));
+}
 
 template <typename _Tp>
 _MatrixIterator<_Tp> _Matrix<_Tp>::begin()
@@ -951,7 +1000,6 @@ void _Matrix<_Tp>::release()
         refcount = nullptr;
     }
 }
-
 
 ///////////////////////////////////////// _Matrix Operators ////////////////////////////////////////////
 template <typename _Tp>
@@ -1604,22 +1652,26 @@ template<> struct TypeWidth<uint32_t>   { enum { value = 11};};
 template<> struct TypeWidth<int64_t>    { enum { value = 20};};
 template<> struct TypeWidth<uint64_t>   { enum { value = 20};};
 
+template <typename _Tp> struct CastType{ typedef _Tp cast_type; };
+
+template <> struct CastType<uint8_t>    { typedef int cast_type; };
+template <> struct CastType<char>       { typedef int cast_type; };
+template <> struct CastType<int8_t>     { typedef int cast_type; };
+
 template <typename _Tp>
 std::ostream &operator<<(std::ostream & os, const _Matrix<_Tp> &m)
 {
-    assert(std::is_arithmetic<_Tp>::value);
-
+    os << "[";
     for(auto i = 0; i < m.rows; ++i) {
         for(auto j = 0; j < m.cols; ++j) {
             os << "[";
             for(auto k = 0; k < m.channels(); ++k) {
-                // + :  promotes a to a type printable as a number, regardless of type.
-                os << std::setw(TypeWidth<_Tp>::value) << (sizeof(_Tp) <= 1 ? (int)m.at(i, j, k) : m.at(i, j, k));
+                os << std::setw(TypeWidth<_Tp>::value) << (typename CastType<_Tp>::cast_type)(m.at(i, j, k));
 
                 os << ((k != m.channels() - 1) ? ", " : "]");
             }
         }
-        os << ";" << std::endl;
+        os << ((i + 1 == m.rows) ? ";]\n" : ";\n ");
     }
     return os;
 }

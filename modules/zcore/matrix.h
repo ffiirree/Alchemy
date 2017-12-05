@@ -1,18 +1,5 @@
-/**
-******************************************************************************
-* @file    zmatrix.h
-* @author  zlq
-* @version V1.0
-* @date    2016.9.7
-* @brief
-******************************************************************************
-* @attention
-*
-*
-******************************************************************************
-*/
-#ifndef _ZCORE_ZMATRIX_H
-#define _ZCORE_ZMATRIX_H
+#ifndef _ZCORE_MATRIX_H
+#define _ZCORE_MATRIX_H
 
 #include <cstdint>
 #include <functional>
@@ -39,6 +26,9 @@ public:
     typedef _MatrixIterator<_Tp> iterator;
     typedef _MatrixConstIterator<_Tp> const_iterator;
 
+    typedef _Tp& reference;
+    typedef const _Tp& const_reference;
+
     /**
      * @brief Constructor
      */
@@ -59,7 +49,11 @@ public:
      */
     explicit _Matrix(Size size, int chs = 1);
 
-    _Matrix(const MatrixShape& shape);
+    /**
+     * @overload
+     * @code Matrix m(MatrixShape(2, 3, 3)); // Matrix m(2, 3, 3);
+     */
+    explicit _Matrix(const MatrixShape& shape);
 
     /**
      * @overload
@@ -68,10 +62,6 @@ public:
     template<typename _T2> _Matrix(int rows, int cols, int chs, const _T2& v);
     template<typename _T2> _Matrix(Size size, int chs,          const _T2& v);
     template<typename _T2> _Matrix(const MatrixShape& shape,    const _T2& v);
-
-    /** @overload */
-    _Matrix(int rows, int cols, int chs, const Scalar& s);
-    _Matrix(Size size, int chs,          const Scalar& s);
 
     /**
      * @overload
@@ -82,11 +72,9 @@ public:
      *
      *      auto m = _Matrix<double>(4, 4, 1, std::make_pair(random_engine, real_distribution));
      */
-    template<typename _T2, typename _T3> _Matrix(int rows, int cols, int chs, std::pair<_T2, _T3>&& initor);
-    template<typename _T2, typename _T3> _Matrix(Size size, int chs, std::pair<_T2, _T3>&& initor);
-
-    /** @overload */
-    _Matrix<_Tp>(std::initializer_list<_Tp> list);
+    template<typename _T2, typename _T3> _Matrix(int rows, int cols, int chs,   const std::pair<_T2, _T3>& initor);
+    template<typename _T2, typename _T3> _Matrix(Size size, int chs,            const std::pair<_T2, _T3>& initor);
+    template<typename _T2, typename _T3> _Matrix(const MatrixShape& shape,      const std::pair<_T2, _T3>& initor);
 
     /**
      * @overload
@@ -100,6 +88,9 @@ public:
      * @param m Assigned, right-hand-side matrix.
      */
     _Matrix<_Tp>& operator= (const _Matrix& m);
+
+    /** @overload */
+    _Matrix(std::initializer_list<_Tp> list);
 
     /** @overload */
     _Matrix<_Tp>& operator= (std::initializer_list<_Tp> list);
@@ -116,7 +107,6 @@ public:
      * @brief Set each matrix element with 'value'.
      */
     template<typename _T2> void fill(const _T2& value);
-
     void fill(const Scalar& value);
     template<typename _T2> void fill(const _Matrix<_T2>& value);
 
@@ -137,8 +127,6 @@ public:
 
     _Matrix<_Tp> reshape(int cn) const;
     _Matrix<_Tp> reshape(int cn, int rows) const;
-
-//    size_t size() const { return size_; }
 
     /**
      *  @brief Transposes a matrix.
@@ -185,53 +173,35 @@ public:
      * @Param _chs Number of channels.
      */
     static _Matrix<_Tp> zeros(int _rows, int _cols, int _chs = 1);
-
-    /**
-     * @overload
-     */
     static _Matrix<_Tp> zeros(Size size, int _chs = 1);
-
     static _Matrix<_Tp> zeros(const MatrixShape& shape);
 
     /**
      * @brief Returns an array of all 1's of the specified size and type.
      */
     static _Matrix<_Tp> ones(int _rows, int _cols, int _chs = 1);
-
-    /**
-     * @overload
-     */
     static _Matrix<_Tp> ones(Size size, int _chs = 1);
+    static _Matrix<_Tp> ones(const MatrixShape& shape);
 
     /**
      * @brief Returns an identity matrix of the specified size and type.
      */
     static _Matrix<_Tp> eye(int _rows, int _cols, int _chs = 1);
-
-    /*
-     * @overload
-     */
     static _Matrix<_Tp> eye(Size size, int _chs = 1);
-
+    static _Matrix<_Tp> eye(const MatrixShape& shape);
 
     /**
      * @brief allocates new matrix data unless the matrix already has specified size and type.
      * previous data is unreferenced if needed.
      */
     void create(int rows, int cols, int chs = 1);
-
-    /**
-     * @overload
-     */
     void create(Size size, int chs = 1);
-
     void create(const MatrixShape& shape);
 
     /**
      * @brief Returns the number of matrix channels.
      */
     int channels() const;
-
 
     /**
      * @overload
@@ -272,7 +242,6 @@ public:
      * @brief Returns the size of the array element.
      */
     size_t esize() const { return esize_; }
-
 
     /**
      * @brief Returns a pointer to the specified matrix row.
@@ -343,6 +312,13 @@ public:
     template<typename _T2> _T2&         at(int row, int col, int ch);
     template<typename _T2> const _T2&   at(int row, int col, int ch) const;
 
+    _Tp&        operator()(int row = 0);
+    const _Tp&  operator()(int row = 0) const;
+    _Tp&        operator()(int row, int col);
+    const _Tp&  operator()(int row, int col) const;
+    _Tp&        operator()(int row, int col, int ch);
+    const _Tp&  operator()(int row, int col, int ch) const;
+
     /**
      * @brief Returns the matrix iterator and sets it to the first matrix element.
      */
@@ -394,10 +370,10 @@ private:
     void release();
 
     /**
-    * - continuity flag: 1 bits
-    * - type: 8 bits
-    * - number of channels: 8 bits
-    */
+     * - continuity flag: 1 bits
+     * - type: 8 bits
+     * - number of channels: 8 bits
+     */
     int flags = 0;
 
     // The start address of the Matrix's data area.
@@ -610,4 +586,4 @@ public:
 
 #include "matrix.hpp"
 
-#endif  //! _ZCORE_ZMATRIX_H
+#endif  //! _ZCORE_MATRIX_H
