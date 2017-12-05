@@ -17,6 +17,8 @@ public:
     std::vector<std::vector<LeNet::Pair>> split(const std::vector<LeNet::Pair> &training_data, int size) const;
 
     _Matrix<double> convolution(const _Matrix<double>& InputMatrix, const _Matrix<double>& kernel);
+    _Matrix<double> max_pooling(const _Matrix<double>& InputMatrix);
+    _Matrix<double> average_pooling(const _Matrix<double>& InputMatrix);
 private:
 };
 

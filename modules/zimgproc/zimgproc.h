@@ -42,7 +42,7 @@ template <typename _Tp> void merge(const std::vector<_Matrix<_Tp>> & src, _Matri
  * @param[out] dst
  * @param[in] flags
  */
-void convertImage(Matrix8u *src, Matrix8u *dst, int flags = 0);
+void convertImage(const Matrix8u *src, Matrix8u *dst, int flags = 0);
 
 template <class _Tp> void copyMakeBorder(const _Matrix<_Tp> & src, _Matrix<_Tp> & dst, int top, int bottom, int left, int right);
 
