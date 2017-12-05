@@ -9,7 +9,7 @@ namespace z {
 Matrix imread(const std::string& filename);
 void imwrite(const std::string& filename, Matrix8u & img, int quality = 95);
 
-void imshow(const std::string & name, Matrix8u & mat);
+void imshow(const std::string & name, const Matrix8u & mat);
 void namedWindow(const std::string & name, int flags = 1);
 int waitKey(int delay = 0);
 

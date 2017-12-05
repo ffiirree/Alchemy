@@ -116,7 +116,7 @@ gboolean on_darea_expose (GtkWidget *widget, GdkEventExpose *event, gpointer use
     return true;
 }
 
-void zShowImage(const char* name, void* arr)
+void zShowImage(const char* name, const void* arr)
 {
     if(!name){
         Z_Error("name can not be null");
@@ -134,7 +134,7 @@ void zShowImage(const char* name, void* arr)
         return;
     }
 
-    auto original = reinterpret_cast<z::Matrix *>(arr);
+    auto original = reinterpret_cast<const z::Matrix *>(arr);
     if(original->channels() == 3) {
         z::cvtColor(*original, window->image, z::BGR2RGB);
     }

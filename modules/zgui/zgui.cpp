@@ -37,7 +37,7 @@ void namedWindow(const std::string & name, int flags)
 	zNamedWindow(name.c_str(), flags);
 }
 
-void imshow(const std::string & name, Matrix8u & mat)
+void imshow(const std::string & name, const Matrix8u & mat)
 {
 	assert(mat.cols != 0 && mat.rows != 0 && mat.data != nullptr);
 	assert(mat.channels() == 1 || mat.channels() == 3);

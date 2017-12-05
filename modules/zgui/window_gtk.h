@@ -17,7 +17,7 @@ typedef void(*zMouseCallback)(int event, int x, int y, int flags, void* param);
 
 int zNamedWindow(const char* name, int flags = 1);
 int zWaitKey(int delay);
-void zShowImage(const char* name, void* arr);
+void zShowImage(const char* name, const void* arr);
 int GUIInitSystem(int argc, char** argv);
 #endif //!USE_GTK2
 #endif //!__ZGUI_LINUX_H

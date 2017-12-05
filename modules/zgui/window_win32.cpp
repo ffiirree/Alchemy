@@ -600,7 +600,7 @@ void cpy(z::Matrix8u &src, char * arr)
 	}
 }
 
-void zShowImage(const char* name, void* arr)
+void zShowImage(const char* name, const void* arr)
 {
 	assert(name);
 
@@ -619,7 +619,7 @@ void zShowImage(const char* name, void* arr)
     if (!window || !arr)
         return; // keep silence here.
 
-    auto image = reinterpret_cast<z::Matrix *>(arr);
+    auto image = reinterpret_cast<const z::Matrix *>(arr);
 
     if (window->image)
         // if there is something wrong with these system calls, we cannot display image...

@@ -10,3 +10,4 @@
 #include "zfeatures2d/zfeatures2d.h"
 #include "zml/mnistloader.h"
 #include "util/range.hpp"
+#include "zml/lenet.h"

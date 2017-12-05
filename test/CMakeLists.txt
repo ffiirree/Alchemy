@@ -17,6 +17,7 @@ endfunction()
 
 
 test(new_zmatrix)
+test(videocapture)
 test(roi)
 test(fft)
 test(split_merge)
@@ -25,6 +26,7 @@ test(morp)
 test(threshold)
 test(operations)
 test(nn)
+test(lenet)
 
 test(find_contours)
 
