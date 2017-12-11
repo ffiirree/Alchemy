@@ -84,6 +84,15 @@ if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
+find_package(CUDA REQUIRED)
+if(CUDA_FOUND)
+	set(HAVE_CUDA ON)
+	set(USE_CUDA ON)
+endif()
+
+find_package(SSE)
+
+
 # ========================== configuration ==========================
 include(cmake/ConfigHeaders.cmake)
 
@@ -129,6 +138,31 @@ if(NOT CMAKE_GENERATOR MATCHES "Xcode|Visual Studio")
 	log("    Configuration:" ${CMAKE_BUILD_TYPE})
 endif()
 log("")
+
+# ============================= CPU =============================
+log("")
+log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CPU features ~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+log("")
+if(SSE2_FOUND)
+log("    SSE2" YES)
+else()
+log("    SSE2" NO)
+endif()
+if(SSE3_FOUND)
+log("    SSE3" YES)
+else()
+log("    SSE3" NO)
+endif()
+if(SSSE3_FOUND)
+log("    SSSE3" YES)
+else()
+log("    SSSE3" NO)
+endif()
+if(SSE4_1_FOUND)
+log("    SSE4_1" YES)
+else()
+log("    SSE4_1" NO)
+endif()
 
 # ========================== C/C++ options ==========================
 log("")
