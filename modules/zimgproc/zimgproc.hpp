@@ -266,6 +266,7 @@ template <typename _Tp> void blur(_Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size siz
 template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize, int borderType)
 {
     assert(size.width == size.height || size.width % 2 != 0);
+    __unused_parameter__(borderType);
 
     auto kv = 1.0;
     if (normalize) kv = 1.0 / (size.width * size.height);
@@ -412,7 +413,7 @@ template <typename _Tp> void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp
     auto ptr = src.ptr();
     auto data_len = src.total() * src.channels();
 
-    for (int i = 0; i < data_len; i += src.channels()) {
+    for (size_t i = 0; i < data_len; i += src.channels()) {
         double norm = 0;
         int mv = 0;
         for (int k = 0; k < src.channels(); ++k) {
@@ -425,7 +426,7 @@ template <typename _Tp> void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp
             double w1 = space_weight[j];
 
             int cv = 0;
-            int c_pos = i + space_ofs[j];
+            int c_pos = static_cast<int>(i + space_ofs[j]);
             if ((unsigned)c_pos < (unsigned)data_len) {
                 for (int k = 0; k < src.channels(); ++k) {
                     cv += ptr[c_pos + k];

@@ -56,7 +56,7 @@ elseif(CMAKE_COMPILER_IS_GNUCXX)
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Werror=non-virtual-dtor \
         -Werror=address -Werror=sequence-point -Wformat -Werror=format-security \
-        -Wmissing-declarations -Wundef -Wuninitialized -Winit-self")
+        -Wmissing-declarations -Wuninitialized -Winit-self")
 endif()
 
 # 设置bin和lib目录
@@ -84,10 +84,32 @@ if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
-find_package(CUDA REQUIRED)
+find_package(CUDA)
 if(CUDA_FOUND)
-	set(HAVE_CUDA ON)
-	set(USE_CUDA ON)
+    include_directories(${CUDA_INCLUDE_DIRS})
+    set(USE_CUDA ON)
+    list(APPEND CUDA_NVCC_FLAGS "-std=c++14")
+    set(CUDA_PROPAGATE_HOST_FLAGS ON)
+
+    find_package(CuDNN)
+    if(CUDNN_FOUND)
+        include_directories(${CUDNN_INCLUDE_DIRS})
+        set(USE_CUDNN ON)
+    endif()
+endif()
+
+# atblas
+#set(BLA_VENDOR "ATLAS")
+find_package(Atlas REQUIRED)
+if(Atlas_FOUND)
+	include_directories(${Atlas_INCLUDE_DIRS})
+    set(USE_ATLAS ON)
+endif()
+
+find_package(Glog REQUIRED)
+if(GLOG_FOUND)
+	include_directories(${GLOG_INCLUDE_DIRS})
+    set(USE_GLOG ON)
 endif()
 
 find_package(SSE)
@@ -109,9 +131,9 @@ add_subdirectory(modules/zcore)
 add_subdirectory(modules/util)
 add_subdirectory(modules/zgui)
 add_subdirectory(modules/zimgproc)
-add_subdirectory(modules/zfeatures2d)
 add_subdirectory(modules/zmath)
 add_subdirectory(modules/zml)
+#add_subdirectory(modules/nn) # 仅做测试，测试好了估计要删除
 
 enable_testing()
 add_subdirectory(test)

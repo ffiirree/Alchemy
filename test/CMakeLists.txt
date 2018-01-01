@@ -2,8 +2,9 @@
 #  CMakeLists.txt for test module
 # --------------------------------------------------------------
 
-set(LINK_LIBS zcore zgui zimgproc zmath zfeatures2d zml ${FFTW_LIBRARIES} ${JPEG_LIBRARIES} ${FFMPEG_LIBRARIES} ${OpenCV_LIBS} ${GTK2_LIBRARIES})
-
+set(LINK_LIBS zcore zgui zimgproc zmath zml
+        ${FFTW_LIBRARIES} ${JPEG_LIBRARIES} ${FFMPEG_LIBRARIES}
+        ${OpenCV_LIBS} ${GTK2_LIBRARIES} ${GLOG_LIBRARIES} ${Atlas_LIBRARIES})
 function(test name)
 
     add_executable(test_${name} test_${name}.cpp)
@@ -25,8 +26,8 @@ test(filter)
 test(morp)
 test(threshold)
 test(operations)
-test(nn)
-test(lenet)
+test(atlas)
+test(nn2)
 
 test(find_contours)
 

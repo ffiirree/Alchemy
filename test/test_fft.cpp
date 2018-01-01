@@ -2,7 +2,7 @@
 // Compute convolution.
 #include "zmatrix.h"
 
-int main(int argc, char *argv[])
+int main()
 {
     auto image = z::imread("test.jpeg");
     z::Matrix gray;

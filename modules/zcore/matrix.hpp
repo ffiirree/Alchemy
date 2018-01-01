@@ -281,6 +281,8 @@ void _Matrix<_Tp>::fill(const _Matrix<_T2>& s)
 template <typename _Tp>
 void _Matrix<_Tp>::create(int _rows, int _cols, int _chs)
 {
+    assert(_rows * _cols * _chs != 0);
+
     flags = (DataType<_Tp>::depth << 8) | _chs;
     esize_ = sizeof(_Tp) * _chs;
 
