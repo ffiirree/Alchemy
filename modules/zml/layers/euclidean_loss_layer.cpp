@@ -1,39 +1,13 @@
-#ifndef _ZML_EUCLIDEAN_LOSS_LAYER_HPP
-#define _ZML_EUCLIDEAN_LOSS_LAYER_HPP
-
-
-#include "tensor.hpp"
-#include "layer.hpp"
+#include <algorithm>
+#include <glog/logging.h>
+#include "euclidean_loss_layer.hpp"
+#include "zml/util/math_op.hpp"
 
 namespace z {
-template <typename T>
-class EuclideanLossLayer: public Layer<T> {
-    using container_type = Tensor<T>;
-public:
-    EuclideanLossLayer()= default;
-    EuclideanLossLayer(int num, int chs, int rows, int cols);
-    EuclideanLossLayer(const EuclideanLossLayer&)= delete;
-    EuclideanLossLayer&operator=(const EuclideanLossLayer&)= delete;
-    ~EuclideanLossLayer()= default;
-
-    inline int hit() const { return hit_; }
-
-    virtual void setup(const vector<container_type*>&input, const vector<container_type*>&output);
-
-
-    virtual void ForwardCPU(const vector<container_type*>& input, const vector<container_type*>& output);
-    virtual void BackwardCPU(const vector<container_type*>& input, const vector<container_type*>& output);
-
-private:
-    Tensor<T> diff_;
-    int hit_ = 0;
-};
 
 template<typename T>
 void EuclideanLossLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
 {
-    LOG(INFO) << "Loss Init: " << this->shape_[0] << " " << this->shape_[1] << " " << this->shape_[2] << " " << this->shape_[3];
-
     output[0]->reshape({ 1 });
     diff_.reshape(input[0]->shape());
 }
@@ -83,7 +57,8 @@ EuclideanLossLayer<T>::EuclideanLossLayer(int num, int chs, int rows, int cols)
     this->shape_.at(2) = rows;
     this->shape_.at(3) = cols;
 }
+
+template class EuclideanLossLayer<float>;
+template class EuclideanLossLayer<double>;
+
 }
-
-
-#endif //! _ZML_EUCLIDEAN_LOSS_LAYER_HPP

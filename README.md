@@ -23,6 +23,7 @@ zMatrix 是一个使用C++编写的计算机视觉库，并且添加一些机器
 - BLAS: ATLAS
 - CUDA 9.0/cuDNN 7
 - Boost
+- Glog
 ### 可选
 - Kinect
 - OpenCV

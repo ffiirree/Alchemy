@@ -23,7 +23,7 @@ int main()
 
     auto td = train_loader.data();
     Network<double> net(layers, td, test_loader.data());
-    net.sgd(30);
+    net.sgd(5);
 
     return 0;
 }

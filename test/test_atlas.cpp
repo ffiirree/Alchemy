@@ -1,6 +1,6 @@
 #include <iostream>
 #include "zmatrix.h"
-#include "zml/math_op.hpp"
+#include "zml/util/math_op.hpp"
 
 using namespace z;
 using namespace std;

@@ -7,5 +7,5 @@
 #include "zimgproc/transform.h"
 #include "zimgproc/zimgproc.h"
 #include "zmath/zmath.h"
-#include "zml/mnistloader.h"
+#include "zml/util/mnistloader.h"
 #include "util/range.hpp"

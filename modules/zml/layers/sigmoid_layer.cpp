@@ -1,25 +1,9 @@
-#ifndef _ZML_SIGMOID_LAYER_HPP
-#define _ZML_SIGMOID_LAYER_HPP
-
-#include "layer.hpp"
+#include <cmath>
+#include <glog/logging.h>
+#include "zml/util/math_op.hpp"
+#include "sigmoid_layer.hpp"
 
 namespace z {
-template <typename T>
-class SigmoidLayer: public Layer<T> {
-    using container_type = Tensor<T>;
-public:
-    SigmoidLayer() = default;
-    SigmoidLayer(int num, int chs, int rows, int cols);
-    SigmoidLayer(const SigmoidLayer&)= delete;
-    SigmoidLayer&operator=(const SigmoidLayer&)= delete;
-    ~SigmoidLayer() = default;
-
-    virtual void setup(const vector<container_type*>&input, const vector<container_type*>&output);
-
-    virtual void ForwardCPU(const vector<container_type*>& input, const vector<container_type*>& output);
-    virtual void BackwardCPU(const vector<container_type*>& input, const vector<container_type*>& output);
-};
-
 template <typename T>
 inline T sigmoid(T value)
 {
@@ -69,6 +53,8 @@ void SigmoidLayer<T>::setup(const vector<container_type *> &input, const vector<
 
     output[0]->reshape(this->shape_);
 }
-}
 
-#endif //_ZML_SIGMOID_LAYER_HPP
+
+template class SigmoidLayer<float>;
+template class SigmoidLayer<double>;
+}

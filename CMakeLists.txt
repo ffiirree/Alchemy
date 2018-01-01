@@ -87,7 +87,7 @@ endif()
 find_package(CUDA)
 if(CUDA_FOUND)
     include_directories(${CUDA_INCLUDE_DIRS})
-    set(USE_CUDA ON)
+#    set(USE_CUDA ON)
     list(APPEND CUDA_NVCC_FLAGS "-std=c++14")
     set(CUDA_PROPAGATE_HOST_FLAGS ON)
 

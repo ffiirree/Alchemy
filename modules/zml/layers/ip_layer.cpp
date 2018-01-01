@@ -1,37 +1,9 @@
-#ifndef _ZML_IP_LAYER_HPP
-#define _ZML_IP_LAYER_HPP
-
-extern "C" {
-#include "cblas.h"
-};
-#include "layer.hpp"
-#include "math_op.hpp"
+#include <glog/logging.h>
+#include <random>
+#include "zml/util/math_op.hpp"
+#include "ip_layer.hpp"
 
 namespace z {
-template <typename T>
-class InnerProductLayer: public Layer<T> {
-    using container_type = Tensor<T>;
-public:
-    InnerProductLayer() = default;
-    InnerProductLayer(int num, int chs, int rows, int cols);
-    InnerProductLayer(const InnerProductLayer&)= delete;
-    InnerProductLayer&operator=(const InnerProductLayer&)= delete;
-    ~InnerProductLayer() = default;
-
-    virtual void setup(const vector<container_type*>&input, const vector<container_type*>&output);
-
-    virtual void ForwardCPU(const vector<container_type*>& input, const vector<container_type*>& output);
-    virtual void BackwardCPU(const vector<container_type*>& input, const vector<container_type*>& output);
-
-private:
-    Tensor<T> weights_;
-    Tensor<T> biases_;
-    Tensor<T> biasmer_;
-
-    int M_;
-    int N_;
-    int K_;
-};
 
 template<typename T>
 void InnerProductLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
@@ -43,7 +15,7 @@ void InnerProductLayer<T>::setup(const vector<container_type *> &input, const ve
     weights_.reshape({ this->shape_[2], input[0]->shape(2) });
     biases_.reshape({ this->shape_[2] });
 
-    vector_set(input[0]->shape(0), 1.0, biasmer_.data());
+    vector_set(input[0]->shape(0), (T)1.0, biasmer_.data());
 
     std::default_random_engine random_engine(time(nullptr));
     std::uniform_real_distribution<double> distribution(-1.0, 1.0);
@@ -120,7 +92,8 @@ InnerProductLayer<T>::InnerProductLayer(int num, int chs, int rows, int cols)
     this->shape_.at(2) = rows;
     this->shape_.at(3) = cols;
 }
+
+
+template class InnerProductLayer<float>;
+template class InnerProductLayer<double>;
 }
-
-
-#endif //_ZML_IP_LAYER_HPP

@@ -2,7 +2,7 @@
 #define _ZML_LAYER_HPP
 
 #include "tensor.hpp"
-
+#include <cassert>
 namespace z {
 
 template <typename T>

@@ -4,11 +4,11 @@
 #include "glog/logging.h"
 #include "tensor.hpp"
 #include "layer.hpp"
-#include "input_layer.hpp"
-#include "ip_layer.hpp"
-#include "sigmoid_layer.hpp"
-#include "softmax_layer.hpp"
-#include "euclidean_loss_layer.hpp"
+#include "zml/layers/input_layer.hpp"
+#include "zml/layers/ip_layer.hpp"
+#include "zml/layers/sigmoid_layer.hpp"
+#include "zml/layers/softmax_layer.hpp"
+#include "zml/layers/euclidean_loss_layer.hpp"
 
 
 namespace z {

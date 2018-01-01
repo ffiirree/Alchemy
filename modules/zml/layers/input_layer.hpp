@@ -1,7 +1,7 @@
 #ifndef _ZML_INPUT_LAYER_HPP
 #define _ZML_INPUT_LAYER_HPP
 
-#include "layer.hpp"
+#include "zml/layer.hpp"
 
 namespace z {
 template <typename T>

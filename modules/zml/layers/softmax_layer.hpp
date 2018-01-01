@@ -1,7 +1,7 @@
 #ifndef _ZML_SOFTMAX_LAYER_HPP
 #define _ZML_SOFTMAX_LAYER_HPP
 
-#include "layer.hpp"
+#include "zml/layer.hpp"
 
 namespace z {
 
@@ -19,6 +19,12 @@ public:
 
     virtual void ForwardCPU(const Tensor<T>& input, const Tensor<T>& output);
     virtual void BackwardCPU(const Tensor<T>& input, const Tensor<T>& output);
+
+
+#ifdef USE_CUDA
+    virtual void ForwardGPU(const vector<container_type*>& input, const vector<container_type*>& output);
+    virtual void BackwardGPU(const vector<container_type*>& input, const vector<container_type*>& output);
+#endif //! USE_CUDA
 };
 
 template<typename T>
