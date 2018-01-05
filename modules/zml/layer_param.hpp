@@ -11,7 +11,8 @@ enum LayerType {
     INNER_PRODUCT_LAYER,
     SIGMOID_LAYER,
     EUCLIDEAN_LOSS_LAYER,
-    ACCURACY_LAYER
+    ACCURACY_LAYER,
+    SIGMOID_CROSS_ENTORPY_LOSS_LAYER,
 };
 
 class InputParameter {
@@ -69,6 +70,10 @@ class EuclideanLossParameter {
 class AccuracyParameter {
 };
 
+class SigmoidCrossEntropyLossParameter{
+
+};
+
 
 class LayerParameter {
 public:
@@ -109,6 +114,9 @@ public:
     inline LayerParameter& accuracy_param(const AccuracyParameter& ap) { accuracy_param_ = ap; return *this; }
     inline AccuracyParameter accuracy_param() const { return accuracy_param_; }
 
+    inline LayerParameter& sigmoid_cross_entropy_loss_param(const SigmoidCrossEntropyLossParameter &cp) { cross_entropy_loss_param_ = cp; return *this; }
+    inline SigmoidCrossEntropyLossParameter sigmoid_cross_entropy_loss_param() const { return cross_entropy_loss_param_; }
+
 protected:
     Phase phase_ = DEFAULT;
     string name_{};
@@ -119,6 +127,7 @@ protected:
 
     /// layers
     AccuracyParameter accuracy_param_;
+    SigmoidCrossEntropyLossParameter cross_entropy_loss_param_;
     EuclideanLossParameter euclidean_param_;
     InnerProductParameter ip_param_;
     InputParameter input_param_;

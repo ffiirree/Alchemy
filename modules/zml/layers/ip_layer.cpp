@@ -79,8 +79,8 @@ void InnerProductLayer<T>::BackwardCPU(const vector<container_type*>& input, con
                (T)0, biases_.diff());
 
     // update weights & biases
-    vector_axpy(weights_.count(), (T)-2./input[0]->shape(0), weights_.diff(), weights_.data());
-    vector_axpy(biases_.count(), (T)-2./input[0]->shape(0), biases_.diff(), biases_.data());
+    vector_axpy(weights_.count(), (T)-inner_product_param_.wlr()/input[0]->shape(0), weights_.diff(), weights_.data());
+    vector_axpy(biases_.count(), (T)-inner_product_param_.blr()/input[0]->shape(0), biases_.diff(), biases_.data());
 }
 
 template class InnerProductLayer<float>;

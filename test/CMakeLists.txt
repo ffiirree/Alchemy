@@ -27,7 +27,8 @@ test(morp)
 test(threshold)
 test(operations)
 test(atlas)
-test(nn2)
+test(net_01)
+test(net_02_cross_entropy)
 
 test(find_contours)
 

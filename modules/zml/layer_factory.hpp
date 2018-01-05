@@ -8,13 +8,13 @@
 #include "layers/ip_layer.hpp"
 #include "layers/sigmoid_layer.hpp"
 #include "layers/euclidean_loss_layer.hpp"
-#include "zml/layers/accuracy_layer.hpp"
+#include "layers/accuracy_layer.hpp"
+#include "zml/layers/sigmoid_cross_entropy_loss_layer.hpp"
 
 namespace z {
 
 template <typename T>
 class LayerFactory {
-
     using __LT = Layer<T>;
 public:
 
@@ -46,6 +46,10 @@ public:
 
                 case ACCURACY_LAYER:
                     layers_[key] = shared_ptr<Layer<T>>(new AccuracyLayer<T>(param));
+                    break;
+
+                case SIGMOID_CROSS_ENTORPY_LOSS_LAYER:
+                    layers_[key] = shared_ptr<Layer<T>>(new SigmoidCrossEntropyLossLayer<T>(param));
                     break;
 
                 default:

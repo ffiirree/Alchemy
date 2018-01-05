@@ -1,17 +1,14 @@
 #include <zmatrix.h>
 #include "zml/network.hpp"
 #include "zml/optimize.hpp"
-#include "zml/layer_factory.hpp"
-
 
 using namespace z;
 using namespace std;
 
-
 int main()
 {
     MnistLoader train_loader("/home/ffiirree/Code/zMatrix/resources/mnist/train-images.idx3-ubyte",
-                       "/home/ffiirree/Code/zMatrix/resources/mnist/train-labels.idx1-ubyte");
+                             "/home/ffiirree/Code/zMatrix/resources/mnist/train-labels.idx1-ubyte");
 
     MnistLoader test_loader("/home/ffiirree/Code/zMatrix/resources/mnist/t10k-images.idx3-ubyte",
                             "/home/ffiirree/Code/zMatrix/resources/mnist/t10k-labels.idx1-ubyte");
@@ -50,8 +47,8 @@ int main()
                     .ip_param(
                             InnerProductParameter()
                                     .neuron_size(30)
-                                    .wlr(3.)
-                                    .blr(3.)
+                                    .wlr(0.3)
+                                    .blr(0.3)
                                     .weight_filler(NORMAL)
                                     .bias_filler(NORMAL)
                     ),
@@ -71,8 +68,8 @@ int main()
                     .ip_param(
                             InnerProductParameter()
                                     .neuron_size(10)
-                                    .wlr(3.)
-                                    .blr(3.)
+                                    .wlr(0.3)
+                                    .blr(0.3)
                                     .weight_filler(NORMAL)
                                     .bias_filler(NORMAL)
                     ),

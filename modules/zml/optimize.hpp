@@ -1,7 +1,6 @@
 #ifndef _ZML_OPTIMIZE_HPP
 #define _ZML_OPTIMIZE_HPP
 
-//#include "network.hpp"
 #include "layer.hpp"
 #include "layer_factory.hpp"
 
