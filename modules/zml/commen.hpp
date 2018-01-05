@@ -27,12 +27,6 @@ enum Phase {
     TRAIN, TEST, DEFAULT
 };
 
-enum FillerType {
-    UNIFORM,
-    NORMAL,
-    XAVIER,
-};
-
 class Global {
 public:
     Global(const Global&) = delete;

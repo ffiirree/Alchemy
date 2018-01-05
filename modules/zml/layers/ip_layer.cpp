@@ -1,6 +1,6 @@
 #include <glog/logging.h>
 #include <random>
-#include <iostream>
+#include <zml/util/filler.hpp>
 #include "zml/util/math_op.hpp"
 #include "ip_layer.hpp"
 
@@ -16,16 +16,8 @@ void InnerProductLayer<T>::setup(const vector<container_type *> &input, const ve
 
     vector_set(input[0]->shape(0), (T)1.0, biasmer_.data());
 
-    std::default_random_engine random_engine(static_cast<unsigned long>(time(nullptr)));
-    std::uniform_real_distribution<double> distribution(-1.0, 1.0);
-    auto weight_data = weights_.data();
-    for(auto i = 0; i < weights_.count(); ++i) {
-        weight_data[i] = distribution(random_engine);
-    }
-    auto bias_data = biases_.data();
-    for(auto i = 0; i < biases_.count(); ++i) {
-        bias_data[i] = distribution(random_engine);
-    }
+    Filler<T>::fill(weights_, param_.ip_param().weight_filler());
+    Filler<T>::fill(biases_, param_.ip_param().bias_filler());
 
     /// N x C x R x C
     M_ = input[0]->shape(0);

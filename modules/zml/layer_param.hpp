@@ -1,6 +1,7 @@
 #ifndef _ZML_LAYER_PARAM_HPP
 #define _ZML_LAYER_PARAM_HPP
 
+#include <zml/util/filler.hpp>
 #include "commen.hpp"
 #include "zmatrix.h"
 
@@ -40,19 +41,21 @@ private:
 class InnerProductParameter {
 public:
     /// Neuron size
-    InnerProductParameter& neuron_size(size_t size) { neuron_size_ = size; return *this; }
-    size_t neuron_size() const { return neuron_size_; }
+    inline InnerProductParameter& neuron_size(size_t size) { neuron_size_ = size; return *this; }
+    inline size_t neuron_size() const { return neuron_size_; }
 
     /// init
-    InnerProductParameter& weight_filler(FillerType filler) { weight_filler_ = filler; return *this; }
-    InnerProductParameter& bias_filler(FillerType filler) { bias_filler_ = filler; return *this; }
+    inline InnerProductParameter& weight_filler(FillerType filler) { weight_filler_ = filler; return *this; }
+    inline FillerType weight_filler() const { return weight_filler_; }
+    inline InnerProductParameter& bias_filler(FillerType filler) { bias_filler_ = filler; return *this; }
+    inline FillerType bias_filler() const { return bias_filler_; }
 
     /// learning rate
-    InnerProductParameter& wlr(double lr) { wlr_ = lr; return *this; }
-    double wlr() const { return wlr_; }
+    inline InnerProductParameter& wlr(double lr) { wlr_ = lr; return *this; }
+    inline double wlr() const { return wlr_; }
 
-    InnerProductParameter& blr(double lr) { blr_ = lr; return *this; }
-    double blr() const { return blr_; }
+    inline InnerProductParameter& blr(double lr) { blr_ = lr; return *this; }
+    inline double blr() const { return blr_; }
 
 private:
     size_t neuron_size_ = 1;
