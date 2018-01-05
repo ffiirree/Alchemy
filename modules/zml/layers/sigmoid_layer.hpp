@@ -4,15 +4,18 @@
 #include "zml/layer.hpp"
 
 namespace z {
+
 template <typename T>
 class SigmoidLayer: public Layer<T> {
     using container_type = Tensor<T>;
 public:
     SigmoidLayer() = default;
-    SigmoidLayer(int num, int chs, int rows, int cols);
+    explicit SigmoidLayer(const LayerParameter& parameter) : param_(parameter) { }
     SigmoidLayer(const SigmoidLayer&)= delete;
     SigmoidLayer&operator=(const SigmoidLayer&)= delete;
     ~SigmoidLayer() = default;
+
+    inline LayerParameter parameter() const { return param_; }
 
     virtual void setup(const vector<container_type*>&input, const vector<container_type*>&output);
 
@@ -23,6 +26,9 @@ public:
     virtual void ForwardGPU(const vector<container_type*>& input, const vector<container_type*>& output);
     virtual void BackwardGPU(const vector<container_type*>& input, const vector<container_type*>& output);
 #endif //! USE_CUDA
+
+private:
+    LayerParameter param_{};
 };
 
 

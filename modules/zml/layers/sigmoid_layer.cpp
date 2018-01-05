@@ -1,9 +1,18 @@
 #include <cmath>
 #include <glog/logging.h>
+#include <iostream>
 #include "zml/util/math_op.hpp"
 #include "sigmoid_layer.hpp"
 
 namespace z {
+
+template<typename T>
+void SigmoidLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
+{
+    output[0]->reshape(input[0]->shape());
+    LOG(INFO) << "Sigmoid Init: " << output[0]->shape(0) << " " << output[0]->shape(1) << " " << output[0]->shape(2) << " " << output[0]->shape(3);
+}
+
 template <typename T>
 inline T sigmoid(T value)
 {
@@ -23,8 +32,7 @@ void SigmoidLayer<T>::ForwardCPU(const vector<container_type*>& input, const vec
 }
 
 template<typename T>
-void SigmoidLayer<T>::BackwardCPU(const vector<container_type*>& input, const vector<container_type*>& output)
-{
+void SigmoidLayer<T>::BackwardCPU(const vector<container_type*>& input, const vector<container_type*>& output) {
     auto count = input[0]->count();
     auto output_data = output[0]->data();
     auto input_diff = input[0]->diff();
@@ -35,25 +43,6 @@ void SigmoidLayer<T>::BackwardCPU(const vector<container_type*>& input, const ve
         input_diff[i] = output_diff[i] * sv * (1.0 - sv);
     }
 }
-
-template<typename T>
-SigmoidLayer<T>::SigmoidLayer(int num, int chs, int rows, int cols)
-{
-    this->shape_.resize(4);
-    this->shape_[0] = num;
-    this->shape_[1] = chs;
-    this->shape_[2] = rows;
-    this->shape_[3] = cols;
-}
-
-template<typename T>
-void SigmoidLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
-{
-    LOG(INFO) << "Sigmoid Init: " << this->shape_[0] << " " << this->shape_[1] << " " << this->shape_[2] << " " << this->shape_[3];
-
-    output[0]->reshape(this->shape_);
-}
-
 
 template class SigmoidLayer<float>;
 template class SigmoidLayer<double>;

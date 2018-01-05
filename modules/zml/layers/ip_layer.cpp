@@ -1,5 +1,6 @@
 #include <glog/logging.h>
 #include <random>
+#include <iostream>
 #include "zml/util/math_op.hpp"
 #include "ip_layer.hpp"
 
@@ -8,16 +9,14 @@ namespace z {
 template<typename T>
 void InnerProductLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
 {
-    LOG(INFO) << "Inner Product Init: " << this->shape_[0] << " " << this->shape_[1] << " " << this->shape_[2] << " " << this->shape_[3];
-
-    output[0]->reshape(this->shape_);
-    biasmer_.reshape({input[0]->shape(0)});
-    weights_.reshape({ this->shape_[2], input[0]->shape(2) });
-    biases_.reshape({ this->shape_[2] });
+    output[0]->reshape({ input[0]->shape(0), input[0]->shape(1), static_cast<int>(param_.ip_param().neuron_size()), 1 });
+    biasmer_.reshape({ input[0]->shape(0) });
+    weights_.reshape({ param_.ip_param().neuron_size(), input[0]->shape(2) });
+    biases_.reshape({ param_.ip_param().neuron_size() });
 
     vector_set(input[0]->shape(0), (T)1.0, biasmer_.data());
 
-    std::default_random_engine random_engine(time(nullptr));
+    std::default_random_engine random_engine(static_cast<unsigned long>(time(nullptr)));
     std::uniform_real_distribution<double> distribution(-1.0, 1.0);
     auto weight_data = weights_.data();
     for(auto i = 0; i < weights_.count(); ++i) {
@@ -30,8 +29,10 @@ void InnerProductLayer<T>::setup(const vector<container_type *> &input, const ve
 
     /// N x C x R x C
     M_ = input[0]->shape(0);
-    N_ = this->shape_[2];
+    N_ = static_cast<int>(param_.ip_param().neuron_size());
     K_ = input[0]->shape(2);
+
+    LOG(INFO) << "Inner Product Init: " << output[0]->shape(0) << " " << output[0]->shape(1) << " " << output[0]->shape(2) << " " << output[0]->shape(3);
 }
 
 template<typename T>
@@ -78,21 +79,9 @@ void InnerProductLayer<T>::BackwardCPU(const vector<container_type*>& input, con
                (T)0, biases_.diff());
 
     // update weights & biases
-    vector_axpy(weights_.count(), (T)-2./this->shape_[0], weights_.diff(), weights_.data());
-    vector_axpy(biases_.count(), (T)-2./this->shape_[0], biases_.diff(), biases_.data());
+    vector_axpy(weights_.count(), (T)-2./input[0]->shape(0), weights_.diff(), weights_.data());
+    vector_axpy(biases_.count(), (T)-2./input[0]->shape(0), biases_.diff(), biases_.data());
 }
-
-template<typename T>
-InnerProductLayer<T>::InnerProductLayer(int num, int chs, int rows, int cols)
-        :Layer<T>()
-{
-    this->shape_.resize(4);
-    this->shape_.at(0) = num;
-    this->shape_.at(1) = chs;
-    this->shape_.at(2) = rows;
-    this->shape_.at(3) = cols;
-}
-
 
 template class InnerProductLayer<float>;
 template class InnerProductLayer<double>;

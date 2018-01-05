@@ -3,6 +3,8 @@
 
 #include "tensor.hpp"
 #include <cassert>
+#include "zml/layer_param.hpp"
+
 namespace z {
 
 template <typename T>
@@ -15,11 +17,10 @@ public:
 
     virtual ~Layer() = default;
 
-
     virtual void setup(const vector<container_type*>&input, const vector<container_type*>&output) = 0;
 
-    inline vector<int> shape() const { return shape_; }
-    inline int shape(const int axis) const { assert((unsigned)axis < shape_.size()); return shape_[axis]; }
+    virtual LayerParameter parameter() const = 0;
+
 
     void Forward(const vector<container_type*>& input, const vector<container_type*>& output);
     void Backward(const vector<container_type*>& input, const vector<container_type*>& output);
@@ -29,9 +30,6 @@ public:
 
     virtual void BackwardGPU(const vector<container_type*>& input, const vector<container_type*>& output) { BackwardCPU(input, output); }
     virtual void BackwardCPU(const vector<container_type*>& input, const vector<container_type*>& output) = 0;
-
-protected:
-    vector<int> shape_;
 
 private:
     Tensor<T> loss_;

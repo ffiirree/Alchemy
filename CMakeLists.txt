@@ -112,6 +112,12 @@ if(GLOG_FOUND)
     set(USE_GLOG ON)
 endif()
 
+#find_package(Protobuf REQUIRED)
+#if(Protobuf_FOUND)
+#	include_directories(${Protobuf_INCLUDE_DIRS})
+#	set(USE_PROTOBUF ON)
+#endif()
+
 find_package(SSE)
 
 

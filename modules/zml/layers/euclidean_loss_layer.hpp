@@ -6,17 +6,18 @@
 #include "zml/layer.hpp"
 
 namespace z {
+
 template <typename T>
 class EuclideanLossLayer: public Layer<T> {
     using container_type = Tensor<T>;
 public:
     EuclideanLossLayer()= default;
-    EuclideanLossLayer(int num, int chs, int rows, int cols);
+    explicit EuclideanLossLayer(const LayerParameter&parameter) : param_(parameter) { }
     EuclideanLossLayer(const EuclideanLossLayer&)= delete;
     EuclideanLossLayer&operator=(const EuclideanLossLayer&)= delete;
     ~EuclideanLossLayer()= default;
 
-    inline int hit() const { return hit_; }
+    inline LayerParameter parameter() const { return param_; }
 
     virtual void setup(const vector<container_type*>&input, const vector<container_type*>&output);
 
@@ -30,8 +31,9 @@ public:
 #endif //! USE_CUDA
 
 private:
+    LayerParameter param_{};
+
     Tensor<T> diff_;
-    int hit_ = 0;
 };
 
 }

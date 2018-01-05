@@ -8,15 +8,18 @@ extern "C" {
 #include "zml/util/math_op.hpp"
 
 namespace z {
+
 template <typename T>
 class InnerProductLayer: public Layer<T> {
     using container_type = Tensor<T>;
 public:
     InnerProductLayer() = default;
-    InnerProductLayer(int num, int chs, int rows, int cols);
+    explicit InnerProductLayer(const LayerParameter& parameter) : param_(parameter) { }
     InnerProductLayer(const InnerProductLayer&)= delete;
     InnerProductLayer&operator=(const InnerProductLayer&)= delete;
     ~InnerProductLayer() = default;
+
+    inline LayerParameter parameter() const { return param_; }
 
     virtual void setup(const vector<container_type*>&input, const vector<container_type*>&output);
 
@@ -29,14 +32,18 @@ public:
 #endif //! USE_CUDA
 
 private:
+    LayerParameter param_{};
+
     Tensor<T> weights_;
     Tensor<T> biases_;
     Tensor<T> biasmer_;
 
-    int M_;
-    int N_;
-    int K_;
+    int M_ = 0;
+    int N_ = 0;
+    int K_ = 0;
 };
+
+
 
 }
 

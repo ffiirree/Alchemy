@@ -9,182 +9,83 @@
 #include "zml/layers/sigmoid_layer.hpp"
 #include "zml/layers/softmax_layer.hpp"
 #include "zml/layers/euclidean_loss_layer.hpp"
-
+#include "zml/layers/accuracy_layer.hpp"
+#include "layer_param.hpp"
+#include "layer_factory.hpp"
 
 namespace z {
+
+class NetworkParameter{
+public:
+    NetworkParameter() = default;
+
+    explicit NetworkParameter(const vector<LayerParameter>& params) : layer_params_(params) { }
+
+    inline NetworkParameter& name(const string& name) { name_ = name; return *this; }
+    inline string name() const { return name_; }
+
+    inline NetworkParameter& phase(Phase p) { phase_ = p; return *this; }
+    inline Phase phase() const { return phase_; }
+
+    inline NetworkParameter& layer_params(const vector<LayerParameter>& params) { layer_params_ = params; return *this; }
+    inline vector<LayerParameter> layer_params() const { return layer_params_; }
+
+private:
+    string name_{};
+    Phase phase_ = TRAIN;
+    vector<LayerParameter> layer_params_{};
+};
 
 template <typename T>
 class Network {
 public:
     Network()= default;
+    explicit Network(const NetworkParameter& param);
+    ~Network() = default;
 
-    Network(const vector<pair<Matrix, uint8_t>>& train_data, const vector<pair<Matrix, uint8_t>>& test_data);
-
-    Network(const vector<shared_ptr<Layer<T>>>& layers, vector<pair<Matrix, uint8_t>>& trd, const vector<pair<Matrix, uint8_t>>& td);
-    ~Network();
-
-    void sgd(const int times);
-    vector<vector<pair<Matrix, uint8_t>>> split(const vector<pair<Matrix, uint8_t>> &training_data, int size) const;
+    int run();
+    double accuracy() { return output_.back()[0]->data()[0]; }
 
     inline vector<shared_ptr<Layer<T>>> layers() const { return layers_; }
     inline vector<vector<Tensor<T>*>> inputs() const { return input_; }
     inline vector<vector<Tensor<T>*>> outputs() const { return output_; }
 
+    inline Phase phase() const { return phase_; }
+
     void Forward();
     void Backward();
 
 private:
-    vector<shared_ptr<Layer<T>>> layers_;
+    Phase phase_ = DEFAULT;
 
-    vector<shared_ptr<Tensor<T>>> tensors_;
+    vector<shared_ptr<Layer<T>>> layers_{};
+    map<string, shared_ptr<Tensor<T>>> data_flow_{};
 
-    vector<vector<Tensor<T>*>> input_;
-    vector<vector<Tensor<T>*>> output_;
-
-    vector<pair<Matrix, uint8_t>> train_data_;
-    vector<pair<Matrix, uint8_t>> test_data_;
+    vector<vector<Tensor<T>*>> input_{};
+    vector<vector<Tensor<T>*>> output_{};
 };
 
 template<typename T>
-Network<T>::Network(const vector<pair<Matrix, uint8_t>> &train_data, const vector<pair<Matrix, uint8_t>> &test_data)
+int Network<T>::run()
 {
-    train_data_ = train_data;
-    test_data_ = test_data;
-}
-
-template<typename T>
-Network<T>::~Network()
-{
-}
-
-template<typename T>
-Network<T>::Network(const vector<shared_ptr<Layer<T>>> &layers, vector<pair<Matrix, uint8_t>>& trd, const vector<pair<Matrix, uint8_t>>& td)
-{
-    train_data_ = trd;
-    test_data_ = td;
-
-    layers_ = layers;
-
-    input_.resize(layers.size());
-    output_.resize(layers.size());
-
-    /// input layer
-    auto layer_index = 0;
-//    tensors_.resize(layers.size() + 1);
-
-    tensors_.push_back(shared_ptr<Tensor<T>>(new Tensor<T>()));
-    tensors_.push_back(shared_ptr<Tensor<T>>(new Tensor<T>()));
-//    input_[layer_index].push_back(tensors_[0].get());// 输入层这个用不到
-    output_[layer_index].push_back(tensors_[1].get());// data
-    output_[layer_index].push_back(tensors_[0].get());// label
-    layers_[layer_index].get()->setup(input_[layer_index], output_[layer_index]);
-    layer_index++;
-
-    /// hidden layers + output layer
-    for(; layer_index < layers.size() - 1; ++layer_index) {
-        tensors_.push_back(shared_ptr<Tensor<T>>(new Tensor<T>()));
-        input_[layer_index].push_back(tensors_[layer_index].get());
-        output_[layer_index].push_back(tensors_[layer_index + 1].get());
-
-        layers_[layer_index].get()->setup(input_[layer_index], output_[layer_index]);
-    }
-
-    tensors_.push_back(shared_ptr<Tensor<T>>(new Tensor<T>()));
-    /// loss layer
-    input_[layer_index].push_back(tensors_[layer_index].get()); // data
-    input_[layer_index].push_back(tensors_[0].get());           // label
-
-    output_[layer_index].push_back(tensors_[layer_index + 1].get());
-
-    layers_[layer_index].get()->setup(input_[layer_index], output_[layer_index]);
-}
-
-template<typename T>
-void Network<T>::sgd(const int times)
-{
-    LOG(INFO) << "Train: SGD.";
-
-    for(auto i = 0; i < times; ++i) {
-
-        std::shuffle(train_data_.begin(), train_data_.end(), std::default_random_engine(time(nullptr)));
-
-        auto mini_batches = split(train_data_, 10);
-        for(auto& batch : mini_batches) {
-
-            // 设置输入层的数据
-//            input_[0]
-            /// label
-            auto label_ptr = output_[0].at(1)->data();
-            auto label_size = 10 * sizeof(T);
-            for(auto& item : batch) {
-                _Matrix<T> temp(10, 1, 1, (T)0);
-                temp.at(item.second) = 1;
-                memmove(label_ptr, temp.data, label_size);
-                label_ptr += 10;
-            }
-//            output_[0].at(0);
-            /// data
-            auto data_ptr = output_[0].at(0)->data();
-            auto data_count = layers_[0].get()->shape(2) * layers_[0].get()->shape(3);
-            auto data_size = data_count * sizeof(T);
-            for(auto& item : batch) {
-                auto image = _Matrix<T>(item.first)/255.0;
-                memmove(data_ptr, image.data, data_size);
-                data_ptr += data_count;
-            }
-
-            // 开始训练
+    if(phase() == TRAIN) {
+        for(Global::index(0); Global::index() < Global::training_count(); Global::index(Global::index() + 1)) {
             Forward();
             Backward();
-//            std::cout << std::endl;
         }
-
-        // Test
-        // 设置数据
-        auto mini_test_batches = split(test_data_, 10);
-        auto hit = 0;
-        for(auto& batch : mini_test_batches) {
-
-            // 设置输入层的数据
-//            input_[0]
-            /// label
-            auto label_ptr = output_[0].at(1)->data();
-            auto label_size = 10 * sizeof(T);
-            for(auto& item : batch) {
-                _Matrix<T> temp(10, 1, 1, (T)0);
-                temp.at(item.second) = 1;
-                memmove(label_ptr, temp.data, label_size);
-                label_ptr += 10;
-            }
-//            output_[0].at(0);
-            /// data
-            auto data_ptr = output_[0].at(0)->data();
-            auto data_count = layers_[0].get()->shape(2) * layers_[0].get()->shape(3);
-            auto data_size = data_count * sizeof(T);
-            for(auto& item : batch) {
-                auto image = _Matrix<T>(item.first)/255.0;
-                memmove(data_ptr, image.data, data_size);
-                data_ptr += data_count;
-            }
-
-            // 开始训练
+    }
+    else if(phase() == TEST)  {
+        for(Global::index(0); Global::index() < Global::test_count(); Global::index(Global::index()+1)) {
             Forward();
-            hit += ((EuclideanLossLayer<T> *)(layers_.back().get()))->hit();
         }
-        LOG(INFO) << "Epoch {"<< i <<"} :" << hit / 10000.0;
     }
+    else{
+        LOG(INFO) << "Error.";
+    }
+
+    return 0;
 }
 
-
-template<typename T>
-vector<vector<pair<Matrix, uint8_t>>> Network<T>::split(const vector<pair<Matrix, uint8_t>> &training_data, int size) const
-{
-    vector<vector<pair<Matrix, uint8_t>>> out;
-    for (size_t i = 0; i < training_data.size(); i += size) {
-        out.emplace_back(training_data.begin() + i, training_data.begin() + std::min(training_data.size(), i + size));
-    }
-    return out;
-}
 
 template<typename T>
 void Network<T>::Forward()
@@ -199,6 +100,46 @@ void Network<T>::Backward()
 {
     for(auto layer_index = layers_.size(); layer_index > 0; --layer_index) {
         layers_[layer_index - 1]->Backward(input_[layer_index - 1], output_[layer_index - 1]);
+    }
+}
+
+template<typename T>
+Network<T>::Network(const NetworkParameter &param)
+{
+    phase_ = param.phase();
+    for(auto& layer_param: param.layer_params()) {
+        if(phase_ == layer_param.phase() || layer_param.phase() == DEFAULT) {
+            layers_.push_back(LayerFactory<T>::GetLayer(layer_param));
+        }
+    }
+
+    input_.resize(layers_.size());
+    output_.resize(layers_.size());
+
+    auto l0= layers_[0]->parameter();
+    auto l1= layers_[1]->parameter();
+
+    for(size_t layer_index = 0; layer_index < layers_.size(); ++layer_index) {
+
+        /// inputs
+        for(auto& input_name : layers_[layer_index]->parameter().inputs()) {
+            auto search = data_flow_.find(input_name);
+            if(search == data_flow_.end()) {
+                data_flow_[input_name] = shared_ptr<Tensor<T>>(new Tensor<T>());
+            }
+            input_[layer_index].push_back(data_flow_[input_name].get());
+        }
+
+        /// outputs
+        for(auto& output_name : layers_[layer_index]->parameter().outputs()) {
+            auto search = data_flow_.find(output_name);
+            if(search == data_flow_.end()) {
+                data_flow_[output_name] = shared_ptr<Tensor<T>>(new Tensor<T>());
+            }
+            output_[layer_index].push_back(data_flow_[output_name].get());
+        }
+
+        layers_[layer_index]->setup(input_[layer_index], output_[layer_index]);
     }
 }
 

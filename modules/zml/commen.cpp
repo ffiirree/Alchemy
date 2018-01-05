@@ -1,17 +1,18 @@
+#ifdef USE_CUDA
 #include <cublas_v2.h>
+#endif
 #include <glog/logging.h>
 #include "commen.hpp"
-#include "boost/thread.hpp"
 
 namespace z {
-// 保证线程安全
-static boost::thread_specific_ptr<Global> thread_instance_;
+
+Global* Global::instance_ = nullptr;
 
 Global& Global::Instance() {
-    if (!thread_instance_.get()) {
-        thread_instance_.reset(new Global());
+    if (instance_ == nullptr) {
+        instance_ = new Global();
     }
-    return *(thread_instance_.get());
+    return *instance_;
 }
 
 Global::Global()
