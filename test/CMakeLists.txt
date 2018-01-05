@@ -29,6 +29,7 @@ test(operations)
 test(atlas)
 test(net_01)
 test(net_02_cross_entropy)
+test(net_03_tanh)
 
 test(find_contours)
 

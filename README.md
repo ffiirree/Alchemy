@@ -82,10 +82,10 @@ Ubuntu的一些开发软件配置安装，可以参照一下我博客[Ubuntu 16.
  - [ ] Dropout Layer
  - [ ] ReLU Layer
  - [x] sigmoid Layer
- - [ ] tanh Layer
+ - [x] tanh Layer
  - [ ] Softmax Layer
  - [x] Euclidean Loss Layer
- - [ ] Cross-entropy Loss Layer
+ - [x] Sigmoid cross-entropy Loss Layer
  - [x] SGD
  - [ ] AdaDelta
  - [ ] Nesterov

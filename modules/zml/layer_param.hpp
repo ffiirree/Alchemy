@@ -7,12 +7,13 @@
 namespace z {
 
 enum LayerType {
-    INPUT_LAYER,
-    INNER_PRODUCT_LAYER,
-    SIGMOID_LAYER,
-    EUCLIDEAN_LOSS_LAYER,
     ACCURACY_LAYER,
+    EUCLIDEAN_LOSS_LAYER,
+    INNER_PRODUCT_LAYER,
+    INPUT_LAYER,
     SIGMOID_CROSS_ENTORPY_LOSS_LAYER,
+    SIGMOID_LAYER,
+    TANH_LAYER
 };
 
 class InputParameter {
@@ -61,18 +62,16 @@ private:
     double blr_ = 1.0;
 };
 
-class SigmoidParameter {
-};
+class SigmoidParameter {};
+
+class TanhParameter {};
 
 class EuclideanLossParameter {
 };
 
-class AccuracyParameter {
-};
+class AccuracyParameter {};
 
-class SigmoidCrossEntropyLossParameter{
-
-};
+class SigmoidCrossEntropyLossParameter{};
 
 
 class LayerParameter {
@@ -117,6 +116,9 @@ public:
     inline LayerParameter& sigmoid_cross_entropy_loss_param(const SigmoidCrossEntropyLossParameter &cp) { cross_entropy_loss_param_ = cp; return *this; }
     inline SigmoidCrossEntropyLossParameter sigmoid_cross_entropy_loss_param() const { return cross_entropy_loss_param_; }
 
+    inline LayerParameter& tanh_param(const TanhParameter& tp) { tanh_param_ = tp; return *this; }
+    inline TanhParameter tanh_param() const { return tanh_param_; }
+
 protected:
     Phase phase_ = DEFAULT;
     string name_{};
@@ -132,6 +134,7 @@ protected:
     InnerProductParameter ip_param_;
     InputParameter input_param_;
     SigmoidParameter sigmoid_param_;
+    TanhParameter tanh_param_;
 };
 
 

@@ -32,7 +32,8 @@ void SigmoidLayer<T>::ForwardCPU(const vector<container_type*>& input, const vec
 }
 
 template<typename T>
-void SigmoidLayer<T>::BackwardCPU(const vector<container_type*>& input, const vector<container_type*>& output) {
+void SigmoidLayer<T>::BackwardCPU(const vector<container_type*>& input, const vector<container_type*>& output)
+{
     auto count = input[0]->count();
     auto output_data = output[0]->data();
     auto input_diff = input[0]->diff();

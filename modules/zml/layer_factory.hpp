@@ -9,7 +9,8 @@
 #include "layers/sigmoid_layer.hpp"
 #include "layers/euclidean_loss_layer.hpp"
 #include "layers/accuracy_layer.hpp"
-#include "zml/layers/sigmoid_cross_entropy_loss_layer.hpp"
+#include "layers/sigmoid_cross_entropy_loss_layer.hpp"
+#include "layers/tanh_layer.hpp"
 
 namespace z {
 
@@ -28,28 +29,33 @@ public:
         auto search = layers_.find(key);
         if(search == layers_.end()) {
             switch(type) {
-                case INPUT_LAYER:
-                    layers_[key] = shared_ptr<Layer<T>>(new InputLayer<T>(param));
-                    break;
 
-                case INNER_PRODUCT_LAYER:
-                    layers_[key] = shared_ptr<Layer<T>>(new InnerProductLayer<T>(param));
-                    break;
-
-                case SIGMOID_LAYER:
-                    layers_[key] = shared_ptr<Layer<T>>(new SigmoidLayer<T>(param));
+                case ACCURACY_LAYER:
+                    layers_[key] = shared_ptr<Layer<T>>(new AccuracyLayer<T>(param));
                     break;
 
                 case EUCLIDEAN_LOSS_LAYER:
                     layers_[key] = shared_ptr<Layer<T>>(new EuclideanLossLayer<T>(param));
                     break;
 
-                case ACCURACY_LAYER:
-                    layers_[key] = shared_ptr<Layer<T>>(new AccuracyLayer<T>(param));
+                case INNER_PRODUCT_LAYER:
+                    layers_[key] = shared_ptr<Layer<T>>(new InnerProductLayer<T>(param));
+                    break;
+
+                case INPUT_LAYER:
+                    layers_[key] = shared_ptr<Layer<T>>(new InputLayer<T>(param));
                     break;
 
                 case SIGMOID_CROSS_ENTORPY_LOSS_LAYER:
                     layers_[key] = shared_ptr<Layer<T>>(new SigmoidCrossEntropyLossLayer<T>(param));
+                    break;
+
+                case SIGMOID_LAYER:
+                    layers_[key] = shared_ptr<Layer<T>>(new SigmoidLayer<T>(param));
+                    break;
+
+                case TANH_LAYER:
+                    layers_[key] = shared_ptr<Layer<T>>(new TanhLayer<T>(param));
                     break;
 
                 default:
