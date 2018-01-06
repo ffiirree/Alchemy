@@ -73,11 +73,11 @@ Ubuntu的一些开发软件配置安装，可以参照一下我博客[Ubuntu 16.
  - [ ] 仿射变换
  - [ ] SIFT
 ### 
- - [x] 3层神经网络识别手写数字
  - [x] 实现张量类`Tensor`(也就是N维数组)
  - [x] 调整结构为: Tensor -> Layer -> Network -> Optimization 结构
  - [x] weight/bias初始化方法: normal/uniform/xavier
  - [ ] 正则化
+ - [x] Accuracy Layer
  - [ ] Convolution Layer
  - [ ] Pooling Layer
  - [x] Inner Product

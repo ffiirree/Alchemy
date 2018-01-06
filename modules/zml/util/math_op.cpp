@@ -1,5 +1,6 @@
 #include <cstring>
 #include <cstdint>
+#include <cmath>
 #include "math_op.hpp"
 
 
@@ -98,6 +99,26 @@ double vector_dot(const int count, const double* A, const double* B)
 {
     return cblas_ddot(count, A, 1, B, 1);
 }
+
+template <typename T>
+void vector_exp(const int count, const T* A, T* B)
+{
+    for(auto i = 0; i < count; ++i) {
+        B[i] = std::exp(A[i]);
+    }
+}
+template void vector_exp(const int count, const float* A, float* B);
+template void vector_exp(const int count, const double* A, double* B);
+
+template <typename T>
+void vector_div(const int count, const T* A, const T* B, T* C)
+{
+    for(auto i = 0; i < count; ++i) {
+        C[i] = A[i] / B[i];
+    }
+}
+template void vector_div(const int count, const float* A, const float* B, float* C);
+template void vector_div(const int count, const double* A, const double* B, double* C);
 
 /*
  * ===========================================================================

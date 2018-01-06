@@ -41,11 +41,11 @@ private:
 template<typename T>
 void InputLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
 {
-    output[0]->reshape({ param_.input_param().batch_size(),
+    output[0]->reshape({ static_cast<int>(param_.input_param().batch_size()),
                          param_.input_param().data()[0].first.channels(),
-                         param_.input_param().data()[0].first.size(),
+                         static_cast<int>(param_.input_param().data()[0].first.size()),
                          1 });
-    output[1]->reshape({ param_.input_param().batch_size(), 1, 10, 1 }); //TODO: label 暂时这样写着
+    output[1]->reshape({ static_cast<int>(param_.input_param().batch_size()), 1, 10, 1 }); //TODO: label 暂时这样写着
 
     vector_set(output[0]->count(), T(0), output[0]->data());
 

@@ -12,31 +12,16 @@ enum LayerType {
     EUCLIDEAN_LOSS_LAYER,
     INNER_PRODUCT_LAYER,
     INPUT_LAYER,
+    RELU_LAYER,
     SIGMOID_CROSS_ENTORPY_LOSS_LAYER,
     SIGMOID_LAYER,
+    SOFTMAX_LAYER,
     TANH_LAYER
 };
 
-class InputParameter {
-public:
-    /// batch size
-    InputParameter& batch_size(size_t size) { batch_size_ = size; return *this; }
-    size_t batch_size() const { return batch_size_; }
+class AccuracyParameter {};
 
-    /// data
-    InputParameter& source(MnistLoader& loader) { data_ = loader.data(); return *this;}
-    vector<pair<Matrix, uint8_t>> data() const { return data_; };
-
-    /// scale
-    InputParameter& scale(double scale) { scale_ = scale; return *this; }
-    double scale() const { return scale_; }
-
-private:
-    vector<pair<Matrix, uint8_t>> data_;
-
-    size_t batch_size_ = 1;
-    double scale_ = 1.0;
-};
+class EuclideanLossParameter {};
 
 class InnerProductParameter {
 public:
@@ -65,17 +50,42 @@ private:
     double blr_ = 1.0;
 };
 
-class SigmoidParameter {};
+class InputParameter {
+public:
+    /// batch size
+    InputParameter& batch_size(size_t size) { batch_size_ = size; return *this; }
+    size_t batch_size() const { return batch_size_; }
 
-class TanhParameter {};
+    /// data
+    InputParameter& source(MnistLoader& loader) { data_ = loader.data(); return *this;}
+    vector<pair<Matrix, uint8_t>> data() const { return data_; };
 
-class EuclideanLossParameter {
+    /// scale
+    InputParameter& scale(double scale) { scale_ = scale; return *this; }
+    double scale() const { return scale_; }
+
+private:
+    vector<pair<Matrix, uint8_t>> data_{};
+
+    size_t batch_size_ = 1;
+    double scale_ = 1.0;
 };
 
-class AccuracyParameter {};
+class ReLuParameter{
+public:
+    inline ReLuParameter& alpha(double a) { alpha_ = a; return *this; }
+    inline double alpha() const { return alpha_; }
+private:
+    double alpha_ = 0.;
+};
 
 class SigmoidCrossEntropyLossParameter{};
 
+class SigmoidParameter {};
+
+class SoftmaxParameter{};
+
+class TanhParameter {};
 
 class LayerParameter {
 public:
@@ -122,6 +132,12 @@ public:
     inline LayerParameter& tanh_param(const TanhParameter& tp) { tanh_param_ = tp; return *this; }
     inline TanhParameter tanh_param() const { return tanh_param_; }
 
+    inline LayerParameter& softmax_param(const SoftmaxParameter& sp) { softmax_param_ = sp; return *this; }
+    inline SoftmaxParameter softmax_param() const { return softmax_param_; }
+
+    inline LayerParameter& relu_param(const ReLuParameter& rp) { relu_param_ = rp; return *this; }
+    inline ReLuParameter relu_param() const { return relu_param_; }
+
 protected:
     Phase phase_ = DEFAULT;
     string name_{};
@@ -136,7 +152,9 @@ protected:
     EuclideanLossParameter euclidean_param_;
     InnerProductParameter ip_param_;
     InputParameter input_param_;
+    ReLuParameter relu_param_;
     SigmoidParameter sigmoid_param_;
+    SoftmaxParameter softmax_param_;
     TanhParameter tanh_param_;
 };
 

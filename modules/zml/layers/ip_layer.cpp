@@ -9,10 +9,11 @@ namespace z {
 template<typename T>
 void InnerProductLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
 {
+    auto neuron_size = static_cast<int>(param_.ip_param().neuron_size());
     output[0]->reshape({ input[0]->shape(0), input[0]->shape(1), static_cast<int>(param_.ip_param().neuron_size()), 1 });
     biasmer_.reshape({ input[0]->shape(0) });
-    weights_.reshape({ param_.ip_param().neuron_size(), input[0]->shape(2) });
-    biases_.reshape({ param_.ip_param().neuron_size() });
+    weights_.reshape({ neuron_size, input[0]->shape(2) });
+    biases_.reshape({ neuron_size });
 
     vector_set(input[0]->shape(0), (T)1.0, biasmer_.data());
 
@@ -32,7 +33,6 @@ void InnerProductLayer<T>::ForwardCPU(const vector<container_type*>& input, cons
 {
     auto input_data = input[0]->data();
     auto weight = this->weights_.data();
-    auto count = input[0]->count();
     auto output_data = output[0]->data();
 
     // w * x

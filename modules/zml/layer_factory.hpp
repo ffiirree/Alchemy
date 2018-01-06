@@ -11,6 +11,8 @@
 #include "layers/accuracy_layer.hpp"
 #include "layers/sigmoid_cross_entropy_loss_layer.hpp"
 #include "layers/tanh_layer.hpp"
+#include "layers/softmax_layer.hpp"
+#include <zml/layers/relu_layer.hpp>
 
 namespace z {
 
@@ -46,12 +48,20 @@ public:
                     layers_[key] = shared_ptr<Layer<T>>(new InputLayer<T>(param));
                     break;
 
+                case RELU_LAYER:
+                    layers_[key] = shared_ptr<Layer<T>>(new ReLuLayer<T>(param));
+                    break;
+
                 case SIGMOID_CROSS_ENTORPY_LOSS_LAYER:
                     layers_[key] = shared_ptr<Layer<T>>(new SigmoidCrossEntropyLossLayer<T>(param));
                     break;
 
                 case SIGMOID_LAYER:
                     layers_[key] = shared_ptr<Layer<T>>(new SigmoidLayer<T>(param));
+                    break;
+
+                case SOFTMAX_LAYER:
+                    layers_[key] = shared_ptr<Layer<T>>(new SoftmaxLayer<T>(param));
                     break;
 
                 case TANH_LAYER:

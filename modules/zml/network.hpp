@@ -90,7 +90,7 @@ int Network<T>::run()
 template<typename T>
 void Network<T>::Forward()
 {
-    for(auto layer_index = 0; layer_index < layers_.size(); ++layer_index) {
+    for(size_t layer_index = 0; layer_index < layers_.size(); ++layer_index) {
         layers_[layer_index]->Forward(input_[layer_index], output_[layer_index]);
     }
 }
@@ -98,7 +98,7 @@ void Network<T>::Forward()
 template<typename T>
 void Network<T>::Backward()
 {
-    for(auto layer_index = layers_.size(); layer_index > 0; --layer_index) {
+    for(size_t layer_index = layers_.size(); layer_index > 0; --layer_index) {
         layers_[layer_index - 1]->Backward(input_[layer_index - 1], output_[layer_index - 1]);
     }
 }

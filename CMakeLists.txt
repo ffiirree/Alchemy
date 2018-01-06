@@ -57,6 +57,8 @@ elseif(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Werror=non-virtual-dtor \
         -Werror=address -Werror=sequence-point -Wformat -Werror=format-security \
         -Wmissing-declarations -Wuninitialized -Winit-self")
+
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
 endif()
 
 # 设置bin和lib目录

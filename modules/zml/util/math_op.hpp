@@ -28,6 +28,10 @@ template <typename T> void vector_sub(const int count, const T* A, const T* B, T
 template <typename T> void vector_add(const int count, const T* A, const T* B, T* C);
 // return t(A)B
 template <typename T> T    vector_dot(const int count, const T* A, const T* B);
+// B = exp(A)
+template <typename T> void vector_exp(const int count, const T* A, T* B);
+//
+template <typename T> void vector_div(const int count, const T* A, const T* B, T* C);
 
 /*
  * ===========================================================================

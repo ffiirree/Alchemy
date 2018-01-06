@@ -30,6 +30,8 @@ test(atlas)
 test(net_01)
 test(net_02_cross_entropy)
 test(net_03_tanh)
+test(net_04_softmax)
+test(net_05_relu)
 
 test(find_contours)
 

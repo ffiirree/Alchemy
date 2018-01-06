@@ -1,19 +1,20 @@
-#ifndef _ZML_SOFTMAX_LAYER_HPP
-#define _ZML_SOFTMAX_LAYER_HPP
+#ifndef _ZML_RELU_LAYER_HPP
+#define _ZML_RELU_LAYER_HPP
 
 #include "zml/layer.hpp"
 
 namespace z {
 
 template <typename T>
-class SoftmaxLayer : public Layer<T> {
+class ReLuLayer : public Layer<T> {
     using container_type = Tensor<T>;
 public:
-    SoftmaxLayer() = default;
-    explicit SoftmaxLayer(const LayerParameter& param) : param_(param), softmax_param_(param.softmax_param()) { }
-    SoftmaxLayer(const SoftmaxLayer&)= delete;
-    SoftmaxLayer&operator=(const SoftmaxLayer&)=delete;
-    ~SoftmaxLayer() = default;
+    ReLuLayer() = default;
+    explicit ReLuLayer(const LayerParameter& param)
+            : param_(param), relu_param_(param.relu_param()) { }
+    ReLuLayer(const ReLuLayer&)= delete;
+    ReLuLayer&operator=(const ReLuLayer&)=delete;
+    ~ReLuLayer() = default;
 
     inline LayerParameter parameter() const { return param_; }
 
@@ -24,13 +25,14 @@ public:
 
 private:
     LayerParameter param_;
-    SoftmaxParameter softmax_param_;
-
-    Tensor<T> sum_;
-    Tensor<T> sum_multer_;
+    ReLuParameter relu_param_;
 };
+
+
 
 }
 
 
-#endif //! _ZML_SOFTMAX_LAYER_HPP
+
+
+#endif //! _ZML_RELU_LAYER_HPP

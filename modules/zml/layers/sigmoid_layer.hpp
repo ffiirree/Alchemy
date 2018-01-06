@@ -34,4 +34,4 @@ private:
 
 }
 
-#endif //_ZML_SIGMOID_LAYER_HPP
+#endif //! _ZML_SIGMOID_LAYER_HPP
