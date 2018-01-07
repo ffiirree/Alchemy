@@ -13,7 +13,7 @@ public:
     explicit SoftmaxLayer(const LayerParameter& param) : param_(param), softmax_param_(param.softmax_param()) { }
     SoftmaxLayer(const SoftmaxLayer&)= delete;
     SoftmaxLayer&operator=(const SoftmaxLayer&)=delete;
-    ~SoftmaxLayer() = default;
+    virtual ~SoftmaxLayer() = default;
 
     inline LayerParameter parameter() const { return param_; }
 

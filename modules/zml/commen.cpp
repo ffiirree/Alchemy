@@ -31,4 +31,15 @@ Global::~Global()
 #endif
 }
 
+std::ostream& operator << (std::ostream& os, const vector<int>& vec)
+{
+    auto size = vec.size();
+    os << "[";
+    for(size_t i = 0; i < size; ++i) {
+        os << vec[i] << (i == (size - 1) ? "" : ", ");
+    }
+    os << "]";
+    return os;
+}
+
 }

@@ -12,7 +12,7 @@ void EuclideanLossLayer<T>::setup(const vector<container_type *> &input, const v
     output[0]->reshape({ 1 });
     diff_.reshape(input[0]->shape());
 
-    LOG(INFO) << "Euclidean Loss Init: " << output[0]->shape(0);
+    LOG(INFO) << "Euclidean Loss Layer: { out: " << output[0]->shape() << " }";
 }
 
 template<typename T>

@@ -15,7 +15,7 @@ public:
     explicit EuclideanLossLayer(const LayerParameter&parameter) : param_(parameter) { }
     EuclideanLossLayer(const EuclideanLossLayer&)= delete;
     EuclideanLossLayer&operator=(const EuclideanLossLayer&)= delete;
-    ~EuclideanLossLayer()= default;
+    virtual ~EuclideanLossLayer()= default;
 
     inline LayerParameter parameter() const { return param_; }
 

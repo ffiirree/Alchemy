@@ -10,7 +10,8 @@ template<typename T>
 void SigmoidLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
 {
     output[0]->reshape(input[0]->shape());
-    LOG(INFO) << "Sigmoid Init: " << output[0]->shape(0) << " " << output[0]->shape(1) << " " << output[0]->shape(2) << " " << output[0]->shape(3);
+
+    LOG(INFO) << "Sigmoid Layer: { out: " << output[0]->shape() << " }";
 }
 
 template <typename T>

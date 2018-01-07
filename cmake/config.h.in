@@ -16,5 +16,6 @@
 #cmakedefine USE_GTK2
 #cmakedefine USE_GLOG
 #cmakedefine USE_ATLAS
+#cmakedefine USE_NNPACK
 
 #endif // !__ZCORE_CONFIG_H

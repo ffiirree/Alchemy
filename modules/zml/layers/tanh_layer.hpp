@@ -13,7 +13,7 @@ public:
     explicit TanhLayer(const LayerParameter& parameter) : param_(parameter) { }
     TanhLayer(const TanhLayer&)= delete;
     TanhLayer&operator=(const TanhLayer&)= delete;
-    ~TanhLayer() = default;
+    virtual ~TanhLayer() = default;
 
     inline LayerParameter parameter() const { return param_; }
 

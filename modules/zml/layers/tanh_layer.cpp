@@ -7,7 +7,7 @@ void TanhLayer<T>::setup(const vector<container_type *> &input,
                          const vector<container_type *> &output)
 {
     output[0]->reshape(input[0]->shape());
-    LOG(INFO) << "Tanh Layer Init: " << output[0]->shape(0) << " " << output[0]->shape(1) << " " << output[0]->shape(2) << " " << output[0]->shape(3);
+    LOG(INFO) << "Tanh Layer: { out: " << output[0]->shape() << " }";
 }
 
 template<typename T>

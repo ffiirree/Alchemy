@@ -4,7 +4,10 @@
 
 set(LINK_LIBS zcore zgui zimgproc zmath zml
         ${FFTW_LIBRARIES} ${JPEG_LIBRARIES} ${FFMPEG_LIBRARIES}
-        ${OpenCV_LIBS} ${GTK2_LIBRARIES} ${GLOG_LIBRARIES} ${Atlas_LIBRARIES})
+        ${OpenCV_LIBS} ${GTK2_LIBRARIES} ${GLOG_LIBRARIES} ${Atlas_LIBRARIES} ${NNPACK_LIBRARIES} -lpthread)
+
+message(${NNPACK_LIBRARIES})
+
 function(test name)
 
     add_executable(test_${name} test_${name}.cpp)
@@ -27,11 +30,14 @@ test(morp)
 test(threshold)
 test(operations)
 test(atlas)
+test(nnpack)
 test(net_01)
 test(net_02_cross_entropy)
 test(net_03_tanh)
 test(net_04_softmax)
 test(net_05_relu)
+test(net_06_cnn)
+
 
 test(find_contours)
 

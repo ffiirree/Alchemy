@@ -60,6 +60,8 @@ private:
 #endif
 };
 
+std::ostream& operator << (std::ostream& os, const vector<int>& vec);
+
 }
 
 

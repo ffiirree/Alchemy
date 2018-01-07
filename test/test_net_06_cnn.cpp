@@ -1,17 +1,14 @@
 #include <zmatrix.h>
 #include "zml/network.hpp"
 #include "zml/optimize.hpp"
-#include "zml/layer_factory.hpp"
-
 
 using namespace z;
 using namespace std;
 
-
 int main()
 {
     MnistLoader train_loader("/home/ffiirree/Code/zMatrix/resources/mnist/train-images.idx3-ubyte",
-                       "/home/ffiirree/Code/zMatrix/resources/mnist/train-labels.idx1-ubyte");
+                             "/home/ffiirree/Code/zMatrix/resources/mnist/train-labels.idx1-ubyte");
 
     MnistLoader test_loader("/home/ffiirree/Code/zMatrix/resources/mnist/t10k-images.idx3-ubyte",
                             "/home/ffiirree/Code/zMatrix/resources/mnist/t10k-labels.idx1-ubyte");
@@ -43,13 +40,38 @@ int main()
                                     .scale(1./255)
                     ),
             LayerParameter()
-                    .name("ip layer 1")
-                    .type(INNER_PRODUCT_LAYER)
+                    .name("conv layer 1")
+                    .type(CONVOLUTION_LAYER)
                     .input("data")
+                    .output("conv1")
+                    .conv_param(
+                            ConvolutionParameter()
+                                    .output_size(20)
+                                    .kernel_size(5)
+                                    .wlr(0.3)
+                                    .blr(0.3)
+                                    .weight_filler(XAVIER)
+                                    .bias_filler(XAVIER)
+                    ),
+            LayerParameter()
+                    .name("pooling layer 1")
+                    .type(POOLING_LAYER)
+                    .input("conv1")
+                    .output("p1")
+                    .pooling_param(
+                            PoolingParameter()
+                                    .kernel_size(2)
+                                    .stride(2)
+                                    .type(MAX)
+                    ),
+            LayerParameter()
+                    .name("ip1")
+                    .type(INNER_PRODUCT_LAYER)
+                    .input("p1")
                     .output("ip1")
                     .ip_param(
                             InnerProductParameter()
-                                    .output_size(30)
+                                    .output_size(100)
                                     .wlr(0.3)
                                     .blr(0.3)
                                     .weight_filler(XAVIER)
@@ -64,7 +86,7 @@ int main()
                             SigmoidParameter()
                     ),
             LayerParameter()
-                    .name("ip layer 2")
+                    .name("ip2")
                     .type(INNER_PRODUCT_LAYER)
                     .input("s1")
                     .output("ip2")
@@ -77,23 +99,22 @@ int main()
                                     .bias_filler(XAVIER)
                     ),
             LayerParameter()
-                    .name("scel layer")
-                    .type(SIGMOID_CROSS_ENTORPY_LOSS_LAYER)
-                    .phase(TRAIN)
-                    .input("ip2")
-                    .input("label")
-                    .output("loss")
-                    .euclidean_param(
-                            EuclideanLossParameter()
-                    ),
-            LayerParameter()
                     .name("sigmoid layer 2")
-                    .phase(TEST)
                     .type(SIGMOID_LAYER)
                     .input("ip2")
                     .output("s2")
                     .sigmoid_param(
                             SigmoidParameter()
+                    ),
+            LayerParameter()
+                    .name("eucl layer")
+                    .type(EUCLIDEAN_LOSS_LAYER)
+                    .phase(TRAIN)
+                    .input("s2")
+                    .input("label")
+                    .output("loss")
+                    .euclidean_param(
+                            EuclideanLossParameter()
                     ),
             LayerParameter()
                     .name("acc layer")

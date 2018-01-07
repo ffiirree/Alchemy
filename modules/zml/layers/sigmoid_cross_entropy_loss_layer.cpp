@@ -22,7 +22,7 @@ void SigmoidCrossEntropyLossLayer<T>::setup(const vector<container_type *> &inpu
 
     output[0]->reshape({ 1 });
 
-    LOG(INFO) << "Sigmoid Cross Entropy Loss Init: " << output[0]->shape(0);
+    LOG(INFO) << "Sigmoid cross-entropy Loss Layer: { out: " << output[0]->shape() << " }";
 }
 
 

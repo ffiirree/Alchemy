@@ -13,7 +13,7 @@ public:
     explicit SigmoidLayer(const LayerParameter& parameter) : param_(parameter) { }
     SigmoidLayer(const SigmoidLayer&)= delete;
     SigmoidLayer&operator=(const SigmoidLayer&)= delete;
-    ~SigmoidLayer() = default;
+    virtual ~SigmoidLayer() = default;
 
     inline LayerParameter parameter() const { return param_; }
 

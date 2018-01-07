@@ -15,10 +15,10 @@ class InnerProductLayer: public Layer<T> {
 public:
     InnerProductLayer() = default;
     explicit InnerProductLayer(const LayerParameter& parameter)
-            : param_(parameter), inner_product_param_(parameter.ip_param()) { }
+            : param_(parameter), ip_param_(parameter.ip_param()) { }
     InnerProductLayer(const InnerProductLayer&)= delete;
     InnerProductLayer&operator=(const InnerProductLayer&)= delete;
-    ~InnerProductLayer() = default;
+    virtual ~InnerProductLayer() = default;
 
     inline LayerParameter parameter() const { return param_; }
 
@@ -34,7 +34,7 @@ public:
 
 private:
     LayerParameter param_{};
-    InnerProductParameter inner_product_param_{};
+    InnerProductParameter ip_param_{};
 
     Tensor<T> weights_;
     Tensor<T> biases_;

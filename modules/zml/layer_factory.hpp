@@ -1,18 +1,11 @@
 #ifndef _ZML_LAYER_FACTORY_HPP
 #define _ZML_LAYER_FACTORY_HPP
 
-#include "commen.hpp"
-#include "layer_param.hpp"
-#include "layer.hpp"
-#include "layers/input_layer.hpp"
-#include "layers/ip_layer.hpp"
-#include "layers/sigmoid_layer.hpp"
-#include "layers/euclidean_loss_layer.hpp"
-#include "layers/accuracy_layer.hpp"
-#include "layers/sigmoid_cross_entropy_loss_layer.hpp"
-#include "layers/tanh_layer.hpp"
-#include "layers/softmax_layer.hpp"
 #include <zml/layers/relu_layer.hpp>
+#include <zml/layers/conv_layer.hpp>
+#include <zml/layers/pooling_layer.hpp>
+#include <zml/layers/sigmoid_cross_entropy_loss_layer.hpp>
+#include <zml/layers/tanh_layer.hpp>
 
 namespace z {
 
@@ -34,6 +27,10 @@ public:
 
                 case ACCURACY_LAYER:
                     layers_[key] = shared_ptr<Layer<T>>(new AccuracyLayer<T>(param));
+                    break;
+
+                case CONVOLUTION_LAYER:
+                    layers_[key] = shared_ptr<Layer<T>>(new ConvolutionLayer<T>(param));
                     break;
 
                 case EUCLIDEAN_LOSS_LAYER:
@@ -66,6 +63,10 @@ public:
 
                 case TANH_LAYER:
                     layers_[key] = shared_ptr<Layer<T>>(new TanhLayer<T>(param));
+                    break;
+
+                case POOLING_LAYER:
+                    layers_[key] = shared_ptr<Layer<T>>(new PoolingLayer<T>(param));
                     break;
 
                 default:

@@ -9,23 +9,29 @@ namespace z {
 template<typename T>
 void InnerProductLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
 {
-    auto neuron_size = static_cast<int>(param_.ip_param().neuron_size());
-    output[0]->reshape({ input[0]->shape(0), input[0]->shape(1), static_cast<int>(param_.ip_param().neuron_size()), 1 });
+    auto output_size = static_cast<int>(ip_param_.output_size());
+    auto input_size = input[0]->count(1, 4);
+
+    output[0]->reshape({ input[0]->shape(0), 1, output_size, 1 });
+
     biasmer_.reshape({ input[0]->shape(0) });
-    weights_.reshape({ neuron_size, input[0]->shape(2) });
-    biases_.reshape({ neuron_size });
+    weights_.reshape({ output_size, input_size });
+    biases_.reshape({ output_size });
 
     vector_set(input[0]->shape(0), (T)1.0, biasmer_.data());
 
-    Filler<T>::fill(weights_, param_.ip_param().weight_filler());
-    Filler<T>::fill(biases_, param_.ip_param().bias_filler());
+    Filler<T>::fill(weights_, ip_param_.weight_filler());
+    Filler<T>::fill(biases_, ip_param_.bias_filler());
 
     /// N x C x R x C
-    M_ = input[0]->shape(0);
-    N_ = static_cast<int>(param_.ip_param().neuron_size());
-    K_ = input[0]->shape(2);
+    M_ = input[0]->num();
+    N_ = output_size;
+    K_ = input_size;
 
-    LOG(INFO) << "Inner Product Init: " << output[0]->shape(0) << " " << output[0]->shape(1) << " " << output[0]->shape(2) << " " << output[0]->shape(3);
+    LOG(INFO) << "Inner Product Layer: { out: "
+              << output[0]->shape() << " }, "
+              << "{ weight: " << weights_.shape() << " }, "
+              << "{ bias: " << biases_.shape() << " }";
 }
 
 template<typename T>
@@ -71,8 +77,8 @@ void InnerProductLayer<T>::BackwardCPU(const vector<container_type*>& input, con
                (T)0, biases_.diff());
 
     // update weights & biases
-    vector_axpy(weights_.count(), (T)-inner_product_param_.wlr()/input[0]->shape(0), weights_.diff(), weights_.data());
-    vector_axpy(biases_.count(), (T)-inner_product_param_.blr()/input[0]->shape(0), biases_.diff(), biases_.data());
+    vector_axpy(weights_.count(), (T)-ip_param_.wlr()/input[0]->shape(0), weights_.diff(), weights_.data());
+    vector_axpy(biases_.count(), (T)-ip_param_.blr()/input[0]->shape(0), biases_.diff(), biases_.data());
 }
 
 template class InnerProductLayer<float>;

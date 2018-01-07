@@ -15,7 +15,7 @@ public:
             : param_(param), scel_param_(param.sigmoid_cross_entropy_loss_param()) { }
     SigmoidCrossEntropyLossLayer(const SigmoidCrossEntropyLossLayer&) = delete;
     SigmoidCrossEntropyLossLayer&operator=(const SigmoidCrossEntropyLossLayer&) = delete;
-    ~SigmoidCrossEntropyLossLayer() = default;
+    virtual ~SigmoidCrossEntropyLossLayer() = default;
 
     inline LayerParameter parameter() const { return param_; }
 

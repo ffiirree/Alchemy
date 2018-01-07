@@ -17,8 +17,12 @@ public:
     inline OptimizeParameter& test_net_param(const NetworkParameter& p) { test_net_param_ = p; test_net_param_.phase(TEST); return *this; }
     inline NetworkParameter test_net_param() const { return test_net_param_; }
 
+    inline OptimizeParameter& weight_decay() { weight_decay_ = weight_decay_; return *this; }
+    inline double weight_decay() const { return weight_decay_; }
+
 private:
     int epochs_ = 0;
+    double weight_decay_ = 0.0;
     NetworkParameter train_net_param_{};
     NetworkParameter test_net_param_{};
 };

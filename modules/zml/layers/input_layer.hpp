@@ -41,21 +41,26 @@ private:
 template<typename T>
 void InputLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
 {
-    output[0]->reshape({ static_cast<int>(param_.input_param().batch_size()),
-                         param_.input_param().data()[0].first.channels(),
-                         static_cast<int>(param_.input_param().data()[0].first.size()),
-                         1 });
-    output[1]->reshape({ static_cast<int>(param_.input_param().batch_size()), 1, 10, 1 }); //TODO: label 暂时这样写着
+    output[0]->reshape({ static_cast<int>(input_param_.batch_size()),
+                         input_param_.data()[0].first.channels(),
+                         input_param_.data()[0].first.rows,
+                         input_param_.data()[0].first.cols
+                       });
+    output[1]->reshape({ static_cast<int>(input_param_.batch_size()), 1, 10, 1 }); //TODO: label 暂时这样写着
 
     vector_set(output[0]->count(), T(0), output[0]->data());
 
     //
-    data_ = param_.input_param().data();
+    data_ = input_param_.data();
     std::shuffle(data_.begin(), data_.end(), std::default_random_engine(time(nullptr)));
-    mini_batches_ = split(data_, param_.input_param().batch_size());
-    param_.phase() == TRAIN ? Global::training_count(mini_batches_.size()) : Global::test_count(mini_batches_.size());
+    mini_batches_ = split(data_, static_cast<int>(input_param_.batch_size()));
+    param_.phase() == TRAIN
+                            ? Global::training_count(static_cast<int>(mini_batches_.size()))
+                            : Global::test_count(static_cast<int>(mini_batches_.size()));
 
-    LOG(INFO) << "Input Init: " << output[0]->shape(0) << " " << output[0]->shape(1) << " " << output[0]->shape(2) << " " << output[0]->shape(3);
+    LOG(INFO) << "Input Layer:"
+              << " { data: "  << output[0]->shape() << " }, "
+              << " { label: " << output[1]->shape() << " }";
 }
 
 template<typename T>

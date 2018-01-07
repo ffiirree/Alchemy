@@ -11,7 +11,7 @@ void AccuracyLayer<T>::setup(const vector<container_type *> &input, const vector
     output[0]->reshape({ 3 });
     vector_set(output[0]->count(), (T)0., output[0]->data());
 
-    LOG(INFO) << "Accuracy Init.";
+    LOG(INFO) << "Accuracy Layer: { out: " << output[0]->shape() << " }";
 }
 
 template<typename T>

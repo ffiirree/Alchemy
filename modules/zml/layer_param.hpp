@@ -9,6 +9,7 @@ namespace z {
 
 enum LayerType {
     ACCURACY_LAYER,
+    CONVOLUTION_LAYER,
     EUCLIDEAN_LOSS_LAYER,
     INNER_PRODUCT_LAYER,
     INPUT_LAYER,
@@ -16,18 +17,55 @@ enum LayerType {
     SIGMOID_CROSS_ENTORPY_LOSS_LAYER,
     SIGMOID_LAYER,
     SOFTMAX_LAYER,
-    TANH_LAYER
+    TANH_LAYER,
+    POOLING_LAYER,
+};
+
+enum PoolType {
+    MAX, AVERAGE
 };
 
 class AccuracyParameter {};
+
+class ConvolutionParameter{
+public:
+    inline ConvolutionParameter& output_size(size_t size) { output_size_ = size; return *this; }
+    inline size_t output_size() const { return output_size_; }
+
+    inline ConvolutionParameter& kernel_size(size_t size) { kernel_size_ = size; return *this; }
+    inline size_t kernel_size() const { return kernel_size_; }
+
+    inline ConvolutionParameter& stride(uint32_t s) { stride_ = s; return *this; }
+    inline uint32_t stride() const { return stride_; }
+
+    inline ConvolutionParameter& weight_filler(FillerType type) { weight_filler_ = type; return *this; }
+    inline FillerType weight_filler() const { return weight_filler_; }
+
+    inline ConvolutionParameter& bias_filler(FillerType type) { bias_filler_ = type; return *this; }
+    inline FillerType bias_type() const { return bias_filler_; }
+
+    inline ConvolutionParameter& wlr(double wlr) { wlr_ = wlr; return *this; }
+    inline double wlr() const { return wlr_; }
+
+    inline ConvolutionParameter& blr(double blr) { blr_ = blr; return *this; }
+    inline double blr() const { return blr_; }
+private:
+    size_t output_size_ = 0;
+    size_t kernel_size_ = 0;
+    uint32_t stride_ = 1;
+    FillerType weight_filler_ = NORMAL;
+    FillerType bias_filler_ = NORMAL;
+    double wlr_ = 1.0;
+    double blr_ = 1.0;
+};
 
 class EuclideanLossParameter {};
 
 class InnerProductParameter {
 public:
     /// Neuron size
-    inline InnerProductParameter& neuron_size(size_t size) { neuron_size_ = size; return *this; }
-    inline size_t neuron_size() const { return neuron_size_; }
+    inline InnerProductParameter& output_size(size_t size) { neuron_size_ = size; return *this; }
+    inline size_t output_size() const { return neuron_size_; }
 
     /// init
     inline InnerProductParameter& weight_filler(FillerType filler) { weight_filler_ = filler; return *this; }
@@ -87,6 +125,22 @@ class SoftmaxParameter{};
 
 class TanhParameter {};
 
+class PoolingParameter{
+public:
+    inline PoolingParameter& kernel_size(size_t size) { kernel_size_ = size; return *this; }
+    inline size_t kernel_size() const { return kernel_size_; }
+
+    inline PoolingParameter& type(PoolType type) { type_ = type; return *this; }
+    inline PoolType type() const { return type_; }
+
+    inline PoolingParameter& stride(uint32_t s) { stride_ = s; return *this; }
+    inline uint32_t stride() const { return stride_; }
+private:
+    size_t kernel_size_ = 2;
+    PoolType type_ = MAX;
+    uint32_t stride_ = 2;
+};
+
 class LayerParameter {
 public:
     // phase
@@ -138,6 +192,11 @@ public:
     inline LayerParameter& relu_param(const ReLuParameter& rp) { relu_param_ = rp; return *this; }
     inline ReLuParameter relu_param() const { return relu_param_; }
 
+    inline LayerParameter& conv_param(const ConvolutionParameter& cp) { conv_param_ = cp; return *this; }
+    inline ConvolutionParameter conv_param() const { return conv_param_; }
+
+    inline LayerParameter& pooling_param(const PoolingParameter& pp) { pooling_param_ = pp; return *this; }
+    inline PoolingParameter pooling_param() const { return pooling_param_; }
 protected:
     Phase phase_ = DEFAULT;
     string name_{};
@@ -148,6 +207,7 @@ protected:
 
     /// layers
     AccuracyParameter accuracy_param_;
+    ConvolutionParameter conv_param_;
     SigmoidCrossEntropyLossParameter cross_entropy_loss_param_;
     EuclideanLossParameter euclidean_param_;
     InnerProductParameter ip_param_;
@@ -156,6 +216,7 @@ protected:
     SigmoidParameter sigmoid_param_;
     SoftmaxParameter softmax_param_;
     TanhParameter tanh_param_;
+    PoolingParameter pooling_param_;
 };
 
 

@@ -18,6 +18,18 @@ public:
 
     void reshape(const vector<int>& shape);
 
+    inline int num() const { return shape_[0]; }
+    inline int count(int start, int end) const {
+        assert((unsigned)start < (unsigned)shape_.size());
+        assert((unsigned)end <= (unsigned)shape_.size());
+        assert((unsigned)start < (unsigned)end);
+
+        int result = 1;
+        for(auto i = start; i < end; ++i) {
+            result *= shape_[i];
+        }
+        return result;
+    }
     inline bool empty() const { return count_ == 0; }
     inline int count() const { return count_; }
     inline vector<int> shape() const { return shape_; }
