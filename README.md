@@ -5,15 +5,15 @@ zMatrix 是一个使用C++编写的计算机视觉库，包含传统算法和机
 
 ## 依赖
 ### 必须
-- libjpeg
-- fftw
-- gtk-2.x
-- FFmpeg(libavdevice libavutil libavcodec libavformat libswscale)
-- BLAS: ATLAS
-- CUDA 9.0/cuDNN 7
-- Boost
-- Glog
-- NNPACK
+- libjpeg: 读取jpeg图片， `sudo apt install libjpeg8-dev`
+- fftw: 进行快速傅里叶变换，`sudo apt install libfftw3-dev`
+- gtk-2.x: 显示图片使用， `sudo apt install libgtk2.0-dev`
+- FFmpeg: 读取摄像头/视频数据， `sudo apt install ffmpeg`
+- BLAS: ATLAS, `sudo apt install libatlas-base-dev`
+- CUDA 9.0/cuDNN 7: GPU计算，安装见官网
+- Boost: C++通用库，`sudo apt install libboost-all-dev`
+- Glog: 日志，方便调试， `sudo apt install libgoogle-glog-dev`
+- [NNPACK](https://github.com/Maratyszcza/NNPACK), CPU快速计算卷积，安装见github
 ### 可选
 - Kinect
 - OpenCV
@@ -55,13 +55,14 @@ cmake ..
  - [x] 实现张量类`Tensor`(也就是N维数组)
  - [x] 调整结构为: Tensor -> Layer -> Network -> Optimization 结构
  - [x] weight/bias初始化方法: normal/uniform/xavier
+ - [ ] GPU版本实现
  - [ ] 正则化
  - [x] Accuracy Layer
- - [ ] Convolution Layer
- - [ ] Pooling Layer
+ - [x] Convolution Layer
+ - [x] Pooling Layer
  - [x] Inner Product
  - [ ] Dropout Layer
- - [ ] ReLU Layer
+ - [x] ReLU Layer
  - [x] sigmoid Layer
  - [x] tanh Layer
  - [ ] Softmax Layer
