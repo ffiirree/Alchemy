@@ -38,7 +38,7 @@ template<typename T>
 void InnerProductLayer<T>::ForwardCPU(const vector<container_type*>& input, const vector<container_type*>& output)
 {
     auto input_data = input[0]->data();
-    auto weight = this->weights_.data();
+    auto weight = weights_.data();
     auto output_data = output[0]->data();
 
     // w * x

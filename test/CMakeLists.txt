@@ -37,7 +37,7 @@ test(net_03_tanh)
 test(net_04_softmax)
 test(net_05_relu)
 test(net_06_cnn)
-
+test(pooling_layer)
 
 test(find_contours)
 

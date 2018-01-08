@@ -24,6 +24,8 @@ public:
 private:
     LayerParameter param_;
     PoolingParameter pooling_param_;
+
+    Tensor<size_t> max_idx_;
 };
 
 }

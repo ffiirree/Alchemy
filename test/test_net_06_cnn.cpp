@@ -48,8 +48,8 @@ int main()
                             ConvolutionParameter()
                                     .output_size(20)
                                     .kernel_size(5)
-                                    .wlr(0.3)
-                                    .blr(0.3)
+                                    .wlr(1.5)
+                                    .blr(3)
                                     .weight_filler(XAVIER)
                                     .bias_filler(XAVIER)
                     ),
@@ -129,11 +129,11 @@ int main()
     };
 
     auto optimize_param = OptimizeParameter()
-            .epochs(10)
+            .epochs(50)
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
-    Optimize<double> o(optimize_param);
+    Optimize<float> o(optimize_param);
 
     o.run();
 

@@ -49,5 +49,10 @@ int main()
         std::cout << std::endl;
     }
 
+    free(input);
+    free(kernel);
+    free(output);
+    free(bias);
+
     return 0;
 }

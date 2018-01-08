@@ -42,7 +42,7 @@ public:
     inline FillerType weight_filler() const { return weight_filler_; }
 
     inline ConvolutionParameter& bias_filler(FillerType type) { bias_filler_ = type; return *this; }
-    inline FillerType bias_type() const { return bias_filler_; }
+    inline FillerType bias_filler() const { return bias_filler_; }
 
     inline ConvolutionParameter& wlr(double wlr) { wlr_ = wlr; return *this; }
     inline double wlr() const { return wlr_; }
