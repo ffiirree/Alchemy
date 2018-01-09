@@ -17,6 +17,7 @@ enum LayerType {
     SIGMOID_CROSS_ENTORPY_LOSS_LAYER,
     SIGMOID_LAYER,
     SOFTMAX_LAYER,
+    SOFTMAX_LOSS_LAYER,
     TANH_LAYER,
     POOLING_LAYER,
 };
@@ -123,6 +124,8 @@ class SigmoidParameter {};
 
 class SoftmaxParameter{};
 
+class SoftmaxLossParameter{};
+
 class TanhParameter {};
 
 class PoolingParameter{
@@ -197,6 +200,9 @@ public:
 
     inline LayerParameter& pooling_param(const PoolingParameter& pp) { pooling_param_ = pp; return *this; }
     inline PoolingParameter pooling_param() const { return pooling_param_; }
+    
+    inline LayerParameter& softmax_loss_param(const SoftmaxLossParameter& pp) { softmax_loss_param_ = pp; return *this; }
+    inline SoftmaxLossParameter softmax_loss_param() const { return softmax_loss_param_; }
 protected:
     Phase phase_ = DEFAULT;
     string name_{};
@@ -215,6 +221,7 @@ protected:
     ReLuParameter relu_param_;
     SigmoidParameter sigmoid_param_;
     SoftmaxParameter softmax_param_;
+    SoftmaxLossParameter softmax_loss_param_;
     TanhParameter tanh_param_;
     PoolingParameter pooling_param_;
 };

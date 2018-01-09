@@ -25,7 +25,7 @@ void Filler<T>::fill(Tensor<T>& tensor, FillerType type)
             break;
 
         default:
-            LOG(INFO) << "Unknown filler type!";
+            LOG(FATAL) << "Unknown filler type!";
             break;
     }
 }

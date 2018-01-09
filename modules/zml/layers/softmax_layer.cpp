@@ -14,7 +14,7 @@ void SoftmaxLayer<T>::setup(const vector<container_type *> &input, const vector<
 
     vector_set(sum_multer_.count(), (T)1., sum_multer_.data());
 
-    LOG(INFO) << "Softmax Layer Init: " << output[0]->shape(0) << " " << output[0]->shape(1) << " " << output[0]->shape(2) << " " << output[0]->shape(3);
+    LOG(INFO) << "Softmax Layer: { out: " << output[0]->shape() << " }";
 }
 
 template<typename T>
@@ -43,7 +43,7 @@ template<typename T>
 void SoftmaxLayer<T>::BackwardCPU(const vector<container_type *> &input,
                                   const vector<container_type *> &output)
 {
-
+    LOG(FATAL) << "Not implement!";
 }
 
 

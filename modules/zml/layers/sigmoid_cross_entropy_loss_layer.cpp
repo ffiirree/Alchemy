@@ -9,6 +9,8 @@ template<typename T>
 void SigmoidCrossEntropyLossLayer<T>::setup(const vector<container_type *> &input,
                                      const vector<container_type *> &output)
 {
+    LOG_IF(FATAL, input.size() < 2) << "input size: " << input.size();
+
     sigmoid_layers_ = shared_ptr<Layer<T>>(
             new SigmoidLayer<T>(
                     LayerParameter()

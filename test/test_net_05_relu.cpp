@@ -110,7 +110,7 @@ int main()
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
-    Optimize<double> o(optimize_param);
+    Optimize<float> o(optimize_param);
 
     o.run();
 

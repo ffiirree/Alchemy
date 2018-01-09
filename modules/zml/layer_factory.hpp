@@ -6,6 +6,7 @@
 #include <zml/layers/pooling_layer.hpp>
 #include <zml/layers/sigmoid_cross_entropy_loss_layer.hpp>
 #include <zml/layers/tanh_layer.hpp>
+#include <zml/layers/softmax_loss_layer.hpp>
 
 namespace z {
 
@@ -61,6 +62,10 @@ public:
                     layers_[key] = shared_ptr<Layer<T>>(new SoftmaxLayer<T>(param));
                     break;
 
+                case SOFTMAX_LOSS_LAYER:
+                    layers_[key] = shared_ptr<Layer<T>>(new SoftmaxLossLayer<T>(param));
+                    break;
+
                 case TANH_LAYER:
                     layers_[key] = shared_ptr<Layer<T>>(new TanhLayer<T>(param));
                     break;
@@ -70,7 +75,7 @@ public:
                     break;
 
                 default:
-                    LOG(INFO) << "Unknown Layer type!";
+                    LOG(FATAL) << "Unknown Layer type!";
                     break;
             }
         }
