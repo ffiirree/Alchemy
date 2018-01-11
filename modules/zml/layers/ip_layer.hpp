@@ -36,8 +36,8 @@ private:
     LayerParameter param_{};
     InnerProductParameter ip_param_{};
 
-    Tensor<T> weights_;
-    Tensor<T> biases_;
+    shared_ptr<Tensor<T>> weights_;
+    shared_ptr<Tensor<T>> biases_;
     Tensor<T> biasmer_;
 
     int M_ = 0;

@@ -9,6 +9,9 @@ template<typename T>
 void SigmoidCrossEntropyLossLayer<T>::setup(const vector<container_type *> &input,
                                      const vector<container_type *> &output)
 {
+    LOG(INFO) << "Setting up " << param_.name();
+    LOG(INFO) << "input  #0: "  << input[0]->shape();
+    LOG(INFO) << "input  #1: "  << input[1]->shape();
     LOG_IF(FATAL, input.size() < 2) << "input size: " << input.size();
 
     sigmoid_layers_ = shared_ptr<Layer<T>>(
@@ -23,8 +26,7 @@ void SigmoidCrossEntropyLossLayer<T>::setup(const vector<container_type *> &inpu
     sigmoid_layers_->setup(input, { sigmoid_output_[0].get() });
 
     output[0]->reshape({ 1 });
-
-    LOG(INFO) << "Sigmoid cross-entropy Loss Layer: { out: " << output[0]->shape() << " }";
+    LOG(INFO) << "output #0: "  << output[0]->shape();
 }
 
 
@@ -48,6 +50,7 @@ void  SigmoidCrossEntropyLossLayer<T>::BackwardCPU(const vector<container_type *
     auto diff = input[0]->diff();
 
     vector_sub(count, sigmoid_output, target, diff);
+    vector_scal(count, (T)1.0/input[0]->shape(0), diff);
 }
 
 template class SigmoidCrossEntropyLossLayer<float>;

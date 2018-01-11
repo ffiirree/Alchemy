@@ -24,7 +24,7 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(train_loader)
-                                    .batch_size(10)
+                                    .batch_size(64)
                                     .scale(1./255)
                     ),
             LayerParameter()
@@ -36,7 +36,7 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(test_loader)
-                                    .batch_size(10)//暂时需要和训练一致，在ip层有参数与之相关
+                                    .batch_size(100)
                                     .scale(1./255)
                     ),
             LayerParameter()
@@ -104,7 +104,9 @@ int main()
     };
 
     auto optimize_param = OptimizeParameter()
-            .epochs(10)
+            .max_iter(20000)
+            .test_iter(100)
+            .test_interval(500)
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 

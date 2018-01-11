@@ -6,8 +6,11 @@ template<typename T>
 void TanhLayer<T>::setup(const vector<container_type *> &input,
                          const vector<container_type *> &output)
 {
+    LOG(INFO) << "Setting up " << param_.name();
+    LOG(INFO) << "input  #0: "  << input[0]->shape();
+
     output[0]->reshape(input[0]->shape());
-    LOG(INFO) << "Tanh Layer: { out: " << output[0]->shape() << " }";
+    LOG(INFO) << "output #0: "  << output[0]->shape();
 }
 
 template<typename T>

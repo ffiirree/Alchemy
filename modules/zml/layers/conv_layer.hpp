@@ -26,8 +26,8 @@ private:
     LayerParameter param_;
     ConvolutionParameter conv_param_;
     
-    Tensor<T> kernel_;
-    Tensor<T> bias_;
+    shared_ptr<Tensor<T>> kernel_;
+    shared_ptr<Tensor<T>> bias_;
     Tensor<T> biaser_;
 };
 

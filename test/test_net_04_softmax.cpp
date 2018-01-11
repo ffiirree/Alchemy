@@ -24,7 +24,7 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(train_loader)
-                                    .batch_size(32)
+                                    .batch_size(64)
                                     .scale(1./255)
                     ),
             LayerParameter()
@@ -36,7 +36,7 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(test_loader)
-                                    .batch_size(32)//暂时需要和训练一致，在ip层有参数与之相关
+                                    .batch_size(100)
                                     .scale(1./255)
                     ),
             LayerParameter()
@@ -47,8 +47,8 @@ int main()
                     .ip_param(
                             InnerProductParameter()
                                     .output_size(30)
-                                    .wlr(0.3)
-                                    .blr(0.6)
+                                    .wlr(0.1)
+                                    .blr(0.2)
                                     .weight_filler(XAVIER)
                                     .bias_filler(XAVIER)
                     ),
@@ -68,13 +68,14 @@ int main()
                     .ip_param(
                             InnerProductParameter()
                                     .output_size(10)
-                                    .wlr(0.3)
-                                    .blr(0.6)
+                                    .wlr(0.1)
+                                    .blr(0.2)
                                     .weight_filler(XAVIER)
                                     .bias_filler(XAVIER)
                     ),
             LayerParameter()
                     .name("softmax loss layer 2")
+                    .phase(TRAIN)
                     .type(SOFTMAX_LOSS_LAYER)
                     .input("ip2")
                     .input("label")
@@ -95,7 +96,9 @@ int main()
     };
 
     auto optimize_param = OptimizeParameter()
-            .epochs(30)
+            .max_iter(10000)
+            .test_iter(100)
+            .test_interval(500)
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 

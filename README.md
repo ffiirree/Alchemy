@@ -56,7 +56,8 @@ cmake ..
  - [x] 调整结构为: Tensor -> Layer -> Network -> Optimization 结构
  - [x] weight/bias初始化方法: normal/uniform/xavier
  - [ ] GPU版本实现
- - [ ] 正则化
+ - [ ] L1正则化
+ - [x] L2正则化
  - [x] Accuracy Layer
  - [x] Convolution Layer
  - [x] Pooling Layer
@@ -66,6 +67,7 @@ cmake ..
  - [x] sigmoid Layer
  - [x] tanh Layer
  - [ ] Softmax Layer
+ - [x] Softmax Loss Layer
  - [x] Euclidean Loss Layer
  - [x] Sigmoid cross-entropy Loss Layer
  - [x] SGD

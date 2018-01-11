@@ -27,7 +27,7 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(train_loader)
-                                    .batch_size(10)
+                                    .batch_size(64)
                                     .scale(1./255)
                     ),
             LayerParameter()
@@ -39,7 +39,7 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(test_loader)
-                                    .batch_size(10)//暂时需要和训练一致，在ip层有参数与之相关
+                                    .batch_size(100)
                                     .scale(1./255)
                     ),
             LayerParameter()
@@ -87,19 +87,10 @@ int main()
                             EuclideanLossParameter()
                     ),
             LayerParameter()
-                    .name("sigmoid layer 2")
-                    .phase(TEST)
-                    .type(SIGMOID_LAYER)
-                    .input("ip2")
-                    .output("s2")
-                    .sigmoid_param(
-                            SigmoidParameter()
-                    ),
-            LayerParameter()
                     .name("acc layer")
                     .type(ACCURACY_LAYER)
                     .phase(TEST)
-                    .input("s2")
+                    .input("ip2")
                     .input("label")
                     .output("accuracy")
                     .accuracy_param(
@@ -108,7 +99,9 @@ int main()
     };
 
     auto optimize_param = OptimizeParameter()
-            .epochs(30)
+            .max_iter(10000)
+            .test_iter(100)
+            .test_interval(500)
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 

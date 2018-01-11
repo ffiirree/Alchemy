@@ -10,6 +10,8 @@ template<typename T>
 void SoftmaxLossLayer<T>::setup(const vector<container_type *> &input,
                                 const vector<container_type *> &output)
 {
+    LOG(INFO) << "Setting up " << param_.name();
+    LOG(INFO) << "input  #0: "  << input[0]->shape();
     LOG_IF(FATAL, input.size() < 2) << "input size: " << input.size();
 
     softmax_layer_ = shared_ptr<Layer<T>>(
@@ -25,8 +27,7 @@ void SoftmaxLossLayer<T>::setup(const vector<container_type *> &input,
     softmax_layer_->setup(input, { softmax_output_[0].get() });
 
     output[0]->reshape({ 1 });
-
-    LOG(INFO) << "Softmax Loss Layer: { out: " << output[0]->shape() << " }";
+    LOG(INFO) << "output #0: "  << output[0]->shape();
 }
 
 template<typename T>
@@ -48,6 +49,7 @@ void SoftmaxLossLayer<T>::BackwardCPU(const vector<container_type *> &input,
     auto input_diff = input[0]->diff();
 
     vector_sub(count, input_data, label_data, input_diff);
+    vector_scal(count, (T)1.0/input[0]->shape(0), input_diff);
 }
 
 template class SoftmaxLossLayer<float>;

@@ -7,14 +7,16 @@ namespace z {
 template<typename T>
 void SoftmaxLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
 {
+    LOG(INFO) << "Setting up " << param_.name();
+    LOG(INFO) << "input  #0: "  << input[0]->shape();
+
     output[0]->reshape(input[0]->shape());
+    LOG(INFO) << "output #0: "  << output[0]->shape();
 
     sum_.reshape(input[0]->shape());
     sum_multer_.reshape({ input[0]->shape(2), input[0]->shape(2) });
 
     vector_set(sum_multer_.count(), (T)1., sum_multer_.data());
-
-    LOG(INFO) << "Softmax Layer: { out: " << output[0]->shape() << " }";
 }
 
 template<typename T>

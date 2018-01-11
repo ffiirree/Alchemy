@@ -9,6 +9,9 @@ template<typename T>
 void PoolingLayer<T>::setup(const vector<container_type *> &input,
                             const vector<container_type *> &output)
 {
+    LOG(INFO) << "Setting up " << param_.name();
+    LOG(INFO) << "input  #0: "  << input[0]->shape();
+
     assert((size_t)input[0]->shape(2) >= pooling_param_.kernel_size());
     assert((size_t)input[0]->shape(3) >= pooling_param_.kernel_size());
 
@@ -22,9 +25,8 @@ void PoolingLayer<T>::setup(const vector<container_type *> &input,
     auto col_out = static_cast<int>((col_in - ksize) / pooling_param_.stride() + 1);
 
     output[0]->reshape({ num_in, chs_in, row_out, col_out });
+    LOG(INFO) << "output #0: "  << output[0]->shape();
     max_idx_.reshape({ num_in, chs_in, row_out, col_out });
-
-    LOG(INFO) << "Pooling Layer: { out: " << output[0]->shape() << " }";
 }
 
 template<typename T>

@@ -43,8 +43,9 @@ public:
     explicit Network(const NetworkParameter& param);
     ~Network() = default;
 
-    int run();
     double accuracy() { return output_.back()[0]->data()[0]; }
+
+    inline vector<tuple<shared_ptr<Tensor<T>>, double, double>> learnable_params() const { return learnable_params_; };
 
     inline vector<shared_ptr<Layer<T>>> layers() const { return layers_; }
     inline vector<vector<Tensor<T>*>> inputs() const { return input_; }
@@ -58,33 +59,17 @@ public:
 private:
     Phase phase_ = DEFAULT;
 
+    // 层
     vector<shared_ptr<Layer<T>>> layers_{};
+    // 从输入到输出的数据
     map<string, shared_ptr<Tensor<T>>> data_flow_{};
+    // 参数
+    vector<tuple<shared_ptr<Tensor<T>>, double, double>> learnable_params_{};
 
+    // 和每一层一一对应
     vector<vector<Tensor<T>*>> input_{};
     vector<vector<Tensor<T>*>> output_{};
 };
-
-template<typename T>
-int Network<T>::run()
-{
-    if(phase() == TRAIN) {
-        for(Global::index(0); Global::index() < Global::training_count(); Global::index(Global::index() + 1)) {
-            Forward();
-            Backward();
-        }
-    }
-    else if(phase() == TEST)  {
-        for(Global::index(0); Global::index() < Global::test_count(); Global::index(Global::index()+1)) {
-            Forward();
-        }
-    }
-    else{
-        LOG(INFO) << "Error.";
-    }
-
-    return 0;
-}
 
 
 template<typename T>
@@ -116,9 +101,6 @@ Network<T>::Network(const NetworkParameter &param)
     input_.resize(layers_.size());
     output_.resize(layers_.size());
 
-    auto l0= layers_[0]->parameter();
-    auto l1= layers_[1]->parameter();
-
     for(size_t layer_index = 0; layer_index < layers_.size(); ++layer_index) {
 
         /// inputs
@@ -140,9 +122,11 @@ Network<T>::Network(const NetworkParameter &param)
         }
 
         layers_[layer_index]->setup(input_[layer_index], output_[layer_index]);
+
+        const auto& lp = layers_[layer_index]->learnable_params();
+        learnable_params_.insert(learnable_params_.end(), lp.begin(), lp.end());
     }
 }
-
 }
 
 #endif //! _ZML_NETWORK_HPP

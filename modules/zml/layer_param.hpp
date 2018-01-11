@@ -50,6 +50,9 @@ public:
 
     inline ConvolutionParameter& blr(double blr) { blr_ = blr; return *this; }
     inline double blr() const { return blr_; }
+
+    inline ConvolutionParameter& weight_decay(double wd) { weight_decay_ = wd; return *this; }
+    inline double weight_decay() const { return weight_decay_; }
 private:
     size_t output_size_ = 0;
     size_t kernel_size_ = 0;
@@ -58,6 +61,8 @@ private:
     FillerType bias_filler_ = NORMAL;
     double wlr_ = 1.0;
     double blr_ = 1.0;
+
+    double weight_decay_ = 0;
 };
 
 class EuclideanLossParameter {};
@@ -81,12 +86,17 @@ public:
     inline InnerProductParameter& blr(double lr) { blr_ = lr; return *this; }
     inline double blr() const { return blr_; }
 
+    inline InnerProductParameter& weight_decay(double wd) { weight_decay_ = wd; return *this; }
+    inline double weight_decay() const { return weight_decay_; }
+
 private:
     size_t neuron_size_ = 1;
     FillerType weight_filler_ = NORMAL;
     FillerType bias_filler_ = NORMAL;
     double wlr_ = 1.0;
     double blr_ = 1.0;
+
+    double weight_decay_ = 0;
 };
 
 class InputParameter {

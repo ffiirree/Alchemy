@@ -8,9 +8,11 @@ template<typename T>
 void ReLuLayer<T>::setup(const vector<container_type *> &input,
                          const vector<container_type *> &output)
 {
-    output[0]->reshape(input[0]->shape());
+    LOG(INFO) << "Setting up " << param_.name();
+    LOG(INFO) << "input  #0: "  << input[0]->shape();
 
-    LOG(INFO) << "ReLU Layer Init: " << output[0]->shape(0) << " " << output[0]->shape(1) << " " << output[0]->shape(2) << " " << output[0]->shape(3);
+    output[0]->reshape(input[0]->shape());
+    LOG(INFO) << "output #0: "  << output[0]->shape();
 }
 
 template<typename T>

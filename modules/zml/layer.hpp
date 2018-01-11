@@ -21,6 +21,7 @@ public:
 
     virtual LayerParameter parameter() const = 0;
 
+    inline vector<tuple<shared_ptr<Tensor<T>>, double, double>> learnable_params() const { return learnable_params_; }
 
     void Forward(const vector<container_type*>& input, const vector<container_type*>& output);
     void Backward(const vector<container_type*>& input, const vector<container_type*>& output);
@@ -31,8 +32,10 @@ public:
     virtual void BackwardGPU(const vector<container_type*>& input, const vector<container_type*>& output) { BackwardCPU(input, output); }
     virtual void BackwardCPU(const vector<container_type*>& input, const vector<container_type*>& output) = 0;
 
-private:
+protected:
     Tensor<T> loss_;
+
+    vector<tuple<shared_ptr<Tensor<T>>, double, double>> learnable_params_{};
 };
 
 template<typename T>

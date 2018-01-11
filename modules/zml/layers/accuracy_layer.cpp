@@ -8,10 +8,13 @@ namespace z {
 template<typename T>
 void AccuracyLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
 {
-    output[0]->reshape({ 3 });
-    vector_set(output[0]->count(), (T)0., output[0]->data());
+    LOG(INFO) << "Setting up " << param_.name();
+    LOG(INFO) << "input  #0: "  << input[0]->shape();
+    LOG(INFO) << "input  #0: "  << input[1]->shape();
 
-    LOG(INFO) << "Accuracy Layer: { out: " << output[0]->shape() << " }";
+    output[0]->reshape({ 3 });
+    LOG(INFO) << "output #0: "  << output[0]->shape();
+    vector_set(output[0]->count(), (T)0., output[0]->data());
 }
 
 template<typename T>
