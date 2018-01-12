@@ -10,6 +10,7 @@ namespace z {
 enum LayerType {
     ACCURACY_LAYER,
     CONVOLUTION_LAYER,
+    DROPOUT_LAYER,
     EUCLIDEAN_LOSS_LAYER,
     INNER_PRODUCT_LAYER,
     INPUT_LAYER,
@@ -63,6 +64,14 @@ private:
     double blr_ = 1.0;
 
     double weight_decay_ = 0;
+};
+
+class DropoutParameter{
+public:
+    inline DropoutParameter& probability(double val) { probability_ = val; return *this; }
+    inline double probability() const { return probability_; }
+private:
+    double probability_ = 0.5;
 };
 
 class EuclideanLossParameter {};
@@ -213,6 +222,9 @@ public:
     
     inline LayerParameter& softmax_loss_param(const SoftmaxLossParameter& pp) { softmax_loss_param_ = pp; return *this; }
     inline SoftmaxLossParameter softmax_loss_param() const { return softmax_loss_param_; }
+
+    inline LayerParameter& dropout_param(const DropoutParameter& dp) { dropout_param_ = dp; return *this; }
+    inline DropoutParameter dropout_param() const { return dropout_param_; }
 protected:
     Phase phase_ = DEFAULT;
     string name_{};
@@ -224,11 +236,12 @@ protected:
     /// layers
     AccuracyParameter accuracy_param_;
     ConvolutionParameter conv_param_;
-    SigmoidCrossEntropyLossParameter cross_entropy_loss_param_;
+    DropoutParameter dropout_param_;
     EuclideanLossParameter euclidean_param_;
     InnerProductParameter ip_param_;
     InputParameter input_param_;
     ReLuParameter relu_param_;
+    SigmoidCrossEntropyLossParameter cross_entropy_loss_param_;
     SigmoidParameter sigmoid_param_;
     SoftmaxParameter softmax_param_;
     SoftmaxLossParameter softmax_loss_param_;

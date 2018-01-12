@@ -9,6 +9,7 @@ enum FillerType {
     UNIFORM,
     NORMAL,
     XAVIER,
+    BERNOULLI
 };
 
 template <typename T>
@@ -16,6 +17,7 @@ class Filler{
 public:
 
     static void fill(Tensor<T>& tensor, FillerType type);
+    static void fill(Tensor<T>& tensor, FillerType type, double probability);
 
 private:
     static void uniform_fill(const int count, T * ptr);

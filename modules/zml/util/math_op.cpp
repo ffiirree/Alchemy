@@ -120,6 +120,16 @@ void vector_div(const int count, const T* A, const T* B, T* C)
 template void vector_div(const int count, const float* A, const float* B, float* C);
 template void vector_div(const int count, const double* A, const double* B, double* C);
 
+template <typename T>
+void vector_sign(const int count, const T* A, T*B)
+{
+    for(auto i = 0; i < count; ++i) {
+        B[i] = (A[i] > 0) - (0 > A[i]);
+    }
+}
+template void vector_sign(const int count, const float* A, float* B);
+template void vector_sign(const int count, const double* A, double* B);
+
 /*
  * ===========================================================================
  * Prototypes for level 2 BLAS

@@ -11,7 +11,7 @@ using namespace std;
 int main()
 {
     MnistLoader train_loader("/home/ffiirree/Code/zMatrix/resources/mnist/train-images.idx3-ubyte",
-                       "/home/ffiirree/Code/zMatrix/resources/mnist/train-labels.idx1-ubyte");
+                             "/home/ffiirree/Code/zMatrix/resources/mnist/train-labels.idx1-ubyte");
 
     MnistLoader test_loader("/home/ffiirree/Code/zMatrix/resources/mnist/t10k-images.idx3-ubyte",
                             "/home/ffiirree/Code/zMatrix/resources/mnist/t10k-labels.idx1-ubyte");
@@ -49,7 +49,7 @@ int main()
                     .output("ip1")
                     .ip_param(
                             InnerProductParameter()
-                                    .output_size(30)
+                                    .output_size(40)
                                     .wlr(0.3)
                                     .blr(0.3)
                                     .weight_decay(0.0005)
@@ -65,9 +65,18 @@ int main()
                             SigmoidParameter()
                     ),
             LayerParameter()
+                    .name("dropout1")
+                    .type(DROPOUT_LAYER)
+                    .input("s1")
+                    .output("drop1")
+                    .dropout_param(
+                            DropoutParameter()
+                                    .probability(0.5)
+                    ),
+            LayerParameter()
                     .name("ip layer 2")
                     .type(INNER_PRODUCT_LAYER)
-                    .input("s1")
+                    .input("drop1")
                     .output("ip2")
                     .ip_param(
                             InnerProductParameter()

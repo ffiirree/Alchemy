@@ -13,6 +13,7 @@
 #include <zml/layers/tanh_layer.hpp>
 #include <zml/layers/softmax_layer.hpp>
 #include <zml/layers/softmax_loss_layer.hpp>
+#include <zml/layers/dropout_layer.hpp>
 
 namespace z {
 
@@ -31,6 +32,9 @@ public:
 
             case CONVOLUTION_LAYER:
                 return shared_ptr<Layer<T>>(new ConvolutionLayer<T>(param));
+
+            case DROPOUT_LAYER:
+                return shared_ptr<Layer<T>>(new DropoutLayer<T>(param));
 
             case EUCLIDEAN_LOSS_LAYER:
                 return shared_ptr<Layer<T>>(new EuclideanLossLayer<T>(param));

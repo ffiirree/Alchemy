@@ -56,13 +56,13 @@ cmake ..
  - [x] 调整结构为: Tensor -> Layer -> Network -> Optimization 结构
  - [x] weight/bias初始化方法: normal/uniform/xavier
  - [ ] GPU版本实现
- - [ ] L1正则化
+ - [x] L1正则化
  - [x] L2正则化
  - [x] Accuracy Layer
  - [x] Convolution Layer
  - [x] Pooling Layer
  - [x] Inner Product
- - [ ] Dropout Layer
+ - [x] Dropout Layer
  - [x] ReLU Layer
  - [x] sigmoid Layer
  - [x] tanh Layer

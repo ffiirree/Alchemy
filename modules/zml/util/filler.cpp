@@ -64,6 +64,22 @@ void Filler<T>::xavier_fill(const int count, const T scale, T *ptr)
     }
 }
 
+template<typename T>
+void Filler<T>::fill(Tensor<T> &tensor, FillerType type, double probability)
+{
+    assert(type == BERNOULLI);
+
+    std::default_random_engine random_engine(static_cast<unsigned long>(time(nullptr)));
+    std::bernoulli_distribution bernoulli_distribution(probability);
+
+    const auto count = tensor.count();
+    const auto ptr = tensor.data();
+
+    for(auto i = 0; i < count; ++i) {
+        ptr[i] = bernoulli_distribution(random_engine);
+    }
+}
+
 template class Filler<float>;
 template class Filler<double>;
 

@@ -32,6 +32,8 @@ template <typename T> T    vector_dot(const int count, const T* A, const T* B);
 template <typename T> void vector_exp(const int count, const T* A, T* B);
 //
 template <typename T> void vector_div(const int count, const T* A, const T* B, T* C);
+//
+template <typename T> void vector_sign(const int count, const T* A, T* B);
 
 /*
  * ===========================================================================

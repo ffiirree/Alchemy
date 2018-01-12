@@ -94,7 +94,7 @@ Network<T>::Network(const NetworkParameter &param)
     phase_ = param.phase();
     for(auto& layer_param: param.layer_params()) {
         if(phase_ == layer_param.phase() || layer_param.phase() == DEFAULT) {
-            layers_.push_back(LayerFactory<T>::GetLayer(layer_param));
+            layers_.push_back(LayerFactory<T>::GetLayer(layer_param.phase(phase_)));
         }
     }
 
