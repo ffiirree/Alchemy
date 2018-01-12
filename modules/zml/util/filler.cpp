@@ -21,7 +21,7 @@ void Filler<T>::fill(Tensor<T>& tensor, FillerType type)
             break;
 
         case XAVIER:
-            xavier_fill(count, (T)1./((T)count/ num), ptr);
+            xavier_fill(count, std::sqrt((T)1./((T)count/ num)), ptr);
             break;
 
         default:
@@ -82,5 +82,4 @@ void Filler<T>::fill(Tensor<T> &tensor, FillerType type, double probability)
 
 template class Filler<float>;
 template class Filler<double>;
-
 }

@@ -2,6 +2,7 @@
 #define _ZML_OPTIMIZE_HPP
 
 #include "layer.hpp"
+#include "network.hpp"
 #include "layer_factory.hpp"
 
 namespace z {
@@ -10,30 +11,30 @@ enum RegularizationType {
     L1, L2
 };
 
-class OptimizeParameter {
+class OptimizerParameter {
 public:
-    inline OptimizeParameter& epochs(int e) { epochs_ = e; return *this; }
+    inline OptimizerParameter& epochs(int e) { epochs_ = e; return *this; }
     inline int epochs() const { return epochs_; }
 
-    inline OptimizeParameter& train_net_param(const NetworkParameter& p) { train_net_param_ = p; train_net_param_.phase(TRAIN); return *this; }
+    inline OptimizerParameter& train_net_param(const NetworkParameter& p) { train_net_param_ = p; train_net_param_.phase(TRAIN); return *this; }
     inline NetworkParameter train_net_param() const { return train_net_param_; }
 
-    inline OptimizeParameter& test_net_param(const NetworkParameter& p) { test_net_param_ = p; test_net_param_.phase(TEST); return *this; }
+    inline OptimizerParameter& test_net_param(const NetworkParameter& p) { test_net_param_ = p; test_net_param_.phase(TEST); return *this; }
     inline NetworkParameter test_net_param() const { return test_net_param_; }
 
-    inline OptimizeParameter& weight_decay() { weight_decay_ = weight_decay_; return *this; }
+    inline OptimizerParameter& weight_decay() { weight_decay_ = weight_decay_; return *this; }
     inline double weight_decay() const { return weight_decay_; }
 
-    inline OptimizeParameter& test_iter(int ti) { test_iter_ = ti; return *this; }
+    inline OptimizerParameter& test_iter(int ti) { test_iter_ = ti; return *this; }
     inline int test_iter() const { return test_iter_; }
 
-    inline OptimizeParameter& max_iter(int mi) { max_iter_ = mi; return *this; }
+    inline OptimizerParameter& max_iter(int mi) { max_iter_ = mi; return *this; }
     inline int max_iter() const { return max_iter_; }
 
-    inline OptimizeParameter& test_interval(int ti) { test_interval_ = ti; return *this; }
+    inline OptimizerParameter& test_interval(int ti) { test_interval_ = ti; return *this; }
     inline int test_interval() const { return test_interval_; }
 
-    inline OptimizeParameter& regularization_type(RegularizationType type) { rt_ = type; return *this; }
+    inline OptimizerParameter& regularization_type(RegularizationType type) { rt_ = type; return *this; }
     inline RegularizationType regularization_type() const { return rt_; }
 
 private:
@@ -51,16 +52,19 @@ private:
 };
 
 template <typename T>
-class Optimize {
+class Optimizer {
     using LayerType = Layer<T>;
 public:
-    explicit Optimize(const OptimizeParameter& param);
-    void run();
+    explicit Optimizer(const OptimizerParameter& param);
+    virtual ~Optimizer() = default;
 
-    void update();
     void regularize();
-private:
-    OptimizeParameter param_;
+
+    virtual void optimize() = 0;
+    virtual void update() = 0;
+
+protected:
+    OptimizerParameter param_;
 
     vector<Tensor<T>> sign_;
 
@@ -69,7 +73,7 @@ private:
 };
 
 template<typename T>
-Optimize<T>::Optimize(const OptimizeParameter &param)
+Optimizer<T>::Optimizer(const OptimizerParameter &param)
 {
     param_ = param;
 
@@ -87,36 +91,7 @@ Optimize<T>::Optimize(const OptimizeParameter &param)
 }
 
 template<typename T>
-void Optimize<T>::run()
-{
-    for(auto iter = 0; iter < param_.max_iter(); ++iter) {
-        net_->Forward();
-        net_->Backward();
-
-        regularize();
-        update();
-
-        if(iter && iter % param_.test_interval() == 0) {
-
-            for(auto test_iter = 0; test_iter < param_.test_iter(); ++test_iter) {
-                test_net_->Forward();
-            }
-            LOG(INFO) << "Iteration " << std::setw(6) << std::setfill(' ') << iter << " : " <<  test_net_->accuracy();
-        }
-    }
-}
-
-template<typename T>
-void Optimize<T>::update()
-{
-    const auto& learnable_params = net_->learnable_params();
-    for(auto& param : learnable_params) {
-        vector_axpy(std::get<0>(param)->count(), (T)-std::get<1>(param), std::get<0>(param)->diff(), std::get<0>(param)->data());
-    }
-}
-
-template<typename T>
-void Optimize<T>::regularize()
+void Optimizer<T>::regularize()
 {
     const auto& learnable_params = net_->learnable_params();
 

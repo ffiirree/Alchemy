@@ -1,6 +1,7 @@
 #include <zmatrix.h>
+#include <zml/optimizer/sgd_optimizer.hpp>
 #include "zml/network.hpp"
-#include "zml/optimize.hpp"
+#include "zml/optimizer.hpp"
 
 using namespace z;
 using namespace std;
@@ -103,16 +104,16 @@ int main()
                     )
     };
 
-    auto optimize_param = OptimizeParameter()
+    auto optimize_param = OptimizerParameter()
             .max_iter(10000)
             .test_iter(100)
             .test_interval(500)
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
-    Optimize<float> o(optimize_param);
+    SgdOptimizer<float> o(optimize_param);
 
-    o.run();
+    o.optimize();
 
     return 0;
 }
