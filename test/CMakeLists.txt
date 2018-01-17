@@ -6,10 +6,12 @@ set(LINK_LIBS zcore zgui zimgproc zmath zml
         ${FFTW_LIBRARIES} ${JPEG_LIBRARIES} ${FFMPEG_LIBRARIES}
         ${OpenCV_LIBS} ${GTK2_LIBRARIES} ${GLOG_LIBRARIES} ${Atlas_LIBRARIES} ${NNPACK_LIBRARIES} -lpthread)
 
-message(${NNPACK_LIBRARIES})
+if (USE_CUDA)
+    set(LINK_LIBS ${LINK_LIBS} ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
+    message(${LINK_LIBS})
+endif ()
 
 function(test name)
-
     add_executable(test_${name} test_${name}.cpp)
     target_link_libraries(test_${name} ${LINK_LIBS})
 
@@ -39,6 +41,7 @@ test(net_05_relu)
 test(net_06_cnn)
 test(net_07_dropout)
 test(pooling_layer)
+test(cublas)
 
 test(find_contours)
 

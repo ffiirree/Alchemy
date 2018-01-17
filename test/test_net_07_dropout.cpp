@@ -111,6 +111,7 @@ int main()
     };
 
     auto optimize_param = OptimizerParameter()
+            .mode(Global::CPU)
             .max_iter(20000)
             .test_iter(100)
             .test_interval(500)

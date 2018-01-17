@@ -1,6 +1,9 @@
 #include <glog/logging.h>
-#include <cuda_runtime.h>
+#include <zcore/config.h>
 #include "memory.hpp"
+#ifdef USE_CUDA
+#include <cuda_runtime.h>
+#endif
 
 namespace z {
 
@@ -10,23 +13,29 @@ Memory::Memory(int size)
 
 Memory::~Memory()
 {
-    if(data_cpu_) free_host(data_cpu_);
-    if(data_gpu_) free_device(data_gpu_);
+    if(cpu_data_) {
+        free_host(cpu_data_);
+        cpu_data_ = nullptr;
+    };
+    if(gpu_data_) {
+        free_device(gpu_data_);
+        gpu_data_ = nullptr;
+    }
 }
 
 void Memory::to_cpu()
 {
     switch(status_) {
         case UNINITED:
-            malloc_host(&data_cpu_, size_);
+            malloc_host(&cpu_data_, size_);
             status_ = AT_CPU;
             break;
 
         case AT_GPU:
-            if(!data_cpu_) {
-                malloc_host(&data_cpu_, size_);
+            if(!cpu_data_) {
+                malloc_host(&cpu_data_, size_);
             }
-            copy(size_, data_cpu_, data_gpu_);
+            copy(size_, cpu_data_, gpu_data_);
             status_ = SYNCED;
             break;
 
@@ -44,15 +53,15 @@ void Memory::to_gpu()
 {
     switch(status_) {
         case UNINITED:
-            malloc_device(&data_cpu_, size_);
+            malloc_device(&gpu_data_, size_);
             status_ = AT_GPU;
             break;
 
         case AT_CPU:
-            if(!data_gpu_) {
-                malloc_device(&data_gpu_, size_);
+            if(!gpu_data_) {
+                malloc_device(&gpu_data_, size_);
             }
-            copy(size_, data_gpu_, data_cpu_);
+            copy(size_, gpu_data_, cpu_data_);
             status_ = SYNCED;
             break;
 
@@ -86,18 +95,29 @@ void Memory::free_host(void *ptr)
 
 void Memory::malloc_device(void ** ptr, size_t size)
 {
+#ifdef USE_CUDA
     cudaMalloc(ptr, size);
+#else
+    LOG(FATAL) << "NO GPU!";
+#endif
 }
 
 void Memory::free_device(void *ptr)
 {
+#ifdef USE_CUDA
     cudaFree(ptr);
+#else
+    LOG(FATAL) << "NO GPU!";
+#endif
 }
 
 void Memory::copy(size_t count, void *dst, const void *src)
 {
+#ifdef USE_CUDA
     cudaMemcpy(dst, src, count, cudaMemcpyDefault);
+#else
+    LOG(FATAL) << "NO GPU!";
+#endif
 }
-
 
 }

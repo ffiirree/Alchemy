@@ -1,6 +1,7 @@
 #include <cstring>
 #include <cstdint>
 #include <cmath>
+#include <iostream>
 #include "math_op.hpp"
 
 
@@ -181,5 +182,15 @@ void matrix_mul<double>(const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRAN
     cblas_dgemm(CblasRowMajor, TransA, TransB, M, N, K, alpha, A, lda, B, ldb, beta, C, N);
 }
 
-
+///
+template <typename T> void print_cpu(const int count, const T* A)
+{
+    std::cout << "CPU: ";
+    for(auto i = 0; i < count; ++i) {
+        std::cout << A[i] << " ";
+    }
+    std::cout << std::endl;
+}
+template void print_cpu(const int count, const float* A);
+template void print_cpu(const int count, const double* A);
 }

@@ -20,8 +20,8 @@ void ReLuLayer<T>::ForwardCPU(const vector<container_type *> &input,
                               const vector<container_type *> &output)
 {
     auto count = input[0]->count();
-    auto input_data = input[0]->data();
-    auto output_data = output[0]->data();
+    auto input_data = input[0]->cpu_data();
+    auto output_data = output[0]->cpu_data();
     auto alpha = relu_param_.alpha();
 
     /// max(0, z) + alpha * min(0, z)
@@ -35,9 +35,9 @@ void ReLuLayer<T>::BackwardCPU(const vector<container_type *> &input,
                                const vector<container_type *> &output)
 {
     auto count = input[0]->count();
-    auto input_data = input[0]->data();
-    auto input_diff = input[0]->diff();
-    auto output_diff = output[0]->diff();
+    auto input_data = input[0]->cpu_data();
+    auto input_diff = input[0]->cpu_diff();
+    auto output_diff = output[0]->cpu_diff();
     auto alpha = relu_param_.alpha();
 
     for(auto i = 0; i < count; ++i) {

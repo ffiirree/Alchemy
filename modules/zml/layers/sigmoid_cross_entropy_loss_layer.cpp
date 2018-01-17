@@ -7,7 +7,7 @@ namespace z {
 
 template<typename T>
 void SigmoidCrossEntropyLossLayer<T>::setup(const vector<container_type *> &input,
-                                     const vector<container_type *> &output)
+                                            const vector<container_type *> &output)
 {
     LOG(INFO) << "Setting up " << param_.name();
     LOG(INFO) << "input  #0: "  << input[0]->shape();
@@ -32,7 +32,7 @@ void SigmoidCrossEntropyLossLayer<T>::setup(const vector<container_type *> &inpu
 
 template<typename T>
 void SigmoidCrossEntropyLossLayer<T>::ForwardCPU(const vector<container_type *> &input,
-                                          const vector<container_type *> &output)
+                                                 const vector<container_type *> &output)
 {
     // computes the sigmoid outputs.
     sigmoid_layers_->Forward(input, { sigmoid_output_[0].get() });
@@ -42,12 +42,12 @@ void SigmoidCrossEntropyLossLayer<T>::ForwardCPU(const vector<container_type *> 
 
 template<typename T>
 void  SigmoidCrossEntropyLossLayer<T>::BackwardCPU(const vector<container_type *> &input,
-                                            const vector<container_type *> &output)
+                                                   const vector<container_type *> &output)
 {
-    auto sigmoid_output = sigmoid_output_[0]->data();
-    auto target = input[1]->data();
+    auto sigmoid_output = sigmoid_output_[0]->cpu_data();
+    auto target = input[1]->cpu_data();
     auto count = sigmoid_output_[0]->count();
-    auto diff = input[0]->diff();
+    auto diff = input[0]->cpu_diff();
 
     vector_sub(count, sigmoid_output, target, diff);
     vector_scal(count, (T)1.0/input[0]->shape(0), diff);

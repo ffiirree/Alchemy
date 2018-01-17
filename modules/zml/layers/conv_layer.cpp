@@ -47,7 +47,7 @@ void ConvolutionLayer<T>::setup(const vector<container_type *> &input,
         this->learnable_params_[1] = std::make_tuple(bias_, conv_param_.blr(), 0.0);
 
         biaser_.reshape({ 1, output[0]->count(2, 4) });
-        vector_set(biaser_.count(), (T)1.0, biaser_.data());
+        vector_set(biaser_.count(), (T)1.0, biaser_.cpu_data());
     }
 }
 
@@ -55,10 +55,10 @@ template<typename T>
 void ConvolutionLayer<T>::ForwardCPU(const vector<container_type *> &input,
                                      const vector<container_type *> &output)
 {
-    auto input_data = input[0]->data();
-    auto output_data = output[0]->data();
-    auto kernel = kernel_->data();
-    auto bias = bias_->data();
+    auto input_data = input[0]->cpu_data();
+    auto output_data = output[0]->cpu_data();
+    auto kernel = kernel_->cpu_data();
+    auto bias = bias_->cpu_data();
     const size_t batch_size = input[0]->shape(0);
     const size_t chs_in = input[0]->shape(1);
     const size_t chs_out = output[0]->shape(1);
@@ -79,7 +79,7 @@ template<typename T>
 void ConvolutionLayer<T>::BackwardCPU(const vector<container_type *> &input,
                                       const vector<container_type *> &output)
 {
-    auto kernel = kernel_->data();
+    auto kernel = kernel_->cpu_data();
     const size_t batch_size = input[0]->shape(0);
     const size_t chs_in = input[0]->shape(1);
     const size_t chs_out = output[0]->shape(1);
@@ -91,31 +91,31 @@ void ConvolutionLayer<T>::BackwardCPU(const vector<container_type *> &input,
                                    batch_size,
                                    chs_in, chs_out,
                                    input_size, padding_in, kernel_size,
-                                   output[0]->diff(),
+                                   output[0]->cpu_diff(),
                                    kernel,
-                                   input[0]->diff(),
+                                   input[0]->cpu_diff(),
                                    nullptr, nullptr);
 
     nnp_convolution_kernel_gradient(nnp_convolution_algorithm_auto,
                                     batch_size,
                                     chs_in, chs_out,
                                     input_size, padding_in, kernel_size,
-                                    input[0]->data(),
-                                    output[0]->diff(),
-                                    kernel_->diff(),
+                                    input[0]->cpu_data(),
+                                    output[0]->cpu_diff(),
+                                    kernel_->cpu_diff(),
                                     nullptr,
                                     nullptr);
 
     //
-    vector_set(bias_->count(), (T)0.0, bias_->diff());
+    vector_set(bias_->count(), (T)0.0, bias_->cpu_diff());
 
-    auto output_diff = output[0]->diff();
+    auto output_diff = output[0]->cpu_diff();
     auto step = output[0]->count(1, 4);
     for(size_t i = 0; i < batch_size; ++i) {
         matvec_mul(CblasNoTrans,
                    output[0]->shape(1), output[0]->count(2, 4),
-                   (T)1.0, output_diff + i * step, biaser_.data(),
-                   (T)1.0, bias_->diff());
+                   (T)1.0, output_diff + i * step, biaser_.cpu_data(),
+                   (T)1.0, bias_->cpu_diff());
     }
 }
 

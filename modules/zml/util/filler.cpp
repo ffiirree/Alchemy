@@ -8,7 +8,7 @@ template<typename T>
 void Filler<T>::fill(Tensor<T>& tensor, FillerType type)
 {
     const auto count = tensor.count();
-    const auto ptr = tensor.data();
+    const auto ptr = tensor.cpu_data();
     const auto num = tensor.shape(0);
 
     switch(type) {
@@ -73,7 +73,7 @@ void Filler<T>::fill(Tensor<T> &tensor, FillerType type, double probability)
     std::bernoulli_distribution bernoulli_distribution(probability);
 
     const auto count = tensor.count();
-    const auto ptr = tensor.data();
+    const auto ptr = tensor.cpu_data();
 
     for(auto i = 0; i < count; ++i) {
         ptr[i] = bernoulli_distribution(random_engine);

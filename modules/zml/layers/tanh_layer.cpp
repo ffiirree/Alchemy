@@ -17,9 +17,9 @@ template<typename T>
 void TanhLayer<T>::ForwardCPU(const vector<container_type *> &input,
                               const vector<container_type *> &output)
 {
-    auto input_data = input[0]->data();
+    auto input_data = input[0]->cpu_data();
     auto count = input[0]->count();
-    auto output_data = output[0]->data();
+    auto output_data = output[0]->cpu_data();
 
     for(auto i = 0; i < count; ++i) {
         output_data[i] = std::tanh(input_data[i]);
@@ -31,9 +31,9 @@ void TanhLayer<T>::BackwardCPU(const vector<container_type *> &input,
                                const vector<container_type *> &output)
 {
     auto count = input[0]->count();
-    auto output_data = output[0]->data();
-    auto input_diff = input[0]->diff();
-    auto output_diff = output[0]->diff();
+    auto output_data = output[0]->cpu_data();
+    auto input_diff = input[0]->cpu_diff();
+    auto output_diff = output[0]->cpu_diff();
 
     for(auto i = 0; i < count; ++i) {
         auto tx = output_data[i];

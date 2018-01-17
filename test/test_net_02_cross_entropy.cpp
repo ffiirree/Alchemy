@@ -1,8 +1,5 @@
 #include <zmatrix.h>
 #include <zml/optimizer/sgd_optimizer.hpp>
-#include "zml/network.hpp"
-#include "zml/optimizer.hpp"
-#include "zml/layer_factory.hpp"
 
 
 using namespace z;
@@ -102,6 +99,7 @@ int main()
     };
 
     auto optimize_param = OptimizerParameter()
+            .mode(Global::GPU)
             .max_iter(20000)
             .test_iter(100)
             .test_interval(500)

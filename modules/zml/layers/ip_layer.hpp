@@ -45,8 +45,6 @@ private:
     int K_ = 0;
 };
 
-
-
 }
 
 

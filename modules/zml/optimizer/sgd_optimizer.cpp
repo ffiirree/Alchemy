@@ -26,9 +26,20 @@ template<typename T>
 void SgdOptimizer<T>::update()
 {
     const auto& learnable_params = this->net_->learnable_params();
-    for(auto& param : learnable_params) {
-        vector_axpy(std::get<0>(param)->count(), (T)-std::get<1>(param), std::get<0>(param)->diff(), std::get<0>(param)->data());
+    if(Global::mode() == Global::CPU) {
+        for(auto& param : learnable_params) {
+            vector_axpy(std::get<0>(param)->count(), (T)-std::get<1>(param), std::get<0>(param)->cpu_diff(), std::get<0>(param)->cpu_data());
+        }
     }
+    else {
+        for(auto& param : learnable_params) {
+//            std::cout << "[before]"; print_cpu(std::get<0>(param)->count(), std::get<0>(param)->cpu_data());
+//            std::cout << "[diff  ]"; print_cpu(std::get<0>(param)->count(), std::get<0>(param)->cpu_diff());
+            vector_axpy_gpu(std::get<0>(param)->count(), (T)-std::get<1>(param), std::get<0>(param)->gpu_diff(), std::get<0>(param)->gpu_data());
+//            std::cout << "[after ]";print_cpu(std::get<0>(param)->count(), std::get<0>(param)->cpu_data());
+        }
+    }
+
 }
 
 template class SgdOptimizer<float>;

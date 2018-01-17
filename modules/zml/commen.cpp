@@ -1,12 +1,14 @@
-#ifdef USE_CUDA
-#include <cublas_v2.h>
-#endif
 #include <glog/logging.h>
 #include "commen.hpp"
 
 namespace z {
 
 Global* Global::instance_ = nullptr;
+#ifdef USE_CUDA
+Global::Mode Global::mode_ = Global::Mode::GPU;
+#else
+Global::Mode Global::mode_ = Global::Mode::CPU;
+#endif
 
 Global& Global::Instance() {
     if (instance_ == nullptr) {

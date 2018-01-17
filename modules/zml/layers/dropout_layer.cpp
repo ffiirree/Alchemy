@@ -22,12 +22,12 @@ void DropoutLayer<T>::ForwardCPU(const vector<container_type *> &input,
                                  const vector<container_type *> &output)
 {
     const auto count = input[0]->count();
-    const auto input_data = input[0]->data();
-    auto output_data = output[0]->data();
+    const auto input_data = input[0]->cpu_data();
+    auto output_data = output[0]->cpu_data();
 
     if(param_.phase() == TRAIN) {
         Filler<T>::fill(filter_, BERNOULLI, 0.5);
-        const auto filter_data = filter_.data();
+        const auto filter_data = filter_.cpu_data();
 
         for(auto i = 0; i < count; ++i) {
             output_data[i] = input_data[i] * filter_data[i];
@@ -43,11 +43,11 @@ void DropoutLayer<T>::BackwardCPU(const vector<container_type *> &input,
                                   const vector<container_type *> &output)
 {
     const auto count = input[0]->count();
-    auto input_diff = input[0]->diff();
-    const auto output_diff = output[0]->diff();
+    auto input_diff = input[0]->cpu_diff();
+    const auto output_diff = output[0]->cpu_diff();
 
     if(param_.phase() == TRAIN) {
-        const auto filter_data = filter_.data();
+        const auto filter_data = filter_.cpu_data();
 
         for(auto i = 0; i < count; ++i) {
             input_diff[i] = output_diff[i] * filter_data[i];

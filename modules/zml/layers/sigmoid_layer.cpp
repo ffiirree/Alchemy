@@ -7,7 +7,8 @@
 namespace z {
 
 template<typename T>
-void SigmoidLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
+void SigmoidLayer<T>::setup(const vector<container_type *> &input,
+                            const vector<container_type *> &output)
 {
     LOG(INFO) << "Setting up " << param_.name();
     LOG(INFO) << "input  #0: "  << input[0]->shape();
@@ -23,11 +24,12 @@ inline T sigmoid(T value)
 }
 
 template<typename T>
-void SigmoidLayer<T>::ForwardCPU(const vector<container_type*>& input, const vector<container_type*>& output)
+void SigmoidLayer<T>::ForwardCPU(const vector<container_type*>& input,
+                                 const vector<container_type*>& output)
 {
-    auto input_data = input[0]->data();
+    auto input_data = input[0]->cpu_data();
     auto count = input[0]->count();
-    auto output_data = output[0]->data();
+    auto output_data = output[0]->cpu_data();
 
     for(auto i = 0; i < count; ++i) {
         output_data[i] = sigmoid(-1. * input_data[i]);
@@ -35,12 +37,13 @@ void SigmoidLayer<T>::ForwardCPU(const vector<container_type*>& input, const vec
 }
 
 template<typename T>
-void SigmoidLayer<T>::BackwardCPU(const vector<container_type*>& input, const vector<container_type*>& output)
+void SigmoidLayer<T>::BackwardCPU(const vector<container_type*>& input,
+                                  const vector<container_type*>& output)
 {
     auto count = input[0]->count();
-    auto output_data = output[0]->data();
-    auto input_diff = input[0]->diff();
-    auto output_diff = output[0]->diff();
+    auto output_data = output[0]->cpu_data();
+    auto input_diff = input[0]->cpu_diff();
+    auto output_diff = output[0]->cpu_diff();
 
     for(auto i = 0; i < count; ++i) {
         auto sv = output_data[i];

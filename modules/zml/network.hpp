@@ -43,7 +43,7 @@ public:
     explicit Network(const NetworkParameter& param);
     ~Network() = default;
 
-    double accuracy() { return output_.back()[0]->data()[0]; }
+    double accuracy() { return output_.back()[0]->cpu_data()[0]; }
 
     inline vector<tuple<shared_ptr<Tensor<T>>, double, double>> learnable_params() const { return learnable_params_; };
 

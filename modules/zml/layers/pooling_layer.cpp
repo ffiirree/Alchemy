@@ -41,9 +41,9 @@ void PoolingLayer<T>::ForwardCPU(const vector<container_type *> &input,
     const size_t stride = pooling_param_.stride();
     const size_t ksize = pooling_param_.kernel_size();
 
-    auto input_data = input[0]->data();
-    auto output_data = output[0]->data();
-    auto max_idx = max_idx_.data();
+    auto input_data = input[0]->cpu_data();
+    auto output_data = output[0]->cpu_data();
+    auto max_idx = max_idx_.cpu_data();
 
     //
     vector_set(output[0]->count(), -std::numeric_limits<T>::max(), output_data);
@@ -104,11 +104,11 @@ void PoolingLayer<T>::BackwardCPU(const vector<container_type *> &input,
     const size_t out_rows = output[0]->shape(2);
     const size_t out_cols = output[0]->shape(3);
 
-    auto input_diff = input[0]->diff();
-    auto output_diff = output[0]->diff();
-    auto max_idx = max_idx_.data();
+    auto input_diff = input[0]->cpu_diff();
+    auto output_diff = output[0]->cpu_diff();
+    auto max_idx = max_idx_.cpu_data();
 
-    vector_set(input[0]->count(), (T)0.0, input[0]->diff());
+    vector_set(input[0]->count(), (T)0.0, input[0]->cpu_diff());
 
     switch(pooling_param_.type()) {
         case MAX:

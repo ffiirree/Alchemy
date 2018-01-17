@@ -97,6 +97,7 @@ int main()
     };
 
     auto optimize_param = OptimizerParameter()
+            .mode(Global::GPU)
             .max_iter(10000)
             .test_iter(100)
             .test_interval(500)

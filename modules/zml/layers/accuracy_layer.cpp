@@ -6,23 +6,25 @@
 namespace z {
 
 template<typename T>
-void AccuracyLayer<T>::setup(const vector<container_type *> &input, const vector<container_type *> &output)
+void AccuracyLayer<T>::setup(const vector<container_type *> &input,
+                             const vector<container_type *> &output)
 {
     LOG(INFO) << "Setting up " << param_.name();
     LOG(INFO) << "input  #0: "  << input[0]->shape();
-    LOG(INFO) << "input  #0: "  << input[1]->shape();
+    LOG(INFO) << "input  #1: "  << input[1]->shape();
 
     output[0]->reshape({ 3 });
     LOG(INFO) << "output #0: "  << output[0]->shape();
-    vector_set(output[0]->count(), (T)0., output[0]->data());
+    vector_set(output[0]->count(), (T)0., output[0]->cpu_data());
 }
 
 template<typename T>
-void AccuracyLayer<T>::ForwardCPU(const vector<container_type *> &input, const vector<container_type *> &output)
+void AccuracyLayer<T>::ForwardCPU(const vector<container_type *> &input,
+                                  const vector<container_type *> &output)
 {
     auto size = input[0]->shape(2) * input[0]->shape(3);
-    auto o_ptr = input[0]->data();
-    auto g_ptr = input[1]->data();
+    auto o_ptr = input[0]->cpu_data();
+    auto g_ptr = input[1]->cpu_data();
     int result_ = 0;
     for(auto i = 0; i < input[0]->shape(0); ++i) {
         // test
@@ -33,9 +35,9 @@ void AccuracyLayer<T>::ForwardCPU(const vector<container_type *> &input, const v
         }
     }
 
-    output[0]->data()[1] += result_;
-    output[0]->data()[2] += input[0]->shape(0);
-    output[0]->data()[0] = output[0]->data()[1] / output[0]->data()[2];
+    output[0]->cpu_data()[1] += result_;
+    output[0]->cpu_data()[2] += input[0]->shape(0);
+    output[0]->cpu_data()[0] = output[0]->cpu_data()[1] / output[0]->cpu_data()[2];
 }
 
 template class AccuracyLayer<float>;

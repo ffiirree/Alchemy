@@ -18,8 +18,8 @@ public:
     explicit Memory(int size);
     ~Memory();
 
-    inline void * data_cpu() const { return data_cpu_; }
-    inline void * data_gpu() const { return data_gpu_; }
+    inline void * cpu_data() { to_cpu(); return cpu_data_; }
+    inline void * gpu_data() { to_gpu(); return gpu_data_; }
 
     inline size_t size() const { return size_; }
 
@@ -40,8 +40,8 @@ private:
     Status status_ = UNINITED;
     size_t size_ = 0;
 
-    void *data_cpu_ = nullptr;
-    void *data_gpu_ = nullptr;
+    void *cpu_data_ = nullptr;
+    void *gpu_data_ = nullptr;
 };
 
 }

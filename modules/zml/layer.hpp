@@ -41,13 +41,13 @@ protected:
 template<typename T>
 void Layer<T>::Forward(const vector<container_type*>& input, const vector<container_type*>& output)
 {
-    ForwardCPU(input, output);
+    Global::mode() == Global::CPU ? ForwardCPU(input, output) : ForwardGPU(input, output);
 }
 
 template<typename T>
 void Layer<T>::Backward(const vector<container_type*>& input, const vector<container_type*>& output)
 {
-    BackwardCPU(input, output);
+    Global::mode() == Global::CPU ? BackwardCPU(input, output) : BackwardGPU(input, output);
 }
 }
 

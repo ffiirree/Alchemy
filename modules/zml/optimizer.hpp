@@ -37,7 +37,11 @@ public:
     inline OptimizerParameter& regularization_type(RegularizationType type) { rt_ = type; return *this; }
     inline RegularizationType regularization_type() const { return rt_; }
 
+    inline OptimizerParameter& mode(Global::Mode md) { Global::mode(md); return *this; }
+    inline Global::Mode mode() const { return Global::mode(); }
+
 private:
+
     int epochs_ = 0;
     double weight_decay_ = 0.0;
 
@@ -77,6 +81,8 @@ Optimizer<T>::Optimizer(const OptimizerParameter &param)
 {
     param_ = param;
 
+    LOG(INFO) << "Mode: " << ((Global::mode() == Global::Mode::CPU) ? "CPU": "GPU");
+
     LOG(INFO) << "====== TRAINING NETWORK ======";
     net_.reset(new Network<T>(param.train_net_param()));
 
@@ -85,8 +91,8 @@ Optimizer<T>::Optimizer(const OptimizerParameter &param)
 
     /// setting
     const auto& lp = net_->learnable_params();
-    for(const auto& param : lp) {
-        sign_.push_back(Tensor<T>(std::get<0>(param)->shape()));
+    for(const auto& _param : lp) {
+        sign_.push_back(Tensor<T>(std::get<0>(_param)->shape()));
     }
 }
 
@@ -99,23 +105,44 @@ void Optimizer<T>::regularize()
         case L1:
             for(size_t i = 0; i < learnable_params.size(); ++i) {
                 const auto& item = learnable_params[i];
-                vector_sign(std::get<0>(item)->count(),
-                            std::get<0>(item)->data(),
-                            sign_[i].data());
 
-                vector_axpy(std::get<0>(item)->count(),
-                            (T)(std::get<2>(item) * std::get<1>(item)),
-                            sign_[i].data(),
-                            std::get<0>(item)->diff());
+                if(Global::mode() == Global::CPU) {
+                    vector_sign(std::get<0>(item)->count(),
+                                std::get<0>(item)->cpu_data(),
+                                sign_[i].cpu_data());
+
+                    vector_axpy(std::get<0>(item)->count(),
+                                (T)(std::get<2>(item) * std::get<1>(item)),
+                                sign_[i].cpu_data(),
+                                std::get<0>(item)->cpu_diff());
+                }
+                else {
+                    vector_sign_gpu(std::get<0>(item)->count(),
+                                    std::get<0>(item)->gpu_data(),
+                                    sign_[i].gpu_data());
+
+                    vector_axpy_gpu(std::get<0>(item)->count(),
+                                    (T)(std::get<2>(item) * std::get<1>(item)),
+                                    sign_[i].gpu_data(),
+                                    std::get<0>(item)->gpu_diff());
+                }
             }
             break;
 
         case L2:
             for(auto& param : learnable_params) {
-                vector_axpy(std::get<0>(param)->count(),
-                            (T)(std::get<2>(param) * std::get<1>(param)),
-                            std::get<0>(param)->data(),
-                            std::get<0>(param)->diff());
+                if(Global::mode() == Global::CPU) {
+                    vector_axpy(std::get<0>(param)->count(),
+                                (T)(std::get<2>(param) * std::get<1>(param)),
+                                std::get<0>(param)->cpu_data(),
+                                std::get<0>(param)->cpu_diff());
+                }
+                else {
+                    vector_axpy_gpu(std::get<0>(param)->count(),
+                                    (T)(std::get<2>(param) * std::get<1>(param)),
+                                    std::get<0>(param)->gpu_data(),
+                                    std::get<0>(param)->gpu_diff());
+                }
             }
             break;
     }

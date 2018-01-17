@@ -266,13 +266,12 @@ template <typename _Tp> void blur(_Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size siz
 template <typename _Tp> void boxFilter(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, Size size, bool normalize, int borderType)
 {
     assert(size.width == size.height || size.width % 2 != 0);
-    __unused_parameter__(borderType);
 
     auto kv = 1.0;
     if (normalize) kv = 1.0 / (size.width * size.height);
 
     Matrix64f kernel(size, 1,  kv);
-    conv(src, dst, kernel);
+    conv(src, dst, kernel, borderType);
 }
 
 template <typename _Tp> void GaussianBlur(_Matrix<_Tp>&src, _Matrix<_Tp> & dst, Size size, double sigmaX, double sigmaY, int borderType)
