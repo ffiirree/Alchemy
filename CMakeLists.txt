@@ -1,14 +1,8 @@
-﻿# --------------------------------------------------------------
-#  Root CMake file for zMatrix
-#
-#     From the off-tree build directory, invoke:
-#       $ cmake <PATH_TO_ZMATRIX_ROOT>
-# --------------------------------------------------------------
-cmake_minimum_required(VERSION 3.5)
+﻿cmake_minimum_required(VERSION 3.5)
 
 include(cmake/CMakeUtils.cmake)
 
-set(PROJECT_NAME zMatrix)
+set(PROJECT_NAME Alchemy)
 project(${PROJECT_NAME})
 
 # 使用项目分组，Visual studio
@@ -89,6 +83,7 @@ endif()
 find_package(CUDA)
 if(CUDA_FOUND)
     include_directories(${CUDA_INCLUDE_DIRS})
+	add_definitions(-DUSE_CUDA)
     set(USE_CUDA ON)
     list(APPEND CUDA_NVCC_FLAGS "-std=c++14")
     set(CUDA_PROPAGATE_HOST_FLAGS ON)
@@ -101,7 +96,6 @@ if(CUDA_FOUND)
 endif()
 
 # atblas
-#set(BLA_VENDOR "ATLAS")
 find_package(Atlas REQUIRED)
 if(Atlas_FOUND)
 	include_directories(${Atlas_INCLUDE_DIRS})
@@ -121,40 +115,21 @@ if(NNPACK_FOUND)
 	set(USE_NNPACK ON)
 endif()
 
-#find_package(Protobuf REQUIRED)
-#if(Protobuf_FOUND)
-#	include_directories(${Protobuf_INCLUDE_DIRS})
-#	set(USE_PROTOBUF ON)
-#endif()
-
-#find_package(SSE)
-
-
-# ========================== configuration ==========================
-include(cmake/ConfigHeaders.cmake)
-
 # ========================== Debug ==========================
 set(CMAKE_DEBUG_POSTFIX "d")
 
 # ========================== Modules ==========================
 include_directories(${PROJECT_SOURCE_DIR}/modules)
 
-if(USE_KINECT)
-	add_subdirectory(modules/kinect)
-endif(USE_KINECT)
-add_subdirectory(modules/zcore)
 add_subdirectory(modules/util)
-add_subdirectory(modules/zgui)
-add_subdirectory(modules/zimgproc)
-add_subdirectory(modules/zmath)
-add_subdirectory(modules/zml)
-#add_subdirectory(modules/nn) # 仅做测试，测试好了估计要删除
+add_subdirectory(modules/math)
+add_subdirectory(modules/core)
+add_subdirectory(modules/imgproc)
+add_subdirectory(modules/gui)
+add_subdirectory(modules/nn)
 
 enable_testing()
 add_subdirectory(test)
-
-# ========================== Install ==========================
-# include(cmake/Install.cmake)
 
 
 # ========================== Build platform ==========================
@@ -175,31 +150,6 @@ if(NOT CMAKE_GENERATOR MATCHES "Xcode|Visual Studio")
 	log("    Configuration:" ${CMAKE_BUILD_TYPE})
 endif()
 log("")
-
-# ============================= CPU =============================
-#log("")
-#log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CPU features ~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-#log("")
-#if(SSE2_FOUND)
-#log("    SSE2" YES)
-#else()
-#log("    SSE2" NO)
-#endif()
-#if(SSE3_FOUND)
-#log("    SSE3" YES)
-#else()
-#log("    SSE3" NO)
-#endif()
-#if(SSSE3_FOUND)
-#log("    SSSE3" YES)
-#else()
-#log("    SSSE3" NO)
-#endif()
-#if(SSE4_1_FOUND)
-#log("    SSE4_1" YES)
-#else()
-#log("    SSE4_1" NO)
-#endif()
 
 # ========================== C/C++ options ==========================
 log("")
@@ -277,6 +227,12 @@ if(USE_GTK2)
     log("    Gtk+ 2.x:" YES)
 else()
     log("    Gtk+ 2.x:" NO)
+endif()
+
+if(MATHGL2_FOUND)
+    log("    MathGL2:" YES)
+else()
+    log("    MathGL2:" NO)
 endif()
 log("")
 log("")

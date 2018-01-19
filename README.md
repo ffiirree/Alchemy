@@ -1,6 +1,6 @@
-# zMatrix
+# Alchemy
 
-zMatrix 是一个使用C++编写的计算机视觉库，包含传统算法和机器学习算法。
+Alchemy 是一个使用C++编写的CV库，包含传统算法和机器学习算法。
 <br><br>
 
 ## 依赖
@@ -14,8 +14,8 @@ zMatrix 是一个使用C++编写的计算机视觉库，包含传统算法和机
 - Boost: C++通用库，`sudo apt install libboost-all-dev`
 - Glog: 日志，方便调试， `sudo apt install libgoogle-glog-dev`
 - [NNPACK](https://github.com/Maratyszcza/NNPACK), CPU快速计算卷积，安装见github
+- [MathGL2](http://mathgl.sourceforge.net/doc_en/Main.html): 数据可视化，使用`CMake`从源码编译安装
 ### 可选
-- Kinect
 - OpenCV
 
 <br>

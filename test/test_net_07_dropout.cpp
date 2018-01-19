@@ -1,13 +1,7 @@
-#include <zmatrix.h>
-#include <zml/optimizer/sgd_optimizer.hpp>
-#include "zml/network.hpp"
-#include "zml/optimizer.hpp"
-#include "zml/layer_factory.hpp"
+#include <alchemy.h>
 
-
-using namespace z;
+using namespace alchemy;
 using namespace std;
-
 
 int main()
 {

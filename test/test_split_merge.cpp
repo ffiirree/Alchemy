@@ -1,24 +1,24 @@
-#include "zmatrix.h"
+#include <alchemy.h>
 
 int main()
 {
-    auto image = z::imread("test.jpeg");
-    z::imshow("原图", image);
+    auto image = alchemy::imread("test.jpeg");
+    alchemy::imshow("原图", image);
 
     // 通道分离
-    std::vector<z::Matrix> mv;
-    z::spilt(image, mv);
+    std::vector<alchemy::Matrix> mv;
+    alchemy::spilt(image, mv);
 
-    z::imshow("B", mv[0]);
-    z::imshow("G", mv[1]);
-    z::imshow("R", mv[2]);
+    alchemy::imshow("B", mv[0]);
+    alchemy::imshow("G", mv[1]);
+    alchemy::imshow("R", mv[2]);
 
     // 合成
-    z::Matrix merge_image;
-    z::merge(mv, merge_image);
-    z::imshow("再次合成", merge_image);
+    alchemy::Matrix merge_image;
+    alchemy::merge(mv, merge_image);
+    alchemy::imshow("再次合成", merge_image);
 
-    z::waitKey(0);
+    alchemy::waitKey(0);
 
     return 0;
 }

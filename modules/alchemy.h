@@ -1,0 +1,33 @@
+#include "core/defs.h"
+#include "core/types.h"
+#include "core/matrix.h"
+#include "core/videocapture.h"
+
+#include "imgproc/transform.h"
+#include "imgproc/imgproc.h"
+
+#include "gui/gui.h"
+
+#include "core/common.h"
+#include "util/memory.h"
+#include "core/tensor.h"
+#include "nn/layer.h"
+#include "nn/optimizer.h"
+#include "util/filler.h"
+#include "util/mnistloader.h"
+
+#include "nn/layers/accuracy_layer.h"
+#include "nn/layers/conv_layer.h"
+#include "nn/layers/dropout_layer.h"
+#include "nn/layers/euclidean_loss_layer.h"
+#include "nn/layers/input_layer.h"
+#include "nn/layers/ip_layer.h"
+#include "nn/layers/pooling_layer.h"
+#include "nn/layers/relu_layer.h"
+#include "nn/layers/sigmoid_cross_entropy_loss_layer.h"
+#include "nn/layers/sigmoid_layer.h"
+#include "nn/layers/softmax_layer.h"
+#include "nn/layers/softmax_loss_layer.h"
+#include "nn/layers/tanh_layer.h"
+
+#include "nn/optimizer/sgd_optimizer.h"

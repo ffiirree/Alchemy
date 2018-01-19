@@ -3,11 +3,11 @@
     <UIVisualizer ServiceId="{A452AFEA-3DF6-46BB-9177-C0B08F318025}" Id="1" MenuName="Add to Image Watch"/>
 
 
-    <Type Name="z::_Matrix&lt;*&gt;">
+    <Type Name="alchemy::_Matrix&lt;*&gt;">
         <UIVisualizer ServiceId="{A452AFEA-3DF6-46BB-9177-C0B08F318025}" Id="1" />
     </Type>
 
-    <Type Name="z::_Matrix&lt;*&gt;">
+    <Type Name="alchemy::_Matrix&lt;*&gt;">
         <DisplayString Condition="((flags&gt;&gt;8)&amp;0xff)==0">{{UINT8, {(flags&amp;0xff)} x {cols} x {rows}}}</DisplayString>
         <DisplayString Condition="((flags&gt;&gt;8)&amp;0xff)==1">{{INT8, {(flags&amp;0xff)} x {cols} x {rows}}}</DisplayString>
         <DisplayString Condition="((flags&gt;&gt;8)&amp;0xff)==2">{{UINT16, {(flags&amp;0xff)} x {cols} x {rows}}}</DisplayString>

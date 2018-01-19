@@ -1,8 +1,6 @@
-#include <zmatrix.h>
-#include <zml/optimizer/sgd_optimizer.hpp>
+#include <alchemy.h>
 
-
-using namespace z;
+using namespace alchemy;
 using namespace std;
 
 

@@ -11,6 +11,7 @@ if(WIN32)
     set(FFTW_ROOT_DIR "${PROJECT_SOURCE_DIR}/3rdparty/fftw")
     set(FFTW_INCLUDES ${FFTW_ROOT_DIR})
     set(FFTW_LIBRARIES  "${FFTW_ROOT_DIR}/libfftw3-3.lib" "${FFTW_ROOT_DIR}/libfftw3f-3.lib" "${FFTW_ROOT_DIR}/libfftw3l-3.lib")
+    add_definitions(-DUSE_FFTW)
 
     # Copy *.dll files
     file(GLOB FFTW_DLIBS "${FFTW_ROOT_DIR}/*.dll")
@@ -41,6 +42,7 @@ elseif(UNIX)
     if(FFTW_FOUND)
         set(HAVE_FFTW ON)
         set(USE_FFTW ON)
+        add_definitions(-DUSE_FFTW)
 
         include_directories(${FFTW_INCLUDES})
     else()

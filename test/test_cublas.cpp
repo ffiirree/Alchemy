@@ -1,9 +1,7 @@
-#include <zml/tensor.hpp>
-#include <zml/util/math_op.hpp>
-#include <zml/util/filler.hpp>
 #include <iostream>
+#include <alchemy.h>
 
-using namespace z;
+using namespace alchemy;
 using namespace std;
 
 int main()

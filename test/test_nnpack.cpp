@@ -1,13 +1,14 @@
-#include <zml/util/math_op.hpp>
-#include "nnpack.h"
-#include "zmatrix.h"
+#include <alchemy.h>
+#include <nnpack.h>
+#include <iostream>
 
-using namespace z;
+using namespace alchemy;
 using namespace std;
 
 int main()
 {
-    enum nnp_status init_status = nnp_initialize();
+    if(nnp_initialize() != nnp_status_success)
+        return -1;
 
     const size_t batch_size = 1;
     const size_t input_channels = 1;

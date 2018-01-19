@@ -2,13 +2,12 @@
 #  CMakeLists.txt for test module
 # --------------------------------------------------------------
 
-set(LINK_LIBS zcore zgui zimgproc zmath zml
+set(LINK_LIBS alchemy_nn alchemy_gui alchemy_imgproc alchemy_math alchemy_util alchemy_core
         ${FFTW_LIBRARIES} ${JPEG_LIBRARIES} ${FFMPEG_LIBRARIES}
         ${OpenCV_LIBS} ${GTK2_LIBRARIES} ${GLOG_LIBRARIES} ${Atlas_LIBRARIES} ${NNPACK_LIBRARIES} -lpthread)
 
 if (USE_CUDA)
     set(LINK_LIBS ${LINK_LIBS} ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
-    message(${LINK_LIBS})
 endif ()
 
 function(test name)
@@ -40,14 +39,7 @@ test(net_04_softmax)
 test(net_05_relu)
 test(net_06_cnn)
 test(net_07_dropout)
-test(pooling_layer)
 test(cublas)
 
 test(find_contours)
-
-# zMatrix
-add_executable(zMatrix main.cpp)
-target_link_libraries(zMatrix ${LINK_LIBS})
-add_test(TEST_ZMATRIX ${EXECUTABLE_OUTPUT_PATH}/zMatrix)
-set_property(TARGET zMatrix PROPERTY FOLDER "test")
 

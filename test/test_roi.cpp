@@ -1,20 +1,20 @@
-#include "zmatrix.h"
+#include <alchemy.h>
 
 int main()
 {
-    auto image = z::imread("test.jpeg");
-    auto logo = z::imread("logo.jpeg");
+    auto image = alchemy::imread("test.jpeg");
+    auto logo = alchemy::imread("logo.jpeg");
 
-    auto roi = image(z::Rect(50, 50, logo.cols, logo.rows));
-    roi.fill(z::Scalar(-5, 6, 7));
+    auto roi = image(alchemy::Rect(50, 50, logo.cols, logo.rows));
+    roi.fill(alchemy::Scalar(-5, 6, 7));
 
-//    z::addWeighted(roi, 0.2, logo, 0.7, 0.0, roi);
+//    alchemy::addWeighted(roi, 0.2, logo, 0.7, 0.0, roi);
 //    // 测试
-//    roi += z::Scalar(50, 50, 50);
+//    roi += alchemy::Scalar(50, 50, 50);
 //
-    z::imshow("原图像", image);
-//    z::imshow("log", logo);
-    z::imshow("roi:(50, 50, 200, 200) += (50, 50, 50)", roi);
-    z::waitKey(0);
+    alchemy::imshow("原图像", image);
+//    alchemy::imshow("log", logo);
+    alchemy::imshow("roi:(50, 50, 200, 200) += (50, 50, 50)", roi);
+    alchemy::waitKey(0);
     return 0;
 }

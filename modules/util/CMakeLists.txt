@@ -4,8 +4,7 @@
 file(GLOB_RECURSE HEADERS *.h *.hpp)
 source_group("Header Files" FILES ${HEADERS})
 aux_source_directory(. UTIL_SRCS)
-add_custom_target(util SOURCES ${HEADERS})
-# add_library(util STATIC ${UTIL_SRCS} ${HEADERS})
+add_library(alchemy_util STATIC ${UTIL_SRCS} ${HEADERS})
 
-# install(TARGETS util ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/")
-set_property(TARGET util PROPERTY FOLDER "modules")
+ install(TARGETS alchemy_util ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/")
+set_property(TARGET alchemy_util PROPERTY FOLDER "modules")

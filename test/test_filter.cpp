@@ -1,30 +1,30 @@
-#include "zmatrix.h"
+#include <alchemy.h>
 
 int main()
 {
-    auto image = z::imread("test.jpeg");
+    auto image = alchemy::imread("test.jpeg");
 
     // 线性滤波
-    z::Matrix box_image, blur_image, g_image;
-    z::boxFilter(image, box_image, {5, 5}, true);
-    z::blur(image, blur_image, {5, 5});
-    z::GaussianBlur(image, g_image, {5, 5});
+    alchemy::Matrix box_image, blur_image, g_image;
+    alchemy::boxFilter(image, box_image, {5, 5}, true);
+    alchemy::blur(image, blur_image, {5, 5});
+    alchemy::GaussianBlur(image, g_image, {5, 5});
 
     // 非线性滤波
-    z::Matrix median_image, b_image;
-    z::medianFilter(image, median_image, {5 , 5});
-    z::bilateralFilter(image, b_image, 25, 25 * 2, 25/2);
+    alchemy::Matrix median_image, b_image;
+    alchemy::medianFilter(image, median_image, {5 , 5});
+    alchemy::bilateralFilter(image, b_image, 25, 25 * 2, 25/2);
 
 
-    z::imshow("original", image);
-    z::imshow("boxFilter", box_image);
-    z::imshow("blur", blur_image);
-    z::imshow("gaussianBlur", g_image);
+    alchemy::imshow("original", image);
+    alchemy::imshow("boxFilter", box_image);
+    alchemy::imshow("blur", blur_image);
+    alchemy::imshow("gaussianBlur", g_image);
 
-    z::imshow("medianFilter", median_image);
-    z::imshow("bilateralFilter", b_image);
+    alchemy::imshow("medianFilter", median_image);
+    alchemy::imshow("bilateralFilter", b_image);
 
-    z::waitKey(0);
+    alchemy::waitKey(0);
 
     return 0;
 }

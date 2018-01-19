@@ -1,16 +1,16 @@
-#include "zmatrix.h"
+#include <alchemy.h>
 
 int main()
 {
-    z::VideoCapture camera(0);
+    alchemy::VideoCapture camera(0);
 
     if(camera.isOpened()) {
-        z::Matrix frame;
+        alchemy::Matrix frame;
 
-        while(z::waitKey(10) != 'q') {
+        while(alchemy::waitKey(10) != 'q') {
             camera >> frame;
 
-            z::imshow("frame", frame);
+            alchemy::imshow("frame", frame);
         }
     }
 

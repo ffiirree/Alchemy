@@ -1,13 +1,12 @@
 #include <iostream>
-#include "zmatrix.h"
-#include "zml/util/math_op.hpp"
+#include <alchemy.h>
 
-using namespace z;
+using namespace alchemy;
 using namespace std;
 
 int main()
 {
-    z::Matrix64f a(4, 2, 1);
+    alchemy::Matrix64f a(4, 2, 1);
     a = {
             1.5, 3.2,
             3.0, 12.0,
@@ -15,7 +14,7 @@ int main()
             2.3, 4.2
     };
 
-    z::Matrix64f b(3, 2, 1);
+    alchemy::Matrix64f b(3, 2, 1);
     b = {
             2., 1.0,
             3.0, 2.0,
@@ -24,7 +23,7 @@ int main()
 
     std::cout << a * b.t() << std::endl;
 
-    z::Matrix64f c(4, 3, 1);
+    alchemy::Matrix64f c(4, 3, 1);
 
     int M = 4;
     int N = 3;
