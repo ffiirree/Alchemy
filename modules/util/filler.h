@@ -17,12 +17,14 @@ class Filler{
 public:
 
     static void fill(Tensor<T>& tensor, FillerType type);
-    static void fill(Tensor<T>& tensor, FillerType type, double probability);
+
+    static void bernoulli_fill(int count, T* ptr, double probability);
+    static void uniform_fill(int count, T * ptr, double a, double b);
+    static void normal_fill(int count, T * ptr, double mean, double stddev);
 
 private:
-    static void uniform_fill(const int count, T * ptr);
-    static void normal_fill(const int count, T * ptr);
-    static void xavier_fill(const int count, const T scale, T *ptr);
+
+    static void xavier_fill(int count, T *ptr, int N);
 };
 
 }

@@ -112,19 +112,19 @@ private:
 class InputParameter {
 public:
     /// batch size
-    InputParameter& batch_size(size_t size) { batch_size_ = size; return *this; }
-    size_t batch_size() const { return batch_size_; }
+    inline InputParameter& batch_size(size_t size) { batch_size_ = size; return *this; }
+    inline size_t batch_size() const { return batch_size_; }
 
     /// data
-    InputParameter& source(MnistLoader& loader) { data_ = loader.data(); return *this;}
-    vector<pair<Matrix, uint8_t>> data() const { return data_; };
+    inline InputParameter& source(MnistLoader& loader) { source_ = loader; return  *this; }
+    inline MnistLoader source() const { return source_; };
 
     /// scale
-    InputParameter& scale(double scale) { scale_ = scale; return *this; }
-    double scale() const { return scale_; }
+    inline InputParameter& scale(double scale) { scale_ = scale; return *this; }
+    inline double scale() const { return scale_; }
 
 private:
-    vector<pair<Matrix, uint8_t>> data_{};
+    MnistLoader source_;
 
     size_t batch_size_ = 1;
     double scale_ = 1.0;

@@ -6,11 +6,11 @@ using namespace std;
 
 int main()
 {
-    MnistLoader train_loader("/home/ffiirree/Code/zMatrix/resources/mnist/train-images.idx3-ubyte",
-                       "/home/ffiirree/Code/zMatrix/resources/mnist/train-labels.idx1-ubyte");
+    MnistLoader train_loader("/home/ffiirree/Code/Alchemy/resources/mnist/train-images.idx3-ubyte",
+                       "/home/ffiirree/Code/Alchemy/resources/mnist/train-labels.idx1-ubyte");
 
-    MnistLoader test_loader("/home/ffiirree/Code/zMatrix/resources/mnist/t10k-images.idx3-ubyte",
-                            "/home/ffiirree/Code/zMatrix/resources/mnist/t10k-labels.idx1-ubyte");
+    MnistLoader test_loader("/home/ffiirree/Code/Alchemy/resources/mnist/t10k-images.idx3-ubyte",
+                            "/home/ffiirree/Code/Alchemy/resources/mnist/t10k-labels.idx1-ubyte");
 
 
     vector<LayerParameter> params = {
@@ -98,7 +98,7 @@ int main()
 
     auto optimize_param = OptimizerParameter()
             .mode(Global::GPU)
-            .max_iter(20000)
+            .max_iter(50000)
             .test_iter(100)
             .test_interval(500)
             .regularization_type(L1)

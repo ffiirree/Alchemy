@@ -5,11 +5,11 @@ using namespace std;
 
 int main()
 {
-    MnistLoader train_loader("/home/ffiirree/Code/zMatrix/resources/mnist/train-images.idx3-ubyte",
-                             "/home/ffiirree/Code/zMatrix/resources/mnist/train-labels.idx1-ubyte");
+    MnistLoader train_loader("/home/ffiirree/Code/Alchemy/resources/mnist/train-images.idx3-ubyte",
+                             "/home/ffiirree/Code/Alchemy/resources/mnist/train-labels.idx1-ubyte");
 
-    MnistLoader test_loader("/home/ffiirree/Code/zMatrix/resources/mnist/t10k-images.idx3-ubyte",
-                            "/home/ffiirree/Code/zMatrix/resources/mnist/t10k-labels.idx1-ubyte");
+    MnistLoader test_loader("/home/ffiirree/Code/Alchemy/resources/mnist/t10k-images.idx3-ubyte",
+                            "/home/ffiirree/Code/Alchemy/resources/mnist/t10k-labels.idx1-ubyte");
 
 
     vector<LayerParameter> params = {

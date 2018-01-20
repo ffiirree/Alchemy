@@ -1,4 +1,4 @@
-#include "ip_layer.h"
+#include "inner_product_layer.h"
 #include "math/math_op.h"
 
 namespace alchemy {

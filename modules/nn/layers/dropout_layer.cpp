@@ -26,7 +26,7 @@ void DropoutLayer<T>::ForwardCPU(const vector<Tensor<T> *> &input,
     auto output_data = output[0]->cpu_data();
 
     if(this->param_.phase() == TRAIN) {
-        Filler<T>::fill(filter_, BERNOULLI, 0.5);
+        Filler<T>::bernoulli_fill(filter_.count(), filter_.cpu_data(), 0.5);
         const auto filter_data = filter_.cpu_data();
 
         for(auto i = 0; i < count; ++i) {

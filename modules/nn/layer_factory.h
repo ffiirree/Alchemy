@@ -4,7 +4,7 @@
 #include "nn/layers/input_layer.h"
 #include "nn/layers/accuracy_layer.h"
 #include "nn/layers/euclidean_loss_layer.h"
-#include "nn/layers/ip_layer.h"
+#include "nn/layers/inner_product_layer.h"
 #include "nn/layers/relu_layer.h"
 #include "nn/layers/conv_layer.h"
 #include "nn/layers/pooling_layer.h"

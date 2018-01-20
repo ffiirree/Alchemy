@@ -21,7 +21,7 @@
 #include "nn/layers/dropout_layer.h"
 #include "nn/layers/euclidean_loss_layer.h"
 #include "nn/layers/input_layer.h"
-#include "nn/layers/ip_layer.h"
+#include "nn/layers/inner_product_layer.h"
 #include "nn/layers/pooling_layer.h"
 #include "nn/layers/relu_layer.h"
 #include "nn/layers/sigmoid_cross_entropy_loss_layer.h"

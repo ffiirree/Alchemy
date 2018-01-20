@@ -1,3 +1,4 @@
+#include <math/math_op.h>
 #include "input_layer.h"
 
 namespace alchemy {
@@ -6,30 +7,23 @@ template<typename T>
 void InputLayer<T>::ForwardGPU(const vector<Tensor<T> *> &input,
                                 const vector<Tensor<T> *> &output)
 {
+    auto batch_size = input_param_.batch_size();
     /// data
-    auto data_ptr = output[0]->gpu_data();
-    auto data_count = data_[0].first.size();
-    auto data_size = data_count * sizeof(T);
+    auto images_ptr = data_.images().get();
+    cudaMemcpy(output[0]->gpu_data(),
+               images_ptr + index_ * data_.image_size(),
+               batch_size * data_.image_size() * sizeof(T),
+               cudaMemcpyHostToDevice);
 
     /// label
-    auto label_ptr = output[1]->gpu_data();
-    auto label_size = 10 * sizeof(T);
+    auto labels_ptr = data_.labels().get();
+    cudaMemcpy(output[1]->gpu_data(),
+               labels_ptr + index_ * data_.label_size(),
+               batch_size * data_.label_size() * sizeof(T),
+               cudaMemcpyHostToDevice);
 
-    for(size_t i = 0; i < input_param_.batch_size(); ++i, ++index_) {
-        index_ %= data_num_;
-        if(!index_) shuffle();
-
-        auto& item = data_[index_];
-
-        const auto& image = _Matrix<T>(item.first) * input_param_.scale();
-        cudaMemcpy(data_ptr, image.data, data_size, cudaMemcpyHostToDevice);
-        data_ptr += data_count;
-
-        _Matrix<T> temp(10, 1, 1, (T)0);
-        temp.at(item.second) = 1;
-        cudaMemcpy(label_ptr, temp.data, label_size, cudaMemcpyHostToDevice);
-        label_ptr += 10;
-    }
+    index_ = (index_ + batch_size) % data_num_;
+    if(data_num_ - index_ < batch_size) index_ = 0;
 }
 
 template void InputLayer<float>::ForwardGPU(const vector<Tensor<float> *> &input, const vector<Tensor<float> *> &output);
