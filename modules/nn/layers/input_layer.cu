@@ -4,20 +4,20 @@
 namespace alchemy {
 
 template<typename T>
-void InputLayer<T>::ForwardGPU(const vector<Tensor<T> *> &input,
-                                const vector<Tensor<T> *> &output)
+void InputLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
+                                const vector<Blob<T> *> &output)
 {
     auto batch_size = input_param_.batch_size();
     /// data
     auto images_ptr = data_.images().get();
-    cudaMemcpy(output[0]->gpu_data(),
+    cudaMemcpy(output[0]->data_gptr(),
                images_ptr + index_ * data_.image_size(),
                batch_size * data_.image_size() * sizeof(T),
                cudaMemcpyHostToDevice);
 
     /// label
     auto labels_ptr = data_.labels().get();
-    cudaMemcpy(output[1]->gpu_data(),
+    cudaMemcpy(output[1]->data_gptr(),
                labels_ptr + index_ * data_.label_size(),
                batch_size * data_.label_size() * sizeof(T),
                cudaMemcpyHostToDevice);
@@ -26,6 +26,6 @@ void InputLayer<T>::ForwardGPU(const vector<Tensor<T> *> &input,
     if(data_num_ - index_ < batch_size) index_ = 0;
 }
 
-template void InputLayer<float>::ForwardGPU(const vector<Tensor<float> *> &input, const vector<Tensor<float> *> &output);
-template void InputLayer<double>::ForwardGPU(const vector<Tensor<double> *> &input, const vector<Tensor<double> *> &output);
+template void InputLayer<float>::ForwardGPU(const vector<Blob<float> *> &input, const vector<Blob<float> *> &output);
+template void InputLayer<double>::ForwardGPU(const vector<Blob<double> *> &input, const vector<Blob<double> *> &output);
 }

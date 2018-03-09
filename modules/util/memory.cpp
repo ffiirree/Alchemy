@@ -13,13 +13,13 @@ Memory::Memory(int size)
 
 Memory::~Memory()
 {
-    if(cpu_data_) {
-        free_host(cpu_data_);
-        cpu_data_ = nullptr;
+    if(cptr_) {
+        free_host(cptr_);
+        cptr_ = nullptr;
     };
-    if(gpu_data_) {
-        free_device(gpu_data_);
-        gpu_data_ = nullptr;
+    if(gptr_) {
+        free_device(gptr_);
+        gptr_ = nullptr;
     }
 }
 
@@ -27,15 +27,15 @@ void Memory::to_cpu()
 {
     switch(status_) {
         case UNINITED:
-            malloc_host(&cpu_data_, size_);
+            malloc_host(&cptr_, size_);
             status_ = AT_CPU;
             break;
 
         case AT_GPU:
-            if(!cpu_data_) {
-                malloc_host(&cpu_data_, size_);
+            if(!cptr_) {
+                malloc_host(&cptr_, size_);
             }
-            copy(size_, cpu_data_, gpu_data_);
+            copy(size_, cptr_, gptr_);
             status_ = SYNCED;
             break;
 
@@ -53,15 +53,15 @@ void Memory::to_gpu()
 {
     switch(status_) {
         case UNINITED:
-            malloc_device(&gpu_data_, size_);
+            malloc_device(&gptr_, size_);
             status_ = AT_GPU;
             break;
 
         case AT_CPU:
-            if(!gpu_data_) {
-                malloc_device(&gpu_data_, size_);
+            if(!gptr_) {
+                malloc_device(&gptr_, size_);
             }
-            copy(size_, gpu_data_, cpu_data_);
+            copy(size_, gptr_, cptr_);
             status_ = SYNCED;
             break;
 

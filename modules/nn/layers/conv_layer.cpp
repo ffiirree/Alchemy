@@ -7,8 +7,8 @@
 namespace alchemy {
 
 template<typename T>
-void ConvolutionLayer<T>::setup(const vector<Tensor<T> *> &input,
-                                const vector<Tensor<T> *> &output)
+void ConvolutionLayer<T>::setup(const vector<Blob<T> *> &input,
+                                const vector<Blob<T> *> &output)
 {
     LOG(INFO) << "Setting up " << this->param_.name();
     LOG(INFO) << "input  #0: "  << input[0]->shape();
@@ -40,26 +40,26 @@ void ConvolutionLayer<T>::setup(const vector<Tensor<T> *> &input,
         kernel_->reshape({ chs_in, chs_out, (int)ksize, (int)ksize });
         bias_->reshape({ chs_out });
 
-        Filler<T>::fill(*kernel_, conv_param_.weight_filler());
-        Filler<T>::fill(*bias_, conv_param_.bias_filler());
+        Filler<T>::fill(kernel_->data(), conv_param_.weight_filler());
+        Filler<T>::fill(bias_->data(), conv_param_.bias_filler());
 
         this->learnable_params_.resize(2);
         this->learnable_params_[0] = std::make_tuple(kernel_, conv_param_.wlr(), conv_param_.weight_decay()/input[0]->shape(0));
         this->learnable_params_[1] = std::make_tuple(bias_, conv_param_.blr(), 0.0);
 
         biaser_.reshape({ 1, output[0]->count(2, 4) });
-        vector_set(biaser_.count(), (T)1.0, biaser_.cpu_data());
+        vector_set(biaser_.count(), (T)1.0, biaser_.cptr());
     }
 }
 
 template<typename T>
-void ConvolutionLayer<T>::ForwardCPU(const vector<Tensor<T> *> &input,
-                                     const vector<Tensor<T> *> &output)
+void ConvolutionLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
+                                     const vector<Blob<T> *> &output)
 {
-    auto input_data = input[0]->cpu_data();
-    auto output_data = output[0]->cpu_data();
-    auto kernel = kernel_->cpu_data();
-    auto bias = bias_->cpu_data();
+    auto input_data = input[0]->data_cptr();
+    auto output_data = output[0]->data_cptr();
+    auto kernel = kernel_->data_cptr();
+    auto bias = bias_->data_cptr();
     const size_t batch_size = input[0]->shape(0);
     const size_t chs_in = input[0]->shape(1);
     const size_t chs_out = output[0]->shape(1);
@@ -77,10 +77,10 @@ void ConvolutionLayer<T>::ForwardCPU(const vector<Tensor<T> *> &input,
 }
 
 template<typename T>
-void ConvolutionLayer<T>::BackwardCPU(const vector<Tensor<T> *> &input,
-                                      const vector<Tensor<T> *> &output)
+void ConvolutionLayer<T>::BackwardCPU(const vector<Blob<T> *> &input,
+                                      const vector<Blob<T> *> &output)
 {
-    auto kernel = kernel_->cpu_data();
+    auto kernel = kernel_->data_cptr();
     const size_t batch_size = input[0]->shape(0);
     const size_t chs_in = input[0]->shape(1);
     const size_t chs_out = output[0]->shape(1);
@@ -92,31 +92,31 @@ void ConvolutionLayer<T>::BackwardCPU(const vector<Tensor<T> *> &input,
                                    batch_size,
                                    chs_in, chs_out,
                                    input_size, padding_in, kernel_size,
-                                   output[0]->cpu_diff(),
+                                   output[0]->diff_cptr(),
                                    kernel,
-                                   input[0]->cpu_diff(),
+                                   input[0]->diff_cptr(),
                                    nullptr, nullptr);
 
     nnp_convolution_kernel_gradient(nnp_convolution_algorithm_auto,
                                     batch_size,
                                     chs_in, chs_out,
                                     input_size, padding_in, kernel_size,
-                                    input[0]->cpu_data(),
-                                    output[0]->cpu_diff(),
-                                    kernel_->cpu_diff(),
+                                    input[0]->data_cptr(),
+                                    output[0]->diff_cptr(),
+                                    kernel_->diff_cptr(),
                                     nullptr,
                                     nullptr);
 
     //
-    vector_set(bias_->count(), (T)0.0, bias_->cpu_diff());
+    vector_set(bias_->count(), (T)0.0, bias_->diff_cptr());
 
-    auto output_diff = output[0]->cpu_diff();
+    auto output_diff = output[0]->diff_cptr();
     auto step = output[0]->count(1, 4);
     for(size_t i = 0; i < batch_size; ++i) {
         matvec_mul(CblasNoTrans,
                    output[0]->shape(1), output[0]->count(2, 4),
-                   (T)1.0, output_diff + i * step, biaser_.cpu_data(),
-                   (T)1.0, bias_->cpu_diff());
+                   (T)1.0, output_diff + i * step, biaser_.cptr(),
+                   (T)1.0, bias_->diff_cptr());
     }
 }
 

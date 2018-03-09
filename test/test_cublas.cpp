@@ -55,10 +55,10 @@ int main()
     Filler<float>::fill(axpy1, NORMAL);
     Filler<float>::fill(axpy2, XAVIER);
 
-    cout << "[before/0]"; print_cpu(axpy1.count(), axpy1.cpu_data());
-    cout << "[before/1]"; print_cpu(axpy2.count(), axpy2.cpu_data());
-    vector_axpy_gpu(axpy1.count(), -1.f, axpy1.gpu_data(), axpy2.gpu_data());
-    cout << "[after /1]"; print_cpu(axpy2.count(), axpy2.cpu_data());
-    cout << "[after /1]"; print_gpu(axpy2.count(), axpy2.gpu_data());
+    cout << "[before/0]"; print_cpu(axpy1.count(), axpy1.cptr());
+    cout << "[before/1]"; print_cpu(axpy2.count(), axpy2.cptr());
+    vector_axpy_gpu(axpy1.count(), -1.f, axpy1.gptr(), axpy2.gptr());
+    cout << "[after /1]"; print_cpu(axpy2.count(), axpy2.cptr());
+    cout << "[after /1]"; print_gpu(axpy2.count(), axpy2.gptr());
     return 0;
 }

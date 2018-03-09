@@ -17,6 +17,7 @@ namespace alchemy {
 class VideoCapture {
 public:
     explicit VideoCapture(int32_t index);
+    explicit VideoCapture(const std::string& file);
     VideoCapture(const VideoCapture&) = delete;
     VideoCapture& operator=(const VideoCapture&) = delete;
     ~VideoCapture();
@@ -24,6 +25,7 @@ public:
     bool isOpened() const { return opened_; }
 
     bool open(int32_t index);
+    bool open(const std::string& file);
 
     void read(Matrix& image);
 

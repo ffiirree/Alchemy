@@ -71,7 +71,7 @@ public:
 protected:
     OptimizerParameter param_;
 
-    vector<Tensor<T>> sign_;
+    vector<Blob<T>> sign_;
 
     shared_ptr<Network<T>> net_;
     shared_ptr<Network<T>> test_net_;
@@ -93,7 +93,7 @@ Optimizer<T>::Optimizer(const OptimizerParameter &param)
     /// setting
     const auto& lp = net_->learnable_params();
     for(const auto& _param : lp) {
-        sign_.push_back(Tensor<T>(std::get<0>(_param)->shape()));
+        sign_.push_back(Blob<T>(std::get<0>(_param)->shape()));
     }
 }
 
@@ -109,23 +109,23 @@ void Optimizer<T>::regularize()
 
                 if(Global::mode() == Global::CPU) {
                     vector_sign(std::get<0>(item)->count(),
-                                std::get<0>(item)->cpu_data(),
-                                sign_[i].cpu_data());
+                                std::get<0>(item)->data_cptr(),
+                                sign_[i].data_cptr());
 
                     vector_axpy(std::get<0>(item)->count(),
                                 (T)(std::get<2>(item) * std::get<1>(item)),
-                                sign_[i].cpu_data(),
-                                std::get<0>(item)->cpu_diff());
+                                sign_[i].data_cptr(),
+                                std::get<0>(item)->diff_cptr());
                 }
                 else {
                     vector_sign_gpu(std::get<0>(item)->count(),
-                                    std::get<0>(item)->gpu_data(),
-                                    sign_[i].gpu_data());
+                                    std::get<0>(item)->data_gptr(),
+                                    sign_[i].data_gptr());
 
                     vector_axpy_gpu(std::get<0>(item)->count(),
                                     (T)(std::get<2>(item) * std::get<1>(item)),
-                                    sign_[i].gpu_data(),
-                                    std::get<0>(item)->gpu_diff());
+                                    sign_[i].data_gptr(),
+                                    std::get<0>(item)->diff_gptr());
                 }
             }
             break;
@@ -135,14 +135,14 @@ void Optimizer<T>::regularize()
                 if(Global::mode() == Global::CPU) {
                     vector_axpy(std::get<0>(param)->count(),
                                 (T)(std::get<2>(param) * std::get<1>(param)),
-                                std::get<0>(param)->cpu_data(),
-                                std::get<0>(param)->cpu_diff());
+                                std::get<0>(param)->data_cptr(),
+                                std::get<0>(param)->diff_cptr());
                 }
                 else {
                     vector_axpy_gpu(std::get<0>(param)->count(),
                                     (T)(std::get<2>(param) * std::get<1>(param)),
-                                    std::get<0>(param)->gpu_data(),
-                                    std::get<0>(param)->gpu_diff());
+                                    std::get<0>(param)->data_gptr(),
+                                    std::get<0>(param)->diff_gptr());
                 }
             }
             break;

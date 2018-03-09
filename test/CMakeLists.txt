@@ -40,6 +40,7 @@ test(net_05_relu)
 test(net_06_cnn)
 test(net_07_dropout)
 test(cublas)
+test(tensor)
 
 test(find_contours)
 

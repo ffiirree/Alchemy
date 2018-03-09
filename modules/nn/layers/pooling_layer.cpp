@@ -5,8 +5,8 @@
 namespace alchemy {
 
 template<typename T>
-void PoolingLayer<T>::setup(const vector<Tensor<T> *> &input,
-                            const vector<Tensor<T> *> &output)
+void PoolingLayer<T>::setup(const vector<Blob<T> *> &input,
+                            const vector<Blob<T> *> &output)
 {
     LOG(INFO) << "Setting up " << this->param_.name();
     LOG(INFO) << "input  #0: "  << input[0]->shape();
@@ -29,8 +29,8 @@ void PoolingLayer<T>::setup(const vector<Tensor<T> *> &input,
 }
 
 template<typename T>
-void PoolingLayer<T>::ForwardCPU(const vector<Tensor<T> *> &input,
-                                 const vector<Tensor<T> *> &output)
+void PoolingLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
+                                 const vector<Blob<T> *> &output)
 {
     const size_t batch_size = input[0]->shape(0);
     const size_t channels = input[0]->shape(1);
@@ -40,9 +40,9 @@ void PoolingLayer<T>::ForwardCPU(const vector<Tensor<T> *> &input,
     const size_t stride = pooling_param_.stride();
     const size_t ksize = pooling_param_.kernel_size();
 
-    auto input_data = input[0]->cpu_data();
-    auto output_data = output[0]->cpu_data();
-    auto max_idx = max_idx_.cpu_data();
+    auto input_data = input[0]->data_cptr();
+    auto output_data = output[0]->data_cptr();
+    auto max_idx = max_idx_.cptr();
 
     //
     vector_set(output[0]->count(), -std::numeric_limits<T>::max(), output_data);
@@ -89,25 +89,25 @@ void PoolingLayer<T>::ForwardCPU(const vector<Tensor<T> *> &input,
             break;
 
         default:
-            LOG(INFO) << "Unknown Pooling type!";
+            LOG(FATAL) << "Unknown Pooling type!";
             break;
     }
 }
 
 template<typename T>
-void PoolingLayer<T>::BackwardCPU(const vector<Tensor<T> *> &input,
-                                  const vector<Tensor<T> *> &output)
+void PoolingLayer<T>::BackwardCPU(const vector<Blob<T> *> &input,
+                                  const vector<Blob<T> *> &output)
 {
     const size_t batch_size = input[0]->shape(0);
     const size_t channels = input[0]->shape(1);
     const size_t out_rows = output[0]->shape(2);
     const size_t out_cols = output[0]->shape(3);
 
-    auto input_diff = input[0]->cpu_diff();
-    auto output_diff = output[0]->cpu_diff();
-    auto max_idx = max_idx_.cpu_data();
+    auto input_diff = input[0]->diff_cptr();
+    auto output_diff = output[0]->diff_cptr();
+    auto max_idx = max_idx_.cptr();
 
-    vector_set(input[0]->count(), (T)0.0, input[0]->cpu_diff());
+    vector_set(input[0]->count(), (T)0.0, input[0]->diff_cptr());
 
     switch(pooling_param_.type()) {
         case MAX:
@@ -136,7 +136,7 @@ void PoolingLayer<T>::BackwardCPU(const vector<Tensor<T> *> &input,
             break;
 
         default:
-            LOG(INFO) << "Unknown Pooling type!";
+            LOG(FATAL) << "Unknown Pooling type!";
             break;
     }
 }

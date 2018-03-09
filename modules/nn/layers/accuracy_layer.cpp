@@ -6,8 +6,8 @@
 namespace alchemy {
 
 template<typename T>
-void AccuracyLayer<T>::setup(const vector<Tensor<T> *> &input,
-                             const vector<Tensor<T> *> &output)
+void AccuracyLayer<T>::setup(const vector<Blob<T> *> &input,
+                             const vector<Blob<T> *> &output)
 {
     LOG(INFO) << "Setting up " << this->param_.name();
     LOG(INFO) << "input  #0: "  << input[0]->shape();
@@ -15,16 +15,16 @@ void AccuracyLayer<T>::setup(const vector<Tensor<T> *> &input,
 
     output[0]->reshape({ 3 });
     LOG(INFO) << "output #0: "  << output[0]->shape();
-    vector_set(output[0]->count(), (T)0., output[0]->cpu_data());
+    vector_set(output[0]->count(), (T)0., output[0]->data_cptr());
 }
 
 template<typename T>
-void AccuracyLayer<T>::ForwardCPU(const vector<Tensor<T> *> &input,
-                                  const vector<Tensor<T> *> &output)
+void AccuracyLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
+                                  const vector<Blob<T> *> &output)
 {
     auto size = input[0]->shape(2) * input[0]->shape(3);
-    auto o_ptr = input[0]->cpu_data();
-    auto g_ptr = input[1]->cpu_data();
+    auto o_ptr = input[0]->data_cptr();
+    auto g_ptr = input[1]->data_cptr();
     int result_ = 0;
     for(auto i = 0; i < input[0]->shape(0); ++i) {
         // test
@@ -35,9 +35,9 @@ void AccuracyLayer<T>::ForwardCPU(const vector<Tensor<T> *> &input,
         }
     }
 
-    output[0]->cpu_data()[1] += result_;
-    output[0]->cpu_data()[2] += input[0]->shape(0);
-    output[0]->cpu_data()[0] = output[0]->cpu_data()[1] / output[0]->cpu_data()[2];
+    output[0]->data_cptr()[1] += result_;
+    output[0]->data_cptr()[2] += input[0]->shape(0);
+    output[0]->data_cptr()[0] = output[0]->data_cptr()[1] / output[0]->data_cptr()[2];
 }
 
 template class AccuracyLayer<float>;

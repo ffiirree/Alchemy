@@ -61,6 +61,8 @@ public:
     template<typename _T2> _Matrix(Size size, int chs,          const _T2& v);
     template<typename _T2> _Matrix(const MatrixShape& shape,    const _T2& v);
 
+    _Matrix(int rows, int cols, int chs, uint8_t* ptr);
+
     /**
      * @overload
      * @brief Initialize by random number.
@@ -226,12 +228,13 @@ public:
      * @brief Returns true if the array has no elements.
      * The method returns true if the data == nullptr.
      */
-    bool empty() const { return !data || !total(); }
+    bool empty() const { return !data || !size(); }
 
     /**
      * @brief Returns the total number of array elements.
      */
     size_t total() const { return size_; }
+    size_t count() const { return size_ * channels(); }
     size_t size() const { return size_; }
 
     MatrixShape shape() const { return { rows, cols, channels() }; }

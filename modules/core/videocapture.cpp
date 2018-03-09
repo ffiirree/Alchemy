@@ -7,6 +7,12 @@ VideoCapture::VideoCapture(int32_t index)
     opened_ = open(index);
 }
 
+
+VideoCapture::VideoCapture(const std::string &file)
+{
+    opened_ = open(file);
+}
+
 bool VideoCapture::open(int32_t index)
 {
     index_ = index;
@@ -40,6 +46,28 @@ bool VideoCapture::open(int32_t index)
     return true;
 }
 
+
+bool VideoCapture::open(const std::string &file)
+{
+    av_register_all();
+
+    if (avformat_open_input(&format_context_, file.c_str(), nullptr, nullptr) < 0) return false;
+    if(avformat_find_stream_info(format_context_, nullptr) < 0) return false;
+
+    AVCodec *codec;
+    if((video_stream_index_ = av_find_best_stream(format_context_, AVMEDIA_TYPE_VIDEO, -1, -1, &codec, 0)) < 0)
+        return false;
+
+    codec_context_ = format_context_->streams[video_stream_index_]->codec;
+    if(avcodec_open2(codec_context_, codec, nullptr) < 0) return false;
+
+    avpicture_alloc(&picture_, AV_PIX_FMT_BGR24, codec_context_->width, codec_context_->height);
+    frame_ = av_frame_alloc();
+
+    return true;
+}
+
+
 VideoCapture::~VideoCapture()
 {
     av_packet_unref(&packet_);
@@ -60,7 +88,7 @@ void VideoCapture::read(Matrix &image)
     int unfinished = 0;
     struct SwsContext * img_convert_ctx = nullptr;
 
-    if(av_read_frame(format_context_, &packet_) >= 0){
+    while(av_read_frame(format_context_, &packet_) >= 0) {
         if(packet_.stream_index == video_stream_index_) {
             avcodec_decode_video2(codec_context_, frame_, &unfinished, &packet_);
 
@@ -79,8 +107,10 @@ void VideoCapture::read(Matrix &image)
                         picture_.data, picture_.linesize
                 );
 
-                image.create(frame_->height, frame_->width, 3);
-                memcpy(image.data, picture_.data[0], image.total() * image.channels());
+                Matrix _image(frame_->height, frame_->width, 3, picture_.data[0]);
+                image = _image;
+//                memcpy(image.data, , image.size() * image.channels());
+                break;
             }
         }
     }
@@ -88,4 +118,5 @@ void VideoCapture::read(Matrix &image)
     av_free_packet(&packet_);
     sws_freeContext(img_convert_ctx);
 }
+
 }

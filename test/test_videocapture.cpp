@@ -2,16 +2,15 @@
 
 int main()
 {
-    alchemy::VideoCapture camera(0);
+    alchemy::VideoCapture video(0);
 
-    if(camera.isOpened()) {
+    if(video.isOpened()) {
         alchemy::Matrix frame;
 
-        while(alchemy::waitKey(10) != 'q') {
-            camera >> frame;
-
+        do {
+            video >> frame;
             alchemy::imshow("frame", frame);
-        }
+        } while(alchemy::waitKey(10) != 'q');
     }
 
     return 0;

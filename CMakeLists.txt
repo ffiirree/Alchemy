@@ -1,7 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.5)
 
 include(cmake/CMakeUtils.cmake)
-
 set(PROJECT_NAME Alchemy)
 project(${PROJECT_NAME})
 
@@ -194,9 +193,9 @@ log("")
 log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Media ~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 log("")
 if(USE_JPEG)
-    log("    JPEG:" YES)
+    log("    libjpeg:" YES)
 else()
-    log("    JPEG:" NO)
+    log("    libjpeg:" NO)
 endif()
 
 if(USE_FFTW)
@@ -206,11 +205,12 @@ else()
 endif()
 
 if(USE_FFMPEG)
-    log("    FFMPEG:" YES)
+    log("    FFmpeg:" YES)
 else()
-    log("    FFMPEG:" NO)
+    log("    FFmpeg:" NO)
 endif()
 log("")
+
 
 
 # ========================== GUI ==========================

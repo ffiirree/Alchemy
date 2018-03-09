@@ -290,7 +290,7 @@ void idft(Matrix64f & src, Matrix64f & dst)
 
     const auto p3 = fftw_plan_dft_c2r_2d(src.rows, src.cols, reinterpret_cast<fftw_complex *>(src.ptr()), reinterpret_cast<double *>(dst.ptr()), FFTW_ESTIMATE);
     fftw_execute(p3);
-    dst /= dst.total();
+    dst /= dst.size();
 
     fftw_destroy_plan(p3);
     fftw_cleanup();

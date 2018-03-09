@@ -2,7 +2,7 @@
 #define ALCHEMY_NN_NETWORK_H
 
 #include <glog/logging.h>
-#include "core/tensor.h"
+#include "nn/blob.h"
 #include "layer_factory.h"
 
 namespace alchemy {
@@ -35,13 +35,13 @@ public:
     explicit Network(const NetworkParameter& param);
     ~Network() = default;
 
-    double accuracy() { return output_.back()[0]->cpu_data()[0]; }
+    double accuracy() { return output_.back()[0]->data_cptr()[0]; }
 
-    inline vector<tuple<shared_ptr<Tensor<T>>, double, double>> learnable_params() const { return learnable_params_; };
+    inline vector<tuple<shared_ptr<Blob<T>>, double, double>> learnable_params() const { return learnable_params_; };
 
     inline vector<shared_ptr<Layer<T>>> layers() const { return layers_; }
-    inline vector<vector<Tensor<T>*>> inputs() const { return input_; }
-    inline vector<vector<Tensor<T>*>> outputs() const { return output_; }
+    inline vector<vector<Blob<T>*>> inputs() const { return input_; }
+    inline vector<vector<Blob<T>*>> outputs() const { return output_; }
 
     inline Phase phase() const { return phase_; }
 
@@ -54,13 +54,13 @@ private:
     // 层
     vector<shared_ptr<Layer<T>>> layers_{};
     // 从输入到输出的数据
-    map<string, shared_ptr<Tensor<T>>> data_flow_{};
+    map<string, shared_ptr<Blob<T>>> data_flow_{};
     // 参数
-    vector<tuple<shared_ptr<Tensor<T>>, double, double>> learnable_params_{};
+    vector<tuple<shared_ptr<Blob<T>>, double, double>> learnable_params_{};
 
     // 和每一层一一对应
-    vector<vector<Tensor<T>*>> input_{};
-    vector<vector<Tensor<T>*>> output_{};
+    vector<vector<Blob<T>*>> input_{};
+    vector<vector<Blob<T>*>> output_{};
 };
 
 
@@ -99,7 +99,7 @@ Network<T>::Network(const NetworkParameter &param)
         for(auto& input_name : layers_[layer_index]->parameter().inputs()) {
             auto search = data_flow_.find(input_name);
             if(search == data_flow_.end()) {
-                data_flow_[input_name] = shared_ptr<Tensor<T>>(new Tensor<T>());
+                data_flow_[input_name] = shared_ptr<Blob<T>>(new Blob<T>());
             }
             input_[layer_index].push_back(data_flow_[input_name].get());
         }
@@ -108,7 +108,7 @@ Network<T>::Network(const NetworkParameter &param)
         for(auto& output_name : layers_[layer_index]->parameter().outputs()) {
             auto search = data_flow_.find(output_name);
             if(search == data_flow_.end()) {
-                data_flow_[output_name] = shared_ptr<Tensor<T>>(new Tensor<T>());
+                data_flow_[output_name] = shared_ptr<Blob<T>>(new Blob<T>());
             }
             output_[layer_index].push_back(data_flow_[output_name].get());
         }

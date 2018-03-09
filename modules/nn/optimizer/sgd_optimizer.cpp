@@ -29,12 +29,12 @@ void SgdOptimizer<T>::update()
     const auto& learnable_params = this->net_->learnable_params();
     if(Global::mode() == Global::CPU) {
         for(auto& param : learnable_params) {
-            vector_axpy(std::get<0>(param)->count(), (T)-std::get<1>(param), std::get<0>(param)->cpu_diff(), std::get<0>(param)->cpu_data());
+            vector_axpy(std::get<0>(param)->count(), (T)-std::get<1>(param), std::get<0>(param)->diff_cptr(), std::get<0>(param)->data_cptr());
         }
     }
     else {
         for(auto& param : learnable_params) {
-            vector_axpy_gpu(std::get<0>(param)->count(), (T)-std::get<1>(param), std::get<0>(param)->gpu_diff(), std::get<0>(param)->gpu_data());
+            vector_axpy_gpu(std::get<0>(param)->count(), (T)-std::get<1>(param), std::get<0>(param)->diff_gptr(), std::get<0>(param)->data_gptr());
         }
     }
 

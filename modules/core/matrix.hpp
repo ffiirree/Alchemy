@@ -52,6 +52,26 @@ _Matrix<_Tp>::_Matrix(const MatrixShape& shape, const _T2& v)
         : _Matrix(shape.rows, shape.cols, shape.chs, v)
 {}
 
+
+template<typename _Tp>
+_Matrix<_Tp>::_Matrix(int _rows, int _cols, int _chs, uint8_t *_ptr)
+{
+    assert(_rows * _cols * _chs != 0);
+
+    flags = (DataType<_Tp>::depth << 8) | _chs;
+    esize_ = sizeof(_Tp) * _chs;
+
+    rows = _rows;
+    cols = _cols;
+    step = static_cast<int>(_cols * esize_);
+    size_ = static_cast<size_t>(_rows * _cols);
+
+    // Alloc memory.
+    datastart = data = _ptr;
+    dataend = data + size_ * esize_;
+}
+
+
 template <typename _Tp>
 template<typename _T2, typename _T3>
 _Matrix<_Tp>::_Matrix(int rows, int cols, int chs, const std::pair<_T2, _T3>& initor)
@@ -184,7 +204,7 @@ _Matrix<_Tp>& _Matrix<_Tp>::operator=(const _Matrix<_T2> &m)
 template <typename _Tp>
 _Matrix<_Tp>& _Matrix<_Tp>::operator=(std::initializer_list<_Tp> list)
 {
-    assert(total() > 0);
+    assert(size() > 0);
 
     if (list.size() == 0) return *this;
 
@@ -779,7 +799,7 @@ _MatrixIterator<_Tp> _Matrix<_Tp>::end()
 {
     assert(esize() == sizeof(_Tp));
     auto r = _MatrixIterator<_Tp>(this);
-    r += total();
+    r += size();
     return r;
 }
 
@@ -788,7 +808,7 @@ _MatrixConstIterator<_Tp> _Matrix<_Tp>::end() const
 {
     assert(esize() == sizeof(_Tp));
     auto r = _MatrixConstIterator<_Tp>(this);
-    r += total();
+    r += size();
     return r;
 }
 
@@ -798,7 +818,7 @@ _MatrixIterator<_T2> _Matrix<_Tp>::end()
 {
     assert(esize() == sizeof(_T2));
     auto r = _MatrixIterator<_T2>(reinterpret_cast<_Matrix<_T2>*>(this));
-    r += total();
+    r += size();
     return r;
 }
 
@@ -808,7 +828,7 @@ _MatrixConstIterator<_T2> _Matrix<_Tp>::end() const
 {
     assert(esize() == sizeof(_T2));
     auto r = _MatrixConstIterator<_T2>(reinterpret_cast<const _Matrix<_T2>*>(this));
-    r += total();
+    r += size();
     return r;
 }
 
@@ -1976,7 +1996,7 @@ _MatrixConstIterator<_Tp>::_MatrixConstIterator(const _Matrix<_Tp>* m) :
 {
     if (m_ && m_->isContinuous()) {
         start_ = m->template ptr<uint8_t>();
-        end_ = start_ + m_->total() * esize_;
+        end_ = start_ + m_->size() * esize_;
     }
 
     seek(0, false);

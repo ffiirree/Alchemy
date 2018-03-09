@@ -405,7 +405,7 @@ void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int d, double sig
     auto temp_val = new double[src.channels()];
 
     auto ptr = src.ptr();
-    auto data_len = src.total() * src.channels();
+    auto data_len = src.size() * src.channels();
 
     for (size_t i = 0; i < data_len; i += src.channels()) {
         double norm = 0;

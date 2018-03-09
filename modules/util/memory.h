@@ -18,8 +18,8 @@ public:
     explicit Memory(int size);
     ~Memory();
 
-    inline void * cpu_data() { to_cpu(); return cpu_data_; }
-    inline void * gpu_data() { to_gpu(); return gpu_data_; }
+    inline void * cptr() { to_cpu(); return cptr_; }
+    inline void * gptr() { to_gpu(); return gptr_; }
 
     inline size_t size() const { return size_; }
 
@@ -33,15 +33,14 @@ public:
     static void copy(size_t size, void * dst, const void * src);
 
 private:
-
     void to_cpu();
     void to_gpu();
 
     Status status_ = UNINITED;
     size_t size_ = 0;
 
-    void *cpu_data_ = nullptr;
-    void *gpu_data_ = nullptr;
+    void *cptr_ = nullptr;
+    void *gptr_ = nullptr;
 };
 
 }

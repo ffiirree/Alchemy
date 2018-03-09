@@ -13,21 +13,21 @@ public:
             : Layer<T>(param), conv_param_(param.conv_param()) { }
     virtual ~ConvolutionLayer() = default;
 
-    virtual void setup(const vector<Tensor<T>*>&input, const vector<Tensor<T>*>&output);
+    virtual void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output);
 
-    virtual void ForwardCPU(const vector<Tensor<T>*>& input, const vector<Tensor<T>*>& output);
-    virtual void BackwardCPU(const vector<Tensor<T>*>& input, const vector<Tensor<T>*>& output);
+    virtual void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+    virtual void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
 
 #ifdef USE_CUDA
-    virtual void ForwardGPU(const vector<Tensor<T>*>& input, const vector<Tensor<T>*>& output);
-    virtual void BackwardGPU(const vector<Tensor<T>*>& input, const vector<Tensor<T>*>& output);
+    virtual void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+    virtual void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
 #endif //! USE_CUDA
 
 private:
     ConvolutionParameter conv_param_;
     
-    shared_ptr<Tensor<T>> kernel_;
-    shared_ptr<Tensor<T>> bias_;
+    shared_ptr<Blob<T>> kernel_;
+    shared_ptr<Blob<T>> bias_;
     Tensor<T> biaser_;
 };
 

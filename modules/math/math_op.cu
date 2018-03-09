@@ -225,26 +225,25 @@ __global__ void print_kernel(const int count, const float* A) {
     for(auto i = blockIdx.x * blockDim.x + threadIdx.x; i < count; i += blockDim.x * gridDim.x) {
         if(i == 0) printf("GPU: ");
         printf("(%d, %f), ", i, A[i]);
+        if(i + 1 == count) printf("\n");
     }
 }
 template <>
 void print_gpu(const int count, const float* A)
 {
-
     print_kernel<<<CUDA_BLOCK_NUM(count), CUDA_THREAD_NUM>>>(count, A);
-    printf("\n");
 }
 
 __global__ void print_kernel(const int count, const double* A) {
     for(auto i = blockIdx.x * blockDim.x + threadIdx.x; i < count; i += blockDim.x * gridDim.x) {
         if(i == 0) printf("GPU: ");
         printf("(%d, %f), ", i, A[i]);
+        if(i + 1 == count) printf("\n");
     }
 }
 template <>
 void print_gpu(const int count, const double* A)
 {
     print_kernel<<<CUDA_BLOCK_NUM(count), CUDA_THREAD_NUM>>>(count, A);
-    printf("\n");
 }
 }

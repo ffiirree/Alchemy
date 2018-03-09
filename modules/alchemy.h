@@ -7,6 +7,7 @@
 #include "imgproc/imgproc.h"
 
 #include "gui/gui.h"
+#include "gui/jpeg.h"
 
 #include "core/common.h"
 #include "util/memory.h"

@@ -53,11 +53,10 @@ cmake ..
  - [ ] SIFT
 ### 
  - [x] 实现张量类`Tensor`(也就是N维数组)
- - [x] 调整结构为: Tensor -> Layer -> Network -> Optimization 结构
+ - [x] 调整结构为: Tensor -> Layer -> Network -> Optimizer 结构
  - [x] weight/bias初始化方法: normal/uniform/xavier
  - [ ] GPU版本实现
- - [x] L1正则化
- - [x] L2正则化
+ - [x] L1/L2正则化
  - [x] Accuracy Layer
  - [x] Convolution Layer
  - [x] Pooling Layer
@@ -70,7 +69,7 @@ cmake ..
  - [x] Softmax Loss Layer
  - [x] Euclidean Loss Layer
  - [x] Sigmoid cross-entropy Loss Layer
- - [x] SGD
- - [ ] AdaDelta
- - [ ] Nesterov
- - [ ] Adam
+ - [x] SGD Optimizer
+ - [ ] AdaDelta Optimizer
+ - [ ] Nesterov Optimizer
+ - [ ] Adam Optimizer

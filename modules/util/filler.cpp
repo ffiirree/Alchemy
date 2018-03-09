@@ -1,14 +1,13 @@
 #include "filler.h"
 #include <random>
-#include <glog/logging.h>
 
 namespace alchemy {
 
 template<typename T>
-void Filler<T>::fill(Tensor<T>& tensor, FillerType type)
+void Filler<T>::fill(const Tensor<T>& tensor, FillerType type)
 {
     const auto count = tensor.count();
-    const auto ptr = tensor.cpu_data();
+    const auto ptr = tensor.cptr();
 
     switch(type) {
         case NORMAL:
@@ -21,6 +20,10 @@ void Filler<T>::fill(Tensor<T>& tensor, FillerType type)
 
         case XAVIER:
             xavier_fill(count, ptr, count / tensor.shape(0));
+            break;
+
+        case CONSTANT:
+            constant_fill(count, ptr, 0);
             break;
 
         default:
@@ -68,6 +71,12 @@ void Filler<T>::xavier_fill(int count, T *ptr, int N)
     const double scale = std::sqrt(3.0/N);
 
     uniform_fill(count, ptr, -scale, scale);
+}
+
+template<typename T>
+void Filler<T>::constant_fill(int count, T *ptr, const T value)
+{
+    vector_set(count, value, ptr);
 }
 
 template class Filler<float>;

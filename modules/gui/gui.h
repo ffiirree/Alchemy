@@ -7,6 +7,8 @@
 namespace alchemy {
 
 Matrix imread(const std::string& filename);
+std::vector<Matrix> gif_read(const std::string& filename);
+
 void imwrite(const std::string& filename, Matrix8u & img, int quality = 95);
 
 void imshow(const std::string & name, const Matrix8u & mat);

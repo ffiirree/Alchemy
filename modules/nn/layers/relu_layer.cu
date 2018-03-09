@@ -12,12 +12,12 @@ __global__ void relu_kernel(const size_t size, const T* InputData, double alpha,
 }
 
 template<typename T>
-void ReLuLayer<T>::ForwardGPU(const vector<Tensor<T> *> &input,
-                              const vector<Tensor<T> *> &output)
+void ReLuLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
+                              const vector<Blob<T> *> &output)
 {
     auto count = input[0]->count();
-    auto input_data = input[0]->gpu_data();
-    auto output_data = output[0]->gpu_data();
+    auto input_data = input[0]->data_gptr();
+    auto output_data = output[0]->data_gptr();
 
     relu_kernel<<<CUDA_BLOCK_NUM(count), CUDA_THREAD_NUM>>>(count, input_data, relu_param_.alpha(), output_data);
 }
@@ -32,19 +32,19 @@ __global__ void drelu_kernel(const size_t size, const T* InputData, const T* Out
 }
 
 template<typename T>
-void ReLuLayer<T>::BackwardGPU(const vector<Tensor<T> *> &input,
-                               const vector<Tensor<T> *> &output)
+void ReLuLayer<T>::BackwardGPU(const vector<Blob<T> *> &input,
+                               const vector<Blob<T> *> &output)
 {
     auto count = input[0]->count();
-    auto input_data = input[0]->gpu_data();
-    auto input_diff = input[0]->gpu_diff();
-    auto output_diff = output[0]->gpu_diff();
+    auto input_data = input[0]->data_gptr();
+    auto input_diff = input[0]->diff_gptr();
+    auto output_diff = output[0]->diff_gptr();
 
     drelu_kernel<<<CUDA_BLOCK_NUM(count), CUDA_THREAD_NUM>>>(count, input_data, output_diff, relu_param_.alpha(), input_diff);
 }
 
-template void ReLuLayer<float>::ForwardGPU(const vector<Tensor<float> *> &input, const vector<Tensor<float> *> &output);
-template void ReLuLayer<double>::ForwardGPU(const vector<Tensor<double> *> &input, const vector<Tensor<double> *> &output);
-template void ReLuLayer<float>::BackwardGPU(const vector<Tensor<float> *> &input, const vector<Tensor<float> *> &output);
-template void ReLuLayer<double>::BackwardGPU(const vector<Tensor<double> *> &input, const vector<Tensor<double> *> &output);
+template void ReLuLayer<float>::ForwardGPU(const vector<Blob<float> *> &input, const vector<Blob<float> *> &output);
+template void ReLuLayer<double>::ForwardGPU(const vector<Blob<double> *> &input, const vector<Blob<double> *> &output);
+template void ReLuLayer<float>::BackwardGPU(const vector<Blob<float> *> &input, const vector<Blob<float> *> &output);
+template void ReLuLayer<double>::BackwardGPU(const vector<Blob<double> *> &input, const vector<Blob<double> *> &output);
 }

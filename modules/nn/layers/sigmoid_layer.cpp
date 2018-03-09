@@ -4,8 +4,8 @@
 namespace alchemy {
 
 template<typename T>
-void SigmoidLayer<T>::setup(const vector<Tensor<T> *> &input,
-                            const vector<Tensor<T> *> &output)
+void SigmoidLayer<T>::setup(const vector<Blob<T> *> &input,
+                            const vector<Blob<T> *> &output)
 {
     LOG(INFO) << "Setting up " << this->param_.name();
     LOG(INFO) << "input  #0: "  << input[0]->shape();
@@ -21,12 +21,12 @@ inline T sigmoid(T value)
 }
 
 template<typename T>
-void SigmoidLayer<T>::ForwardCPU(const vector<Tensor<T>*>& input,
-                                 const vector<Tensor<T>*>& output)
+void SigmoidLayer<T>::ForwardCPU(const vector<Blob<T>*>& input,
+                                 const vector<Blob<T>*>& output)
 {
-    auto input_data = input[0]->cpu_data();
+    auto input_data = input[0]->data_cptr();
     auto count = input[0]->count();
-    auto output_data = output[0]->cpu_data();
+    auto output_data = output[0]->data_cptr();
 
     for(auto i = 0; i < count; ++i) {
         output_data[i] = sigmoid(-1. * input_data[i]);
@@ -34,13 +34,13 @@ void SigmoidLayer<T>::ForwardCPU(const vector<Tensor<T>*>& input,
 }
 
 template<typename T>
-void SigmoidLayer<T>::BackwardCPU(const vector<Tensor<T>*>& input,
-                                  const vector<Tensor<T>*>& output)
+void SigmoidLayer<T>::BackwardCPU(const vector<Blob<T>*>& input,
+                                  const vector<Blob<T>*>& output)
 {
     auto count = input[0]->count();
-    auto output_data = output[0]->cpu_data();
-    auto input_diff = input[0]->cpu_diff();
-    auto output_diff = output[0]->cpu_diff();
+    auto output_data = output[0]->data_cptr();
+    auto input_diff = input[0]->diff_cptr();
+    auto output_diff = output[0]->diff_cptr();
 
     for(auto i = 0; i < count; ++i) {
         auto sv = output_data[i];

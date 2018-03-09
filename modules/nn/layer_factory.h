@@ -74,21 +74,21 @@ public:
         return shared_ptr<Layer<T>>(nullptr);
     }
 
-    static shared_ptr<Tensor<T>> GetSharedParam(const string& layer_name, int id = 0) {
+    static shared_ptr<Blob<T>> GetSharedParam(const string& layer_name, int id = 0) {
         const auto& name = layer_name + std::to_string(id);
 
         auto search = shared_params_.find(name);
         if(search == shared_params_.end()) {
-            shared_params_[name] = shared_ptr<Tensor<T>>(new Tensor<T>());
+            shared_params_[name] = shared_ptr<Blob<T>>(new Blob<T>());
         }
         return shared_params_[name];
     }
 
 private:
-    static map<string, shared_ptr<Tensor<T>>> shared_params_;
+    static map<string, shared_ptr<Blob<T>>> shared_params_;
 };
 
-template <typename T> map<string, shared_ptr<Tensor<T>>> LayerFactory<T>::shared_params_{};
+template <typename T> map<string, shared_ptr<Blob<T>>> LayerFactory<T>::shared_params_{};
 }
 
 #endif //! ALCHEMY_NN_LAYER_FACTORY_H

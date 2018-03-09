@@ -6,8 +6,8 @@
 namespace alchemy {
 
 template<typename T>
-void EuclideanLossLayer<T>::setup(const vector<Tensor<T> *> &input,
-                                  const vector<Tensor<T> *> &output)
+void EuclideanLossLayer<T>::setup(const vector<Blob<T> *> &input,
+                                  const vector<Blob<T> *> &output)
 {
     LOG(INFO) << "Setting up " << this->param_.name();
     LOG(INFO) << "input  #0: "  << input[0]->shape();
@@ -22,26 +22,26 @@ void EuclideanLossLayer<T>::setup(const vector<Tensor<T> *> &input,
 }
 
 template<typename T>
-void EuclideanLossLayer<T>::ForwardCPU(const vector<Tensor<T>*>& input,
-                                       const vector<Tensor<T>*>& output)
+void EuclideanLossLayer<T>::ForwardCPU(const vector<Blob<T>*>& input,
+                                       const vector<Blob<T>*>& output)
 {
     auto count = input[0]->count();
     //! output - label
-    vector_sub(count, input[0]->cpu_data(), input[1]->cpu_data(), diff_.cpu_data());
+    vector_sub(count, input[0]->data_cptr(), input[1]->data_cptr(), diff_.cptr());
     //! dot = sum_(a - y)^2
-    T dot = vector_dot(count, diff_.cpu_data(), diff_.cpu_data());
+    T dot = vector_dot(count, diff_.cptr(), diff_.cptr());
     //! loss = dot/2n
     auto loss = dot / (diff_.shape(2) * (T)2);
-    output[0]->cpu_data()[0] = loss;
+    output[0]->data_cptr()[0] = loss;
 }
 
 template<typename T>
-void EuclideanLossLayer<T>::BackwardCPU(const vector<Tensor<T>*>& input,
-                                        const vector<Tensor<T>*>& output)
+void EuclideanLossLayer<T>::BackwardCPU(const vector<Blob<T>*>& input,
+                                        const vector<Blob<T>*>& output)
 {
     auto count = input[0]->count();
-    vector_copy(count, diff_.cpu_data(), input[0]->cpu_diff());
-    vector_scal(count, (T)1.0/input[0]->shape(0), input[0]->cpu_diff());
+    vector_copy(count, diff_.cptr(), input[0]->diff_cptr());
+    vector_scal(count, (T)1.0/input[0]->shape(0), input[0]->diff_cptr());
 }
 
 template class EuclideanLossLayer<float>;
