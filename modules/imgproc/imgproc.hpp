@@ -1,6 +1,8 @@
 #ifndef ALCHEMY_IMGPROC_IMGPROC_HPP
 #define ALCHEMY_IMGPROC_IMGPROC_HPP
 
+#include <bitset>
+#include <iostream>
 #include <algorithm>
 #include <vector>
 #include <functional>
@@ -743,6 +745,129 @@ void pyrDown(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
         for (auto j = 0; j < dst_cols; ++j)
             for (auto k = 0; k < src.channels(); ++k)
                 dst.at(i, j, k) = src.at(2 * i, 2 * j, k);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <typename _Tp>
+static void rotation_invariance_mapping(int P, _Tp *mapping)
+{
+    auto range = std::pow(2, P);
+    memset(mapping, -1, static_cast<size_t>(range) * sizeof(_Tp));
+
+    for(int i = 0; i < range; ++i) {
+        for(_Tp j = 0; j < P; ++j) {
+            //           　　　移位　　　　　　　　　溢出部分　　　　　　　　抹掉不为8/16等的任意位数　的多余部分
+            _Tp value = (((unsigned)i << j) | ((unsigned)i >> (P - j))) & (~(((unsigned)-1) << P));
+            if(mapping[i] > value) mapping[i] = value;
+//            std::cout << "(" << std::bitset<8>(i) << ", " << std::bitset<8>(value) << ", " << std::bitset<8>(mapping[i]) << ") ";
+        }
+    }
+}
+
+template <typename _Tp>
+static void rotation_invariance_with_uniform_pattern_mapping(int P, _Tp *mapping)
+{
+    auto range = std::pow(2, P);
+    memset(mapping, -1, static_cast<size_t>(range) * sizeof(_Tp));
+
+    for(int i = 0; i < range; ++i) {
+        _Tp j = (((unsigned)i << 1) | ((unsigned)i >> (P - 1))) & (~(((unsigned)-1) << P));
+        _Tp k = j ^ (unsigned)i;
+        auto value = 0, jump = 0;
+
+        for(auto ii = 0; ii < P; ++ii) {
+            jump += k >> ii & 0x01;
+            value += i >> ii & 0x01;
+        }
+        mapping[i] = jump > 2 ? P + 1 : value;
+    }
+}
+
+template <typename _Tp>
+void _ELBP(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, int r, int P, int mode, std::function<void(int&, int&)> callback)
+{
+    if (dst.shape() != src.shape())
+        dst.create(src.rows, src.cols, src.channels());
+
+    _Tp mapping[(int)std::pow(2, P)];
+
+    for(auto i = 0; i < src.rows; ++i) {
+        for(auto j = 0; j < src.cols; ++j) {
+
+            auto center_value = src.at(i, j);
+
+            unsigned char code = 0;
+            auto _i = 0, _j = 0;
+            _i = i - 1; _j = j - 1; callback(_i, _j); code |= (src.at(_i, _j) > center_value) << 7;
+            _i = i - 1; _j = j;     callback(_i, _j); code |= (src.at(_i, _j) > center_value) << 6;
+            _i = i - 1; _j = j + 1; callback(_i, _j); code |= (src.at(_i, _j) > center_value) << 5;
+            _i = i;     _j = j + 1; callback(_i, _j); code |= (src.at(_i, _j) > center_value) << 4;
+            _i = i + 1; _j = j + 1; callback(_i, _j); code |= (src.at(_i, _j) > center_value) << 3;
+            _i = i + 1; _j = j;     callback(_i, _j); code |= (src.at(_i, _j) > center_value) << 2;
+            _i = i + 1; _j = j - 1; callback(_i, _j); code |= (src.at(_i, _j) > center_value) << 1;
+            _i = i;     _j = j - 1; callback(_i, _j); code |= (src.at(_i, _j) > center_value);
+
+            switch(mode) {
+                case GRAY_SCALE_INVARIANCE: dst.at(i, j) = code; break;
+
+                case                         UNIFORM_PATTERN:
+                case GRAY_SCALE_INVARIANCE | UNIFORM_PATTERN: break;
+
+                case                         ROTATION_INVARIANCE:
+                case GRAY_SCALE_INVARIANCE | ROTATION_INVARIANCE:
+                    rotation_invariance_mapping(P, mapping);
+                    dst.at(i, j) = mapping[code] * 6;
+                    break;
+
+                case                         UNIFORM_PATTERN | ROTATION_INVARIANCE:
+                case GRAY_SCALE_INVARIANCE | UNIFORM_PATTERN | ROTATION_INVARIANCE:
+                    rotation_invariance_with_uniform_pattern_mapping(P, mapping);
+                    dst.at(i, j) = mapping[code] * 25;
+                    break;
+                default: break;
+            }
+
+        }
+    }
+
+}
+
+template <typename _Tp>
+void LBP(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, int r, int P, int mode, int borderType)
+{
+    switch (borderType) {
+        //!< `iiiiii|abcdefgh|iiiiiii`  with some specified `i`
+        case BORDER_CONSTANT:
+            //                                    break;
+            //!< `aaaaaa|abcdefgh|hhhhhhh`
+        case BORDER_REPLICATE:
+            _ELBP(src, dst, mode, r, P, BORDER_REPLICATE_CALLBACK(src));
+            break;
+
+            //!< `fedcba|abcdefgh|hgfedcb`
+        case BORDER_REFLECT:
+            _ELBP(src, dst, r, P, mode, BORDER_REFLECT_CALLBACK(src));
+            break;
+
+            //!< `cdefgh|abcdefgh|abcdefg`
+        case BORDER_WRAP:
+            _ELBP(src, dst, r, P, mode, BORDER_WRAP_CALLBACK(src));
+            break;
+
+            //!< `gfedcb|abcdefgh|gfedcba`
+        default:
+        case BORDER_REFLECT_101:
+            _ELBP(src, dst, r, P, mode, BORDER_DEFAULT_CALLBACK(src));
+            break;
+
+            //!< `uvwxyz|absdefgh|ijklmno`
+            // Do not support!
+        case BORDER_TRANSPARENT:
+            LOG(FATAL) << "Not implemented!";
+            break;
+    }
 }
 };
 

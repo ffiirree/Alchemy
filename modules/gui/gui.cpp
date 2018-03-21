@@ -1,5 +1,7 @@
 #include "gui.h"
+#include <fstream>
 #include "jpeg.h"
+#include "png.h"
 
 #ifdef __unix__
 #ifdef USE_GTK2
@@ -13,10 +15,31 @@
 
 namespace alchemy{
 
+static ImageFormat imformat(const std::string& filename)
+{
+	std::ifstream file(filename, std::ios::in | std::ios::binary);
+	if(!file.is_open()) return static_cast<ImageFormat>(0);
+
+	uint8_t buf[5];
+	file.read(reinterpret_cast<char *>(buf), 4);
+	if(buf[0] == 0xff && buf[1] == 0xd8) return JPEG;
+	if(buf[0] == 0x47 && buf[1] == 0x49 && buf[2] == 0x46) return GIF;
+	if(buf[0] == 0x89 && buf[1] == 0x50 && buf[2] == 0x4e && buf[3] == 0x47) return PNG;
+
+    return static_cast<ImageFormat>(0);
+}
+
 Matrix imread(const std::string& filename)
 {
 	Matrix temp;
-	read_JPEG_file(filename.c_str(), temp);
+
+	switch(imformat(filename)) {
+		case JPEG: read_JPEG_file(filename.c_str(), temp); break;
+		case GIF: LOG(FATAL) << "Not implemented!";
+		case PNG: read_PNG_file(filename.c_str(), temp); break;
+		default: LOG(FATAL) << "Not implemented!"; break;
+	}
+
 	return temp;
 }
 

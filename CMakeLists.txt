@@ -198,6 +198,18 @@ else()
     log("    libjpeg:" NO)
 endif()
 
+if(USE_ZLIB)
+    log("    zlib:" YES)
+else()
+    log("    zlib:" NO)
+endif()
+
+if(USE_PNG)
+	log("    libpng:" YES)
+else()
+	log("    libpng:" NO)
+endif()
+
 if(USE_FFTW)
     log("    FFTW:" YES)
 else()

@@ -79,6 +79,7 @@ void Filler<T>::constant_fill(int count, T *ptr, const T value)
     vector_set(count, value, ptr);
 }
 
+template class Filler<uint8_t>;
 template class Filler<float>;
 template class Filler<double>;
 }

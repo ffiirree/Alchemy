@@ -128,6 +128,16 @@ template <typename _Tp> void threshold(_Matrix<_Tp> &src, _Matrix<_Tp>& dst, dou
 ///////////////////////////////////////////////Image Pyramid/////////////////////////////////////////////////////
 template <typename _Tp> void pyrUp(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst);
 template <typename _Tp> void pyrDown(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+enum  {
+	GRAY_SCALE_INVARIANCE = 0x01,
+	ROTATION_INVARIANCE = 0x02,
+	UNIFORM_PATTERN = 0x04
+};
+
+// only: r = 1, P = 8
+template <typename _Tp> void LBP(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, int r, int P, int mode = GRAY_SCALE_INVARIANCE, int borderType = BORDER_DEFAULT);
 }
 
 #include "imgproc.hpp"

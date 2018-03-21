@@ -36,6 +36,10 @@ enum BorderTypes {
     BORDER_DEFAULT = BORDER_REFLECT_101,    //!< same as BORDER_REFLECT_101
 };
 
+enum ImageFormat {
+    JPEG = 0x01, GIF, PNG, WEBP
+};
+
 // Method of boundary processing.
 #define BORDER_REPLICATE_CALLBACK(src)  [&](int &_i, int &_j) { \
         _i < 0 ? _i = 0 : _i >= (src).rows ? _i = (src).rows - 1 : 0;   \

@@ -49,17 +49,28 @@ elseif(UNIX)
         set(USE_FFTW OFF)
     endif()
 
-    # # libpng
-    # find_package(PNG)
-    # if(PNG_FOUND)
-    #     set(HAVE_PNG ON)
-    # endif()
+     # libzib
+     find_package(ZLIB)
+     if(ZLIB_FOUND)
+         set(HAVE_ZLIB ON)
+         set(USE_ZLIB ON)
+         include_directories(${ZLIB_INCLUDE_DIR})
+     else()
+         set(HAVE_ZLIB OFF)
+     endif()
 
-    # # libzib
-    # find_package(ZLIB)
-    # if(ZLIB_FOUND)
-    #     set(HAVE_ZLIB ON)
-    # endif()
+     # libpng
+     find_package(PNG)
+     if(PNG_FOUND)
+         set(HAVE_PNG ON)
+         set(USE_PNG ON)
+
+         include_directories(${PNG_INCLUDE_DIR})
+     else()
+         set(HAVE_PNG OFF)
+     endif()
+
+
 endif(WIN32)
 
 

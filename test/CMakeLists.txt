@@ -2,8 +2,9 @@
 #  CMakeLists.txt for test module
 # --------------------------------------------------------------
 
-set(LINK_LIBS alchemy_nn alchemy_gui alchemy_imgproc alchemy_math alchemy_util alchemy_core
+set(LINK_LIBS alchemy_nn alchemy_gui alchemy_imgproc alchemy_util alchemy_math alchemy_core
         ${FFTW_LIBRARIES} ${JPEG_LIBRARIES} ${FFMPEG_LIBRARIES}
+        ${ZLIB_LIBRARIES} ${PNG_LIBRARIES}
         ${OpenCV_LIBS} ${GTK2_LIBRARIES} ${GLOG_LIBRARIES} ${Atlas_LIBRARIES} ${NNPACK_LIBRARIES} -lpthread)
 
 if (USE_CUDA)
@@ -41,6 +42,8 @@ test(net_06_cnn)
 test(net_07_dropout)
 test(cublas)
 test(tensor)
+test(lbp)
+test(cp)
 
 test(find_contours)
 
