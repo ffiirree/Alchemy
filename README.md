@@ -60,7 +60,7 @@ cmake ..
  - [x] 实现张量类`Tensor`(也就是N维数组)
  - [x] 调整结构为: Tensor -> Layer -> Network -> Optimizer 结构
  - [x] weight/bias初始化方法: normal/uniform/xavier
- - [ ] GPU版本实现(已部分实现)
+ - [x] GPU版本实现
  - [x] L1/L2正则化
  - [x] Accuracy Layer
  - [x] Convolution Layer

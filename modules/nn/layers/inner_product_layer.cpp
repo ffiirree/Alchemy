@@ -9,7 +9,7 @@ template<typename T>
 void InnerProductLayer<T>::setup(const vector<Blob<T> *> &input,
                                  const vector<Blob<T> *> &output)
 {
-    LOG(INFO) << "Setting up " << this->param_.name();
+    LOG(INFO) << "Setting up: " << this->param_.name();
     LOG(INFO) << "input  #0: "  << input[0]->shape();
 
     auto output_size = static_cast<int>(ip_param_.output_size());
@@ -37,7 +37,7 @@ void InnerProductLayer<T>::setup(const vector<Blob<T> *> &input,
         this->learnable_params_[0] = std::make_tuple(weights_, ip_param_.wlr(), ip_param_.weight_decay()/input[0]->shape(0));
         this->learnable_params_[1] = std::make_tuple(biases_, ip_param_.blr(), 0.0);
 
-        vector_set(input[0]->shape(0), (T)1.0, biasmer_.cptr());
+        vector_set(input[0]->shape(0), (T)1.0, biasmer_.mutable_cptr());
 
         Filler<T>::fill(weights_->data(), ip_param_.weight_filler());
         Filler<T>::fill(biases_->data(), ip_param_.bias_filler());
@@ -50,7 +50,7 @@ void InnerProductLayer<T>::ForwardCPU(const vector<Blob<T>*>& input,
 {
     auto input_data = input[0]->data_cptr();
     auto weight = weights_->data_cptr();
-    auto output_data = output[0]->data_cptr();
+    auto output_data = output[0]->mutable_data_cptr();
 
     // w * x
     matrix_mul(CblasNoTrans, CblasTrans,
@@ -73,7 +73,7 @@ void InnerProductLayer<T>::BackwardCPU(const vector<Blob<T>*>& input,
     matrix_mul(CblasNoTrans, CblasNoTrans,
                M_, K_, N_,
                (T)1, output[0]->diff_cptr(), weights_->data_cptr(),
-               (T)0, input[0]->diff_cptr());
+               (T)0, input[0]->mutable_diff_cptr());
 
 
     // 计算参数的更新值
@@ -81,12 +81,12 @@ void InnerProductLayer<T>::BackwardCPU(const vector<Blob<T>*>& input,
     matrix_mul(CblasTrans, CblasNoTrans,
                N_, K_, M_,
                (T)1, output[0]->diff_cptr(), input[0]->data_cptr(),
-               (T)0, weights_->diff_cptr());
+               (T)0, weights_->mutable_diff_cptr());
 
     // biases
     matvec_mul(CblasTrans, M_, N_,
                (T)1, output[0]->diff_cptr(), biasmer_.cptr(),
-               (T)0, biases_->diff_cptr());
+               (T)0, biases_->mutable_diff_cptr());
 }
 
 template class InnerProductLayer<float>;

@@ -7,7 +7,7 @@ template<typename T>
 void Filler<T>::fill(const Tensor<T>& tensor, FillerType type)
 {
     const auto count = tensor.count();
-    const auto ptr = tensor.cptr();
+    const auto ptr = tensor.mutable_cptr();
 
     switch(type) {
         case NORMAL:

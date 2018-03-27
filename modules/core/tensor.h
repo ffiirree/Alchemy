@@ -35,8 +35,10 @@ public:
 
     inline bool empty() const { return count_ == 0; }
 
-    inline T * cptr() const { return reinterpret_cast<T *>(data_->cptr()); }
-    inline T * gptr() const { return reinterpret_cast<T *>(data_->gptr()); }
+    inline const T * cptr() const { return reinterpret_cast<const T *>(data_->cptr()); }
+    inline const T * gptr() const { return reinterpret_cast<const T *>(data_->gptr()); }
+    inline T * mutable_cptr() const { return reinterpret_cast<T *>(data_->mutable_cptr()); }
+    inline T * mutable_gptr() const { return reinterpret_cast<T *>(data_->mutable_gptr()); }
 private:
     shared_ptr<Memory> data_;
     vector<int> shape_;

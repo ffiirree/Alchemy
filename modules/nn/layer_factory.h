@@ -7,6 +7,7 @@
 #include "nn/layers/inner_product_layer.h"
 #include "nn/layers/relu_layer.h"
 #include "nn/layers/conv_layer.h"
+#include "nn/layers/cudnn_conv_layer.h"
 #include "nn/layers/pooling_layer.h"
 #include "nn/layers/sigmoid_layer.h"
 #include "nn/layers/sigmoid_cross_entropy_loss_layer.h"
@@ -32,6 +33,9 @@ public:
 
             case CONVOLUTION_LAYER:
                 return shared_ptr<Layer<T>>(new ConvolutionLayer<T>(param));
+
+            case CUDNN_CONV_LAYER:
+                return shared_ptr<Layer<T>>(new CuDNNConvolutionLayer<T>(param));
 
             case DROPOUT_LAYER:
                 return shared_ptr<Layer<T>>(new DropoutLayer<T>(param));

@@ -10,14 +10,14 @@ void InputLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
     auto batch_size = input_param_.batch_size();
     /// data
     auto images_ptr = data_.images().get();
-    cudaMemcpy(output[0]->data_gptr(),
+    cudaMemcpy(output[0]->mutable_data_gptr(),
                images_ptr + index_ * data_.image_size(),
                batch_size * data_.image_size() * sizeof(T),
                cudaMemcpyHostToDevice);
 
     /// label
     auto labels_ptr = data_.labels().get();
-    cudaMemcpy(output[1]->data_gptr(),
+    cudaMemcpy(output[1]->mutable_data_gptr(),
                labels_ptr + index_ * data_.label_size(),
                batch_size * data_.label_size() * sizeof(T),
                cudaMemcpyHostToDevice);

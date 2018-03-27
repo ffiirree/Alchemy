@@ -9,7 +9,7 @@ void InnerProductLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
 {
     auto input_data = input[0]->data_gptr();
     auto weight = weights_->data_gptr();
-    auto output_data = output[0]->data_gptr();
+    auto output_data = output[0]->mutable_data_gptr();
 
     // w * x
     matrix_mul_gpu(CblasNoTrans, CblasTrans,
@@ -32,7 +32,7 @@ void InnerProductLayer<T>::BackwardGPU(const vector<Blob<T> *> &input,
     matrix_mul_gpu(CblasNoTrans, CblasNoTrans,
                    M_, K_, N_,
                    (T)1, output[0]->diff_gptr(), weights_->data_gptr(),
-                   (T)0, input[0]->diff_gptr());
+                   (T)0, input[0]->mutable_diff_gptr());
 
 
     // 计算参数的更新值
@@ -40,12 +40,12 @@ void InnerProductLayer<T>::BackwardGPU(const vector<Blob<T> *> &input,
     matrix_mul_gpu(CblasTrans, CblasNoTrans,
                    N_, K_, M_,
                    (T)1, output[0]->diff_gptr(), input[0]->data_gptr(),
-                   (T)0, weights_->diff_gptr());
+                   (T)0, weights_->mutable_diff_gptr());
 
     // biases
     matvec_mul_gpu(CblasTrans, M_, N_,
                    (T)1, output[0]->diff_gptr(), biasmer_.gptr(),
-                   (T)0, biases_->diff_gptr());
+                   (T)0, biases_->mutable_diff_gptr());
 }
 
 template void InnerProductLayer<float>::ForwardGPU(const vector<Blob<float> *> &input, const vector<Blob<float> *> &output);

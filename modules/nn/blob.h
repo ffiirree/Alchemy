@@ -25,10 +25,15 @@ public:
     inline auto data() const { return data_; }
     inline auto diff() const { return diff_; }
 
-    inline T * data_cptr() const { return data_.cptr(); }
-    inline T * data_gptr() const { return data_.gptr(); }
-    inline T * diff_cptr() const { return diff_.cptr(); }
-    inline T * diff_gptr() const { return diff_.gptr(); }
+    inline const T * data_cptr() const { return data_.cptr(); }
+    inline const T * data_gptr() const { return data_.gptr(); }
+    inline T * mutable_data_cptr() const { return data_.mutable_cptr(); }
+    inline T * mutable_data_gptr() const { return data_.mutable_gptr(); }
+
+    inline const T * diff_cptr() const { return diff_.cptr(); }
+    inline const T * diff_gptr() const { return diff_.gptr(); }
+    inline T * mutable_diff_cptr() const { return diff_.mutable_cptr(); }
+    inline T * mutable_diff_gptr() const { return diff_.mutable_gptr(); }
 
 private:
     Tensor<T> data_;

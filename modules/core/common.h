@@ -11,6 +11,9 @@
 #include <cublas_v2.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
+#ifdef USE_CUDNN
+#include <cudnn_v7.h>
+#endif
 #endif
 
 using std::vector;
@@ -60,6 +63,11 @@ std::ostream& operator << (std::ostream& os, const vector<int>& vec);
 
 // CUDA: number of blocks for threads.
 #define CUDA_BLOCK_NUM(N) (((N) + CUDA_THREAD_NUM - 1) / CUDA_THREAD_NUM)
+
+//
+#define CUDNN_CHECK(x)      st(if((x) != CUDNN_STATUS_SUCCESS) { \
+                                LOG(FATAL) << TO_STRING(x); \
+                            })
 
 }
 

@@ -18,9 +18,12 @@ public:
     explicit Memory(int size);
     ~Memory();
 
-    inline void * cptr() { to_cpu(); return cptr_; }
-    inline void * gptr() { to_gpu(); return gptr_; }
-
+    inline const void * cptr() { to_cpu(); return (const void *)cptr_; }
+    inline const void * gptr() { to_gpu(); return (const void *)gptr_; }
+    
+    inline void * mutable_cptr() { to_cpu(); status_ = AT_CPU; return cptr_; }
+    inline void * mutable_gptr() { to_gpu(); status_ = AT_GPU; return gptr_; }
+    
     inline size_t size() const { return size_; }
 
     inline Status status() const { return status_; }

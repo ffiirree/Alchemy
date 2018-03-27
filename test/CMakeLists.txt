@@ -9,6 +9,9 @@ set(LINK_LIBS alchemy_nn alchemy_gui alchemy_imgproc alchemy_util alchemy_math a
 
 if (USE_CUDA)
     set(LINK_LIBS ${LINK_LIBS} ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
+    if(USE_CUDNN)
+        set(LINK_LIBS ${LINK_LIBS} ${CUDNN_LIBRARIES})
+    endif()
 endif ()
 
 function(test name)
@@ -40,10 +43,13 @@ test(net_04_softmax)
 test(net_05_relu)
 test(net_06_cnn)
 test(net_07_dropout)
+test(net_08_cudnn_cnn)
 test(cublas)
 test(tensor)
 test(lbp)
 test(cp)
-
+test(lenet)
 test(find_contours)
+test(conv_with_cudnn)
+test(pooling_layer)
 

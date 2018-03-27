@@ -27,8 +27,8 @@ void AccuracyLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
 
     for(auto i = 0; i < input[0]->shape(0); ++i) {
 
-        max_index_kernel<<<1, 1>>>(size, o_ptr, index_1.gptr());
-        max_index_kernel<<<1, 1>>>(size, g_ptr, index_2.gptr());
+        max_index_kernel<<<1, 1>>>(size, o_ptr, index_1.mutable_gptr());
+        max_index_kernel<<<1, 1>>>(size, g_ptr, index_2.mutable_gptr());
 
         auto _1 = index_1.cptr()[0];
         auto _2 = index_2.cptr()[0];
@@ -41,9 +41,9 @@ void AccuracyLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
     }
 
     /// cpu
-    output[0]->data_cptr()[1] += result_;
-    output[0]->data_cptr()[2] += input[0]->shape(0);
-    output[0]->data_cptr()[0] = output[0]->data_cptr()[1] / output[0]->data_cptr()[2];
+    output[0]->mutable_data_cptr()[1] += result_;
+    output[0]->mutable_data_cptr()[2] += input[0]->shape(0);
+    output[0]->mutable_data_cptr()[0] = output[0]->data_cptr()[1] / output[0]->data_cptr()[2];
 }
 
 template void AccuracyLayer<float>::ForwardGPU(const vector<Blob<float> *> &input, const vector<Blob<float> *> &output);

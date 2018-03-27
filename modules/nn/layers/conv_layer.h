@@ -23,7 +23,7 @@ public:
     virtual void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
 #endif //! USE_CUDA
 
-private:
+protected:
     ConvolutionParameter conv_param_;
     
     shared_ptr<Blob<T>> kernel_;

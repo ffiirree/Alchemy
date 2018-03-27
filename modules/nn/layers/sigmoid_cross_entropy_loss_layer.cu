@@ -20,7 +20,7 @@ void SigmoidCrossEntropyLossLayer<T>::BackwardGPU(const vector<Blob<T> *> &input
     auto sigmoid_output = sigmoid_output_[0]->data_gptr();
     auto target = input[1]->data_gptr();
     auto count = sigmoid_output_[0]->count();
-    auto diff = input[0]->diff_gptr();
+    auto diff = input[0]->mutable_diff_gptr();
 
     vector_sub_gpu(count, sigmoid_output, target, diff);
     vector_scal_gpu(count, (T)1.0/input[0]->shape(0), diff);

@@ -110,22 +110,22 @@ void Optimizer<T>::regularize()
                 if(Global::mode() == Global::CPU) {
                     vector_sign(std::get<0>(item)->count(),
                                 std::get<0>(item)->data_cptr(),
-                                sign_[i].data_cptr());
+                                sign_[i].mutable_data_cptr());
 
                     vector_axpy(std::get<0>(item)->count(),
                                 (T)(std::get<2>(item) * std::get<1>(item)),
                                 sign_[i].data_cptr(),
-                                std::get<0>(item)->diff_cptr());
+                                std::get<0>(item)->mutable_diff_cptr());
                 }
                 else {
                     vector_sign_gpu(std::get<0>(item)->count(),
                                     std::get<0>(item)->data_gptr(),
-                                    sign_[i].data_gptr());
+                                    sign_[i].mutable_data_gptr());
 
                     vector_axpy_gpu(std::get<0>(item)->count(),
                                     (T)(std::get<2>(item) * std::get<1>(item)),
                                     sign_[i].data_gptr(),
-                                    std::get<0>(item)->diff_gptr());
+                                    std::get<0>(item)->mutable_diff_gptr());
                 }
             }
             break;
@@ -136,13 +136,13 @@ void Optimizer<T>::regularize()
                     vector_axpy(std::get<0>(param)->count(),
                                 (T)(std::get<2>(param) * std::get<1>(param)),
                                 std::get<0>(param)->data_cptr(),
-                                std::get<0>(param)->diff_cptr());
+                                std::get<0>(param)->mutable_diff_cptr());
                 }
                 else {
                     vector_axpy_gpu(std::get<0>(param)->count(),
                                     (T)(std::get<2>(param) * std::get<1>(param)),
                                     std::get<0>(param)->data_gptr(),
-                                    std::get<0>(param)->diff_gptr());
+                                    std::get<0>(param)->mutable_diff_gptr());
                 }
             }
             break;

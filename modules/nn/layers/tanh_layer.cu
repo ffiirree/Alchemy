@@ -16,7 +16,7 @@ void TanhLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
 {
     const auto count = input[0]->count();
     const auto input_data = input[0]->data_gptr();
-    auto output_data = output[0]->data_gptr();
+    auto output_data = output[0]->mutable_data_gptr();
 
     tanh_kernel<<<CUDA_BLOCK_NUM(count), CUDA_THREAD_NUM>>>(count, input_data, output_data);
 }
@@ -35,8 +35,8 @@ void TanhLayer<T>::BackwardGPU(const vector<Blob<T> *> &input,
 {
     auto count = input[0]->count();
     auto output_data = output[0]->data_gptr();
-    auto input_diff = input[0]->diff_gptr();
     auto output_diff = output[0]->diff_gptr();
+    auto input_diff = input[0]->mutable_diff_gptr();
 
     dtanh_kernel<<<CUDA_BLOCK_NUM(count), CUDA_THREAD_NUM>>>(count, output_data, output_diff, input_diff);
 }

@@ -8,7 +8,7 @@ template<typename T>
 void PoolingLayer<T>::setup(const vector<Blob<T> *> &input,
                             const vector<Blob<T> *> &output)
 {
-    LOG(INFO) << "Setting up " << this->param_.name();
+    LOG(INFO) << "Setting up: " << this->param_.name();
     LOG(INFO) << "input  #0: "  << input[0]->shape();
 
     assert((size_t)input[0]->shape(2) >= pooling_param_.kernel_size());
@@ -25,7 +25,7 @@ void PoolingLayer<T>::setup(const vector<Blob<T> *> &input,
 
     output[0]->reshape({ num_in, chs_in, row_out, col_out });
     LOG(INFO) << "output #0: "  << output[0]->shape();
-    max_idx_.reshape({ num_in, chs_in, row_out, col_out });
+    max_idx_.reshape(output[0]->shape());
 }
 
 template<typename T>
@@ -41,8 +41,8 @@ void PoolingLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
     const size_t ksize = pooling_param_.kernel_size();
 
     auto input_data = input[0]->data_cptr();
-    auto output_data = output[0]->data_cptr();
-    auto max_idx = max_idx_.cptr();
+    auto output_data = output[0]->mutable_data_cptr();
+    auto max_idx = max_idx_.mutable_cptr();
 
     //
     vector_set(output[0]->count(), -std::numeric_limits<T>::max(), output_data);
@@ -70,10 +70,8 @@ void PoolingLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
                                         output_data[out_idx] = input_data[in_idx];
                                         max_idx[out_idx] = in_idx;
                                     }
-
                                 }
                             }
-
                         }
                     }
 
@@ -85,12 +83,9 @@ void PoolingLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
 
             break;
 
-        case AVERAGE:
-            break;
+        case AVERAGE: LOG(FATAL) << "Not implement!"; break;
 
-        default:
-            LOG(FATAL) << "Unknown Pooling type!";
-            break;
+        default: LOG(FATAL) << "Unknown Pooling type!"; break;
     }
 }
 
@@ -103,11 +98,11 @@ void PoolingLayer<T>::BackwardCPU(const vector<Blob<T> *> &input,
     const size_t out_rows = output[0]->shape(2);
     const size_t out_cols = output[0]->shape(3);
 
-    auto input_diff = input[0]->diff_cptr();
+    auto input_diff = input[0]->mutable_diff_cptr();
     auto output_diff = output[0]->diff_cptr();
     auto max_idx = max_idx_.cptr();
 
-    vector_set(input[0]->count(), (T)0.0, input[0]->diff_cptr());
+    vector_set(input[0]->count(), (T)0.0, input[0]->mutable_diff_cptr());
 
     switch(pooling_param_.type()) {
         case MAX:
@@ -118,10 +113,8 @@ void PoolingLayer<T>::BackwardCPU(const vector<Blob<T> *> &input,
                         for(size_t col_idx = 0; col_idx < out_cols; ++col_idx) {
 
                             size_t out_idx = row_idx * out_cols + col_idx;
-                            size_t in_idx = max_idx[out_idx];
 
-                            input_diff[in_idx] += output_diff[out_idx];
-
+                            input_diff[max_idx[out_idx]] += output_diff[out_idx];
                         }
                     }
 
@@ -132,12 +125,8 @@ void PoolingLayer<T>::BackwardCPU(const vector<Blob<T> *> &input,
             }
             break;
 
-        case AVERAGE:
-            break;
-
-        default:
-            LOG(FATAL) << "Unknown Pooling type!";
-            break;
+        case AVERAGE: LOG(FATAL) << "Not implement!"; break;
+        default: LOG(FATAL) << "Unknown Pooling type!"; break;
     }
 }
 

@@ -17,7 +17,7 @@ void ReLuLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
 {
     auto count = input[0]->count();
     auto input_data = input[0]->data_gptr();
-    auto output_data = output[0]->data_gptr();
+    auto output_data = output[0]->mutable_data_gptr();
 
     relu_kernel<<<CUDA_BLOCK_NUM(count), CUDA_THREAD_NUM>>>(count, input_data, relu_param_.alpha(), output_data);
 }
@@ -37,8 +37,8 @@ void ReLuLayer<T>::BackwardGPU(const vector<Blob<T> *> &input,
 {
     auto count = input[0]->count();
     auto input_data = input[0]->data_gptr();
-    auto input_diff = input[0]->diff_gptr();
     auto output_diff = output[0]->diff_gptr();
+    auto input_diff = input[0]->mutable_diff_gptr();
 
     drelu_kernel<<<CUDA_BLOCK_NUM(count), CUDA_THREAD_NUM>>>(count, input_data, output_diff, relu_param_.alpha(), input_diff);
 }

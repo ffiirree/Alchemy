@@ -89,6 +89,7 @@ if(CUDA_FOUND)
 
     find_package(CuDNN)
     if(CUDNN_FOUND)
+		add_definitions(-DUSE_CUDNN)
         include_directories(${CUDNN_INCLUDE_DIRS})
         set(USE_CUDNN ON)
     endif()

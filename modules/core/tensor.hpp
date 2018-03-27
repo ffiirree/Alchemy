@@ -44,11 +44,11 @@ template <typename T> Tensor<T> add(const Tensor<T>& a, const Tensor<T>& b)
 
     switch(Global::mode()) {
         case Global::CPU:
-            vector_add(a.count(), a.cptr(), b.cptr(), r.cptr());
+            vector_add(a.count(), a.cptr(), b.cptr(), r.mutable_cptr());
             break;
 
         case Global::GPU:
-            vector_add_gpu(a.count(), a.gptr(), b.gptr(), r.gptr());
+            vector_add_gpu(a.count(), a.gptr(), b.gptr(), r.mutable_gptr());
             break;
 
         default:

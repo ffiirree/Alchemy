@@ -11,6 +11,7 @@ namespace alchemy {
 enum LayerType {
     ACCURACY_LAYER,
     CONVOLUTION_LAYER,
+    CUDNN_CONV_LAYER,
     DROPOUT_LAYER,
     EUCLIDEAN_LOSS_LAYER,
     INNER_PRODUCT_LAYER,

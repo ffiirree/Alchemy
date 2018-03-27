@@ -57,7 +57,7 @@ int main()
 
     cout << "[before/0]"; print_cpu(axpy1.count(), axpy1.cptr());
     cout << "[before/1]"; print_cpu(axpy2.count(), axpy2.cptr());
-    vector_axpy_gpu(axpy1.count(), -1.f, axpy1.gptr(), axpy2.gptr());
+    vector_axpy_gpu(axpy1.count(), -1.f, axpy1.gptr(), axpy2.mutable_gptr());
     cout << "[after /1]"; print_cpu(axpy2.count(), axpy2.cptr());
     cout << "[after /1]"; print_gpu(axpy2.count(), axpy2.gptr());
     return 0;

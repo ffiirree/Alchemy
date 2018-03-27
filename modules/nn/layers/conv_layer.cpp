@@ -10,7 +10,7 @@ template<typename T>
 void ConvolutionLayer<T>::setup(const vector<Blob<T> *> &input,
                                 const vector<Blob<T> *> &output)
 {
-    LOG(INFO) << "Setting up " << this->param_.name();
+    LOG(INFO) << "Setting up: " << this->param_.name();
     LOG(INFO) << "input  #0: "  << input[0]->shape();
 
     assert((size_t)input[0]->shape(2) > conv_param_.kernel_size());
@@ -38,7 +38,7 @@ void ConvolutionLayer<T>::setup(const vector<Blob<T> *> &input,
         bias_ = LayerFactory<T>::GetSharedParam(this->param_.name(), 1);
 
         kernel_->reshape({ chs_in, chs_out, (int)ksize, (int)ksize });
-        bias_->reshape({ chs_out });
+        bias_->reshape({ chs_out }); // { 1, chs_out, 1, 1 }
 
         Filler<T>::fill(kernel_->data(), conv_param_.weight_filler());
         Filler<T>::fill(bias_->data(), conv_param_.bias_filler());
@@ -48,7 +48,7 @@ void ConvolutionLayer<T>::setup(const vector<Blob<T> *> &input,
         this->learnable_params_[1] = std::make_tuple(bias_, conv_param_.blr(), 0.0);
 
         biaser_.reshape({ 1, output[0]->count(2, 4) });
-        vector_set(biaser_.count(), (T)1.0, biaser_.cptr());
+        vector_set(biaser_.count(), (T)1.0, biaser_.mutable_cptr());
     }
 }
 
@@ -57,7 +57,7 @@ void ConvolutionLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
                                      const vector<Blob<T> *> &output)
 {
     auto input_data = input[0]->data_cptr();
-    auto output_data = output[0]->data_cptr();
+    auto output_data = output[0]->mutable_data_cptr();
     auto kernel = kernel_->data_cptr();
     auto bias = bias_->data_cptr();
     const size_t batch_size = input[0]->shape(0);
@@ -94,7 +94,7 @@ void ConvolutionLayer<T>::BackwardCPU(const vector<Blob<T> *> &input,
                                    input_size, padding_in, kernel_size,
                                    output[0]->diff_cptr(),
                                    kernel,
-                                   input[0]->diff_cptr(),
+                                   input[0]->mutable_diff_cptr(),
                                    nullptr, nullptr);
 
     nnp_convolution_kernel_gradient(nnp_convolution_algorithm_auto,
@@ -103,12 +103,12 @@ void ConvolutionLayer<T>::BackwardCPU(const vector<Blob<T> *> &input,
                                     input_size, padding_in, kernel_size,
                                     input[0]->data_cptr(),
                                     output[0]->diff_cptr(),
-                                    kernel_->diff_cptr(),
+                                    kernel_->mutable_diff_cptr(),
                                     nullptr,
                                     nullptr);
 
     //
-    vector_set(bias_->count(), (T)0.0, bias_->diff_cptr());
+    vector_set(bias_->count(), (T)0.0, bias_->mutable_diff_cptr());
 
     auto output_diff = output[0]->diff_cptr();
     auto step = output[0]->count(1, 4);
@@ -116,7 +116,7 @@ void ConvolutionLayer<T>::BackwardCPU(const vector<Blob<T> *> &input,
         matvec_mul(CblasNoTrans,
                    output[0]->shape(1), output[0]->count(2, 4),
                    (T)1.0, output_diff + i * step, biaser_.cptr(),
-                   (T)1.0, bias_->diff_cptr());
+                   (T)1.0, bias_->mutable_diff_cptr());
     }
 }
 
