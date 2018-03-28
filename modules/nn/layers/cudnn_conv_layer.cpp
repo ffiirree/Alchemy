@@ -144,12 +144,12 @@ template<typename T>
 CuDNNConvolutionLayer<T>::~CuDNNConvolutionLayer()
 {
     cudaFree(workspace_);
-    delete workspace_fwd_sizes_;
-    delete workspace_bwd_filter_sizes_;
-    delete workspace_bwd_data_sizes_;
-    delete fwd_algorithms_;
-    delete bwd_filter_algorithms_;
-    delete bwd_data_algorithms_;
+    delete[] workspace_fwd_sizes_;
+    delete[] workspace_bwd_filter_sizes_;
+    delete[] workspace_bwd_data_sizes_;
+    delete[] fwd_algorithms_;
+    delete[] bwd_filter_algorithms_;
+    delete[] bwd_data_algorithms_;
 
     CUDNN_CHECK(cudnnDestroyTensorDescriptor(bias_descriptor_));
     CUDNN_CHECK(cudnnDestroyFilterDescriptor(kernel_descriptor_));
