@@ -10,8 +10,8 @@ void SgdOptimizer<T>::optimize()
         this->net_->Forward();
         this->net_->Backward();
 
-        this->regularize();
         update();
+        this->regularize();
 
         if(iter && iter % this->param_.test_interval() == 0) {
 
@@ -37,7 +37,6 @@ void SgdOptimizer<T>::update()
             vector_axpy_gpu(std::get<0>(param)->count(), (T)-std::get<1>(param), std::get<0>(param)->diff_gptr(), std::get<0>(param)->mutable_data_gptr());
         }
     }
-
 }
 
 template class SgdOptimizer<float>;

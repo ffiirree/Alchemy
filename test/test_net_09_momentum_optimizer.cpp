@@ -83,15 +83,6 @@ int main()
                     .sigmoid_param(
                             SigmoidParameter()
                     ),
-
-//            LayerParameter()
-//                    .name("relu_01")
-//                    .type(RELU_LAYER)
-//                    .input("ip_01")
-//                    .output("sigmoid_01")
-//                    .relu_param(
-//                            ReLuParameter().alpha(-0.1)
-//                    ),
             LayerParameter()
                     .name("ip_02")
                     .type(INNER_PRODUCT_LAYER)
@@ -132,10 +123,11 @@ int main()
             .max_iter(60000)
             .test_iter(100)
             .test_interval(500)
+            .momentum(0.9)
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
-    SgdOptimizer<float> o(optimize_param);
+    NesterovOptimizer<float> o(optimize_param);
 
     o.optimize();
 

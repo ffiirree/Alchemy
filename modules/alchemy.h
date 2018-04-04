@@ -32,3 +32,6 @@
 #include "nn/layers/tanh_layer.h"
 
 #include "nn/optimizer/sgd_optimizer.h"
+#include "nn/optimizer/momentum_optimizer.h"
+#include "nn/optimizer/nesterov_optimizer.h"
+

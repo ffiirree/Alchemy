@@ -75,6 +75,7 @@ cmake ..
  - [x] Euclidean Loss Layer
  - [x] Sigmoid cross-entropy Loss Layer
  - [x] SGD Optimizer
+ - [x] Momentum Optimizer
+ - [x] Nesterov Optimizer
  - [ ] AdaDelta Optimizer
- - [ ] Nesterov Optimizer
  - [ ] Adam Optimizer

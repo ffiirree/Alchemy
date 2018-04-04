@@ -41,6 +41,9 @@ public:
     inline OptimizerParameter& mode(Global::Mode md) { Global::mode(md); return *this; }
     inline Global::Mode mode() const { return Global::mode(); }
 
+    inline OptimizerParameter& momentum(double m) { momentum_ = m; return *this; }
+    inline double momentum() const { return momentum_; }
+
 private:
 
     int epochs_ = 0;
@@ -49,6 +52,8 @@ private:
     int test_iter_ = 0;
     int max_iter_ = 0;
     int test_interval_ = 0;
+
+    double momentum_ = 0.0;
 
     RegularizationType rt_ = L2;
 
