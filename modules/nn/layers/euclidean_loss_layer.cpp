@@ -46,5 +46,4 @@ void EuclideanLossLayer<T>::BackwardCPU(const vector<Blob<T>*>& input,
 
 template class EuclideanLossLayer<float>;
 template class EuclideanLossLayer<double>;
-
 }

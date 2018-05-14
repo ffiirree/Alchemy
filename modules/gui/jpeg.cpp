@@ -64,10 +64,10 @@ GLOBAL(void) write_JPEG_file (const char * filename, alchemy::Matrix & img, int 
     /* First we supply a description of the input image.
      * Four fields of the cinfo struct must be filled in:
      */
-    cinfo.image_width = img.cols; 	/* image width and height, in pixels */
-    cinfo.image_height = img.rows;
-    cinfo.input_components = 3;		/* # of color components per pixel */
-    cinfo.in_color_space = JCS_RGB; 	/* colorspace of input image */
+    cinfo.image_width = static_cast<JDIMENSION>(img.cols); 	/* image width and height, in pixels */
+    cinfo.image_height = static_cast<JDIMENSION>(img.rows);
+    cinfo.input_components = img.channels();		/* # of color components per pixel */
+    cinfo.in_color_space = (img.channels() == 1) ? JCS_GRAYSCALE : JCS_RGB; 	/* colorspace of input image */
     /* Now use the library's routine to set default compression parameters.
      * (You must set at least cinfo.in_color_space before calling this,
      * since the defaults depend on the source color space.)

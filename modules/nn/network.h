@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_NN_NETWORK_H
 #define ALCHEMY_NN_NETWORK_H
 
+#include <fstream>
 #include <glog/logging.h>
 #include "nn/blob.h"
 #include "layer_factory.h"
@@ -36,6 +37,11 @@ public:
     ~Network() = default;
 
     double accuracy() { return output_.back()[0]->data_cptr()[0]; }
+    double loss()
+    {
+//        LOG(INFO) << input_.back()[0]->data_cptr()[0] << " " << input_.back()[1]->data_cptr()[0] << " [" << std::fabs(input_.back()[0]->data_cptr()[0] - input_.back()[1]->data_cptr()[0]) << "]";
+        return output_.back()[0]->data_cptr()[0];
+    }
 
     inline vector<tuple<shared_ptr<Blob<T>>, double, double>> learnable_params() const { return learnable_params_; };
 
@@ -47,6 +53,9 @@ public:
 
     void Forward();
     void Backward();
+
+    void save(string path);
+    void load(string path);
 
 private:
     Phase phase_ = DEFAULT;
@@ -118,6 +127,38 @@ Network<T>::Network(const NetworkParameter &param)
         const auto& lp = layers_[layer_index]->learnable_params();
         learnable_params_.insert(learnable_params_.end(), lp.begin(), lp.end());
     }
+}
+
+template <typename T>
+void Network<T>::save(string path)
+{
+    std::fstream file(path, std::ios::out | std::ios::binary);
+
+    if(!file.is_open()) LOG(FATAL) << "Open file failure.";
+
+    for(const auto& param : learnable_params_) {
+        auto blob = std::get<0>(param);
+        auto data = blob->data_cptr();
+        auto total = blob->count();
+        file.write(reinterpret_cast<const char*>(data), total * sizeof(T));
+    }
+    file.close();
+}
+
+template <typename T>
+void Network<T>::load(string path)
+{
+    std::fstream file(path, std::ios::in | std::ios::binary);
+
+    if(!file.is_open()) LOG(FATAL) << "Open file failure.";
+
+    for(auto& param : learnable_params_) {
+        auto blob = std::get<0>(param);
+        auto data = blob->mutable_data_cptr();
+        auto total = blob->count();
+        file.read(reinterpret_cast<char*>(data), total * sizeof(T));
+    }
+    file.close();
 }
 }
 

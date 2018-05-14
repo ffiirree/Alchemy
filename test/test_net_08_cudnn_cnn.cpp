@@ -5,12 +5,11 @@ using namespace std;
 
 int main()
 {
-    MnistLoader train_loader("/home/ffiirree/Code/Alchemy/resources/mnist/train-images.idx3-ubyte",
-                             "/home/ffiirree/Code/Alchemy/resources/mnist/train-labels.idx1-ubyte");
+    MnistLoader<float> train_loader("/home/ffiirree/Code/Alchemy/resources/mnist/train-images.idx3-ubyte",
+                                    "/home/ffiirree/Code/Alchemy/resources/mnist/train-labels.idx1-ubyte");
 
-    MnistLoader test_loader("/home/ffiirree/Code/Alchemy/resources/mnist/t10k-images.idx3-ubyte",
-                            "/home/ffiirree/Code/Alchemy/resources/mnist/t10k-labels.idx1-ubyte");
-
+    MnistLoader<float> test_loader("/home/ffiirree/Code/Alchemy/resources/mnist/t10k-images.idx3-ubyte",
+                                   "/home/ffiirree/Code/Alchemy/resources/mnist/t10k-labels.idx1-ubyte");
 
     vector<LayerParameter> params = {
             LayerParameter()
@@ -21,7 +20,7 @@ int main()
                     .output("label")
                     .input_param(
                             InputParameter()
-                                    .source(train_loader)
+                                    .source(&train_loader)
                                     .batch_size(10)
                                     .scale(1./255)
                     ),
@@ -33,7 +32,7 @@ int main()
                     .output("label")
                     .input_param(
                             InputParameter()
-                                    .source(test_loader)
+                                    .source(&test_loader)
                                     .batch_size(100)
                                     .scale(1./255)
                     ),

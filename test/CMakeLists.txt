@@ -53,4 +53,7 @@ test(lenet)
 test(find_contours)
 test(conv_with_cudnn)
 test(pooling_layer)
-
+test(create_picture)
+test(read_cp)
+test(sand)
+test(sand_cnn)

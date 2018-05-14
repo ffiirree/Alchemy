@@ -6,7 +6,7 @@
 namespace alchemy {
 
 template <typename T>
-struct Blob {
+class Blob {
 public:
     Blob() = default;
     explicit Blob(const vector<int>& shape);

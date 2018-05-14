@@ -73,6 +73,9 @@ public:
     virtual void optimize() = 0;
     virtual void update() = 0;
 
+    void save(string path) { net_->save(path); }
+    void load(string path) { net_->load(path); }
+
 protected:
     OptimizerParameter param_;
 

@@ -12,8 +12,3 @@ else(WIN32)
         message(NOT FOUND GTK2)
     endif(GTK2_FOUND)
 endif(WIN32)
-
-find_package(MATHGL2)
-if(MATHGL2_FOUND)
-    include_directories(MATHGL2_INCLUDE_DIR)
-endif()

@@ -16,6 +16,7 @@
 #include "nn/optimizer.h"
 #include "util/filler.h"
 #include "util/mnistloader.h"
+#include "util/sandloader.h"
 
 #include "nn/layers/accuracy_layer.h"
 #include "nn/layers/conv_layer.h"

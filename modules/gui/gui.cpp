@@ -45,10 +45,16 @@ Matrix imread(const std::string& filename)
 
 void imwrite(const std::string& filename, Matrix8u & img, int quality)
 {
-	Matrix8u rgbimg;
-	cvtColor(img, rgbimg, BGR2RGB);
+	assert(img.channels() == 1 || img.channels() == 3);
 
-	write_JPEG_file(filename.c_str(), rgbimg, quality);
+	Matrix8u image;
+	if(image.channels() == 3) {
+        cvtColor(img, image, BGR2RGB);
+        write_JPEG_file(filename.c_str(), image, quality);
+    }
+    else {
+        write_JPEG_file(filename.c_str(), img, quality);
+	}
 }
 
 void namedWindow(const std::string & name, int flags)

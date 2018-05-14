@@ -1,5 +1,6 @@
 #include "filler.h"
 #include <random>
+#include <type_traits>
 
 namespace alchemy {
 
@@ -15,7 +16,7 @@ void Filler<T>::fill(const Tensor<T>& tensor, FillerType type)
             break;
 
         case UNIFORM:
-            uniform_fill(count, ptr, -1.0, 1.0);
+            uniform_fill(count, ptr, static_cast<T>(-1.0), static_cast<T>(1.0));
             break;
 
         case XAVIER:
@@ -33,35 +34,63 @@ void Filler<T>::fill(const Tensor<T>& tensor, FillerType type)
 }
 
 template<typename T>
-void Filler<T>::uniform_fill(int count, T * ptr, double a, double b)
+void Filler<T>::constant_fill(int count, T *ptr, T value)
 {
-    std::default_random_engine random_engine(static_cast<unsigned long>(time(nullptr)));
-    std::uniform_real_distribution<double> uniform_distribution(a, b);
-
-    for(auto i = 0; i < count; ++i) {
-        ptr[i] = uniform_distribution(random_engine);
-    }
-}
-
-template<typename T>
-void Filler<T>::normal_fill(int count, T * ptr, double mean, double stddev)
-{
-    std::default_random_engine random_engine(static_cast<unsigned long>(time(nullptr)));
-    std::normal_distribution<double> normal_distribution(mean, stddev);
-
-    for(auto i = 0; i < count; ++i) {
-        ptr[i] = normal_distribution(random_engine);
-    }
+    vector_set(count, value, ptr);
 }
 
 template<typename T>
 void Filler<T>::bernoulli_fill(int count, T* ptr, double probability)
 {
-    std::default_random_engine random_engine(static_cast<unsigned long>(time(nullptr)));
+    std::random_device r;
+    std::default_random_engine random_engine(r());
     std::bernoulli_distribution bernoulli_distribution(probability);
 
     for(auto i = 0; i < count; ++i) {
         ptr[i] = bernoulli_distribution(random_engine);
+    }
+}
+
+// @ uniform_fill {
+template <typename T>
+static void __uniform_fill(int count, T *ptr, T a, T b, typename std::enable_if<std::is_floating_point<T>::value>::type * = nullptr)
+{
+    std::random_device r;
+    std::default_random_engine random_engine(r());
+    std::uniform_real_distribution<T> uniform_distribution(a, b);
+
+    for(auto i = 0; i < count; ++i) {
+        ptr[i] = uniform_distribution(random_engine);
+    }
+}
+template <typename T>
+static void __uniform_fill(int count, T *ptr, T a, T b, typename std::enable_if<std::is_integral<T>::value>::type * = nullptr)
+{
+    std::random_device r;
+    std::default_random_engine random_engine(r());
+    std::uniform_int_distribution<T> uniform_distribution(a, b);
+
+    for(auto i = 0; i < count; ++i) {
+        ptr[i] = uniform_distribution(random_engine);
+    }
+}
+// }
+
+template <typename T>
+void Filler<T>::uniform_fill(int count, T *ptr, T a, T b)
+{
+    __uniform_fill(count, ptr, a, b);
+}
+
+template<typename T>
+void Filler<T>::normal_fill(int count, T * ptr, double mean, double stddev)
+{
+    std::random_device r;
+    std::default_random_engine random_engine(r());
+    std::normal_distribution<double> normal_distribution(mean, stddev);
+
+    for(auto i = 0; i < count; ++i) {
+        ptr[i] = normal_distribution(random_engine);
     }
 }
 
@@ -71,12 +100,6 @@ void Filler<T>::xavier_fill(int count, T *ptr, int N)
     const double scale = std::sqrt(3.0/N);
 
     uniform_fill(count, ptr, -scale, scale);
-}
-
-template<typename T>
-void Filler<T>::constant_fill(int count, T *ptr, const T value)
-{
-    vector_set(count, value, ptr);
 }
 
 template class Filler<uint8_t>;

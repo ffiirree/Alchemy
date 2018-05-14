@@ -18,7 +18,9 @@ void SgdOptimizer<T>::optimize()
             for(auto test_iter = 0; test_iter < this->param_.test_iter(); ++test_iter) {
                 this->test_net_->Forward();
             }
-            LOG(INFO) << "Iteration " << std::setw(6) << std::setfill(' ') << iter << " : accuracy=" << this->test_net_->accuracy();
+            LOG(INFO) << "Iteration " << std::setw(6) << std::setfill(' ') << iter
+                      << " : accuracy=" << std::setw(9) << std::left << std::setfill(' ') << this->test_net_->accuracy()
+                      << " , loss=" << this->net_->loss();
         }
     }
 }

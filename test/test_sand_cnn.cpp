@@ -3,16 +3,14 @@
 using namespace alchemy;
 using namespace std;
 
-//// CPU: batch #10, iter #60000, accuracy > 0.9833
-//// GPU: batch #10, iter #40000, accuracy > 0.98
+
 int main()
 {
-    MnistLoader<float> train_loader("/home/ffiirree/Code/Alchemy/resources/mnist/train-images.idx3-ubyte",
-                             "/home/ffiirree/Code/Alchemy/resources/mnist/train-labels.idx1-ubyte");
+    SandLoader<float> train_loader("/home/ffiirree/Code/Alchemy/resources/train_images_20k.ubyte",
+                                   "/home/ffiirree/Code/Alchemy/resources/train_labels_20k.ubyte");
 
-    MnistLoader<float> test_loader("/home/ffiirree/Code/Alchemy/resources/mnist/t10k-images.idx3-ubyte",
-                            "/home/ffiirree/Code/Alchemy/resources/mnist/t10k-labels.idx1-ubyte");
-
+    SandLoader<float> test_loader("/home/ffiirree/Code/Alchemy/resources/test_images_10k.ubyte",
+                                  "/home/ffiirree/Code/Alchemy/resources/test_labels_10k.ubyte");
 
     vector<LayerParameter> params = {
             LayerParameter()
@@ -24,7 +22,7 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(&train_loader)
-                                    .batch_size(10)
+                                    .batch_size(1)
                                     .scale(1./255)
                     ),
             LayerParameter()
@@ -50,7 +48,6 @@ int main()
                                     .kernel_size(5)
                                     .wlr(1)
                                     .blr(2)
-//                                    .weight_decay(0.05)
                                     .weight_filler(XAVIER)
                                     .bias_filler(CONSTANT)
                     ),
@@ -66,77 +63,57 @@ int main()
                                     .type(MAX)
                     ),
             LayerParameter()
-                    .name("conv_02")
-                    .type(CUDNN_CONV_LAYER)
-                    .input("data")
-                    .output("conv_02")
-                    .conv_param(
-                            ConvolutionParameter()
-                                    .output_size(50)
-                                    .kernel_size(5)
-                                    .wlr(1)
-                                    .blr(2)
-//                                    .weight_decay(0.05)
-                                    .weight_filler(XAVIER)
-                                    .bias_filler(CONSTANT)
-                    ),
-            LayerParameter()
-                    .name("pool_02")
-                    .type(POOLING_LAYER)
-                    .input("conv_02")
-                    .output("pool_02")
-                    .pooling_param(
-                            PoolingParameter()
-                                    .kernel_size(2)
-                                    .stride(2)
-                                    .type(MAX)
-                    ),
-            LayerParameter()
                     .name("ip_01")
                     .type(INNER_PRODUCT_LAYER)
-                    .input("pool_02")
+                    .input("pool_01")
                     .output("ip_01")
                     .ip_param(
                             InnerProductParameter()
-                                    .output_size(500)
-                                    .wlr(0.01)
-                                    .blr(0.02)
-//                                    .weight_decay(0.01)
+                                    .output_size(50)
+                                    .wlr(0.5)
+                                    .blr(1)
                                     .weight_filler(XAVIER)
                                     .bias_filler(CONSTANT)
                     ),
             LayerParameter()
-                    .name("relu_01")
-                    .type(RELU_LAYER)
+                    .name("sigmoid_01")
+                    .type(SIGMOID_LAYER)
                     .input("ip_01")
-                    .output("act_01")
-                    .relu_param(
-                            ReLuParameter()
-                                    .alpha(-0.1)
+                    .output("sigmoid_01")
+                    .sigmoid_param(
+                            SigmoidParameter()
                     ),
             LayerParameter()
                     .name("ip_02")
                     .type(INNER_PRODUCT_LAYER)
-                    .input("act_01")
+                    .input("sigmoid_01")
                     .output("ip_02")
                     .ip_param(
                             InnerProductParameter()
-                                    .output_size(10)
-                                    .wlr(0.01)
-                                    .blr(0.02)
-//                                    .weight_decay(0.01)
+                                    .output_size(1)
+                                    .wlr(0.5)
+                                    .blr(1)
                                     .weight_filler(XAVIER)
                                     .bias_filler(CONSTANT)
                     ),
+
+            LayerParameter()
+                    .name("sigmoid_02")
+                    .type(SIGMOID_LAYER)
+                    .input("ip_02")
+                    .output("sigmoid_02")
+                    .sigmoid_param(
+                            SigmoidParameter()
+                    ),
             LayerParameter()
                     .name("loss")
-                    .type(SOFTMAX_LOSS_LAYER)
+                    .type(EUCLIDEAN_LOSS_LAYER)
                     .phase(TRAIN)
-                    .input("ip_02")
+                    .input("sigmoid_02")
                     .input("label")
                     .output("loss")
-                    .softmax_loss_param(
-                            SoftmaxLossParameter()
+                    .euclidean_param(
+                            EuclideanLossParameter()
                     ),
             LayerParameter()
                     .name("accuracy")
@@ -152,15 +129,18 @@ int main()
 
     auto optimize_param = OptimizerParameter()
             .mode(Global::GPU)
-            .max_iter(50000)
-            .test_iter(100)
-            .test_interval(200)
+            .max_iter(10000)
+            .test_iter(1)
+            .test_interval(1)
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
     SgdOptimizer<float> o(optimize_param);
 
+
+//    o.load("/home/ffiirree/Code/Alchemy/resources/train_.bin");
     o.optimize();
+//    o.save("/home/ffiirree/Code/Alchemy/resources/train_.bin");
 
     return 0;
 }

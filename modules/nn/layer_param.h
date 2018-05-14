@@ -117,15 +117,15 @@ public:
     inline size_t batch_size() const { return batch_size_; }
 
     /// data
-    inline InputParameter& source(MnistLoader& loader) { source_ = loader; return  *this; }
-    inline MnistLoader source() const { return source_; };
+    inline InputParameter& source(Loader* loader) { source_ = loader; return  *this; }
+    inline Loader* source() const { return source_; };
 
     /// scale
     inline InputParameter& scale(double scale) { scale_ = scale; return *this; }
     inline double scale() const { return scale_; }
 
 private:
-    MnistLoader source_;
+    Loader *source_{nullptr};
 
     size_t batch_size_ = 1;
     double scale_ = 1.0;

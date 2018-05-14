@@ -10,23 +10,25 @@ void InputLayer<T>::setup(const vector<Blob<T> *> &input,
 {
     LOG(INFO) << "Setting up: " << this->param_.name();
 
+    auto source = input_param_.source();
+
     output[0]->reshape({ static_cast<int>(input_param_.batch_size()),
-                         static_cast<int>(data_.chs()),
-                         static_cast<int>(data_.rows()),
-                         static_cast<int>(data_.cols())
+                         static_cast<int>(source->chs()),
+                         static_cast<int>(source->rows()),
+                         static_cast<int>(source->cols())
                        });
     LOG(INFO) << "output #0: "  << output[0]->shape();
     output[1]->reshape({ static_cast<int>(input_param_.batch_size()),
                          1,
-                         static_cast<int>(data_.classification_num()),
+                         static_cast<int>(source->classification_num()),
                          1
                        });
     LOG(INFO) << "output #1: " << output[1]->shape();
 
-    data_num_ = data_.size();
-    vector_scal(static_cast<const int>(data_.size() * data_.image_size()),
+    data_num_ = source->size();
+    vector_scal(static_cast<const int>(source->size() * source->image_size()),
                 (T)input_param_.scale(),
-                data_.images().get());
+                (T*)source->images().get());
 }
 
 template<typename T>
@@ -34,20 +36,25 @@ void InputLayer<T>::ForwardCPU(const vector<Blob<T>*>& input,
                                const vector<Blob<T>*>& output)
 {
     auto batch_size = input_param_.batch_size();
+
+    auto source = input_param_.source();
+    if(!source->hasNext(static_cast<int>(batch_size))) source->reset();
+
+    auto data_pair = source->next(static_cast<int>(batch_size));
+
     /// data
-    auto images_ptr = data_.images().get();
     memmove(output[0]->mutable_data_cptr(),
-            images_ptr + index_ * data_.image_size(),
-            batch_size * data_.image_size() * sizeof(T));
+            data_pair.first,
+            batch_size * source->image_size() * sizeof(T));
+
+//    print_cpu(output[0]->count(), output[0]->data_cptr());
 
     /// label
-    auto labels_ptr = data_.labels().get();
     memmove(output[1]->mutable_data_cptr(),
-            labels_ptr + index_ * data_.label_size(),
-            batch_size * data_.label_size() * sizeof(T));
+            data_pair.second,
+            batch_size * source->label_size() * sizeof(T));
 
-    index_ = (index_ + batch_size) % data_num_;
-    if(data_num_ - index_ < batch_size) index_ = 0;
+//    print_cpu(output[1]->count(), output[1]->data_cptr());
 }
 
 template class InputLayer<float>;

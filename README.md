@@ -14,8 +14,16 @@ Alchemy 是一个使用C++编写的CV库，包含传统算法和机器学习算�
 - CUDA 9.0/cuDNN 7: GPU计算，安装见官网
 - Boost: C++通用库，`sudo apt install libboost-all-dev`
 - Glog: 日志，方便调试， `sudo apt install libgoogle-glog-dev`
-- [NNPACK](https://github.com/Maratyszcza/NNPACK), CPU快速计算卷积，安装见github
-- [MathGL2](http://mathgl.sourceforge.net/doc_en/Main.html): 数据可视化，使用`CMake`从源码编译安装
+- [NNPACK](https://github.com/Maratyszcza/NNPACK), CPU快速计算卷积
+```
+git clone https://github.com/Maratyszcza/NNPACK.git
+cd NNPACK
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+```
 ### 可选
 - OpenCV
 
