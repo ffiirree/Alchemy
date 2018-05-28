@@ -15,12 +15,12 @@ int main()
         1, -4, 1,
         0,  1, 0
     };
-    alchemy::copyMakeBorder(ker, kernelR, 0, image.rows - 3, 0, image.cols - 3);
+    alchemy::copyMakeBorder(ker, kernelR, 0, image.rows_ - 3, 0, image.cols_ - 3);
     alchemy::dft(kernelR, OutputKernel);
 
-    alchemy::Matrix64f BackImage(image.rows, image.cols, 2, alchemy::Scalar{ 0, 0 });
-    for (auto i = 0; i < image.rows; ++i) {
-        for (auto j = 0; j < image.cols; ++j) {
+    alchemy::Matrix64f BackImage(image.rows_, image.cols_, 2, alchemy::Scalar{ 0, 0 });
+    for (auto i = 0; i < image.rows_; ++i) {
+        for (auto j = 0; j < image.cols_; ++j) {
             BackImage.at<alchemy::Complex>(i, j) = OutputImage.at<alchemy::Complex>(i, j) * OutputKernel.at<alchemy::Complex>(i, j);
         }
     }

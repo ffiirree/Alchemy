@@ -12,19 +12,24 @@ public:
             : Layer<T>(param), tanh_param_(param.tanh_param()) { }
     virtual ~TanhLayer() = default;
 
-    virtual void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output);
+    void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) override;
 
-    virtual void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+    void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
 
-#ifdef USE_CUDA
-    virtual void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+#ifdef __CUDACC__
+    void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
 #endif //! USE_CUDA
 
 private:
     TanhParameter tanh_param_{};
 };
 }
+
+#include "tanh_layer.hpp"
+#ifdef __CUDACC__
+#include "tanh_layer.cuh"
+#endif//! __CUDACC__
 
 #endif //! ALCHEMY_NN_LAYERS_TANH_LAYER_H

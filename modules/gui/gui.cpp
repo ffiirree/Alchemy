@@ -64,7 +64,7 @@ void namedWindow(const std::string & name, int flags)
 
 void imshow(const std::string & name, const Matrix8u & mat)
 {
-	assert(mat.cols != 0 && mat.rows != 0 && mat.data != nullptr);
+	assert(mat.cols_ != 0 && mat.rows_ != 0 && mat.ptr_ != nullptr);
 	assert(mat.channels() == 1 || mat.channels() == 3);
 	assert(!name.empty());
 

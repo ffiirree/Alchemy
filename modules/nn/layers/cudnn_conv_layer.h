@@ -24,10 +24,10 @@ public:
             : ConvolutionLayer<T>(param) { }
     virtual ~CuDNNConvolutionLayer();
 
-    virtual void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output);
+    void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) override;
 
-    virtual void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+    void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
 
 private:
     cudnnHandle_t cudnn_{};
@@ -44,9 +44,11 @@ private:
     size_t * workspace_bwd_data_sizes_ = nullptr;
     size_t * workspace_bwd_filter_sizes_ = nullptr;
     void * workspace_ = nullptr;
-
 };
-
 }
 
+#include "cudnn_conv_layer.hpp"
+#ifdef __CUDACC__
+#include "cudnn_conv_layer.cuh"
+#endif //! __CUDACC__
 #endif //! ALCHEMY_NN_LAYERS_CUDNN_CONV_LAYER_H

@@ -13,21 +13,24 @@ public:
             : Layer<T>(param), dropout_param_(param.dropout_param()) { }
     virtual ~DropoutLayer() = default;
 
-    virtual void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output);
+    void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) override;
 
-    virtual void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+    void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
 
 #ifdef USE_CUDA
-    virtual void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+    void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
 #endif //! USE_CUDA
 
 private:
     DropoutParameter dropout_param_;
-
     Tensor<T> filter_;
 };
 }
 
+#include "dropout_layer.hpp"
+#ifdef __CUDACC__
+#include "dropout_layer.cuh"
+#endif //! __CUDACC__
 #endif //! ALCHEMY_NN_LAYERS_DROPOUT_LAYER_H

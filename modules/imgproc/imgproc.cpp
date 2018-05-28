@@ -14,10 +14,10 @@ void convertImage(const Matrix8u *src, Matrix8u *dst, int flags)
     if (dst->shape() != src->shape())
         dst->create(src->shape());
 
-    for (auto i = 0; i < src->rows; ++i)
-        for (auto j = 0; j < src->cols; ++j)
+    for (auto i = 0; i < src->rows_; ++i)
+        for (auto j = 0; j < src->cols_; ++j)
             for (auto k = 0; k < src->channels(); ++k)
-                dst->at(i, j, k) = src->at(src->rows - i - 1, j, k);
+                dst->at(i, j, k) = src->at(src->rows_ - i - 1, j, k);
 }
 
 Matrix64f Gaussian(Size ksize, double sigmaX, double sigmaY)
@@ -34,8 +34,8 @@ Matrix64f Gaussian(Size ksize, double sigmaX, double sigmaY)
 
     double alpha = 0;
 
-    for (int i = 0; i < kernel.rows; ++i) {
-        for (int j = 0; j < kernel.cols; ++j) {
+    for (int i = 0; i < kernel.rows_; ++i) {
+        for (int j = 0; j < kernel.cols_; ++j) {
             auto z = std::pow((i - x), 2)/(2.0 * std::pow(sigmaX, 2)) + std::pow((j - y), 2)/(2.0 * std::pow(sigmaY, 2));
             alpha += kernel.at<double>(i, j) = exp(-z);
         }
@@ -254,9 +254,9 @@ void _fft(Matrix64f & src, Ft ft)
 void dft(const Matrix64f & src, Matrix64f & dst)
 {
 #ifdef USE_FFTW
-    dst = Matrix64f::zeros(src.rows, src.cols, 2);
+    dst = Matrix64f::zeros(src.rows_, src.cols_, 2);
 
-    const auto plan = fftw_plan_dft_r2c_2d(src.rows, src.cols, const_cast<double *>(src.ptr()), reinterpret_cast<fftw_complex *>(dst.ptr()), FFTW_ESTIMATE);
+    const auto plan = fftw_plan_dft_r2c_2d(src.rows_, src.cols_, const_cast<double *>(src.ptr()), reinterpret_cast<fftw_complex *>(dst.ptr()), FFTW_ESTIMATE);
     fftw_execute(plan);
 
     // Destory and cleanup.
@@ -286,9 +286,9 @@ void dft(const Matrix64f & src, Matrix64f & dst)
 void idft(Matrix64f & src, Matrix64f & dst)
 {
 #ifdef USE_FFTW
-    dst = Matrix64f::zeros(src.rows, src.cols, 1);
+    dst = Matrix64f::zeros(src.rows_, src.cols_, 1);
 
-    const auto p3 = fftw_plan_dft_c2r_2d(src.rows, src.cols, reinterpret_cast<fftw_complex *>(src.ptr()), reinterpret_cast<double *>(dst.ptr()), FFTW_ESTIMATE);
+    const auto p3 = fftw_plan_dft_c2r_2d(src.rows_, src.cols_, reinterpret_cast<fftw_complex *>(src.ptr()), reinterpret_cast<double *>(dst.ptr()), FFTW_ESTIMATE);
     fftw_execute(p3);
     dst /= dst.size();
 

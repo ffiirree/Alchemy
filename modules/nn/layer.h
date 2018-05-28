@@ -2,6 +2,7 @@
 #define ALCHEMY_NN_LAYER_H
 
 #include <cassert>
+#include <glog/logging.h>
 #include "nn/blob.h"
 #include "nn/layer_param.h"
 
@@ -18,18 +19,19 @@ public:
 
     virtual void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) = 0;
 
-    inline LayerParameter parameter() const { return param_; }
+    inline LayerParameter params() const { return param_; }
 
     inline decltype(auto) learnable_params() const { return learnable_params_; }
 
     void Forward(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
     void Backward(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
 
-    virtual void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) { ForwardCPU(input, output); }
+
     virtual void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) = 0;
+    virtual void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) = 0;
 
     virtual void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) { BackwardCPU(input, output); }
-    virtual void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) = 0;
+    virtual void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) { ForwardCPU(input, output); }
 
 protected:
     Tensor<T> loss_;

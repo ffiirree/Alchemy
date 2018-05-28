@@ -61,7 +61,7 @@ private:
     NetworkParameter test_net_param_{};
 };
 
-template <typename T>
+template <typename Device, typename T>
 class Optimizer {
     using LayerType = Layer<T>;
 public:
@@ -85,17 +85,17 @@ protected:
     shared_ptr<Network<T>> test_net_;
 };
 
-template<typename T>
-Optimizer<T>::Optimizer(const OptimizerParameter &param)
+template <typename Device, typename T>
+Optimizer<Device, T>::Optimizer(const OptimizerParameter &param)
 {
     param_ = param;
 
     LOG(INFO) << "Mode: " << ((Global::mode() == Global::Mode::CPU) ? "CPU": "GPU");
 
-    LOG(INFO) << "====== TRAINING NETWORK ======";
+    LOG(INFO) << "========= TRAINING NETWORK =========";
     net_.reset(new Network<T>(param.train_net_param()));
 
-    LOG(INFO) << "====== TEST NETWORK ======";
+    LOG(INFO) << "========= TEST NETWORK =========";
     test_net_.reset(new Network<T>(param.test_net_param()));
 
     /// setting
@@ -105,8 +105,8 @@ Optimizer<T>::Optimizer(const OptimizerParameter &param)
     }
 }
 
-template<typename T>
-void Optimizer<T>::regularize()
+template <typename Device, typename T>
+void Optimizer<Device, T>::regularize()
 {
     const auto& learnable_params = net_->learnable_params();
 

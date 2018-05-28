@@ -228,7 +228,7 @@ public:
      * @brief Returns true if the array has no elements.
      * The method returns true if the data == nullptr.
      */
-    bool empty() const { return !data || !size(); }
+    bool empty() const { return !ptr_ || !size(); }
 
     /**
      * @brief Returns the total number of array elements.
@@ -237,7 +237,7 @@ public:
     size_t count() const { return size_ * channels(); }
     size_t size() const { return size_; }
 
-    MatrixShape shape() const { return { rows, cols, channels() }; }
+    MatrixShape shape() const { return { rows_, cols_, channels() }; }
 
     /**
      * @brief Returns the size of the array element.
@@ -356,15 +356,15 @@ public:
     void swap(int32_t i0, int32_t j0, int32_t i1, int32_t j1);
 
     // Number of rows.
-    int rows = 0;
+    int rows_ = 0;
     // Number of columns.
-    int cols = 0;
+    int cols_ = 0;
 
     // Data area
-    uint8_t *data = nullptr;
+    uint8_t *ptr_ = nullptr;
 
     // Length of rows.
-    int step = 0;
+    int step_ = 0;
 
 private:
     int refAdd(int *addr, int delta);

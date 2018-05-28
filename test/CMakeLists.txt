@@ -7,7 +7,7 @@ set(LINK_LIBS alchemy_nn alchemy_gui alchemy_imgproc alchemy_util alchemy_math a
         ${ZLIB_LIBRARIES} ${PNG_LIBRARIES}
         ${OpenCV_LIBS} ${GTK2_LIBRARIES} ${GLOG_LIBRARIES} ${Atlas_LIBRARIES} ${NNPACK_LIBRARIES} -lpthread)
 
-if (USE_CUDA)
+if (USE_CUDA AND CUDA_FOUND)
     set(LINK_LIBS ${LINK_LIBS} ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
     if(USE_CUDNN)
         set(LINK_LIBS ${LINK_LIBS} ${CUDNN_LIBRARIES})
@@ -15,7 +15,12 @@ if (USE_CUDA)
 endif ()
 
 function(test name)
-    add_executable(test_${name} test_${name}.cpp)
+    if (USE_CUDA AND CUDA_FOUND)
+        set_source_files_properties(test_${name}.cpp PROPERTIES CUDA_SOURCE_PROPERTY_FORMAT OBJ)
+        cuda_add_executable(test_${name} test_${name}.cpp)
+    else()
+        add_executable(test_${name} test_${name}.cpp)
+    endif()
     target_link_libraries(test_${name} ${LINK_LIBS})
 
     add_test(TEST_${name} ${EXECUTABLE_OUTPUT_PATH}/test_${name})

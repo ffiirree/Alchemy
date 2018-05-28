@@ -100,8 +100,8 @@ void __sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, _Matrix<_Tp>&dstGD, int dx, int
     unsigned char * dstGDPtr = nullptr;
     double ang = 0;
 
-    for (int i = 0; i < dst.rows; ++i) {
-        for (int j = 0; j < dst.cols; ++j) {
+    for (int i = 0; i < dst.rows_; ++i) {
+        for (int j = 0; j < dst.cols_; ++j) {
 
             memset(tempGx, 0, src.channels() * sizeof(int));
             memset(tempGy, 0, src.channels() * sizeof(int));
@@ -112,8 +112,8 @@ void __sobel(_Matrix<_Tp>&src, _Matrix<_Tp>&dst, _Matrix<_Tp>&dstGD, int dx, int
                     auto _i = i - m + ii;
                     auto _j = j - n + jj;
 
-                    if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows) &&
-                          static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
+                    if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows_) &&
+                          static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols_))) {
                         callback(_i, _j);
                     }
 

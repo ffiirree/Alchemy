@@ -15,7 +15,7 @@ int main()
     cudnnCreate(&handle);
 
     // input
-    Tensor<float> input({ 1, image.channels(), image.rows, image.cols });
+    Tensor<float> input({ 1, image.channels(), image.rows_, image.cols_ });
     Memory::copy(image_float.count() * sizeof(float), input.mutable_gptr(), image_float.ptr());
 
     cudnnTensorDescriptor_t input_descriptor;

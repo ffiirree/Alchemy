@@ -126,7 +126,7 @@ int main()
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
-    NesterovOptimizer<float> o(optimize_param);
+    NesterovOptimizer<GPU, float> o(optimize_param);
 
     o.optimize();
 

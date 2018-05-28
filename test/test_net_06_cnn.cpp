@@ -13,7 +13,7 @@ int main()
 
     vector<LayerParameter> params = {
             LayerParameter()
-                    .name("train input layer")
+                    .name("mnist_train")
                     .type(INPUT_LAYER)
                     .phase(TRAIN)
                     .output("data")
@@ -25,7 +25,7 @@ int main()
                                     .scale(1./255)
                     ),
             LayerParameter()
-                    .name("test input layer")
+                    .name("mnist_test")
                     .type(INPUT_LAYER)
                     .phase(TEST)
                     .output("data")
@@ -37,10 +37,10 @@ int main()
                                     .scale(1./255)
                     ),
             LayerParameter()
-                    .name("conv layer 1")
+                    .name("conv_layer_01")
                     .type(CONVOLUTION_LAYER)
                     .input("data")
-                    .output("conv1")
+                    .output("conv_01")
                     .conv_param(
                             ConvolutionParameter()
                                     .output_size(20)
@@ -52,10 +52,10 @@ int main()
                                     .bias_filler(XAVIER)
                     ),
             LayerParameter()
-                    .name("pooling layer 1")
+                    .name("pooling_layer_01")
                     .type(POOLING_LAYER)
-                    .input("conv1")
-                    .output("p1")
+                    .input("conv_01")
+                    .output("pooling_01")
                     .pooling_param(
                             PoolingParameter()
                                     .kernel_size(2)
@@ -63,10 +63,10 @@ int main()
                                     .type(MAX)
                     ),
             LayerParameter()
-                    .name("ip1")
+                    .name("ip_layer_01")
                     .type(INNER_PRODUCT_LAYER)
-                    .input("p1")
-                    .output("ip1")
+                    .input("pooling_01")
+                    .output("ip_01")
                     .ip_param(
                             InnerProductParameter()
                                     .output_size(100)
@@ -77,18 +77,18 @@ int main()
                                     .bias_filler(XAVIER)
                     ),
             LayerParameter()
-                    .name("sigmoid layer 1")
+                    .name("sigmoid_layer_01")
                     .type(SIGMOID_LAYER)
-                    .input("ip1")
-                    .output("s1")
+                    .input("ip_01")
+                    .output("sigmoid_01")
                     .sigmoid_param(
                             SigmoidParameter()
                     ),
             LayerParameter()
-                    .name("ip2")
+                    .name("ip_layer_02")
                     .type(INNER_PRODUCT_LAYER)
-                    .input("s1")
-                    .output("ip2")
+                    .input("sigmoid_01")
+                    .output("ip_02")
                     .ip_param(
                             InnerProductParameter()
                                     .output_size(10)
@@ -98,20 +98,20 @@ int main()
                                     .bias_filler(XAVIER)
                     ),
             LayerParameter()
-                    .name("scel layer")
+                    .name("loss")
                     .type(SIGMOID_CROSS_ENTORPY_LOSS_LAYER)
                     .phase(TRAIN)
-                    .input("ip2")
+                    .input("ip_02")
                     .input("label")
                     .output("loss")
                     .euclidean_param(
                             EuclideanLossParameter()
                     ),
             LayerParameter()
-                    .name("acc layer")
+                    .name("accuracy")
                     .type(ACCURACY_LAYER)
                     .phase(TEST)
-                    .input("ip2")
+                    .input("ip_02")
                     .input("label")
                     .output("accuracy")
                     .accuracy_param(
@@ -127,7 +127,7 @@ int main()
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
-    SgdOptimizer<float> o(optimize_param);
+    SgdOptimizer<GPU, float> o(optimize_param);
 
     o.optimize();
 

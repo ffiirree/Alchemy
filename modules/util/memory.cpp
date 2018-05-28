@@ -96,7 +96,7 @@ void Memory::free_host(void *ptr)
 void Memory::malloc_device(void ** ptr, size_t size)
 {
 #ifdef USE_CUDA
-    cudaMalloc(ptr, size);
+    cudaMallocManaged(ptr, size);
 #else
     LOG(FATAL) << "NO GPU!";
 #endif

@@ -40,7 +40,7 @@ int main()
                                     .scale(1./255)
                     ),
             LayerParameter()
-                    .name("conv_01")
+                    .name("cudnn_conv_01")
                     .type(CUDNN_CONV_LAYER)
                     .input("data")
                     .output("conv_01")
@@ -66,7 +66,7 @@ int main()
                                     .type(MAX)
                     ),
             LayerParameter()
-                    .name("conv_02")
+                    .name("cudnn_conv_02")
                     .type(CUDNN_CONV_LAYER)
                     .input("data")
                     .output("conv_02")
@@ -158,7 +158,7 @@ int main()
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
-    SgdOptimizer<float> o(optimize_param);
+    SgdOptimizer<GPU, float> o(optimize_param);
 
     o.optimize();
 

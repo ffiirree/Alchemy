@@ -1,5 +1,6 @@
 #include "common.h"
 #include <glog/logging.h>
+#include <iomanip>
 
 namespace alchemy {
 
@@ -38,7 +39,7 @@ std::ostream& operator << (std::ostream& os, const vector<int>& vec)
     auto size = vec.size();
     os << "[";
     for(size_t i = 0; i < size; ++i) {
-        os << vec[i] << (i == (size - 1) ? "" : ", ");
+        os << std::setw(3) << std::setfill(' ') << vec[i] << (i == (size - 1) ? "" : ", ");
     }
     os << "]";
     return os;

@@ -13,19 +13,23 @@ public:
             : Layer<T>(param), relu_param_(param.relu_param()) { }
     ~ReLuLayer() = default;
 
-    virtual void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output);
+    void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) override;
 
-    virtual void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+    void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
 
-#ifdef USE_CUDA
-    virtual void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-#endif //! USE_CUDA
+#ifdef __CUDACC__
+    void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+#endif //! __CUDACC__
 
 private:
     ReLuParameter relu_param_;
 };
 }
 
+#include "relu_layer.hpp"
+#ifdef __CUDACC__
+#include "relu_layer.cuh"
+#endif //! __CUDACC__
 #endif //! ALCHEMY_NN_LAYERS_RELU_LAYER_H

@@ -13,15 +13,15 @@ public:
             : Layer<T>(param), softmax_loss_param_(param.softmax_loss_param()) { }
     virtual ~SoftmaxLossLayer() = default;
 
-    virtual void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output);
+    void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) override;
 
-    virtual void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+    void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
 
-#ifdef USE_CUDA
-    virtual void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-#endif //! USE_CUDA
+#ifdef __CUDACC__
+    void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+#endif //! __CUDACC__
 
 private:
     SoftmaxLossParameter softmax_loss_param_{};
@@ -31,4 +31,8 @@ private:
 };
 }
 
+#include "softmax_loss_layer.hpp"
+#ifdef __CUDACC__
+#include "softmax_loss_layer.cuh"
+#endif//! __CUDACC__
 #endif //! ALCHEMY_NN_LAYERS_SOFTMAX_LOSS_LAYER_H

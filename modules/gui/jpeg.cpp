@@ -64,8 +64,8 @@ GLOBAL(void) write_JPEG_file (const char * filename, alchemy::Matrix & img, int 
     /* First we supply a description of the input image.
      * Four fields of the cinfo struct must be filled in:
      */
-    cinfo.image_width = static_cast<JDIMENSION>(img.cols); 	/* image width and height, in pixels */
-    cinfo.image_height = static_cast<JDIMENSION>(img.rows);
+    cinfo.image_width = static_cast<JDIMENSION>(img.cols_); 	/* image width and height, in pixels */
+    cinfo.image_height = static_cast<JDIMENSION>(img.rows_);
     cinfo.input_components = img.channels();		/* # of color components per pixel */
     cinfo.in_color_space = (img.channels() == 1) ? JCS_GRAYSCALE : JCS_RGB; 	/* colorspace of input image */
     /* Now use the library's routine to set default compression parameters.
@@ -93,14 +93,14 @@ GLOBAL(void) write_JPEG_file (const char * filename, alchemy::Matrix & img, int 
      * To keep things simple, we pass one scanline per call; you can pass
      * more if you wish, though.
      */
-    row_stride = img.cols * 3;	/* JSAMPLEs per row in image_buffer */
+    row_stride = img.cols_ * 3;	/* JSAMPLEs per row in image_buffer */
 
     while (cinfo.next_scanline < cinfo.image_height) {
         /* jpeg_write_scanlines expects an array of pointers to scanlines.
          * Here the array is only one element long, but you could pass
          * more than one scanline at a time if that's more convenient.
          */
-        row_pointer[0] = & img.data[cinfo.next_scanline * row_stride];
+        row_pointer[0] = & img.ptr_[cinfo.next_scanline * row_stride];
         (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
 
@@ -248,7 +248,7 @@ GLOBAL(int) read_JPEG_file(const char * filename, alchemy::Matrix & img)
         (void)jpeg_read_scanlines(&cinfo, buffer, 1);
         /* Assume put_scanline_someplace wants a pointer and sample count. */
 
-        for (int i = 0; i < img.cols; ++i) {
+        for (int i = 0; i < img.cols_; ++i) {
             img[cinfo.output_scanline - 1][i * 3 + 2] = buffer[0][i * 3 + 0];
             img[cinfo.output_scanline - 1][i * 3 + 1] = buffer[0][i * 3 + 1];
             img[cinfo.output_scanline - 1][i * 3 + 0] = buffer[0][i * 3 + 2];

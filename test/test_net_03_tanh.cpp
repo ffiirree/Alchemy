@@ -13,7 +13,7 @@ int main()
 
     vector<LayerParameter> params = {
             LayerParameter()
-                    .name("train input layer")
+                    .name("mnist_train")
                     .type(INPUT_LAYER)
                     .phase(TRAIN)
                     .output("data")
@@ -25,7 +25,7 @@ int main()
                                     .scale(1./255)
                     ),
             LayerParameter()
-                    .name("test input layer")
+                    .name("mnist_test")
                     .type(INPUT_LAYER)
                     .phase(TEST)
                     .output("data")
@@ -37,7 +37,7 @@ int main()
                                     .scale(1./255)
                     ),
             LayerParameter()
-                    .name("ip layer 1")
+                    .name("ip_layer_01")
                     .type(INNER_PRODUCT_LAYER)
                     .input("data")
                     .output("ip1")
@@ -50,7 +50,7 @@ int main()
                                     .bias_filler(XAVIER)
                     ),
             LayerParameter()
-                    .name("tanh layer 1")
+                    .name("tanh_layer_01")
                     .type(TANH_LAYER)
                     .input("ip1")
                     .output("s1")
@@ -58,7 +58,7 @@ int main()
                             SigmoidParameter()
                     ),
             LayerParameter()
-                    .name("ip layer 2")
+                    .name("ip_layer_02")
                     .type(INNER_PRODUCT_LAYER)
                     .input("s1")
                     .output("ip2")
@@ -71,7 +71,7 @@ int main()
                                     .bias_filler(XAVIER)
                     ),
             LayerParameter()
-                    .name("tanh layer 2")
+                    .name("tanh_layer_02")
                     .type(TANH_LAYER)
                     .input("ip2")
                     .output("s2")
@@ -79,7 +79,7 @@ int main()
                             SigmoidParameter()
                     ),
             LayerParameter()
-                    .name("eucl layer")
+                    .name("loss")
                     .type(EUCLIDEAN_LOSS_LAYER)
                     .phase(TRAIN)
                     .input("s2")
@@ -89,7 +89,7 @@ int main()
                             EuclideanLossParameter()
                     ),
             LayerParameter()
-                    .name("acc layer")
+                    .name("accuracy")
                     .type(ACCURACY_LAYER)
                     .phase(TEST)
                     .input("s2")
@@ -108,7 +108,7 @@ int main()
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
-    SgdOptimizer<float> o(optimize_param);
+    SgdOptimizer<GPU, float> o(optimize_param);
 
     o.optimize();
 

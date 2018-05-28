@@ -104,14 +104,14 @@ gboolean on_darea_expose (GtkWidget *widget, GdkEventExpose *event, gpointer use
     if(image->channels() == 1) {
         gdk_draw_gray_image(widget->window,
                             widget->style->fg_gc[GTK_STATE_NORMAL],
-                            0, 0, image->cols, image->rows,
-                            GDK_RGB_DITHER_NONE, image->data, image->cols);
+                            0, 0, image->cols_, image->rows_,
+                            GDK_RGB_DITHER_NONE, image->ptr_, image->cols_);
     }
     else {
         gdk_draw_rgb_image (widget->window,
                             widget->style->fg_gc[GTK_STATE_NORMAL],
-                            0, 0, image->cols, image->rows,
-                            GDK_RGB_DITHER_MAX, image->data, image->cols * 3);
+                            0, 0, image->cols_, image->rows_,
+                            GDK_RGB_DITHER_MAX, image->ptr_, image->cols_ * 3);
     }
     return true;
 }
@@ -137,7 +137,7 @@ void zShowImage(const char* name, const void* arr)
         window->image = original->clone();
     }
 
-    gtk_drawing_area_size(GTK_DRAWING_AREA(window->area), window->image.cols, window->image.rows);
+    gtk_drawing_area_size(GTK_DRAWING_AREA(window->area), window->image.cols_, window->image.rows_);
 
 
     gtk_signal_connect(GTK_OBJECT(window->area), "expose-event",

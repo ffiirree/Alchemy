@@ -134,7 +134,7 @@ int main()
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
-    SgdOptimizer<float> o(optimize_param);
+    SgdOptimizer<GPU, float> o(optimize_param);
 
     o.optimize();
 

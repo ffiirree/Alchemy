@@ -13,15 +13,15 @@ public:
             : Layer<T>(param), scel_param_(param.sigmoid_cross_entropy_loss_param()) { }
     virtual ~SigmoidCrossEntropyLossLayer() = default;
 
-    virtual void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output);
+    void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) override;
 
-    virtual void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+    void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
 
-#ifdef USE_CUDA
-    virtual void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-#endif //! USE_CUDA
+#ifdef __CUDACC__
+    void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+#endif //! __CUDACC__
 
 private:
     SigmoidCrossEntropyLossParameter scel_param_{};
@@ -31,4 +31,8 @@ private:
 };
 }
 
+#include "sigmoid_cross_entropy_loss_layer.hpp"
+#ifdef __CUDACC__
+#include "sigmoid_cross_entropy_loss_layer.cuh"
+#endif //! __CUDACC__
 #endif //! ALCHEMY_NN_LAYERS_CROSS_ENTROPY_LOSS_LAYER_H

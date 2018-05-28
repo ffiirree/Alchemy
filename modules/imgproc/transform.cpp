@@ -17,8 +17,8 @@ inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD)
     assert(src.shape() == srcGD.shape());
 
     dst = src.clone();
-    for (int i = 0; i < src.rows; ++i) {
-        for (int j = 0; j < src.cols; ++j) {
+    for (int i = 0; i < src.rows_; ++i) {
+        for (int j = 0; j < src.cols_; ++j) {
 
             auto srcptr = src.ptr(i, j);
             auto dstptr = dst.ptr(i, j);
@@ -28,28 +28,28 @@ inline void only_max(Matrix8u&src, Matrix8u&dst, Matrix8u&srcGD)
                 switch (srcGD.ptr(i, j)[k])
                 {
                     case 0:  // [j - 1 | - | j + 1 ]
-                        if (j - 1 >= 0 && j + 1 < src.cols
+                        if (j - 1 >= 0 && j + 1 < src.cols_
                             && srcptr[k] < src.ptr(i, j - 1)[k]
                             && srcptr[k] < src.ptr(i, j + 1)[k])
                             dstptr[k] = 0;
                         break;
 
                     case 45:
-                        if ((i - 1 >= 0 && j - 1 >= 0 && i + 1 < src.rows && j + 1 < src.cols)
+                        if ((i - 1 >= 0 && j - 1 >= 0 && i + 1 < src.rows_ && j + 1 < src.cols_)
                             && srcptr[k] < src.ptr(i - 1, j + 1)[k]
                             && srcptr[k] < src.ptr(i + 1, j - 1)[k])
                             dstptr[k] = 0;
                         break;
 
                     case 90:
-                        if ((i - 1 >= 0 && i + 1 < src.rows)
+                        if ((i - 1 >= 0 && i + 1 < src.rows_)
                             && srcptr[k] < src.ptr(i - 1, j)[k]
                             && srcptr[k] < src.ptr(i + 1, j)[k])
                             dstptr[k] = 0;
                         break;
 
                     case 135:
-                        if ((i - 1 >= 0 && j - 1 >= 0 && i + 1 < src.rows && j + 1 < src.cols)
+                        if ((i - 1 >= 0 && j - 1 >= 0 && i + 1 < src.rows_ && j + 1 < src.cols_)
                             && srcptr[k] < src.ptr(i - 1, j - 1)[k]
                             && srcptr[k] < src.ptr(i + 1, j + 1)[k])
                             dstptr[k] = 0;
@@ -73,8 +73,8 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
     if (src.shape() != dst.shape())
         dst.create(src.shape());
 
-    for (auto i = 0; i < src.rows; ++i) {
-        for (auto j = 0; j < src.cols; ++j) {
+    for (auto i = 0; i < src.rows_; ++i) {
+        for (auto j = 0; j < src.cols_; ++j) {
             auto ptr = src.ptr(i, j);
             auto dstPtr = dst.ptr(i, j);
 
@@ -88,12 +88,12 @@ void double_threashold(Matrix8u&src, Matrix8u&dst, double threshold1, double thr
                 }
                 else if ((i - 1 >= 0 && src.ptr(i - 1, j)[k] > maxt)                                    // up
                          || (j - 1 >= 0 && src.ptr(i, j - 1)[k] > maxt)                                      // left
-                         || (j + 1 < src.cols && src.ptr(i, j + 1)[k] > maxt)                                // right
-                         || (i + 1 < src.rows && src.ptr(i + 1, j)[k] > maxt)                                // down
+                         || (j + 1 < src.cols_ && src.ptr(i, j + 1)[k] > maxt)                                // right
+                         || (i + 1 < src.rows_ && src.ptr(i + 1, j)[k] > maxt)                                // down
                          || (i - 1 >=0  && j - 1 >= 0 && src.ptr(i - 1, j - 1)[k] > maxt)                    // up left
-                         || (i - 1 >= 0 && j + 1 < src.cols && src.ptr(i - 1, j + 1)[k] > maxt)              // up right
-                         || (i + 1 < src.rows && j + 1 < src.cols && src.ptr(i + 1, j + 1)[k] > maxt)        // down right
-                         || (i + 1 < src.rows && j - 1 >= 0 && src.ptr(i + 1, j - 1)[k] > maxt)) {           // down left
+                         || (i - 1 >= 0 && j + 1 < src.cols_ && src.ptr(i - 1, j + 1)[k] > maxt)              // up right
+                         || (i + 1 < src.rows_ && j + 1 < src.cols_ && src.ptr(i + 1, j + 1)[k] > maxt)        // down right
+                         || (i + 1 < src.rows_ && j - 1 >= 0 && src.ptr(i + 1, j - 1)[k] > maxt)) {           // down left
                     dstPtr[k] = 255;
                 }
                 else {
@@ -132,8 +132,8 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
 //	unsigned char * srcPtr = nullptr;
 //	unsigned char * dstPtr = nullptr;
 
-    for (int i = 0; i < dst.rows; ++i) {
-        for (int j = 0; j < dst.cols; ++j) {
+    for (int i = 0; i < dst.rows_; ++i) {
+        for (int j = 0; j < dst.cols_; ++j) {
 
             memset(tempGx, 0, src.channels() * sizeof(int));
             memset(tempGy, 0, src.channels() * sizeof(int));
@@ -145,7 +145,7 @@ void prewitt(Matrix8u&src, Matrix8u&dst)
                     auto _i = i - 1 + ii;
                     auto _j = j - 1 + jj;
 
-                    if (_i >=0  && _i < src.rows && _j >=0 && _j < src.cols) {
+                    if (_i >=0  && _i < src.rows_ && _j >=0 && _j < src.cols_) {
                         for (int k = 0; k < src.channels(); ++k) {
                             tempGx[k] += src.ptr(_i, _j)[k] * Gx[ii][jj];
                             tempGy[k] += src.ptr(_i, _j)[k] * Gy[ii][jj];
@@ -236,8 +236,8 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
     Point clockwise[8] = { { 0, -1 },{ -1, -1 },{ -1, 0 },{ -1, 1 },{ 0, 1 },{ 1, 1 },{ 1, 0 },{ 1, -1 } };      // 顺时针
     Point anticlockwise[8] = { { 0, -1 },{ 1, -1 },{ 1, 0 },{ 1, 1 },{ 0, 1 },{ -1, 1 },{ -1, 0 },{ -1, -1 } };  // 逆时针
 
-    for (int i = 0; i < src.rows; ++i) {
-        for (int j = 0; j < src.cols; ++j) {
+    for (int i = 0; i < src.rows_; ++i) {
+        for (int j = 0; j < src.cols_; ++j) {
 
             // step (1)
             // [ 0 | 1 ]
@@ -250,7 +250,7 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
                 p2 = { i, j - 1 };
             }
             // [ >=1 | 0 ]
-            else if (src.at(i, j) >= 1 && (j + 1 >= src.cols || !src.at(i, j + 1))) {
+            else if (src.at(i, j) >= 1 && (j + 1 >= src.cols_ || !src.at(i, j + 1))) {
                 NBD++;
                 rpos = 4;
 
@@ -267,7 +267,7 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
             for (; k < 8; ++k) {
                 Point temp_(i, j);
                 p1 = clockwise[rpos++ & 0x07] + temp_;
-                if (p1.x >= 0 && p1.y >= 0 && p1.x < src.rows && p1.y < src.cols && src.at(p1.x, p1.y))
+                if (p1.x >= 0 && p1.y >= 0 && p1.x < src.rows_ && p1.y < src.cols_ && src.at(p1.x, p1.y))
                     break;
             }
             if (k == 8) {
@@ -287,13 +287,13 @@ void findOutermostContours(Matrix8u &src, std::vector<std::vector<Point>> &dst)
                 // step (3.3)
                 for (int k2 = 0; k2 < 8; ++k2) {
                     p4 = anticlockwise[++rpos & 0x07] + p3;
-                    if (p4.x >= 0 && p4.y >= 0 && p4.x < src.rows && p4.y < src.cols && src.at(p4.x, p4.y))
+                    if (p4.x >= 0 && p4.y >= 0 && p4.x < src.rows_ && p4.y < src.cols_ && src.at(p4.x, p4.y))
                         break;
                 }
                 rpos += 4;
 
                 // step (3.4)
-                if (p3.y + 1 >= src.cols || src.at(p3.x, p3.y + 1) == 0) {
+                if (p3.y + 1 >= src.cols_ || src.at(p3.x, p3.y + 1) == 0) {
                     src.at(p3.x, p3.y) = -NBD;
                     middle_res.push_back(p3);
                 }
@@ -342,9 +342,9 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst) {
 
     Point p1, p2, p3, p4;
 
-    for(int i = 0; i < src.rows; ++i) {
+    for(int i = 0; i < src.rows_; ++i) {
         LNBD = 0;
-        for(int j = 0; j < src.cols; ++j) {
+        for(int j = 0; j < src.cols_; ++j) {
 
             // [ 0 | 1] && LNBD == -2(254)
             if(((j - 1) <= 0 || !src.at(i, j - 1)) && src.at(i, j) == 255 && (LNBD == 0 || LNBD == 254))
@@ -360,7 +360,7 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst) {
             uint8_t k = 0;
             for(; k < 8; ++k) {
                 p1 = clockwise[k] + Point(i, j);
-                if(p1.x >= 0 && p1.y >= 0 && p1.x < src.rows && p1.y < src.cols && src.at(p1.x, p1.y) != 0)
+                if(p1.x >= 0 && p1.y >= 0 && p1.x < src.rows_ && p1.y < src.cols_ && src.at(p1.x, p1.y) != 0)
                     break;
             }
             if(k == 8) {
@@ -382,13 +382,13 @@ void findContours(Matrix8u &src, std::vector<std::vector<Point>> &dst) {
                 // step (3.3)
                 for(int kk = 0; kk < 8; ++kk) {
                     p4 = anticlockwise[++rpos & 0x07] + p3;
-                    if(p4.x >= 0 && p4.y >= 0 && p4.x < src.rows && p4.y < src.cols && src.at(p4.x, p4.y))
+                    if(p4.x >= 0 && p4.y >= 0 && p4.x < src.rows_ && p4.y < src.cols_ && src.at(p4.x, p4.y))
                         break;
                 }
                 rpos += 4;
 
                 // step (3.4)
-                if(p3.y + 1 >= src.cols || src.at(p3.x, p3.y + 1) == 0) {
+                if(p3.y + 1 >= src.cols_ || src.at(p3.x, p3.y + 1) == 0) {
                     src.at(p3.x, p3.y) = 254;
                     middle_res.push_back(p3);
                 } else if(src.at(p3.x, p3.y) == 255) {

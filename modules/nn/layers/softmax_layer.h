@@ -13,14 +13,14 @@ public:
             : Layer<T>(param), softmax_param_(param.softmax_param()) { }
     virtual ~SoftmaxLayer() = default;
 
-    virtual void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output);
+    void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) override;
 
-    virtual void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+    void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
 
-#ifdef USE_CUDA
-    virtual void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    virtual void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+#ifdef __CUDACC__
+    void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
 #endif //! USE_CUDA
 
 private:
@@ -31,4 +31,8 @@ private:
 };
 }
 
+#include "softmax_layer.hpp"
+#ifdef __CUDACC__
+#include "softmax_layer.cuh"
+#endif//! __CUDACC__
 #endif //! ALCHEMY_NN_LAYERS_SOFTMAX_LAYER_H

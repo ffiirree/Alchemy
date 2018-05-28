@@ -12,7 +12,7 @@ int main()
 
     // 寻找轮廓
     std::vector<std::vector<alchemy::Point>> contours;
-    auto res = alchemy::Matrix::zeros(image.rows, image.cols, 3);
+    auto res = alchemy::Matrix::zeros(image.rows_, image.cols_, 3);
     alchemy::findContours(bin_image, contours);
 
     uint8_t r = 50, g = 100, b = 150;
@@ -28,7 +28,7 @@ int main()
     contours.clear();
     alchemy::findOutermostContours(bin_image, contours);
 
-    res = alchemy::Matrix::zeros(image.rows, image.cols, 3);
+    res = alchemy::Matrix::zeros(image.rows_, image.cols_, 3);
     for (const auto &c : contours) {
         for (const auto &j : c) {
             res.at<alchemy::Vec3u8>(j.x, j.y) = { b, g, r };

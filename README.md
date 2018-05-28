@@ -6,13 +6,12 @@ Alchemy 是一个使用C++编写的CV库，包含传统算法和机器学习算�
 ## 依赖
 ### 必须
 - libjpeg: 读取jpeg图片， `sudo apt install libjpeg8-dev`
-- libpng/zlib
+- libpng/zlib, `sudo apt install libpng-dev`
 - fftw: 进行快速傅里叶变换，`sudo apt install libfftw3-dev`
 - gtk-2.x: 显示图片使用， `sudo apt install libgtk2.0-dev`
 - FFmpeg: 读取摄像头/视频数据， `sudo apt install ffmpeg`
 - BLAS: ATLAS, `sudo apt install libatlas-base-dev`
 - CUDA 9.0/cuDNN 7: GPU计算，安装见官网
-- Boost: C++通用库，`sudo apt install libboost-all-dev`
 - Glog: 日志，方便调试， `sudo apt install libgoogle-glog-dev`
 - [NNPACK](https://github.com/Maratyszcza/NNPACK), CPU快速计算卷积
 ```

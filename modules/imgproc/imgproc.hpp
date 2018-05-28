@@ -67,8 +67,8 @@ void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code)
         {
             assert(src.channels() == 3);
 
-            if (!(dst.rows == src.rows && dst.cols == src.cols && dst.channels() == 1))
-                dst.create(src.rows, src.cols, 1);
+            if (!(dst.rows_ == src.rows_ && dst.cols_ == src.cols_ && dst.channels() == 1))
+                dst.create(src.rows_, src.cols_, 1);
 
             using Pixel = _Vec<_Tp, 3>;
 
@@ -111,8 +111,8 @@ void cvtColor(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int code)
             if (dst.shape() != src.shape())
                 dst.create(src.shape());
 
-            for (int i = 0; i < src.rows; ++i) {
-                for (int j = 0; j < src.cols; ++j) {
+            for (int i = 0; i < src.rows_; ++i) {
+                for (int j = 0; j < src.cols_; ++j) {
                     auto spixel = src.template at<_Vec<_Tp, 3>>(i, j);
                     auto&& dpixel = dst.template at<_Vec<_Tp, 3>>(i, j);
 
@@ -178,19 +178,19 @@ void __conv(const _Matrix<_T1>& src, _Matrix<_T1>& dst, const _Matrix<_T2>& kern
     auto temp = new double[channels];
     auto temp_size = sizeof(double) * channels;
 
-    for (auto i = 0; i < dst.rows; ++i) {
-        for (auto j = 0; j < dst.cols; ++j) {
+    for (auto i = 0; i < dst.rows_; ++i) {
+        for (auto j = 0; j < dst.cols_; ++j) {
 
             memset(temp, 0, temp_size);
 
-            for (auto ii = 0; ii < kernel.rows; ++ii) {
-                for (auto jj = 0; jj < kernel.cols; ++jj) {
+            for (auto ii = 0; ii < kernel.rows_; ++ii) {
+                for (auto jj = 0; jj < kernel.cols_; ++jj) {
 
-                    auto _i = i - kernel.rows / 2 + ii;
-                    auto _j = j - kernel.cols / 2 + jj;
+                    auto _i = i - kernel.rows_ / 2 + ii;
+                    auto _j = j - kernel.cols_ / 2 + jj;
 
-                    if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows) &&
-                          static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
+                    if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows_) &&
+                          static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols_))) {
                         callback(_i, _j);
                     }
 
@@ -212,7 +212,7 @@ void __conv(const _Matrix<_T1>& src, _Matrix<_T1>& dst, const _Matrix<_T2>& kern
 template <typename _T1, typename _T2>
 void conv(const _Matrix<_T1>& src, _Matrix<_T1>&dst, const _Matrix<_T2>& kernel, int borderType)
 {
-    assert(src.rows >= kernel.rows && src.cols >= kernel.cols);
+    assert(src.rows_ >= kernel.rows_ && src.cols_ >= kernel.cols_);
 
     switch (borderType) {
         //!< `iiiiii|abcdefgh|iiiiiii`  with some specified `i`
@@ -277,11 +277,11 @@ void embossingFilter(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size, int borderT
 {
     Matrix64f kernel(size);
 
-    for (int i = 0; i < kernel.rows; ++i) {
-        for (int j = 0; j < kernel.cols; ++j) {
-            if (j < kernel.rows - i - 1)
+    for (int i = 0; i < kernel.rows_; ++i) {
+        for (int j = 0; j < kernel.cols_; ++j) {
+            if (j < kernel.rows_ - i - 1)
                 kernel[i][j] = -1;
-            else if (j > kernel.rows - i - 1)
+            else if (j > kernel.rows_ - i - 1)
                 kernel[i][j] = 1;
             else
                 kernel[i][j] = 0;
@@ -302,8 +302,8 @@ void __medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, Size size, std::functio
     auto m = size.width / 2, n = size.height / 2;
     int valindex = area / 2;
 
-    for (int i = 0; i < src.rows; ++i) {
-        for (int j = 0; j < src.cols; ++j) {
+    for (int i = 0; i < src.rows_; ++i) {
+        for (int j = 0; j < src.cols_; ++j) {
 
             for (int ii = 0; ii < size.width; ++ii) {
                 for (int jj = 0; jj < size.height; ++jj) {
@@ -311,8 +311,8 @@ void __medianFilter(_Matrix<_Tp>&src, _Matrix<_Tp>& dst, Size size, std::functio
                     auto _j = j - n + jj;
 
                     for (auto k = 0; k < src.channels(); ++k) {
-                        if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows) &&
-                              static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
+                        if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows_) &&
+                              static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols_))) {
                             callback(_i, _j);
                         }
                         buffer.at(k, ii * size.width + jj) = src.at(_i, _j, k);
@@ -399,7 +399,7 @@ void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int d, double sig
             auto r_t = std::sqrt(static_cast<double>(i) * i + static_cast<double>(j) * j);
             if (r_t <= r) {
                 space_weight[max_ofs] = std::exp(r_t * r_t * gauss_space_coeff);
-                space_ofs[max_ofs++] = i * src.step + j * src.channels();
+                space_ofs[max_ofs++] = i * src.step_ + j * src.channels();
             }
         }
     }
@@ -437,7 +437,7 @@ void bilateralFilter(const _Matrix<_Tp>&src, _Matrix<_Tp>&dst, int d, double sig
             }
         }
         for (int k = 0; k < src.channels(); ++k) {
-            dst.data[i + k] = saturate_cast<_Tp>(temp_val[k] / norm);
+            dst.ptr_[i + k] = saturate_cast<_Tp>(temp_val[k] / norm);
         }
     }
 
@@ -457,8 +457,8 @@ void __morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size, std::fu
     if (dst.shape() != src.shape())
         dst.create(src.shape());
 
-    for (auto i = 0; i < src.rows; ++i) {
-        for (auto j = 0; j < src.cols; ++j) {
+    for (auto i = 0; i < src.rows_; ++i) {
+        for (auto j = 0; j < src.cols_; ++j) {
 
             for (auto ii = 0; ii < size.width; ++ii) {
                 for (auto jj = 0; jj < size.height; ++jj) {
@@ -466,8 +466,8 @@ void __morphOp(int code, _Matrix<_Tp>& src, _Matrix<_Tp>&dst, Size size, std::fu
                     auto _j = j - size.height / 2 + jj;
 
                     for (auto k = 0; k < src.channels(); ++k) {
-                        if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows) &&
-                              static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols))) {
+                        if (!(static_cast<unsigned>(_i) < static_cast<unsigned>(dst.rows_) &&
+                              static_cast<unsigned>(_j) < static_cast<unsigned>(dst.cols_))) {
                             callback(_i, _j);
                         }
 
@@ -553,7 +553,7 @@ void morphEx(_Matrix<_Tp>& src, _Matrix<_Tp>&dst, int op, Size kernel, int borde
 {
     _Matrix<_Tp> temp;
     if (dst.shape() != src.shape())
-        dst.create(src.rows, src.cols, src.channels());
+        dst.create(src.rows_, src.cols_, src.channels());
 
     switch (op) {
         case MORP_ERODE:
@@ -604,11 +604,11 @@ void spilt(const _Matrix<_Tp>& src, std::vector<_Matrix<_Tp>>& mv)
     mv = std::vector<_Matrix<_Tp>>(src.channels());
 
     for (auto i = 0; i < src.channels(); ++i) {
-        mv.at(i).create(src.rows, src.cols, 1);
+        mv.at(i).create(src.rows_, src.cols_, 1);
     }
 
-    for (auto i = 0; i < src.rows; ++i) {
-        for (auto j = 0; j < src.cols; ++j) {
+    for (auto i = 0; i < src.rows_; ++i) {
+        for (auto j = 0; j < src.cols_; ++j) {
             for (auto k = 0; k < src.channels(); ++k) {
                 mv.at(k).at(i, j) = src.ptr(i, j)[k];
             }
@@ -620,11 +620,11 @@ template <typename _Tp> void merge(const _Matrix<_Tp> & src1, const _Matrix<_Tp>
 {
     assert(src1.shape() == src2.shape());
 
-    if (dst.rows != src1.rows || dst.cols != src1.cols)
-        dst.create(src1.rows, src1.cols, 2);
+    if (dst.rows_ != src1.rows_ || dst.cols_ != src1.cols_)
+        dst.create(src1.rows_, src1.cols_, 2);
 
-    for (auto i = 0; i < src1.rows; ++i) {
-        for (auto j = 0; j < src2.cols; ++j) {
+    for (auto i = 0; i < src1.rows_; ++i) {
+        for (auto j = 0; j < src2.cols_; ++j) {
             dst.at(i, j, 0) = src1.at(i, j);
             dst.at(i, j, 1) = src2.at(i, j);
         }
@@ -635,8 +635,8 @@ template <typename _Tp> void merge(const std::vector<_Matrix<_Tp>> & src, _Matri
 {
     assert(src.size() >= 1);
 
-    int rows = src.at(0).rows;
-    int cols = src.at(0).cols;
+    int rows = src.at(0).rows_;
+    int cols = src.at(0).cols_;
     int chs = src.size();
 
     // Alloc the memory.
@@ -655,10 +655,10 @@ template <typename _Tp> void merge(const std::vector<_Matrix<_Tp>> & src, _Matri
 template <typename _Tp>
 void copyMakeBorder(const _Matrix<_Tp> & src, _Matrix<_Tp> & dst, int top, int bottom, int left, int right)
 {
-    dst = _Matrix<_Tp>::zeros(src.rows + top + bottom, src.cols + left + right, src.channels());
+    dst = _Matrix<_Tp>::zeros(src.rows_ + top + bottom, src.cols_ + left + right, src.channels());
 
-    for (auto i = top; i < src.rows + top; ++i) {
-        for (auto j = left; j < src.cols + left; ++j) {
+    for (auto i = top; i < src.rows_ + top; ++i) {
+        for (auto j = left; j < src.cols_ + left; ++j) {
             for (auto k = 0; k < dst.channels(); ++k) {
                 dst.at(i, j, k) = src.at(i - top, j - left, k);
             }
@@ -721,10 +721,10 @@ void pyrUp(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
     auto kernel = Gaussian({5, 5}, 0, 0);
     kernel = kernel * 4;
 
-    auto temp = _Matrix<_Tp>::zeros(src.rows * 2, src.cols * 2, src.channels());
+    auto temp = _Matrix<_Tp>::zeros(src.rows_ * 2, src.cols_ * 2, src.channels());
 
-    for (auto i = 0; i < src.rows; ++i)
-        for (auto j = 0; j < src.cols; ++j)
+    for (auto i = 0; i < src.rows_; ++i)
+        for (auto j = 0; j < src.cols_; ++j)
             for (auto k = 0; k < src.channels(); ++k)
                 temp.at(2 * i, 2 * j, k) = src.at(i, j, k);
 
@@ -737,8 +737,8 @@ void pyrDown(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst)
 {
     conv(src, dst, Gaussian({5, 5}, 0, 0));
 
-    int dst_rows = src.rows / 2;
-    int dst_cols = src.cols / 2;
+    int dst_rows = src.rows_ / 2;
+    int dst_cols = src.cols_ / 2;
 
     dst.create(dst_rows, dst_cols, src.channels());
     for (auto i = 0; i < dst_rows; ++i)
@@ -789,12 +789,12 @@ template <typename _Tp>
 void _ELBP(const _Matrix<_Tp>& src, _Matrix<_Tp>& dst, int r, int P, int mode, std::function<void(int&, int&)> callback)
 {
     if (dst.shape() != src.shape())
-        dst.create(src.rows, src.cols, src.channels());
+        dst.create(src.rows_, src.cols_, src.channels());
 
     _Tp mapping[(int)std::pow(2, P)];
 
-    for(auto i = 0; i < src.rows; ++i) {
-        for(auto j = 0; j < src.cols; ++j) {
+    for(auto i = 0; i < src.rows_; ++i) {
+        for(auto j = 0; j < src.cols_; ++j) {
 
             auto center_value = src.at(i, j);
 

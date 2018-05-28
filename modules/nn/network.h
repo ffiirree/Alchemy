@@ -23,31 +23,43 @@ public:
     inline NetworkParameter& layer_params(const vector<LayerParameter>& params) { layer_params_ = params; return *this; }
     inline vector<LayerParameter> layer_params() const { return layer_params_; }
 
+    inline vector<LayerParameter> filter(Phase phase) const;
 private:
     string name_{};
     Phase phase_ = TRAIN;
     vector<LayerParameter> layer_params_{};
 };
 
+vector<LayerParameter> NetworkParameter::filter(Phase phase) const
+{
+    vector<LayerParameter> params;
+    for(const auto& param : layer_params_) {
+        if(param.phase() == phase || param.phase() == SHARED) {
+            params.push_back(param);
+        }
+    }
+    return params;
+}
+
 template <typename T>
 class Network {
 public:
     Network()= default;
-    explicit Network(const NetworkParameter& param);
+    explicit Network(const NetworkParameter& net_params);
     ~Network() = default;
 
-    double accuracy() { return output_.back()[0]->data_cptr()[0]; }
+    double accuracy() { return outputs_.back()[0]->data_cptr()[0]; }
     double loss()
     {
 //        LOG(INFO) << input_.back()[0]->data_cptr()[0] << " " << input_.back()[1]->data_cptr()[0] << " [" << std::fabs(input_.back()[0]->data_cptr()[0] - input_.back()[1]->data_cptr()[0]) << "]";
-        return output_.back()[0]->data_cptr()[0];
+        return outputs_.back()[0]->data_cptr()[0];
     }
 
     inline vector<tuple<shared_ptr<Blob<T>>, double, double>> learnable_params() const { return learnable_params_; };
 
     inline vector<shared_ptr<Layer<T>>> layers() const { return layers_; }
-    inline vector<vector<Blob<T>*>> inputs() const { return input_; }
-    inline vector<vector<Blob<T>*>> outputs() const { return output_; }
+    inline vector<vector<Blob<T>*>> inputs() const { return inputs_; }
+    inline vector<vector<Blob<T>*>> outputs() const { return outputs_; }
 
     inline Phase phase() const { return phase_; }
 
@@ -58,7 +70,7 @@ public:
     void load(string path);
 
 private:
-    Phase phase_ = DEFAULT;
+    Phase phase_ = SHARED;
 
     // 层
     vector<shared_ptr<Layer<T>>> layers_{};
@@ -68,8 +80,8 @@ private:
     vector<tuple<shared_ptr<Blob<T>>, double, double>> learnable_params_{};
 
     // 和每一层一一对应
-    vector<vector<Blob<T>*>> input_{};
-    vector<vector<Blob<T>*>> output_{};
+    vector<vector<Blob<T>*>> inputs_{};
+    vector<vector<Blob<T>*>> outputs_{};
 };
 
 
@@ -77,7 +89,7 @@ template<typename T>
 void Network<T>::Forward()
 {
     for(size_t layer_index = 0; layer_index < layers_.size(); ++layer_index) {
-        layers_[layer_index]->Forward(input_[layer_index], output_[layer_index]);
+        layers_[layer_index]->Forward(inputs_[layer_index], outputs_[layer_index]);
     }
 }
 
@@ -85,46 +97,58 @@ template<typename T>
 void Network<T>::Backward()
 {
     for(size_t layer_index = layers_.size(); layer_index > 0; --layer_index) {
-        layers_[layer_index - 1]->Backward(input_[layer_index - 1], output_[layer_index - 1]);
+        layers_[layer_index - 1]->Backward(inputs_[layer_index - 1], outputs_[layer_index - 1]);
     }
 }
 
 template<typename T>
-Network<T>::Network(const NetworkParameter &param)
+Network<T>::Network(const NetworkParameter &net_params)
 {
-    phase_ = param.phase();
-    for(auto& layer_param: param.layer_params()) {
-        if(phase_ == layer_param.phase() || layer_param.phase() == DEFAULT) {
-            layers_.push_back(LayerFactory<T>::GetLayer(layer_param.phase(phase_)));
-        }
-    }
+    phase_ = net_params.phase();
+    auto layer_params = net_params.filter(phase_);
 
-    input_.resize(layers_.size());
-    output_.resize(layers_.size());
+    inputs_.resize(layer_params.size());
+    outputs_.resize(layer_params.size());
 
-    for(size_t layer_index = 0; layer_index < layers_.size(); ++layer_index) {
+    for(size_t layer_idx = 0; layer_idx < layer_params.size(); ++layer_idx) {
+        const auto param = layer_params[layer_idx];
 
-        /// inputs
-        for(auto& input_name : layers_[layer_index]->parameter().inputs()) {
-            auto search = data_flow_.find(input_name);
+        // Create layers
+        LOG(INFO) << "Creating Layer: " << param.name();
+        layers_.push_back(LayerFactory<T>::GetLayer(param));
+
+        // inputs
+        for(const auto& input: param.inputs()) {
+            auto search = data_flow_.find(input);
             if(search == data_flow_.end()) {
-                data_flow_[input_name] = shared_ptr<Blob<T>>(new Blob<T>());
+                data_flow_[input] = shared_ptr<Blob<T>>(new Blob<T>());
             }
-            input_[layer_index].push_back(data_flow_[input_name].get());
+            LOG(INFO) << param.name() << " <-- " << input;
+            inputs_[layer_idx].push_back(data_flow_[input].get());
         }
 
-        /// outputs
-        for(auto& output_name : layers_[layer_index]->parameter().outputs()) {
-            auto search = data_flow_.find(output_name);
+        // outputs
+        for(const auto& output: param.outputs()) {
+            auto search = data_flow_.find(output);
             if(search == data_flow_.end()) {
-                data_flow_[output_name] = shared_ptr<Blob<T>>(new Blob<T>());
+                data_flow_[output] = shared_ptr<Blob<T>>(new Blob<T>());
             }
-            output_[layer_index].push_back(data_flow_[output_name].get());
+            LOG(INFO) << param.name() << " --> " << output;
+            outputs_[layer_idx].push_back(data_flow_[output].get());
         }
 
-        layers_[layer_index]->setup(input_[layer_index], output_[layer_index]);
+        // Set up
+        LOG(INFO) << "Setting up: " << param.name();
+        for(size_t i = 0; i < inputs_[layer_idx].size(); ++i) {
+            LOG(INFO) << "input  #" << std::to_string(i) << ": " << inputs_[layer_idx][i]->shape();
+        }
+        layers_[layer_idx]->setup(inputs_[layer_idx], outputs_[layer_idx]);
+        for(size_t i = 0; i < outputs_[layer_idx].size(); ++i) {
+            LOG(INFO) << "output #" << std::to_string(i) << ": " << outputs_[layer_idx][i]->shape();
+        }
 
-        const auto& lp = layers_[layer_index]->learnable_params();
+        // Learnable parameters
+        const auto& lp = layers_[layer_idx]->learnable_params();
         learnable_params_.insert(learnable_params_.end(), lp.begin(), lp.end());
     }
 }

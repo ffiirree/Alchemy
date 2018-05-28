@@ -175,6 +175,9 @@ public:
     inline LayerParameter& name(const string& name) { name_ = name; return *this; }
     inline string name() const { return name_; }
 
+    // id: name + phase
+    inline string id() const { return name_ + (phase_ == SHARED ? "_SHARED" : (phase_ == TRAIN ? "_TRAIN" : "_TEST")); }
+
     // type
     inline LayerParameter& type(LayerType type) { type_ = type; return *this; }
     inline LayerType type() const { return type_; }
@@ -228,7 +231,7 @@ public:
     inline LayerParameter& dropout_param(const DropoutParameter& dp) { dropout_param_ = dp; return *this; }
     inline DropoutParameter dropout_param() const { return dropout_param_; }
 protected:
-    Phase phase_ = DEFAULT;
+    Phase phase_ = SHARED;
     string name_{};
     LayerType type_ = INNER_PRODUCT_LAYER;
 

@@ -28,7 +28,7 @@ using std::tuple;
 namespace alchemy {
 
 enum Phase {
-    TRAIN, TEST, DEFAULT
+    TRAIN, TEST, SHARED
 };
 
 class Global {
@@ -70,6 +70,5 @@ std::ostream& operator << (std::ostream& os, const vector<int>& vec);
                             })
 
 }
-
 
 #endif //! ALCHEMY_CORE_COMMON_H

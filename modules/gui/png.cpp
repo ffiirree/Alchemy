@@ -56,7 +56,7 @@ int read_PNG_file(const char * filename, Matrix & img)
     auto row_pointers = png_get_rows(png_ptr, info_ptr);
 
     for(uint32_t i = 0; i < info_ptr->height; ++i) {
-        memcpy(img.data + img.step * i, row_pointers[i], static_cast<size_t>(img.step));
+        memcpy(img.ptr_ + img.step_ * i, row_pointers[i], static_cast<size_t>(img.step_));
     }
     png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
     fclose(fp);
