@@ -2,22 +2,23 @@
 
 namespace alchemy {
 
-template<typename T>
-void SoftmaxLayer<T>::setup(const vector<Blob<T> *> &input, const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void SoftmaxLayer<Device, T>::setup(const vector<container *> &input,
+                                    const vector<container *> &output)
 {
     output[0]->reshape(input[0]->shape());
 
     sum_.reshape(input[0]->shape());
     sum_multer_.reshape({ input[0]->shape(2), input[0]->shape(2) });
 
-    vector_set(sum_multer_.count(), (T)1., sum_multer_.mutable_data_cptr());
+    vector_set(sum_multer_.size(), (T)1., sum_multer_.mutable_data_cptr());
 }
 
-template<typename T>
-void SoftmaxLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
-                                 const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void SoftmaxLayer<Device, T>::ForwardCPU(const vector<container *> &input,
+                                 const vector<container *> &output)
 {
-    const auto count = input[0]->count();
+    const auto count = input[0]->size();
     auto input_data = input[0]->data_cptr();
     auto output_data = output[0]->mutable_data_cptr();
 
@@ -35,9 +36,9 @@ void SoftmaxLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
     vector_div(count, output_data, sum_.data_cptr(), output_data);
 }
 
-template<typename T>
-void SoftmaxLayer<T>::BackwardCPU(const vector<Blob<T> *> &input,
-                                  const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void SoftmaxLayer<Device, T>::BackwardCPU(const vector<container *> &input,
+                                  const vector<container *> &output)
 {
     LOG(FATAL) << "Not implement!";
 }

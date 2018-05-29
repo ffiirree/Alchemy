@@ -5,20 +5,20 @@
 
 namespace alchemy {
 
-template<typename T>
-void InputLayer<T>::setup(const vector<container *> &input,
+template <typename Device, typename T>
+void InputLayer<Device, T>::setup(const vector<container *> &input,
                           const vector<container *> &output)
 {
     auto source = input_param_.source();
 
-    output[0]->reshape({ static_cast<int>(input_param_.batch_size()),
-                         static_cast<int>(source->chs()),
-                         static_cast<int>(source->rows()),
-                         static_cast<int>(source->cols())
+    output[0]->reshape({ input_param_.batch_size(),
+                         source->chs(),
+                         source->rows(),
+                         source->cols()
                        });
-    output[1]->reshape({ static_cast<int>(input_param_.batch_size()),
+    output[1]->reshape({ input_param_.batch_size(),
                          1,
-                         static_cast<int>(source->classification_num()),
+                         source->classification_num(),
                          1
                        });
 
@@ -28,8 +28,8 @@ void InputLayer<T>::setup(const vector<container *> &input,
                 (T*)source->images().get());
 }
 
-template<typename T>
-void InputLayer<T>::ForwardCPU(const vector<container *>& input,
+template <typename Device, typename T>
+void InputLayer<Device, T>::ForwardCPU(const vector<container *>& input,
                                const vector<container *>& output)
 {
     auto batch_size = input_param_.batch_size();

@@ -103,14 +103,14 @@ int main()
     };
 
     auto optimize_param = OptimizerParameter()
-            .mode(Global::GPU)
+            .mode(Global::CPU)
             .max_iter(20000)
             .test_iter(100)
             .test_interval(500)
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
-    SgdOptimizer<GPU, float> o(optimize_param);
+    SgdOptimizer<CPU, float> o(optimize_param);
 
     o.optimize();
 

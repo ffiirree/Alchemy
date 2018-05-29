@@ -3,21 +3,14 @@
 
 namespace alchemy {
 
-template<typename T>
-void SigmoidLayer<T>::setup(const vector<container *> &input,
-                            const vector<container *> &output)
-{
-    output[0]->reshape(input[0]->shape());
-}
-
 template <typename T>
 inline T sigmoid(T value)
 {
     return 1.0/(1.0 + std::exp(-value));
 }
 
-template<typename T>
-void SigmoidLayer<T>::ForwardCPU(const vector<container *>& input,
+template <typename Device, typename T>
+void SigmoidLayer<Device, T>::ForwardCPU(const vector<container *>& input,
                                  const vector<container *>& output)
 {
     auto input_data = input[0]->data_cptr();
@@ -29,8 +22,8 @@ void SigmoidLayer<T>::ForwardCPU(const vector<container *>& input,
     }
 }
 
-template<typename T>
-void SigmoidLayer<T>::BackwardCPU(const vector<container *>& input,
+template <typename Device, typename T>
+void SigmoidLayer<Device, T>::BackwardCPU(const vector<container *>& input,
                                   const vector<container *>& output)
 {
     auto count = input[0]->count();

@@ -5,27 +5,29 @@
 
 namespace alchemy {
 
-template <typename T>
-class DropoutLayer : public Layer<T> {
+template <typename Device, typename T>
+class DropoutLayer : public Layer<Device, T> {
 public:
+    using container = Blob<Device, T>;
+    
     DropoutLayer() = default;
     explicit DropoutLayer(const LayerParameter&param)
-            : Layer<T>(param), dropout_param_(param.dropout_param()) { }
+            : Layer<Device, T>(param), dropout_param_(param.dropout_param()) { }
     virtual ~DropoutLayer() = default;
 
-    void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) override;
+    void setup(const vector<container *>&input, const vector<container *>&output) override;
 
-    void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
-    void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void ForwardCPU(const vector<container *>& input, const vector<container *>& output) override;
+    void BackwardCPU(const vector<container *>& input, const vector<container *>& output) override;
 
 #ifdef USE_CUDA
-    void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
-    void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void ForwardGPU(const vector<container *>& input, const vector<container *>& output) override;
+    void BackwardGPU(const vector<container *>& input, const vector<container *>& output) override;
 #endif //! USE_CUDA
 
 private:
     DropoutParameter dropout_param_;
-    Tensor<T> filter_;
+    Tensor<Device, T> filter_;
 };
 }
 

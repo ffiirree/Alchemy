@@ -56,7 +56,7 @@ private:
 #endif
 };
 
-std::ostream& operator << (std::ostream& os, const vector<int>& vec);
+std::ostream& operator << (std::ostream& os, const vector<size_t>& vec);
 
 // CUDA: use 512 threads per block
 #define CUDA_THREAD_NUM  512

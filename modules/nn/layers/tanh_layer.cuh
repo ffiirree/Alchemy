@@ -9,11 +9,11 @@ __global__ void tanh_kernel(const size_t size, const T* A, T* B)
         B[i] = std::tanh(A[i]);
     }
 }
-template<typename T>
-void TanhLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
-                              const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void TanhLayer<Device, T>::ForwardGPU(const vector<container *> &input,
+                              const vector<container *> &output)
 {
-    const auto count = input[0]->count();
+    const auto count = input[0]->size();
     const auto input_data = input[0]->data_gptr();
     auto output_data = output[0]->mutable_data_gptr();
 
@@ -28,11 +28,11 @@ __global__ void dtanh_kernel(const size_t size, const T* OutputData, const T* Ou
         InputDiff[i] = OutputDiff[i] *(1 - tx * tx);
     }
 }
-template<typename T>
-void TanhLayer<T>::BackwardGPU(const vector<Blob<T> *> &input,
-                               const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void TanhLayer<Device, T>::BackwardGPU(const vector<container *> &input,
+                               const vector<container *> &output)
 {
-    auto count = input[0]->count();
+    auto count = input[0]->size();
     auto output_data = output[0]->data_gptr();
     auto output_diff = output[0]->diff_gptr();
     auto input_diff = input[0]->mutable_diff_gptr();

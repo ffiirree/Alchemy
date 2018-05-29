@@ -15,7 +15,7 @@ public:
     };
 public:
     Memory() = default;
-    explicit Memory(int size);
+    explicit Memory(size_t size);
     ~Memory();
 
     inline const void * cptr() { to_cpu(); return (const void *)cptr_; }

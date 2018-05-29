@@ -15,7 +15,7 @@ int main()
     cudnnCreate(&handle);
 
     // input
-    Tensor<float> input({ 1, image.channels(), image.rows_, image.cols_ });
+    Tensor<GPU, float> input({ 1, (size_t)image.channels(), (size_t)image.rows_, (size_t)image.cols_ });
     Memory::copy(image_float.count() * sizeof(float), input.mutable_gptr(), image_float.ptr());
 
     cudnnTensorDescriptor_t input_descriptor;
@@ -26,8 +26,8 @@ int main()
                                input.shape(0), input.shape(1), input.shape(2), input.shape(3));
 
     // output
-    Tensor<float> output(input.shape());
-    vector_set_gpu(output.count(), 0.0f, output.mutable_gptr());
+    Tensor<GPU, float> output(input.shape());
+    vector_set_gpu(output.size(), 0.0f, output.mutable_gptr());
 
     cudnnTensorDescriptor_t output_descriptor;
     cudnnCreateTensorDescriptor(&output_descriptor);
@@ -37,10 +37,10 @@ int main()
                                output.shape(0), output.shape(1), output.shape(2), output.shape(3));
 
     // kernel
-    Tensor<float> kernel({ output.shape(1), input.shape(1), 3, 3 });
-    auto kernel_size = kernel.count(2, 4);
+    Tensor<GPU, float> kernel({ output.shape(1), input.shape(1), 3, 3 });
+    auto kernel_size = kernel.size(2, 4);
     float kernel_[kernel_size] = { 0, 1, 0, 1, -4, 1, 0, 1, 0 };
-    for(auto i = 0; i < kernel.count(0, 2); ++i) {
+    for(size_t i = 0; i < kernel.size(0, 2); ++i) {
         memcpy(kernel.mutable_cptr() + i * kernel_size, kernel_, kernel_size * sizeof(float));
     }
 

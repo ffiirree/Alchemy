@@ -5,12 +5,12 @@
 
 namespace alchemy {
 
-template<typename T>
-void InnerProductLayer<T>::setup(const vector<container *> &input,
+template <typename Device, typename T>
+void InnerProductLayer<Device, T>::setup(const vector<container *> &input,
                                  const vector<container *> &output)
 {
-    auto output_size = static_cast<int>(ip_param_.output_size());
-    auto input_size = input[0]->count(1, 4);
+    auto output_size = ip_param_.output_size();
+    auto input_size = input[0]->size(1, 4);
 
     output[0]->reshape({ input[0]->shape(0), 1, output_size, 1 });
 
@@ -30,13 +30,13 @@ void InnerProductLayer<T>::setup(const vector<container *> &input,
 
         vector_set(input[0]->shape(0), (T)1.0, biasmer_.mutable_cptr());
 
-        Filler<T>::fill(weights_->data(), ip_param_.weight_filler());
-        Filler<T>::fill(biases_->data(), ip_param_.bias_filler());
+        Filler<Device, T>::fill(weights_->data(), ip_param_.weight_filler());
+        Filler<Device, T>::fill(biases_->data(), ip_param_.bias_filler());
     }
 }
 
-template<typename T>
-void InnerProductLayer<T>::ForwardCPU(const vector<container *>& input,
+template <typename Device, typename T>
+void InnerProductLayer<Device, T>::ForwardCPU(const vector<container *>& input,
                                       const vector<container *>& output)
 {
     auto input_data = input[0]->data_cptr();
@@ -56,8 +56,8 @@ void InnerProductLayer<T>::ForwardCPU(const vector<container *>& input,
                (T)1, output_data);
 }
 
-template<typename T>
-void InnerProductLayer<T>::BackwardCPU(const vector<container *>& input,
+template <typename Device, typename T>
+void InnerProductLayer<Device, T>::BackwardCPU(const vector<container *>& input,
                                        const vector<container *>& output)
 {
     // 向前传递误差

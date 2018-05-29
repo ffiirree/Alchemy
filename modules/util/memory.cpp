@@ -7,8 +7,8 @@
 
 namespace alchemy {
 
-Memory::Memory(int size)
-        : size_(static_cast<size_t>(size))
+Memory::Memory(size_t size)
+        : size_(size)
 {}
 
 Memory::~Memory()

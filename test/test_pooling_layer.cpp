@@ -6,14 +6,14 @@ int main()
 {
     Global::mode(Global::GPU);
 
-    Blob<float> input({2, 3, 6, 5});
-    Blob<float> output;
+    Blob<CPU, float> input({2, 3, 6, 5});
+    Blob<CPU, float> output;
 
-    Filler<float>::uniform_fill(input.count(), input.mutable_data_cptr(), 0, 10.0);
+    Filler<CPU, float>::uniform_fill(input.size(), input.mutable_data_cptr(), 0, 10.0);
 
-    print_cpu(input.count(), input.data_cptr());
+    print_cpu(input.size(), input.data_cptr());
 
-    PoolingLayer<float> poolingLayer(
+    PoolingLayer<CPU, float> poolingLayer(
             LayerParameter()
                     .pooling_param(
                             PoolingParameter()
@@ -29,13 +29,13 @@ int main()
     Global::mode(Global::GPU);
     poolingLayer.Forward({ &input }, { &output });
 //    print_gpu(output.count(), output.data_gptr());
-    print_cpu(output.count(), output.data_cptr());
+    print_cpu(output.size(), output.data_cptr());
 
     std::cout << "\n#CPU: \n";
     Global::mode(Global::CPU);
     poolingLayer.Forward({ &input }, { &output });
 //    print_gpu(output.count(), output.data_gptr());
-    print_cpu(output.count(), output.data_cptr());
+    print_cpu(output.size(), output.data_cptr());
 
     return 0;
 }

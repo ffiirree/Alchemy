@@ -18,15 +18,15 @@
 
 #define REGISTER_LAYER(TYPE, NAME, CLASS, PARAMS)\
 case (TYPE):\
-    layers_[(NAME)] = shared_ptr<Layer<T>>(new CLASS<T>(PARAMS));\
+    layers_[(NAME)] = shared_ptr<Layer<Device, T>>(new CLASS<Device, T>(PARAMS));\
     break
 
 namespace alchemy {
 
-template <typename T>
+template <typename Device, typename T>
 class LayerFactory {
 public:
-    static shared_ptr<Layer<T>> GetLayer(const LayerParameter& param) {
+    static shared_ptr<Layer<Device, T>> GetLayer(const LayerParameter& param) {
         auto key = param.id();
         auto type = param.type();
         auto search = layers_.find(key);
@@ -56,10 +56,10 @@ public:
     }
 
 private:
-    static map<string, shared_ptr<Layer<T>>> layers_;
+    static map<string, shared_ptr<Layer<Device, T>>> layers_;
 };//! class LayerFactory
 
-template <typename T> map<string, shared_ptr<Layer<T>>> LayerFactory<T>::layers_{};
+template <typename Device, typename T> map<string, shared_ptr<Layer<Device, T>>> LayerFactory<Device, T>::layers_{};
 }//! namespace
 #undef REGISTER_LAYER
 #endif //! ALCHEMY_NN_LAYER_FACTORY_H

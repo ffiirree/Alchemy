@@ -15,8 +15,8 @@ public:
     virtual void update();
 
 protected:
-    vector<Tensor<T>> buf_;
-    vector<Tensor<T>> buf2_;
+    vector<Tensor<Device, T>> buf_;
+    vector<Tensor<Device, T>> buf2_;
 };
 
 template <typename Device, typename T>
@@ -26,8 +26,8 @@ NesterovOptimizer<Device, T>::NesterovOptimizer(const OptimizerParameter &param)
     const auto& learnable_params = this->net_->learnable_params();
     for(const auto& learnable_param : learnable_params) {
         const auto& shape = std::get<0>(learnable_param)->shape();
-        Tensor<T> buf(shape), buf2(shape);
-        Filler<T>::constant_fill(buf.count(), buf.mutable_cptr(), 0.0);
+        Tensor<Device, T> buf(shape), buf2(shape);
+        Filler<Device, T>::constant_fill(buf.size(), buf.mutable_cptr(), 0.0);
         buf_.push_back(buf);
         buf2_.push_back(buf2);
     }
@@ -62,23 +62,23 @@ void NesterovOptimizer<Device, T>::update()
     if(Global::mode() == Global::CPU) {
         for(size_t idx = 0; idx < learnable_params.size(); ++idx) {
             // v_ = v
-            vector_copy(buf2_[idx].count(), buf_[idx].cptr(), buf2_[idx].mutable_cptr());
+            vector_copy(buf2_[idx].size(), buf_[idx].cptr(), buf2_[idx].mutable_cptr());
             // v_ = m * v_
-            vector_scal(buf2_[idx].count(), (T)momentum, buf2_[idx].mutable_cptr());
+            vector_scal(buf2_[idx].size(), (T)momentum, buf2_[idx].mutable_cptr());
             // v_ = v_ -
-            vector_axpy(buf2_[idx].count(), (T)-std::get<1>(learnable_params[idx]), std::get<0>(learnable_params[idx])->diff_cptr(), buf2_[idx].mutable_cptr());
+            vector_axpy(buf2_[idx].size(), (T)-std::get<1>(learnable_params[idx]), std::get<0>(learnable_params[idx])->diff_cptr(), buf2_[idx].mutable_cptr());
             // v = v_
-            vector_copy(buf2_[idx].count(), buf2_[idx].cptr(), buf_[idx].mutable_cptr());
-            vector_axpy(buf2_[idx].count(), (T)(1.0 + momentum), buf_[idx].cptr(), std::get<0>(learnable_params[idx])->mutable_data_cptr());
+            vector_copy(buf2_[idx].size(), buf2_[idx].cptr(), buf_[idx].mutable_cptr());
+            vector_axpy(buf2_[idx].size(), (T)(1.0 + momentum), buf_[idx].cptr(), std::get<0>(learnable_params[idx])->mutable_data_cptr());
         }
     }
     else {
         for(size_t idx = 0; idx < learnable_params.size(); ++idx) {
-            vector_copy_gpu(buf2_[idx].count(), buf_[idx].gptr(), buf2_[idx].mutable_gptr());
-            vector_scal_gpu(buf2_[idx].count(), (T)momentum, buf2_[idx].mutable_gptr());
-            vector_axpy_gpu(buf2_[idx].count(), (T)-std::get<1>(learnable_params[idx]), std::get<0>(learnable_params[idx])->diff_gptr(), buf2_[idx].mutable_gptr());
-            vector_copy_gpu(buf2_[idx].count(), buf2_[idx].gptr(), buf_[idx].mutable_gptr());
-            vector_axpy_gpu(buf2_[idx].count(), (T)1.0, buf_[idx].gptr(), std::get<0>(learnable_params[idx])->mutable_data_gptr());
+            vector_copy_gpu(buf2_[idx].size(), buf_[idx].gptr(), buf2_[idx].mutable_gptr());
+            vector_scal_gpu(buf2_[idx].size(), (T)momentum, buf2_[idx].mutable_gptr());
+            vector_axpy_gpu(buf2_[idx].size(), (T)-std::get<1>(learnable_params[idx]), std::get<0>(learnable_params[idx])->diff_gptr(), buf2_[idx].mutable_gptr());
+            vector_copy_gpu(buf2_[idx].size(), buf2_[idx].gptr(), buf_[idx].mutable_gptr());
+            vector_axpy_gpu(buf2_[idx].size(), (T)1.0, buf_[idx].gptr(), std::get<0>(learnable_params[idx])->mutable_data_gptr());
         }
     }
 }

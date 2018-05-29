@@ -5,9 +5,9 @@
 
 namespace alchemy {
 
-template<typename T>
-void InnerProductLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
-                                      const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void InnerProductLayer<Device, T>::ForwardGPU(const vector<container *> &input,
+                                      const vector<container *> &output)
 {
     auto input_data = input[0]->data_gptr();
     auto weight = weights_->data_gptr();
@@ -26,9 +26,9 @@ void InnerProductLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
                    (T)1, output_data);
 }
 
-template<typename T>
-void InnerProductLayer<T>::BackwardGPU(const vector<Blob<T> *> &input,
-                                       const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void InnerProductLayer<Device, T>::BackwardGPU(const vector<container *> &input,
+                                       const vector<container *> &output)
 {
     // 向前传递误差
     matrix_mul_gpu(CblasNoTrans, CblasNoTrans,

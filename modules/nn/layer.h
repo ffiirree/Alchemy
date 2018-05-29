@@ -8,46 +8,48 @@
 
 namespace alchemy {
 
-template <typename T>
+template <typename Device, typename T>
 class Layer {
 public:
+    using container = Blob<Device, T>;
+    
     Layer() = default;
     explicit Layer(const LayerParameter& param): param_(param) { }
     Layer(const Layer&) = delete;
     Layer&operator=(const Layer&) = delete;
     virtual ~Layer() = default;
 
-    virtual void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) = 0;
+    virtual void setup(const vector<container *>&input, const vector<container *>&output) = 0;
 
     inline LayerParameter params() const { return param_; }
 
     inline decltype(auto) learnable_params() const { return learnable_params_; }
 
-    void Forward(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
-    void Backward(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output);
+    virtual void Forward(const vector<container *>& input, const vector<container *>& output);
+    virtual void Backward(const vector<container *>& input, const vector<container *>& output);
 
 
-    virtual void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) = 0;
-    virtual void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) = 0;
+    virtual void ForwardCPU(const vector<container *>& input, const vector<container *>& output) = 0;
+    virtual void BackwardCPU(const vector<container *>& input, const vector<container *>& output) = 0;
 
-    virtual void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) { BackwardCPU(input, output); }
-    virtual void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) { ForwardCPU(input, output); }
+    virtual void BackwardGPU(const vector<container *>& input, const vector<container *>& output) { BackwardCPU(input, output); }
+    virtual void ForwardGPU(const vector<container *>& input, const vector<container *>& output) { ForwardCPU(input, output); }
 
 protected:
-    Tensor<T> loss_;
+    Tensor<Device, T> loss_;
     LayerParameter param_;
 
-    vector<tuple<shared_ptr<Blob<T>>, double, double>> learnable_params_{};
+    vector<tuple<shared_ptr<Blob<Device, T>>, double, double>> learnable_params_{};
 };
 
-template<typename T>
-void Layer<T>::Forward(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output)
+template <typename Device, typename T>
+void Layer<Device, T>::Forward(const vector<container *>& input, const vector<container *>& output)
 {
     Global::mode() == Global::CPU ? ForwardCPU(input, output) : ForwardGPU(input, output);
 }
 
-template<typename T>
-void Layer<T>::Backward(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output)
+template <typename Device, typename T>
+void Layer<Device, T>::Backward(const vector<container *>& input, const vector<container *>& output)
 {
     Global::mode() == Global::CPU ? BackwardCPU(input, output) : BackwardGPU(input, output);
 }

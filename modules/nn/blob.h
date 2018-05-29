@@ -5,30 +5,32 @@
 
 namespace alchemy {
 
-template <typename T>
+template<typename Device, typename T>
 class Blob {
 public:
     Blob() = default;
-    explicit Blob(const vector<int>& shape);
+    explicit Blob(const vector<size_t>& shape);
     Blob(const Blob&) = default;
     Blob&operator=(const Blob&) = default;
     ~Blob() = default;
 
-    void reshape(const vector<int>& shape);
+    void reshape(const vector<size_t>& shape);
 
-    inline auto shape() const { return data_.shape(); }
-    inline auto shape(int axis) { return data_.shape(axis); }
-    inline auto count() const { return data_.count(); }
-    inline auto count(int start, int end) const { return data_.count(start, end); }
-    inline auto num() const { return data_.shape(0); }
+    inline vector<size_t> shape() const { return data_.shape(); }
+    inline size_t shape(int axis) { return data_.shape(axis); }
+    inline size_t size() const { return data_.size(); }
+    inline size_t size(int start, int end) const { return data_.size(start, end); }
+    inline size_t num() const { return data_.shape(0); }
 
-    inline auto data() const { return data_; }
-    inline auto diff() const { return diff_; }
+    inline Tensor<Device, T>& data() { return data_; }
+    inline Tensor<Device, T> const& data() const { return data_; }
+    inline Tensor<Device, T>& diff() { return diff_; }
+    inline Tensor<Device, T> const& diff() const { return diff_; }
 
     inline const T * data_cptr() const { return data_.cptr(); }
     inline const T * data_gptr() const { return data_.gptr(); }
-    inline T * mutable_data_cptr() const { return data_.mutable_cptr(); }
-    inline T * mutable_data_gptr() const { return data_.mutable_gptr(); }
+    inline T * mutable_data_cptr() { return data_.mutable_cptr(); }
+    inline T * mutable_data_gptr() { return data_.mutable_gptr(); }
 
     inline const T * diff_cptr() const { return diff_.cptr(); }
     inline const T * diff_gptr() const { return diff_.gptr(); }
@@ -36,24 +38,21 @@ public:
     inline T * mutable_diff_gptr() const { return diff_.mutable_gptr(); }
 
 private:
-    Tensor<T> data_;
-    Tensor<T> diff_;
+    Tensor<Device, T> data_;
+    Tensor<Device, T> diff_;
 };
 
-template<typename T>
-Blob<T>::Blob(const vector<int> &shape)
+template<typename Device, typename T>
+Blob<Device, T>::Blob(const vector<size_t> &shape)
 {
     data_.reshape(shape);
     diff_.reshape(shape);
 }
-
-template<typename T>
-void Blob<T>::reshape(const vector<int> &shape)
+template<typename Device, typename T>
+void Blob<Device, T>::reshape(const vector<size_t> &shape)
 {
     data_.reshape(shape);
     diff_.reshape(shape);
 }
-
 }
-
 #endif //! ALCHEMY_NN_BLOB_H

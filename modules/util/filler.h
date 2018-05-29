@@ -4,6 +4,7 @@
 #include <random>
 #include <type_traits>
 #include "core/tensor.h"
+#include "util.h"
 
 namespace alchemy {
 
@@ -15,10 +16,10 @@ enum FillerType {
     CONSTANT
 };
 
-template <typename T>
+template <typename Device, typename T>
 class Filler{
 public:
-    static void fill(const Tensor<T>& tensor, FillerType type);
+    static void fill(const Tensor<Device, T>& tensor, FillerType type);
 
     static void constant_fill(int count, T* ptr, T value);
     static void bernoulli_fill(int count, T* ptr, double probability);
@@ -28,11 +29,11 @@ public:
 };
 
 
-template<typename T>
-void Filler<T>::fill(const Tensor<T>& tensor, FillerType type)
+template <typename Device, typename T>
+void Filler<Device, T>::fill(const Tensor<Device, T>& tensor, FillerType type)
 {
-    const auto count = tensor.count();
-    const auto ptr = tensor.mutable_cptr();
+    const auto count = tensor.size();
+    auto ptr = tensor.mutable_cptr();
 
     switch(type) {
         case NORMAL:
@@ -57,14 +58,14 @@ void Filler<T>::fill(const Tensor<T>& tensor, FillerType type)
     }
 }
 
-template<typename T>
-void Filler<T>::constant_fill(int count, T *ptr, T value)
+template <typename Device, typename T>
+void Filler<Device, T>::constant_fill(int count, T *ptr, T value)
 {
     vector_set(count, value, ptr);
 }
 
-template<typename T>
-void Filler<T>::bernoulli_fill(int count, T* ptr, double probability)
+template <typename Device, typename T>
+void Filler<Device, T>::bernoulli_fill(int count, T* ptr, double probability)
 {
     std::random_device r;
     std::default_random_engine random_engine(r());
@@ -87,7 +88,7 @@ static void __uniform_fill(int count, T *ptr, T a, T b, typename std::enable_if<
         ptr[i] = uniform_distribution(random_engine);
     }
 }
-template <typename T>
+template <typename Device, typename T>
 static void __uniform_fill(int count, T *ptr, T a, T b, typename std::enable_if<std::is_integral<T>::value>::type * = nullptr)
 {
     std::random_device r;
@@ -100,14 +101,14 @@ static void __uniform_fill(int count, T *ptr, T a, T b, typename std::enable_if<
 }
 // }
 
-template <typename T>
-void Filler<T>::uniform_fill(int count, T *ptr, T a, T b)
+template <typename Device, typename T>
+void Filler<Device, T>::uniform_fill(int count, T *ptr, T a, T b)
 {
     __uniform_fill(count, ptr, a, b);
 }
 
-template<typename T>
-void Filler<T>::normal_fill(int count, T * ptr, double mean, double stddev)
+template <typename Device, typename T>
+void Filler<Device, T>::normal_fill(int count, T * ptr, double mean, double stddev)
 {
     std::random_device r;
     std::default_random_engine random_engine(r());
@@ -118,8 +119,8 @@ void Filler<T>::normal_fill(int count, T * ptr, double mean, double stddev)
     }
 }
 
-template<typename T>
-void Filler<T>::xavier_fill(int count, T *ptr, int N)
+template <typename Device, typename T>
+void Filler<Device, T>::xavier_fill(int count, T *ptr, int N)
 {
     const double scale = std::sqrt(3.0/N);
 

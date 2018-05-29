@@ -1,8 +1,8 @@
 namespace alchemy {
 
-template<typename T>
-void CuDNNConvolutionLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
-                                          const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void CuDNNConvolutionLayer<Device, T>::ForwardGPU(const vector<container *> &input,
+                                          const vector<container *> &output)
 {
     const T one = 1.0, zero = 0.0;
 
@@ -36,9 +36,9 @@ void CuDNNConvolutionLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
 }
 
 
-template<typename T>
-void CuDNNConvolutionLayer<T>::BackwardGPU(const vector<Blob<T> *> &input,
-                                           const vector<Blob<T> *> &output)
+template<typename Device, typename T>
+void CuDNNConvolutionLayer<Device, T>::BackwardGPU(const vector<container *> &input,
+                                           const vector<container *> &output)
 {
     const T one = 1.0, zero = 0.0;
 

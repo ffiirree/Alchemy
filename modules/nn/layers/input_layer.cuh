@@ -5,8 +5,8 @@
 
 namespace alchemy {
 
-template<typename T>
-void InputLayer<T>::ForwardGPU(const vector<container *> &input,
+template <typename Device, typename T>
+void InputLayer<Device, T>::ForwardGPU(const vector<container *> &input,
                                 const vector<container *> &output)
 {
     auto batch_size = input_param_.batch_size();

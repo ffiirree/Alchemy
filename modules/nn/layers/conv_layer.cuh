@@ -1,16 +1,16 @@
 namespace alchemy {
 
-template<typename T>
-void ConvolutionLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
-                                     const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void ConvolutionLayer<Device, T>::ForwardGPU(const vector<container *> &input,
+                                     const vector<container *> &output)
 {
     LOG(FATAL) << "Not implement!";
 }
 
 
-template<typename T>
-void ConvolutionLayer<T>::BackwardGPU(const vector<Blob<T> *> &input,
-                                      const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void ConvolutionLayer<Device, T>::BackwardGPU(const vector<container *> &input,
+                                      const vector<container *> &output)
 {
     LOG(FATAL) << "Not implement!";
 }

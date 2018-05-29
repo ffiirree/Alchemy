@@ -6,14 +6,14 @@
 
 namespace alchemy {
 
-template<typename T>
-Tensor<T>::Tensor(const vector<int> &shape)
+template<typename Device, typename T>
+Tensor<Device, T>::Tensor(const vector<size_t> &shape)
 {
     reshape(shape);
 }
 
-template<typename T>
-void Tensor<T>::reshape(const vector<int> &shape)
+template<typename Device, typename T>
+void Tensor<Device, T>::reshape(const vector<size_t> &shape)
 {
     shape_ = shape;
     count_ = 1;
@@ -26,29 +26,32 @@ void Tensor<T>::reshape(const vector<int> &shape)
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-template <typename T> Tensor<T> operator+(const Tensor<T>& a, const Tensor<T>& b)
+template<typename Device, typename T>
+Tensor<Device, T> operator+(const Tensor<Device, T>& a, const Tensor<Device, T>& b)
 {
     return add(a, b);
 }
 
-template <typename T> Tensor<T> operator-(const Tensor<T>& a, const Tensor<T>& b)
+template<typename Device, typename T>
+Tensor<Device, T> operator-(const Tensor<Device, T>& a, const Tensor<Device, T>& b)
 {
     return sub(a, b);
 }
 
-template <typename T> Tensor<T> add(const Tensor<T>& a, const Tensor<T>& b)
+template<typename Device, typename T>
+Tensor<Device, T> add(const Tensor<Device, T>& a, const Tensor<Device, T>& b)
 {
     assert(a.shape() == b.shape());
 
-    Tensor<T> r(a.shape());
+    Tensor<Device, T> r(a.shape());
 
     switch(Global::mode()) {
         case Global::CPU:
-            vector_add(a.count(), a.cptr(), b.cptr(), r.mutable_cptr());
+            vector_add(a.size(), a.cptr(), b.cptr(), r.mutable_cptr());
             break;
 
         case Global::GPU:
-            vector_add_gpu(a.count(), a.gptr(), b.gptr(), r.mutable_gptr());
+            vector_add_gpu(a.size(), a.gptr(), b.gptr(), r.mutable_gptr());
             break;
 
         default:
@@ -57,19 +60,20 @@ template <typename T> Tensor<T> add(const Tensor<T>& a, const Tensor<T>& b)
     }
     return r;
 }
-template <typename T> Tensor<T> sub(const Tensor<T>& a, const Tensor<T>& b)
+template<typename Device, typename T>
+Tensor<Device, T> sub(const Tensor<Device, T>& a, const Tensor<Device, T>& b)
 {
     assert(a.shape() == b.shape());
 
-    Tensor<T> r(a.shape());
+    Tensor<Device, T> r(a.shape());
 
     switch(Global::mode()) {
         case Global::CPU:
-            vector_sub(a.count(), a.cptr(), b.cptr(), r.cptr());
+            vector_sub(a.size(), a.cptr(), b.cptr(), r.cptr());
             break;
 
         case Global::GPU:
-            vector_sub_gpu(a.count(), a.gptr(), b.gptr(), r.gptr());
+            vector_sub_gpu(a.size(), a.gptr(), b.gptr(), r.gptr());
             break;
 
         default:

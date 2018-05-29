@@ -1,10 +1,10 @@
 namespace alchemy {
 
-template<typename T>
-void CuDNNConvolutionLayer<T>::setup(const vector<Blob<T> *> &input,
-                                     const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void CuDNNConvolutionLayer<Device, T>::setup(const vector<container *> &input,
+                                     const vector<container *> &output)
 {
-    ConvolutionLayer<T>::setup(input, output);
+    ConvolutionLayer<Device, T>::setup(input, output);
 
     CUDNN_CHECK(cudnnCreate(&cudnn_));
 
@@ -138,8 +138,8 @@ void CuDNNConvolutionLayer<T>::setup(const vector<Blob<T> *> &input,
     cudaMalloc(&workspace_, workspace_size);
 }
 
-template<typename T>
-CuDNNConvolutionLayer<T>::~CuDNNConvolutionLayer()
+template <typename Device, typename T>
+CuDNNConvolutionLayer<Device, T>::~CuDNNConvolutionLayer()
 {
     cudaFree(workspace_);
     delete[] workspace_fwd_sizes_;

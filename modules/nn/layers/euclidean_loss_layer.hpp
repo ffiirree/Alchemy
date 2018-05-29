@@ -3,9 +3,9 @@
 
 namespace alchemy {
 
-template<typename T>
-void EuclideanLossLayer<T>::setup(const vector<Blob<T> *> &input,
-                                  const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void EuclideanLossLayer<Device, T>::setup(const vector<container *> &input,
+                                  const vector<container *> &output)
 {
     LOG_IF(FATAL, input.size() < 2) << "input size: " << input.size();
 
@@ -13,11 +13,11 @@ void EuclideanLossLayer<T>::setup(const vector<Blob<T> *> &input,
     diff_.reshape(input[0]->shape());
 }
 
-template<typename T>
-void EuclideanLossLayer<T>::ForwardCPU(const vector<Blob<T>*>& input,
-                                       const vector<Blob<T>*>& output)
+template <typename Device, typename T>
+void EuclideanLossLayer<Device, T>::ForwardCPU(const vector<container *>& input,
+                                       const vector<container *>& output)
 {
-    auto count = input[0]->count();
+    auto count = input[0]->size();
     //! output - label
     vector_sub(count, input[0]->data_cptr(), input[1]->data_cptr(), diff_.mutable_cptr());
     //! dot = sum_(a - y)^2
@@ -27,11 +27,11 @@ void EuclideanLossLayer<T>::ForwardCPU(const vector<Blob<T>*>& input,
     output[0]->mutable_data_cptr()[0] = loss;
 }
 
-template<typename T>
-void EuclideanLossLayer<T>::BackwardCPU(const vector<Blob<T>*>& input,
-                                        const vector<Blob<T>*>& output)
+template<typename Device, typename T>
+void EuclideanLossLayer<Device, T>::BackwardCPU(const vector<container *>& input,
+                                        const vector<container *>& output)
 {
-    auto count = input[0]->count();
+    auto count = input[0]->size();
     vector_copy(count, diff_.cptr(), input[0]->mutable_diff_cptr());
     vector_scal(count, (T)1.0/input[0]->shape(0), input[0]->mutable_diff_cptr());
 }

@@ -13,12 +13,12 @@ __global__ void sigmoid(const size_t size, const T* A, T* B)
     }
 }
 
-template<typename T>
-void SigmoidLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
-                                 const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void SigmoidLayer<Device, T>::ForwardGPU(const vector<container *> &input,
+                                 const vector<container *> &output)
 {
     auto input_data = input[0]->data_gptr();
-    auto count = input[0]->count();
+    auto count = input[0]->size();
     auto output_data = output[0]->mutable_data_gptr();
 
     sigmoid<<<CUDA_BLOCK_NUM(count), CUDA_THREAD_NUM>>>(count, input_data, output_data);
@@ -34,11 +34,11 @@ __global__ void dsigmoid(const size_t size, const T* OutputData, const T* Output
     }
 }
 
-template<typename T>
-void SigmoidLayer<T>::BackwardGPU(const vector<Blob<T> *> &input,
-                                  const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void SigmoidLayer<Device, T>::BackwardGPU(const vector<container *> &input,
+                                  const vector<container *> &output)
 {
-    auto count = input[0]->count();
+    auto count = input[0]->size();
     auto output_data = output[0]->data_gptr();
     auto output_diff = output[0]->diff_gptr();
     auto input_diff = input[0]->mutable_diff_gptr();

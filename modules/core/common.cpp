@@ -34,7 +34,7 @@ Global::~Global()
 #endif
 }
 
-std::ostream& operator << (std::ostream& os, const vector<int>& vec)
+std::ostream& operator << (std::ostream& os, const vector<size_t>& vec)
 {
     auto size = vec.size();
     os << "[";

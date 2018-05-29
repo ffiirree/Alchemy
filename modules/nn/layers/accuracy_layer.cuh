@@ -14,17 +14,17 @@ __global__ void max_index_kernel(const int count, const T * ptr, int * index){
     }
 }
 
-template<typename T>
-void AccuracyLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
-                                  const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void AccuracyLayer<Device, T>::ForwardGPU(const vector<container *> &input,
+                                  const vector<container *> &output)
 {
     auto size = input[0]->shape(2) * input[0]->shape(3);
     auto o_ptr = input[0]->data_gptr();
     auto g_ptr = input[1]->data_gptr();
     int result_ = 0;
-    Tensor<int> index_1({1}), index_2({1});
+    Tensor<Device, int> index_1({1}), index_2({1});
 
-    for(auto i = 0; i < input[0]->shape(0); ++i) {
+    for(size_t i = 0; i < input[0]->shape(0); ++i) {
 
         max_index_kernel<<<1, 1>>>(size, o_ptr, index_1.mutable_gptr());
         max_index_kernel<<<1, 1>>>(size, g_ptr, index_2.mutable_gptr());

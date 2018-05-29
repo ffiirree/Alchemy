@@ -63,7 +63,7 @@ private:
 
 template <typename Device, typename T>
 class Optimizer {
-    using LayerType = Layer<T>;
+    using LayerType = Layer<Device, T>;
 public:
     explicit Optimizer(const OptimizerParameter& param);
     virtual ~Optimizer() = default;
@@ -79,10 +79,10 @@ public:
 protected:
     OptimizerParameter param_;
 
-    vector<Blob<T>> sign_;
+    vector<Blob<Device, T>> sign_;
 
-    shared_ptr<Network<T>> net_;
-    shared_ptr<Network<T>> test_net_;
+    shared_ptr<Network<Device, T>> net_;
+    shared_ptr<Network<Device, T>> test_net_;
 };
 
 template <typename Device, typename T>
@@ -93,15 +93,15 @@ Optimizer<Device, T>::Optimizer(const OptimizerParameter &param)
     LOG(INFO) << "Mode: " << ((Global::mode() == Global::Mode::CPU) ? "CPU": "GPU");
 
     LOG(INFO) << "========= TRAINING NETWORK =========";
-    net_.reset(new Network<T>(param.train_net_param()));
+    net_.reset(new Network<Device, T>(param.train_net_param()));
 
     LOG(INFO) << "========= TEST NETWORK =========";
-    test_net_.reset(new Network<T>(param.test_net_param()));
+    test_net_.reset(new Network<Device, T>(param.test_net_param()));
 
     /// setting
     const auto& lp = net_->learnable_params();
     for(const auto& _param : lp) {
-        sign_.push_back(Blob<T>(std::get<0>(_param)->shape()));
+        sign_.push_back(Blob<Device, T>(std::get<0>(_param)->shape()));
     }
 }
 
@@ -116,21 +116,21 @@ void Optimizer<Device, T>::regularize()
                 const auto& item = learnable_params[i];
 
                 if(Global::mode() == Global::CPU) {
-                    vector_sign(std::get<0>(item)->count(),
+                    vector_sign(std::get<0>(item)->size(),
                                 std::get<0>(item)->data_cptr(),
                                 sign_[i].mutable_data_cptr());
 
-                    vector_axpy(std::get<0>(item)->count(),
+                    vector_axpy(std::get<0>(item)->size(),
                                 (T)(std::get<2>(item) * std::get<1>(item)),
                                 sign_[i].data_cptr(),
                                 std::get<0>(item)->mutable_diff_cptr());
                 }
                 else {
-                    vector_sign_gpu(std::get<0>(item)->count(),
+                    vector_sign_gpu(std::get<0>(item)->size(),
                                     std::get<0>(item)->data_gptr(),
                                     sign_[i].mutable_data_gptr());
 
-                    vector_axpy_gpu(std::get<0>(item)->count(),
+                    vector_axpy_gpu(std::get<0>(item)->size(),
                                     (T)(std::get<2>(item) * std::get<1>(item)),
                                     sign_[i].data_gptr(),
                                     std::get<0>(item)->mutable_diff_gptr());
@@ -141,13 +141,13 @@ void Optimizer<Device, T>::regularize()
         case L2:
             for(auto& param : learnable_params) {
                 if(Global::mode() == Global::CPU) {
-                    vector_axpy(std::get<0>(param)->count(),
+                    vector_axpy(std::get<0>(param)->size(),
                                 (T)(std::get<2>(param) * std::get<1>(param)),
                                 std::get<0>(param)->data_cptr(),
                                 std::get<0>(param)->mutable_diff_cptr());
                 }
                 else {
-                    vector_axpy_gpu(std::get<0>(param)->count(),
+                    vector_axpy_gpu(std::get<0>(param)->size(),
                                     (T)(std::get<2>(param) * std::get<1>(param)),
                                     std::get<0>(param)->data_gptr(),
                                     std::get<0>(param)->mutable_diff_gptr());

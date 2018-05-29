@@ -16,18 +16,20 @@ template <> struct DataType<double> {
 };
 }
 
-template <typename T>
-class CuDNNConvolutionLayer : public ConvolutionLayer<T> {
+template <typename Device, typename T>
+class CuDNNConvolutionLayer : public ConvolutionLayer<Device, T> {
 public:
+    using container = Blob<Device, T>;
+    
     explicit CuDNNConvolutionLayer() = default;
     explicit CuDNNConvolutionLayer(const LayerParameter&param)
-            : ConvolutionLayer<T>(param) { }
+            : ConvolutionLayer<Device, T>(param) { }
     virtual ~CuDNNConvolutionLayer();
 
-    void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) override;
+    void setup(const vector<container *>&input, const vector<container *>&output) override;
 
-    void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
-    void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void ForwardGPU(const vector<container *>& input, const vector<container *>& output) override;
+    void BackwardGPU(const vector<container *>& input, const vector<container *>& output) override;
 
 private:
     cudnnHandle_t cudnn_{};

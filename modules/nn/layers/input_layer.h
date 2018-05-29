@@ -6,14 +6,14 @@
 
 namespace alchemy {
 
-template <typename T>
-class InputLayer : public Layer<T> {
+template <typename Device, typename T>
+class InputLayer : public Layer<Device, T> {
 public:
-    using container = Blob<T>;
+    using container = Blob<Device, T>;
     
     InputLayer() = default;
     explicit InputLayer(const LayerParameter& param)
-            : Layer<T>(param), input_param_(param.input_param()) { }
+            : Layer<Device, T>(param), input_param_(param.input_param()) { }
     ~InputLayer() = default;
 
     void setup(const vector<container *> &input, const vector<container *> &output) override;

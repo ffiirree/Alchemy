@@ -5,25 +5,27 @@
 
 namespace alchemy {
 
-template <typename T>
-class EuclideanLossLayer: public Layer<T> {
+template <typename Device, typename T>
+class EuclideanLossLayer: public Layer<Device, T> {
 public:
+    using container = Blob<Device, T>;
+    
     EuclideanLossLayer() = default;
-    explicit EuclideanLossLayer(const LayerParameter&parameter) : Layer<T>(parameter) { }
+    explicit EuclideanLossLayer(const LayerParameter&parameter) : Layer<Device, T>(parameter) { }
     virtual ~EuclideanLossLayer() = default;
 
-    void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) override;
+    void setup(const vector<container *>&input, const vector<container *>&output) override;
 
-    void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
-    void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void ForwardCPU(const vector<container *>& input, const vector<container *>& output) override;
+    void BackwardCPU(const vector<container *>& input, const vector<container *>& output) override;
 
 #ifdef __CUDACC__
-    void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
-    void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void ForwardGPU(const vector<container *>& input, const vector<container *>& output) override;
+    void BackwardGPU(const vector<container *>& input, const vector<container *>& output) override;
 #endif //! __CUDACC__
 
 private:
-    Tensor<T> diff_;
+    Tensor<Device, T> diff_;
 };
 }
 #include "euclidean_loss_layer.hpp"

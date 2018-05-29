@@ -49,16 +49,16 @@ int main()
 
 
     ///
-    Tensor<float> axpy1({2, 2});
-    Tensor<float> axpy2({2, 2});
+    Tensor<CPU, float> axpy1({2, 2});
+    Tensor<CPU, float> axpy2({2, 2});
 
-    Filler<float>::fill(axpy1, NORMAL);
-    Filler<float>::fill(axpy2, XAVIER);
+    Filler<CPU, float>::fill(axpy1, NORMAL);
+    Filler<CPU, float>::fill(axpy2, XAVIER);
 
-    cout << "[before/0]"; print_cpu(axpy1.count(), axpy1.cptr());
-    cout << "[before/1]"; print_cpu(axpy2.count(), axpy2.cptr());
-    vector_axpy_gpu(axpy1.count(), -1.f, axpy1.gptr(), axpy2.mutable_gptr());
-    cout << "[after /1]"; print_cpu(axpy2.count(), axpy2.cptr());
-    cout << "[after /1]"; print_gpu(axpy2.count(), axpy2.gptr());
+    cout << "[before/0]"; print_cpu(axpy1.size(), axpy1.cptr());
+    cout << "[before/1]"; print_cpu(axpy2.size(), axpy2.cptr());
+    vector_axpy_gpu(axpy1.size(), -1.f, axpy1.gptr(), axpy2.mutable_gptr());
+    cout << "[after /1]"; print_cpu(axpy2.size(), axpy2.cptr());
+    cout << "[after /1]"; print_gpu(axpy2.size(), axpy2.gptr());
     return 0;
 }

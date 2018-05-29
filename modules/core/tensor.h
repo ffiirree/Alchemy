@@ -6,27 +6,30 @@
 
 namespace alchemy {
 
-template <typename T>
+template <typename Device, typename T>
 class Tensor {
 public:
+    using reference = T&;
+    using const_reference = T const&;
+
     Tensor() = default;
-    explicit Tensor(const vector<int>& shape);
+    explicit Tensor(const vector<size_t>& shape);
     Tensor(const Tensor&) = default;
     Tensor&operator=(const Tensor&) = default;
     ~Tensor() = default;
 
-    inline vector<int> shape() const { return shape_; }
-    inline int shape(int axis) const { assert((unsigned)axis < this->shape_.size());  return shape_[axis]; }
+    inline vector<size_t> shape() const { return shape_; }
+    inline size_t shape(int axis) const { assert((unsigned)axis < this->shape_.size());  return shape_[axis]; }
 
-    void reshape(const vector<int>& shape);
+    void reshape(const vector<size_t>& shape);
 
-    inline int count() const { return count_; }
-    inline int count(int start, int end) const {
+    inline size_t size() const { return count_; }
+    inline size_t size(int start, int end) const {
         assert((unsigned)start < (unsigned)shape_.size());
         assert((unsigned)end <= (unsigned)shape_.size());
         assert((unsigned)start < (unsigned)end);
 
-        int result = 1;
+        size_t result = 1;
         for(auto i = start; i < end; ++i) {
             result *= shape_[i];
         }
@@ -39,19 +42,21 @@ public:
     inline const T * gptr() const { return reinterpret_cast<const T *>(data_->gptr()); }
     inline T * mutable_cptr() const { return reinterpret_cast<T *>(data_->mutable_cptr()); }
     inline T * mutable_gptr() const { return reinterpret_cast<T *>(data_->mutable_gptr()); }
+
+    inline reference cat(size_t idx) { return mutable_cptr()[idx]; }
+    inline const_reference cat(size_t idx) const { return cptr()[idx]; }
 private:
     shared_ptr<Memory> data_;
-    vector<int> shape_;
+    vector<size_t> shape_;
 
-    int count_ = 0;
+    size_t count_ = 0;
 };
 
-template <typename T> Tensor<T> operator+(const Tensor<T>& a, const Tensor<T>& b);
-template <typename T> Tensor<T> operator-(const Tensor<T>& a, const Tensor<T>& b);
+template <typename Device, typename T> Tensor<Device, T> operator+(const Tensor<Device, T>& a, const Tensor<Device, T>& b);
+template <typename Device, typename T> Tensor<Device, T> operator-(const Tensor<Device, T>& a, const Tensor<Device, T>& b);
 
-template <typename T> Tensor<T> add(const Tensor<T>& a, const Tensor<T>& b);
-template <typename T> Tensor<T> sub(const Tensor<T>& a, const Tensor<T>& b);
-
+template <typename Device, typename T> Tensor<Device, T> add(const Tensor<Device, T>& a, const Tensor<Device, T>& b);
+template <typename Device, typename T> Tensor<Device, T> sub(const Tensor<Device, T>& a, const Tensor<Device, T>& b);
 }
 
 #include "tensor.hpp"

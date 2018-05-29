@@ -41,7 +41,7 @@ vector<LayerParameter> NetworkParameter::filter(Phase phase) const
     return params;
 }
 
-template <typename T>
+template <typename Device, typename T>
 class Network {
 public:
     Network()= default;
@@ -55,11 +55,11 @@ public:
         return outputs_.back()[0]->data_cptr()[0];
     }
 
-    inline vector<tuple<shared_ptr<Blob<T>>, double, double>> learnable_params() const { return learnable_params_; };
+    inline vector<tuple<shared_ptr<Blob<Device, T>>, double, double>> learnable_params() const { return learnable_params_; };
 
-    inline vector<shared_ptr<Layer<T>>> layers() const { return layers_; }
-    inline vector<vector<Blob<T>*>> inputs() const { return inputs_; }
-    inline vector<vector<Blob<T>*>> outputs() const { return outputs_; }
+    inline vector<shared_ptr<Layer<Device, T>>> layers() const { return layers_; }
+    inline vector<vector<Blob<Device, T>*>> inputs() const { return inputs_; }
+    inline vector<vector<Blob<Device, T>*>> outputs() const { return outputs_; }
 
     inline Phase phase() const { return phase_; }
 
@@ -73,36 +73,36 @@ private:
     Phase phase_ = SHARED;
 
     // 层
-    vector<shared_ptr<Layer<T>>> layers_{};
+    vector<shared_ptr<Layer<Device, T>>> layers_{};
     // 从输入到输出的数据
-    map<string, shared_ptr<Blob<T>>> data_flow_{};
+    map<string, shared_ptr<Blob<Device, T>>> data_flow_{};
     // 参数
-    vector<tuple<shared_ptr<Blob<T>>, double, double>> learnable_params_{};
+    vector<tuple<shared_ptr<Blob<Device, T>>, double, double>> learnable_params_{};
 
     // 和每一层一一对应
-    vector<vector<Blob<T>*>> inputs_{};
-    vector<vector<Blob<T>*>> outputs_{};
+    vector<vector<Blob<Device, T>*>> inputs_{};
+    vector<vector<Blob<Device, T>*>> outputs_{};
 };
 
 
-template<typename T>
-void Network<T>::Forward()
+template <typename Device, typename T>
+void Network<Device, T>::Forward()
 {
     for(size_t layer_index = 0; layer_index < layers_.size(); ++layer_index) {
         layers_[layer_index]->Forward(inputs_[layer_index], outputs_[layer_index]);
     }
 }
 
-template<typename T>
-void Network<T>::Backward()
+template <typename Device, typename T>
+void Network<Device, T>::Backward()
 {
     for(size_t layer_index = layers_.size(); layer_index > 0; --layer_index) {
         layers_[layer_index - 1]->Backward(inputs_[layer_index - 1], outputs_[layer_index - 1]);
     }
 }
 
-template<typename T>
-Network<T>::Network(const NetworkParameter &net_params)
+template <typename Device, typename T>
+Network<Device, T>::Network(const NetworkParameter &net_params)
 {
     phase_ = net_params.phase();
     auto layer_params = net_params.filter(phase_);
@@ -115,13 +115,13 @@ Network<T>::Network(const NetworkParameter &net_params)
 
         // Create layers
         LOG(INFO) << "Creating Layer: " << param.name();
-        layers_.push_back(LayerFactory<T>::GetLayer(param));
+        layers_.push_back(LayerFactory<Device, T>::GetLayer(param));
 
         // inputs
         for(const auto& input: param.inputs()) {
             auto search = data_flow_.find(input);
             if(search == data_flow_.end()) {
-                data_flow_[input] = shared_ptr<Blob<T>>(new Blob<T>());
+                data_flow_[input] = shared_ptr<Blob<Device, T>>(new Blob<Device, T>());
             }
             LOG(INFO) << param.name() << " <-- " << input;
             inputs_[layer_idx].push_back(data_flow_[input].get());
@@ -131,7 +131,7 @@ Network<T>::Network(const NetworkParameter &net_params)
         for(const auto& output: param.outputs()) {
             auto search = data_flow_.find(output);
             if(search == data_flow_.end()) {
-                data_flow_[output] = shared_ptr<Blob<T>>(new Blob<T>());
+                data_flow_[output] = shared_ptr<Blob<Device, T>>(new Blob<Device, T>());
             }
             LOG(INFO) << param.name() << " --> " << output;
             outputs_[layer_idx].push_back(data_flow_[output].get());
@@ -153,8 +153,8 @@ Network<T>::Network(const NetworkParameter &net_params)
     }
 }
 
-template <typename T>
-void Network<T>::save(string path)
+template <typename Device, typename T>
+void Network<Device, T>::save(string path)
 {
     std::fstream file(path, std::ios::out | std::ios::binary);
 
@@ -169,8 +169,8 @@ void Network<T>::save(string path)
     file.close();
 }
 
-template <typename T>
-void Network<T>::load(string path)
+template <typename Device, typename T>
+void Network<Device, T>::load(string path)
 {
     std::fstream file(path, std::ios::in | std::ios::binary);
 

@@ -5,15 +5,15 @@
 
 namespace alchemy {
 
-template <typename T>
-class InnerProductLayer: public Layer<T> {
+template <typename Device, typename T>
+class InnerProductLayer: public Layer<Device, T> {
 public:
-    using container = Blob<T>;
+    using container = Blob<Device, T>;
 
     InnerProductLayer() = default;
     explicit InnerProductLayer(const LayerParameter& parameter)
-            : Layer<T>(parameter), ip_param_(parameter.ip_param()),
-              weights_(new Blob<T>()), biases_(new Blob<T>()) { }
+            : Layer<Device, T>(parameter), ip_param_(parameter.ip_param()),
+              weights_(new Blob<Device, T>()), biases_(new Blob<Device, T>()) { }
     virtual ~InnerProductLayer() = default;
 
     void setup(const vector<container *>&input, const vector<container *>&output) override;
@@ -29,9 +29,9 @@ public:
 private:
     InnerProductParameter ip_param_{};
 
-    shared_ptr<Blob<T>> weights_;
-    shared_ptr<Blob<T>> biases_;
-    Tensor<T> biasmer_;
+    shared_ptr<Blob<Device, T>> weights_;
+    shared_ptr<Blob<Device, T>> biases_;
+    Tensor<Device, T> biasmer_;
 
     int M_ = 0;
     int N_ = 0;

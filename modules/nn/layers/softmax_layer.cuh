@@ -2,11 +2,11 @@
 
 namespace alchemy {
 
-template<typename T>
-void SoftmaxLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
-                                 const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void SoftmaxLayer<Device, T>::ForwardGPU(const vector<container *> &input,
+                                 const vector<container *> &output)
 {
-    const auto count = input[0]->count();
+    const auto count = input[0]->size();
     auto input_data = input[0]->data_gptr();
     auto output_data = output[0]->mutable_data_gptr();
 
@@ -24,9 +24,9 @@ void SoftmaxLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
     vector_div_gpu(count, output_data, sum_.data_gptr(), output_data);
 }
 
-template<typename T>
-void SoftmaxLayer<T>::BackwardGPU(const vector<Blob<T> *> &input,
-                                  const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void SoftmaxLayer<Device, T>::BackwardGPU(const vector<container *> &input,
+                                  const vector<container *> &output)
 {
     LOG(FATAL) << "Not implement!";
 }

@@ -10,11 +10,11 @@ __global__ void relu_kernel(const size_t size, const T* InputData, double alpha,
     }
 }
 
-template<typename T>
-void ReLuLayer<T>::ForwardGPU(const vector<Blob<T> *> &input,
-                              const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void ReLuLayer<Device, T>::ForwardGPU(const vector<container *> &input,
+                              const vector<container *> &output)
 {
-    auto count = input[0]->count();
+    auto count = input[0]->size();
     auto input_data = input[0]->data_gptr();
     auto output_data = output[0]->mutable_data_gptr();
 
@@ -30,11 +30,11 @@ __global__ void drelu_kernel(const size_t size, const T* InputData, const T* Out
     }
 }
 
-template<typename T>
-void ReLuLayer<T>::BackwardGPU(const vector<Blob<T> *> &input,
-                               const vector<Blob<T> *> &output)
+template<typename Device, typename T>
+void ReLuLayer<Device, T>::BackwardGPU(const vector<container *> &input,
+                               const vector<container *> &output)
 {
-    auto count = input[0]->count();
+    auto count = input[0]->size();
     auto input_data = input[0]->data_gptr();
     auto output_diff = output[0]->diff_gptr();
     auto input_diff = input[0]->mutable_diff_gptr();

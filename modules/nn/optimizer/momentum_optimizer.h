@@ -15,8 +15,8 @@ public:
     virtual void update();
 
 protected:
-    vector<Tensor<T>> buf_;
-    vector<Tensor<T>> buf2_;
+    vector<Tensor<Device, T>> buf_;
+    vector<Tensor<Device, T>> buf2_;
 };
 
 
@@ -27,8 +27,8 @@ MomentumOptimizer<Device, T>::MomentumOptimizer(const OptimizerParameter &param)
     const auto& learnable_params = this->net_->learnable_params();
     for(const auto& learnable_param : learnable_params) {
         const auto& shape = std::get<0>(learnable_param)->shape();
-        Tensor<T> buf(shape), buf2(shape);
-        Filler<T>::constant_fill(buf.count(), buf.mutable_cptr(), 0.0);
+        Tensor<Device, T> buf(shape), buf2(shape);
+        Filler<Device, T>::constant_fill(buf.size(), buf.mutable_cptr(), 0.0);
         buf_.push_back(buf);
         buf2_.push_back(buf2);
     }

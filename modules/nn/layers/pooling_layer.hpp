@@ -2,9 +2,9 @@
 
 namespace alchemy {
 
-template<typename T>
-void PoolingLayer<T>::setup(const vector<Blob<T> *> &input,
-                            const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void PoolingLayer<Device, T>::setup(const vector<container *> &input,
+                            const vector<container *> &output)
 {
     assert((size_t)input[0]->shape(2) >= pooling_param_.kernel_size());
     assert((size_t)input[0]->shape(3) >= pooling_param_.kernel_size());
@@ -15,16 +15,16 @@ void PoolingLayer<T>::setup(const vector<Blob<T> *> &input,
     auto row_in = input[0]->shape(2);
     auto col_in = input[0]->shape(3);
 
-    auto row_out = static_cast<int>((row_in - ksize) / pooling_param_.stride() + 1);
-    auto col_out = static_cast<int>((col_in - ksize) / pooling_param_.stride() + 1);
+    auto row_out = (row_in - ksize) / pooling_param_.stride() + 1;
+    auto col_out = (col_in - ksize) / pooling_param_.stride() + 1;
 
     output[0]->reshape({ num_in, chs_in, row_out, col_out });
     max_idx_.reshape(output[0]->shape());
 }
 
-template<typename T>
-void PoolingLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
-                                 const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void PoolingLayer<Device, T>::ForwardCPU(const vector<container *> &input,
+                                 const vector<container *> &output)
 {
     const size_t batch_size = input[0]->shape(0);
     const size_t channels = input[0]->shape(1);
@@ -39,7 +39,7 @@ void PoolingLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
     auto max_idx = max_idx_.mutable_cptr();
 
     //
-    vector_set(output[0]->count(), -std::numeric_limits<T>::max(), output_data);
+    vector_set(output[0]->size(), -std::numeric_limits<T>::max(), output_data);
 
     switch(pooling_param_.type()) {
         case MAX:
@@ -69,9 +69,9 @@ void PoolingLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
                         }
                     }
 
-                    input_data += input[0]->count(2, 4);
-                    output_data += output[0]->count(2, 4);
-                    max_idx += max_idx_.count(2, 4);
+                    input_data += input[0]->size(2, 4);
+                    output_data += output[0]->size(2, 4);
+                    max_idx += max_idx_.size(2, 4);
                 }
             }
 
@@ -83,9 +83,9 @@ void PoolingLayer<T>::ForwardCPU(const vector<Blob<T> *> &input,
     }
 }
 
-template<typename T>
-void PoolingLayer<T>::BackwardCPU(const vector<Blob<T> *> &input,
-                                  const vector<Blob<T> *> &output)
+template <typename Device, typename T>
+void PoolingLayer<Device, T>::BackwardCPU(const vector<container *> &input,
+                                  const vector<container *> &output)
 {
     const size_t batch_size = input[0]->shape(0);
     const size_t channels = input[0]->shape(1);
@@ -96,7 +96,7 @@ void PoolingLayer<T>::BackwardCPU(const vector<Blob<T> *> &input,
     auto output_diff = output[0]->diff_cptr();
     auto max_idx = max_idx_.cptr();
 
-    vector_set(input[0]->count(), (T)0.0, input[0]->mutable_diff_cptr());
+    vector_set(input[0]->size(), (T)0.0, input[0]->mutable_diff_cptr());
 
     switch(pooling_param_.type()) {
         case MAX:
@@ -112,9 +112,9 @@ void PoolingLayer<T>::BackwardCPU(const vector<Blob<T> *> &input,
                         }
                     }
 
-                    input_diff += input[0]->count(2, 4);
-                    output_diff += output[0]->count(2, 4);
-                    max_idx += max_idx_.count(2, 4);
+                    input_diff += input[0]->size(2, 4);
+                    output_diff += output[0]->size(2, 4);
+                    max_idx += max_idx_.size(2, 4);
                 }
             }
             break;

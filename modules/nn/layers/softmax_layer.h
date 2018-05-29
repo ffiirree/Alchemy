@@ -5,29 +5,31 @@
 
 namespace alchemy {
 
-template <typename T>
-class SoftmaxLayer : public Layer<T> {
+template <typename Device, typename T>
+class SoftmaxLayer : public Layer<Device, T> {
 public:
+    using container = Blob<Device, T>;
+    
     SoftmaxLayer() = default;
     explicit SoftmaxLayer(const LayerParameter& param)
-            : Layer<T>(param), softmax_param_(param.softmax_param()) { }
+            : Layer<Device, T>(param), softmax_param_(param.softmax_param()) { }
     virtual ~SoftmaxLayer() = default;
 
-    void setup(const vector<Blob<T>*>&input, const vector<Blob<T>*>&output) override;
+    void setup(const vector<container *>&input, const vector<container *>&output) override;
 
-    void ForwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
-    void BackwardCPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void ForwardCPU(const vector<container *>& input, const vector<container *>& output) override;
+    void BackwardCPU(const vector<container *>& input, const vector<container *>& output) override;
 
 #ifdef __CUDACC__
-    void ForwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
-    void BackwardGPU(const vector<Blob<T>*>& input, const vector<Blob<T>*>& output) override;
+    void ForwardGPU(const vector<container *>& input, const vector<container *>& output) override;
+    void BackwardGPU(const vector<container *>& input, const vector<container *>& output) override;
 #endif //! USE_CUDA
 
 private:
     SoftmaxParameter softmax_param_;
 
-    Blob<T> sum_;
-    Blob<T> sum_multer_;
+    Blob<Device, T> sum_;
+    Blob<Device, T> sum_multer_;
 };
 }
 
