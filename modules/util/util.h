@@ -5,6 +5,9 @@
 #define st(x)           do { x } while (__LINE__ == -1)
 #define __unused_parameter__(param)   {(param) = (param);}
 
+#define CUDA_FOREACH(COUNT) \
+for (size_t idx = blockIdx.x * blockDim.x + threadIdx.x; idx < (COUNT); idx += blockDim.x * gridDim.x)
+
 namespace alchemy {
 struct CPU {};
 

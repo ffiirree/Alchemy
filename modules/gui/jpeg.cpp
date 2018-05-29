@@ -276,7 +276,7 @@ GLOBAL(int) read_JPEG_file(const char * filename, alchemy::Matrix & img)
     fclose(infile);
 
     /* At this point you may want to check to see whether any corrupt-data
-    * warnings occurred (test whether jerr.pub.num_warnings is nonzero).
+    * warnings occurred (simples whether jerr.pub.num_warnings is nonzero).
     */
 
     /* And we're done! */

@@ -25,36 +25,7 @@ if(WIN32)
 	add_custom_target(COPY_DLL_FILES ALL)
 endif()
 
-include(cmake/FindGUI.cmake)
-include(cmake/FindMedia.cmake)
-
-find_package(CUDA)
-if(CUDA_FOUND)
-    include_directories(${CUDA_INCLUDE_DIRS})
-    if(USE_CUDA)
-	    add_definitions(-DUSE_CUDA)
-    endif()
-    list(APPEND CUDA_NVCC_FLAGS "-std=c++14")
-    set(CUDA_PROPAGATE_HOST_FLAGS ON)
-
-    find_package(CuDNN)
-    if(CUDNN_FOUND)
-        if(USE_CUDNN)
-		    add_definitions(-DUSE_CUDNN)
-        endif()
-        include_directories(${CUDNN_INCLUDE_DIRS})
-    endif()
-endif()
-
-# atblas
-find_package(Atlas REQUIRED)
-include_directories(${Atlas_INCLUDE_DIRS})
-
-find_package(Glog REQUIRED)
-include_directories(${GLOG_INCLUDE_DIRS})
-
-find_package(NNPACK REQUIRED)
-include_directories(${NNPACK_INCLUDE_DIRS})
+include(cmake/AlchemyDependencies.cmake)
 
 # ========================== Debug ==========================
 set(CMAKE_DEBUG_POSTFIX "d")
@@ -68,6 +39,11 @@ add_subdirectory(modules/core)
 add_subdirectory(modules/imgproc)
 add_subdirectory(modules/gui)
 add_subdirectory(modules/nn)
+
+list(APPEND ALCHEMY_LIBS alchemy_nn alchemy_gui alchemy_imgproc alchemy_util alchemy_math alchemy_core)
+
+# simples
+add_subdirectory(simples)
 
 enable_testing()
 add_subdirectory(test)

@@ -1,7 +1,0 @@
-if(WIN32)
-    ADD_DEFINITIONS(-DUSE_WIN32)
-else()
-    find_package(GTK2 REQUIRED)
-    ADD_DEFINITIONS(-DUSE_GTK2)
-    include_directories(${GTK2_INCLUDE_DIRS})
-endif()

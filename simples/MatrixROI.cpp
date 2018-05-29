@@ -2,7 +2,7 @@
 
 int main()
 {
-    auto image = alchemy::imread("test.jpeg");
+    auto image = alchemy::imread("simples.jpeg");
     auto logo = alchemy::imread("logo.jpeg");
 
     auto roi = image(alchemy::Rect(50, 50, logo.cols_, logo.rows_));

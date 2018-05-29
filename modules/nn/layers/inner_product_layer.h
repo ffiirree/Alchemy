@@ -37,6 +37,36 @@ private:
     int N_ = 0;
     int K_ = 0;
 };
+
+template <typename Device, typename T>
+void InnerProductLayer<Device, T>::setup(const vector<container *> &input,
+                                         const vector<container *> &output)
+{
+    auto output_size = ip_param_.output_size();
+    auto input_size = input[0]->size(1, 4);
+
+    output[0]->reshape({ input[0]->shape(0), 1, output_size, 1 });
+
+    /// N x C x R x C
+    M_ = input[0]->num();
+    N_ = output_size;
+    K_ = input_size;
+
+    if(this->learnable_params_.empty()) {
+        biasmer_.reshape({ input[0]->shape(0) });
+        weights_->reshape({ output_size, input_size });
+        biases_->reshape({ output_size });
+
+        this->learnable_params_.resize(2);
+        this->learnable_params_[0] = std::make_tuple(weights_, ip_param_.wlr(), ip_param_.weight_decay()/input[0]->shape(0));
+        this->learnable_params_[1] = std::make_tuple(biases_, ip_param_.blr(), 0.0);
+
+        vector_set(input[0]->shape(0), (T)1.0, biasmer_.mutable_cptr());
+
+        Filler<Device, T>::fill(weights_->data(), ip_param_.weight_filler());
+        Filler<Device, T>::fill(biases_->data(), ip_param_.bias_filler());
+    }
+}
 } // namespace
 
 #include "inner_product_layer.hpp"

@@ -3,7 +3,7 @@
 
 int main()
 {
-    auto image = alchemy::imread("test.jpeg");
+    auto image = alchemy::imread("simples.jpeg");
     auto roi = image(alchemy::Rect(50, 50, 10, 3));
 
     std::cout << roi << std::endl;

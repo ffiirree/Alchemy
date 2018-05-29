@@ -1,5 +1,3 @@
-#include <device_launch_parameters.h>
-
 namespace alchemy {
 
 template <typename T>

@@ -29,8 +29,8 @@ public:
     virtual void Backward(const vector<container *>& input, const vector<container *>& output);
 
 
-    virtual void ForwardCPU(const vector<container *>& input, const vector<container *>& output) = 0;
-    virtual void BackwardCPU(const vector<container *>& input, const vector<container *>& output) = 0;
+    virtual void ForwardCPU(const vector<container *>& input, const vector<container *>& output) { LOG(FATAL) << ""; };
+    virtual void BackwardCPU(const vector<container *>& input, const vector<container *>& output) { LOG(FATAL) << "";  };
 
     virtual void BackwardGPU(const vector<container *>& input, const vector<container *>& output) { BackwardCPU(input, output); }
     virtual void ForwardGPU(const vector<container *>& input, const vector<container *>& output) { ForwardCPU(input, output); }

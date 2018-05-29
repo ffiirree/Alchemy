@@ -20,7 +20,7 @@ void AccuracyLayer<Device, T>::ForwardCPU(const vector<container *> &input,
     auto g_ptr = input[1]->data_cptr();
     int result_ = 0;
     for(size_t i = 0; i < input[0]->shape(0); ++i) {
-        // test
+        // simples
         auto o_iter = std::max_element(o_ptr + i * size, o_ptr + i * size + size);
         auto g_iter = std::max_element(g_ptr + i * size, g_ptr + i * size + size);
         if(std::distance(o_ptr + i * size, o_iter) == std::distance(g_ptr + i * size, g_iter)) {

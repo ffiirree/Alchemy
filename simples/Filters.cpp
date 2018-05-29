@@ -2,7 +2,7 @@
 
 int main()
 {
-    auto image = alchemy::imread("test.jpeg");
+    auto image = alchemy::imread("simples.jpeg");
 
     // 线性滤波
     alchemy::Matrix box_image, blur_image, g_image;

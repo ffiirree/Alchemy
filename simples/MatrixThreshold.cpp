@@ -2,7 +2,7 @@
 
 int main()
 {
-    auto image = alchemy::imread("test.jpeg");
+    auto image = alchemy::imread("simples.jpeg");
     alchemy::Matrix gray;
     alchemy::cvtColor(image, gray, alchemy::BGR2GRAY);
 

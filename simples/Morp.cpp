@@ -2,7 +2,7 @@
 
 int main()
 {
-    auto image = alchemy::imread("test.jpeg");
+    auto image = alchemy::imread("simples.jpeg");
 
     // 膨胀和腐蚀
     alchemy::Matrix erode_image, dilate_image;

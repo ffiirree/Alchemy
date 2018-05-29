@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_MATH_MATH_OP_H
 #define ALCHEMY_MATH_MATH_OP_H
 
-#include <util/util.h>
 #include <cmath>
+#include "util/util.h"
 #include "core/tensor.h"
 
 extern "C"{
@@ -90,38 +90,29 @@ void matrix_mul_gpu(const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOS
 template <typename T> void print_cpu(const int count, const T* A);
 template <typename T> void print_gpu(const int count, const T* A);
 
-template <typename T>
-void Sigmoid(const Tensor<CPU, T>& A, Tensor<CPU, T>& B)
-{
-    for(size_t idx = 0; idx < A.size(); ++idx) {
-        B.cat(idx) = 1.0 / (1.0 + std::exp(-A.cat(idx)));
-    }
+template <typename T> void Add(const Tensor<CPU, T>& X1, const Tensor<CPU, T>& X2, Tensor<CPU, T>& Y);
+template <typename T> void Add(const Tensor<GPU, T>& X1, const Tensor<GPU, T>& X2, Tensor<GPU, T>& Y);
+template <typename T> void Sub(const Tensor<CPU, T>& X1, const Tensor<CPU, T>& X2, Tensor<CPU, T>& Y);
+template <typename T> void Sub(const Tensor<GPU, T>& X1, const Tensor<GPU, T>& X2, Tensor<GPU, T>& Y);
+
+template <typename T> void Sigmoid(const Tensor<CPU, T>& X, Tensor<CPU, T>& Y);
+template <typename T> void Sigmoid(const Tensor<GPU, T>& X, Tensor<GPU, T>& Y);
+template <typename T> void SigmoidGrad(const Tensor<CPU, T>& Y, const Tensor<CPU, T>& DY, Tensor<CPU, T>& DX);
+template <typename T> void SigmoidGrad(const Tensor<GPU, T>& Y, const Tensor<GPU, T>& DY, Tensor<GPU, T>& DX);
+
+template <typename T> void Tanh(const Tensor<CPU, T>& X, Tensor<CPU, T>& Y);
+template <typename T> void Tanh(const Tensor<GPU, T>& X, Tensor<GPU, T>& Y);
+template <typename T> void TanhGrad(const Tensor<CPU, T>& Y, const Tensor<CPU, T>& DY, Tensor<CPU, T>& DX);
+template <typename T> void TanhGrad(const Tensor<GPU, T>& Y, const Tensor<GPU, T>& DY, Tensor<GPU, T>& DX);
+
+template <typename T> void ReLU(const Tensor<CPU, T>& X, double alpha, Tensor<CPU, T>& Y);
+template <typename T> void ReLU(const Tensor<GPU, T>& X, double alpha, Tensor<GPU, T>& Y);
+template <typename T> void ReLUGrad(const Tensor<CPU, T>& X, const Tensor<CPU, T>& DY, double alpha, Tensor<CPU, T>& DX);
+template <typename T> void ReLUGrad(const Tensor<GPU, T>& X, const Tensor<GPU, T>& DY, double alpha, Tensor<GPU, T>& DX);
 }
+
+#include "math_op_cpu.hpp"
 #ifdef __CUDACC__
-template <typename T>
-void Sigmoid(const Tensor<GPU, T>& A, Tensor<GPU, T>& B)
-{
-
-}
+#include "math_op_gpu.hpp"
 #endif
-template <typename T>
-void SigmoidGrad(const Tensor<CPU, T>& A, const Tensor<CPU, T>& B, Tensor<CPU, T>& C)
-{
-    for(size_t idx = 0; idx < A.size(); ++idx) {
-        C.cat(idx) = B.cat(idx) * A.cat(idx) * (1.0 - A.cat(idx));
-    }
-}
-#ifdef __CUDACC__
-template <typename T>
-void SigmoidGrad(const Tensor<GPU, T>& A, const Tensor<GPU, T>& B, Tensor<GPU, T>& C)
-{
-
-}
-#endif
-template <typename T> void Tanh(Tensor<CPU, T>& A, Tensor<CPU, T>& B);
-template <typename T> void Tanh(Tensor<GPU, T>& A, Tensor<GPU, T>& B);
-
-template <typename T> void TanhGrad(Tensor<CPU, T>& A, Tensor<CPU, T>& B);
-template <typename T> void TanhGrad(Tensor<GPU, T>& A, Tensor<GPU, T>& B);
-}
 #endif //! ALCHEMY_MATH_MATH_OP_H

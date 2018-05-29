@@ -1,20 +1,50 @@
-#include <alchemy.h>
+#include "gtest/gtest.h"
+#include "core/tensor.h"
+#include "defines.h"
 
-using namespace alchemy;
+namespace alchemy {
 
-int main()
-{
+template <typename T>
+class TensorTest : public ::testing::Test {
+protected:
+    TensorTest()
+            : tensor_(new Tensor<typename T::TypeA, typename T::TypeB>()),
+              tensor_preshaped_(new Tensor<typename T::TypeA, typename T::TypeB>({ 2, 3, 4, 5})) { }
 
-    Tensor<GPU, float> a({ 2, 2, 3, 2});
-    Tensor<GPU, float> b(a.shape());
-    Filler<GPU, float>::fill(a, NORMAL);
-    Filler<GPU, float>::fill(b, NORMAL);
+    ~TensorTest() override { delete tensor_, delete tensor_preshaped_; }
+    Tensor<typename T::TypeA, typename T::TypeB> * const tensor_;
+    Tensor<typename T::TypeA, typename T::TypeB> * const tensor_preshaped_;
+};
 
-    auto c = a + b;
+typedef ::testing::Types<TypeDefinitions<CPU, float>, TypeDefinitions<GPU, float>, TypeDefinitions<CPU, double>, TypeDefinitions<GPU, double>> TestTypes;
 
+TYPED_TEST_CASE(TensorTest, TestTypes);
 
-    print_gpu(a.size(), a.gptr());
-    print_gpu(b.size(), b.gptr());
-    print_gpu(c.size(), c.gptr());
-    return 0;
+TYPED_TEST(TensorTest, TestInitialization){
+    EXPECT_TRUE(this->tensor_);
+    EXPECT_TRUE(this->tensor_preshaped_);
+    EXPECT_EQ(this->tensor_preshaped_->shape(0), 2);
+    EXPECT_EQ(this->tensor_preshaped_->shape(1), 3);
+    EXPECT_EQ(this->tensor_preshaped_->shape(2), 4);
+    EXPECT_EQ(this->tensor_preshaped_->shape(3), 5);
+    EXPECT_EQ(this->tensor_preshaped_->size(), 120);
+    EXPECT_EQ(this->tensor_->size(), 0);
 }
+
+TYPED_TEST(TensorTest, TestPointers) {
+    EXPECT_TRUE(this->tensor_preshaped_->cptr());
+    EXPECT_TRUE(this->tensor_preshaped_->gptr());
+    EXPECT_TRUE(this->tensor_preshaped_->mutable_cptr());
+    EXPECT_TRUE(this->tensor_preshaped_->mutable_gptr());
+}
+
+TYPED_TEST(TensorTest, TestReshape) {
+    this->tensor_->reshape({ 3, 4, 5, 6});
+    EXPECT_EQ(this->tensor_->shape(0), 3);
+    EXPECT_EQ(this->tensor_->shape(1), 4);
+    EXPECT_EQ(this->tensor_->shape(2), 5);
+    EXPECT_EQ(this->tensor_->shape(3), 6);
+    EXPECT_EQ(this->tensor_->size(), 360);
+}
+}
+

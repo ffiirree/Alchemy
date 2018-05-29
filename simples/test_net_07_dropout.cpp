@@ -25,7 +25,7 @@ int main()
                                     .scale(1./255)
                     ),
             LayerParameter()
-                    .name("test input layer")
+                    .name("simples input layer")
                     .type(INPUT_LAYER)
                     .phase(TEST)
                     .output("data")

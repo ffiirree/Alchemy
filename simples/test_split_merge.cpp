@@ -2,7 +2,7 @@
 
 int main()
 {
-    auto image = alchemy::imread("test.jpeg");
+    auto image = alchemy::imread("simples.jpeg");
     alchemy::imshow("原图", image);
 
     // 通道分离

@@ -1,4 +1,3 @@
-#include <cudnn_v7.h>
 #include "alchemy.h"
 
 using namespace std;
