@@ -40,12 +40,12 @@ add_subdirectory(modules/imgproc)
 add_subdirectory(modules/gui)
 add_subdirectory(modules/nn)
 
-list(APPEND ALCHEMY_LIBS alchemy_nn alchemy_gui alchemy_imgproc alchemy_util alchemy_math alchemy_core)
+list(APPEND ALCHEMY_LIBS alchemy_math alchemy_nn alchemy_gui alchemy_imgproc alchemy_util alchemy_core)
 
 # simples
 add_subdirectory(simples)
 
-enable_testing()
+#enable_testing()
 add_subdirectory(test)
 
 

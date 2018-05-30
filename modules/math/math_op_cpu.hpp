@@ -35,7 +35,7 @@ void TanhGrad(const Tensor<CPU, T>& Y, const Tensor<CPU, T>& DY, Tensor<CPU, T>&
 template <typename T>
 void ReLU(const Tensor<CPU, T>& X, double alpha, Tensor<CPU, T>& Y)
 {
-    for(size_t idx = 0; idx < Y.size(); ++idx) {
+    for(size_t idx = 0; idx < X.size(); ++idx) {
         Y.cat(idx) = X.cat(0) > 0 ? X.cat(idx) : alpha * X.cat(idx);
     }
 }

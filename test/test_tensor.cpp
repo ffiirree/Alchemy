@@ -4,6 +4,8 @@
 
 namespace alchemy {
 
+using TestTypes = ::testing::Types<XPU_F>;
+
 template <typename T>
 class TensorTest : public ::testing::Test {
 protected:
@@ -15,8 +17,6 @@ protected:
     Tensor<typename T::TypeA, typename T::TypeB> * const tensor_;
     Tensor<typename T::TypeA, typename T::TypeB> * const tensor_preshaped_;
 };
-
-typedef ::testing::Types<TypeDefinitions<CPU, float>, TypeDefinitions<GPU, float>, TypeDefinitions<CPU, double>, TypeDefinitions<GPU, double>> TestTypes;
 
 TYPED_TEST_CASE(TensorTest, TestTypes);
 

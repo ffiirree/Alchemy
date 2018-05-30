@@ -25,7 +25,7 @@ template <typename Device, typename T>
 void TanhLayer<Device, T>::setup(const vector<container *> &input,
                                  const vector<container *> &output)
 {
-    output[0]->reshape(input[0]->shape());
+    output[0]->reset(input[0]->shape());
 }
 
 template <typename Device, typename T>

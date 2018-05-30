@@ -18,8 +18,8 @@ void PoolingLayer<Device, T>::setup(const vector<container *> &input,
     auto row_out = (row_in - ksize) / pooling_param_.stride() + 1;
     auto col_out = (col_in - ksize) / pooling_param_.stride() + 1;
 
-    output[0]->reshape({ num_in, chs_in, row_out, col_out });
-    max_idx_.reshape(output[0]->shape());
+    output[0]->reset({ num_in, chs_in, row_out, col_out });
+    max_idx_.reset(output[0]->shape());
 }
 
 template <typename Device, typename T>

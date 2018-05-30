@@ -20,10 +20,8 @@ public:
     void ForwardCPU(const vector<container *>& input, const vector<container *>& output) override;
     void BackwardCPU(const vector<container *>& input, const vector<container *>& output) override;
 
-#ifdef __CUDACC__
     void ForwardGPU(const vector<container *>& input, const vector<container *>& output) override;
     void BackwardGPU(const vector<container *>& input, const vector<container *>& output) override;
-#endif //! USE_CUDA
 
 private:
     SoftmaxParameter softmax_param_;
@@ -34,7 +32,5 @@ private:
 }
 
 #include "softmax_layer.hpp"
-#ifdef __CUDACC__
 #include "softmax_layer.cuh"
-#endif//! __CUDACC__
 #endif //! ALCHEMY_NN_LAYERS_SOFTMAX_LAYER_H

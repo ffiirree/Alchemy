@@ -15,6 +15,7 @@ public:
     ~Blob() = default;
 
     void reshape(const vector<size_t>& shape);
+    void reset(const vector<size_t>& shape);
 
     inline vector<size_t> shape() const { return data_.shape(); }
     inline size_t shape(int axis) { return data_.shape(axis); }
@@ -45,14 +46,21 @@ private:
 template<typename Device, typename T>
 Blob<Device, T>::Blob(const vector<size_t> &shape)
 {
-    data_.reshape(shape);
-    diff_.reshape(shape);
+    data_.reset(shape);
+    diff_.reset(shape);
 }
 template<typename Device, typename T>
 void Blob<Device, T>::reshape(const vector<size_t> &shape)
 {
     data_.reshape(shape);
     diff_.reshape(shape);
+}
+
+template <typename Device, typename T>
+void Blob<Device, T>::reset(const vector<size_t> &shape)
+{
+    data_.reset(shape);
+    diff_.reset(shape);
 }
 }
 #endif //! ALCHEMY_NN_BLOB_H

@@ -11,12 +11,12 @@ void InputLayer<Device, T>::setup(const vector<container *> &input,
 {
     auto source = input_param_.source();
 
-    output[0]->reshape({ input_param_.batch_size(),
+    output[0]->reset({ input_param_.batch_size(),
                          source->chs(),
                          source->rows(),
                          source->cols()
                        });
-    output[1]->reshape({ input_param_.batch_size(),
+    output[1]->reset({ input_param_.batch_size(),
                          1,
                          source->classification_num(),
                          1

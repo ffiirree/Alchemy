@@ -43,8 +43,8 @@ public:
                 REGISTER_LAYER(RELU_LAYER, key, ReLuLayer, param);
                 REGISTER_LAYER(SIGMOID_CROSS_ENTORPY_LOSS_LAYER, key, SigmoidCrossEntropyLossLayer, param);
                 REGISTER_LAYER(SIGMOID_LAYER, key, SigmoidLayer, param);
-                REGISTER_LAYER(SOFTMAX_LAYER, key, SoftmaxLossLayer, param);
-                REGISTER_LAYER(SOFTMAX_LOSS_LAYER, key, SoftmaxLayer, param);
+                REGISTER_LAYER(SOFTMAX_LAYER, key, SoftmaxLayer, param);
+                REGISTER_LAYER(SOFTMAX_LOSS_LAYER, key, SoftmaxLossLayer, param);
                 REGISTER_LAYER(TANH_LAYER, key, TanhLayer, param);
                 REGISTER_LAYER(POOLING_LAYER, key, PoolingLayer, param);
 

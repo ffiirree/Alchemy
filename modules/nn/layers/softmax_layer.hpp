@@ -6,10 +6,10 @@ template <typename Device, typename T>
 void SoftmaxLayer<Device, T>::setup(const vector<container *> &input,
                                     const vector<container *> &output)
 {
-    output[0]->reshape(input[0]->shape());
+    output[0]->reset(input[0]->shape());
 
-    sum_.reshape(input[0]->shape());
-    sum_multer_.reshape({ input[0]->shape(2), input[0]->shape(2) });
+    sum_.reset(input[0]->shape());
+    sum_multer_.reset({ input[0]->shape(2), input[0]->shape(2) });
 
     vector_set(sum_multer_.size(), (T)1., sum_multer_.mutable_data_cptr());
 }

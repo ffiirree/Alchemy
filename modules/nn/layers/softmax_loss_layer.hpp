@@ -21,7 +21,7 @@ void SoftmaxLossLayer<Device, T>::setup(const vector<container *> &input,
     softmax_output_.push_back(shared_ptr<Blob<Device, T>>(new Blob<Device, T>()));
     softmax_layer_->setup(input, { softmax_output_[0].get() });
 
-    output[0]->reshape({ 1 });
+    output[0]->reset({ 1 });
 }
 
 template <typename Device, typename T>

@@ -117,7 +117,3 @@ list(APPEND LINK_LIBS ${GLOG_LIBRARIES})
 find_package(NNPACK REQUIRED)
 include_directories(${NNPACK_INCLUDE_DIRS})
 list(APPEND LINK_LIBS ${NNPACK_LIBRARIES} -lpthread)
-
-find_package(GTest)
-include_directories(${GTEST_INCLUDE_DIRS})
-list(APPEND LINK_LIBS ${GTEST_LIBRARIES})

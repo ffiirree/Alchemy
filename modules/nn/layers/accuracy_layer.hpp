@@ -7,7 +7,7 @@ template <typename Device, typename T>
 void AccuracyLayer<Device, T>::setup(const vector<container *> &input,
                              const vector<container *> &output)
 {
-    output[0]->reshape({ 3 });
+    output[0]->reset({ 3 });
     vector_set(output[0]->size(), (T)0., output[0]->mutable_data_cptr());
 }
 

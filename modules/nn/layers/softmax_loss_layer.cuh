@@ -6,7 +6,7 @@ template <typename Device, typename T>
 void SoftmaxLossLayer<Device, T>::ForwardGPU(const vector<container *> &input,
                                      const vector<container *> &output)
 {
-    softmax_layer_->Forward(input, { softmax_output_[0].get() });
+    softmax_layer_->ForwardGPU(input, { softmax_output_[0].get() });
 
     //TODO: loss
 }

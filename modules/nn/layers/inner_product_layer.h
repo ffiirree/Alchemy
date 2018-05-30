@@ -21,10 +21,9 @@ public:
     void ForwardCPU(const vector<container *>& input, const vector<container *>& output) override;
     void BackwardCPU(const vector<container *>& input, const vector<container *>& output) override;
 
-#ifdef __CUDACC__
     void ForwardGPU(const vector<container *>& input, const vector<container *>& output) override;
     void BackwardGPU(const vector<container *>& input, const vector<container *>& output) override;
-#endif //! __CUDACC__
+
 
 private:
     InnerProductParameter ip_param_{};
@@ -45,7 +44,7 @@ void InnerProductLayer<Device, T>::setup(const vector<container *> &input,
     auto output_size = ip_param_.output_size();
     auto input_size = input[0]->size(1, 4);
 
-    output[0]->reshape({ input[0]->shape(0), 1, output_size, 1 });
+    output[0]->reset({ input[0]->shape(0), 1, output_size, 1 });
 
     /// N x C x R x C
     M_ = input[0]->num();
@@ -53,9 +52,9 @@ void InnerProductLayer<Device, T>::setup(const vector<container *> &input,
     K_ = input_size;
 
     if(this->learnable_params_.empty()) {
-        biasmer_.reshape({ input[0]->shape(0) });
-        weights_->reshape({ output_size, input_size });
-        biases_->reshape({ output_size });
+        biasmer_.reset({ input[0]->shape(0) });
+        weights_->reset({ output_size, input_size });
+        biases_->reset({ output_size });
 
         this->learnable_params_.resize(2);
         this->learnable_params_[0] = std::make_tuple(weights_, ip_param_.wlr(), ip_param_.weight_decay()/input[0]->shape(0));
@@ -70,7 +69,5 @@ void InnerProductLayer<Device, T>::setup(const vector<container *> &input,
 } // namespace
 
 #include "inner_product_layer.hpp"
-#ifdef __CUDACC__
 #include "inner_product_layer.cuh"
-#endif //! __CUDACC__
 #endif //! ALCHEMY_NN_LAYERS_IP_LAYER_H

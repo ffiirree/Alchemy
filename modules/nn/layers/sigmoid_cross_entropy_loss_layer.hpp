@@ -20,7 +20,7 @@ void SigmoidCrossEntropyLossLayer<Device, T>::setup(const vector<container *> &i
     sigmoid_output_.push_back(shared_ptr<Blob<Device, T>>(new Blob<Device, T>()));
     sigmoid_layers_->setup(input, { sigmoid_output_[0].get() });
 
-    output[0]->reshape({ 1 });
+    output[0]->reset({ 1 });
 }
 
 
@@ -29,7 +29,7 @@ void SigmoidCrossEntropyLossLayer<Device, T>::ForwardCPU(const vector<container 
                                                  const vector<container *> &output)
 {
     // computes the sigmoid outputs.
-    sigmoid_layers_->Forward(input, { sigmoid_output_[0].get() });
+    sigmoid_layers_->ForwardCPU(input, { sigmoid_output_[0].get() });
 
     //TODO: loss
 }

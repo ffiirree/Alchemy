@@ -26,12 +26,12 @@ void ConvolutionLayer<Device, T>::setup(const vector<container *> &input,
     auto row_out = (row_in - ksize) / conv_param_.stride() + 1;
     auto col_out = (col_in - ksize) / conv_param_.stride() + 1;
 
-    output[0]->reshape({ num_in, chs_out, row_out, col_out });
+    output[0]->reset({ num_in, chs_out, row_out, col_out });
 
     if(this->learnable_params_.empty()) {
 
-        kernel_->reshape({ chs_in, chs_out, ksize, ksize });
-        bias_->reshape({ chs_out }); // { 1, chs_out, 1, 1 }
+        kernel_->reset({ chs_in, chs_out, ksize, ksize });
+        bias_->reset({ chs_out }); // { 1, chs_out, 1, 1 }
 
         Filler<Device, T>::fill(kernel_->data(), conv_param_.weight_filler());
         Filler<Device, T>::fill(bias_->data(), conv_param_.bias_filler());
@@ -40,7 +40,7 @@ void ConvolutionLayer<Device, T>::setup(const vector<container *> &input,
         this->learnable_params_[0] = std::make_tuple(kernel_, conv_param_.wlr(), conv_param_.weight_decay()/input[0]->shape(0));
         this->learnable_params_[1] = std::make_tuple(bias_, conv_param_.blr(), 0.0);
 
-        biaser_.reshape({ 1, output[0]->size(2, 4) });
+        biaser_.reset({ 1, output[0]->size(2, 4) });
         vector_set(biaser_.size(), (T)1.0, biaser_.mutable_cptr());
     }
 }

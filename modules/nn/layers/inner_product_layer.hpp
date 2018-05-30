@@ -1,6 +1,3 @@
-#ifndef ALCHEMY_NN_LAYERS_INNER_PRODUCT_HPP
-#define ALCHEMY_NN_LAYERS_INNER_PRODUCT_HPP
-
 #include "math/math_op.h"
 
 namespace alchemy {
@@ -50,5 +47,3 @@ void InnerProductLayer<Device, T>::BackwardCPU(const vector<container *>& input,
                (T)0, biases_->mutable_diff_cptr());
 }
 }
-
-#endif //! ALCHEMY_NN_LAYERS_INNER_PRODUCT_HPP

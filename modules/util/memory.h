@@ -2,8 +2,12 @@
 #define ALCHEMY_UTIL_MEMORY_H
 
 #include <cstddef>
+#include <cuda_runtime.h>
+#include "util.h"
 
 namespace alchemy {
+template <typename Device> void alchemy_alloc(void **ptr, size_t size);
+template <typename Device> void alchemy_free(void *ptr);
 
 class Memory {
 public:
@@ -28,11 +32,6 @@ public:
 
     inline Status status() const { return status_; }
 
-    static void malloc_host(void ** ptr, size_t size);
-    static void malloc_device(void ** ptr, size_t size);
-    static void free_host(void * ptr);
-    static void free_device(void *ptr);
-
     static void copy(size_t size, void * dst, const void * src);
 
 private:
@@ -45,8 +44,5 @@ private:
     void *cptr_ = nullptr;
     void *gptr_ = nullptr;
 };
-
 }
-
-
 #endif //! ALCHEMY_UTIL_MEMORY_H

@@ -9,8 +9,8 @@ void EuclideanLossLayer<Device, T>::setup(const vector<container *> &input,
 {
     LOG_IF(FATAL, input.size() < 2) << "input size: " << input.size();
 
-    output[0]->reshape({ 1 });
-    diff_.reshape(input[0]->shape());
+    output[0]->reset({ 1 });
+    diff_.reset(input[0]->shape());
 }
 
 template <typename Device, typename T>

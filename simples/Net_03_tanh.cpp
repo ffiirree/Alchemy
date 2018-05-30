@@ -33,7 +33,7 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(&test_loader)
-                                    .batch_size(100)
+                                    .batch_size(64)
                                     .scale(1./255)
                     ),
             LayerParameter()

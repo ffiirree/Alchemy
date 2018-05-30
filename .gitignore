@@ -249,6 +249,8 @@ ModelManifest.xml
 .vs
 .idea
 cmake-build-debug
+cmake-build-release
+build
 lib
 bin
 modules/zcore/config.h

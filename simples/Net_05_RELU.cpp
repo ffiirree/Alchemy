@@ -21,7 +21,7 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(&train_loader)
-                                    .batch_size(1)
+                                    .batch_size(64)
                                     .scale(1./255)
                     ),
             LayerParameter()
@@ -33,58 +33,70 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(&test_loader)
-                                    .batch_size(100)
+                                    .batch_size(64)
                                     .scale(1./255)
                     ),
             LayerParameter()
-                    .name("ip_01")
+                    .name("inner_product_layer_01")
                     .type(INNER_PRODUCT_LAYER)
                     .input("data")
-                    .output("ip_01")
+                    .output("ip1")
                     .ip_param(
                             InnerProductParameter()
-                                    .output_size(50)
-                                    .wlr(0.1)
-                                    .blr(0.2)
+                                    .output_size(30)
+                                    .wlr(0.075)
+                                    .blr(0.1)
+//                                    .weight_decay(0.005)
                                     .weight_filler(XAVIER)
-                                    .bias_filler(CONSTANT)
+                                    .bias_filler(XAVIER)
                     ),
             LayerParameter()
-                    .name("sig_01")
-                    .type(SIGMOID_LAYER)
-                    .input("ip_01")
-                    .output("act_01")
-                    .sigmoid_param(
-                            SigmoidParameter()
+                    .name("relu_layer_01")
+                    .type(RELU_LAYER)
+                    .input("ip1")
+                    .output("r1")
+                    .relu_param(
+                            ReLuParameter()
+                                    .alpha(-0.01)
                     ),
             LayerParameter()
-                    .name("ip_02")
+                    .name("inner_product_layer_02")
                     .type(INNER_PRODUCT_LAYER)
-                    .input("act_01")
-                    .output("ip_02")
+                    .input("r1")
+                    .output("ip2")
                     .ip_param(
                             InnerProductParameter()
                                     .output_size(10)
-                                    .wlr(0.1)
-                                    .blr(0.2)
+                                    .wlr(0.075)
+                                    .blr(0.1)
+//                                    .weight_decay(0.005)
                                     .weight_filler(XAVIER)
-                                    .bias_filler(CONSTANT)
+                                    .bias_filler(XAVIER)
+                    ),
+            LayerParameter()
+                    .name("relu_layer_02")
+                    .type(RELU_LAYER)
+                    .input("ip2")
+                    .output("r2")
+                    .relu_param(
+                            ReLuParameter()
+                                    .alpha(-0.01)
                     ),
             LayerParameter()
                     .name("loss")
+                    .type(EUCLIDEAN_LOSS_LAYER)
                     .phase(TRAIN)
-                    .type(SOFTMAX_LOSS_LAYER)
-                    .input("ip_02")
+                    .input("r2")
                     .input("label")
                     .output("loss")
-                    .softmax_loss_param(
-                            SoftmaxLossParameter()
+                    .euclidean_param(
+                            EuclideanLossParameter()
                     ),
             LayerParameter()
                     .name("accuracy")
                     .type(ACCURACY_LAYER)
                     .phase(TEST)
-                    .input("ip_02")
+                    .input("r2")
                     .input("label")
                     .output("accuracy")
                     .accuracy_param(
@@ -93,14 +105,14 @@ int main()
     };
 
     auto optimize_param = OptimizerParameter()
-            .mode(Global::GPU)
-            .max_iter(20000)
+            .mode(Global::CPU)
+            .max_iter(10000)
             .test_iter(100)
-            .test_interval(200)
+            .test_interval(500)
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
-    SgdOptimizer<GPU, float> o(optimize_param);
+    SgdOptimizer<CPU, float> o(optimize_param);
 
     o.optimize();
 

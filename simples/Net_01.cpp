@@ -3,7 +3,6 @@
 using namespace alchemy;
 using namespace std;
 
-
 int main()
 {
     MnistLoader<float> train_loader("/home/ffiirree/Code/Alchemy/resources/mnist/train-images.idx3-ubyte",
@@ -14,7 +13,7 @@ int main()
 
     vector<LayerParameter> params = {
             LayerParameter()
-                    .name("mnist_train")
+                    .name("mnist")
                     .type(INPUT_LAYER)
                     .phase(TRAIN)
                     .output("data")
@@ -26,7 +25,7 @@ int main()
                                     .scale(1./255)
                     ),
             LayerParameter()
-                    .name("mnist_test")
+                    .name("mnist")
                     .type(INPUT_LAYER)
                     .phase(TEST)
                     .output("data")
@@ -34,11 +33,11 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(&test_loader)
-                                    .batch_size(100)
+                                    .batch_size(64)
                                     .scale(1./255)
                     ),
             LayerParameter()
-                    .name("ip_layer_01")
+                    .name("inner_product_01")
                     .type(INNER_PRODUCT_LAYER)
                     .input("data")
                     .output("ip1")
@@ -47,7 +46,7 @@ int main()
                                     .output_size(30)
                                     .wlr(0.3)
                                     .blr(0.3)
-                                    .weight_decay(0.0005)
+                                    .weight_decay(0.005)
                                     .weight_filler(XAVIER)
                                     .bias_filler(XAVIER)
                     ),
@@ -60,7 +59,7 @@ int main()
                             SigmoidParameter()
                     ),
             LayerParameter()
-                    .name("ip_layer_02")
+                    .name("inner_product_02")
                     .type(INNER_PRODUCT_LAYER)
                     .input("s1")
                     .output("ip2")
@@ -69,15 +68,23 @@ int main()
                                     .output_size(10)
                                     .wlr(0.3)
                                     .blr(0.3)
-                                    .weight_decay(0.0005)
+                                    .weight_decay(0.005)
                                     .weight_filler(XAVIER)
                                     .bias_filler(XAVIER)
                     ),
             LayerParameter()
-                    .name("loss")
-                    .type(SIGMOID_CROSS_ENTORPY_LOSS_LAYER)
-                    .phase(TRAIN)
+                    .name("sigmoid_layer_02")
+                    .type(SIGMOID_LAYER)
                     .input("ip2")
+                    .output("s2")
+                    .sigmoid_param(
+                            SigmoidParameter()
+                    ),
+            LayerParameter()
+                    .name("loss")
+                    .type(EUCLIDEAN_LOSS_LAYER)
+                    .phase(TRAIN)
+                    .input("s2")
                     .input("label")
                     .output("loss")
                     .euclidean_param(
@@ -87,7 +94,7 @@ int main()
                     .name("accuracy")
                     .type(ACCURACY_LAYER)
                     .phase(TEST)
-                    .input("ip2")
+                    .input("s2")
                     .input("label")
                     .output("accuracy")
                     .accuracy_param(
@@ -96,15 +103,14 @@ int main()
     };
 
     auto optimize_param = OptimizerParameter()
-            .mode(Global::GPU)
-            .max_iter(50000)
+            .mode(Global::CPU)
+            .max_iter(20000)
             .test_iter(100)
             .test_interval(500)
-            .regularization_type(L1)
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 
-    SgdOptimizer<GPU, float> o(optimize_param);
+    SgdOptimizer<CPU, float> o(optimize_param);
 
     o.optimize();
 

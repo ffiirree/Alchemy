@@ -22,6 +22,7 @@ public:
     inline size_t shape(int axis) const { assert((unsigned)axis < this->shape_.size());  return shape_[axis]; }
 
     void reshape(const vector<size_t>& shape);
+    void reset(const vector<size_t>& shape);
 
     inline size_t size() const { return count_; }
     inline size_t size(int start, int end) const {

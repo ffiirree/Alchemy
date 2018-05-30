@@ -1,6 +1,3 @@
-#ifndef ALCHEMY_NN_LAYERS_INNER_PRODUCT_CUH
-#define ALCHEMY_NN_LAYERS_INNER_PRODUCT_CUH
-
 #include "math/math_op.h"
 
 namespace alchemy {
@@ -50,4 +47,3 @@ void InnerProductLayer<Device, T>::BackwardGPU(const vector<container *> &input,
                    (T)0, biases_->mutable_diff_gptr());
 }
 }
-#endif// !ALCHEMY_NN_LAYERS_INNER_PRODUCT_CUH

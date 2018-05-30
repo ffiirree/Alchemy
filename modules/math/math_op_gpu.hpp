@@ -2,30 +2,30 @@ namespace alchemy {
 
 template <typename T>
 // simoid
-__global__ void sigmoid_kernel(size_t size, const T *A, T *B)
+__global__ void sigmoid_kernel(size_t size, const T *X, T *Y)
 {
     CUDA_FOREACH(size) {
-        B[idx] = 1.0 / (1.0 + std::exp(-A[idx]));
+        Y[idx] = 1.0 / (1.0 + std::exp(-X[idx]));
     }
 }
 template <typename T>
-void Sigmoid(const Tensor<GPU, T>& A, Tensor<GPU, T>& B)
+void Sigmoid(const Tensor<GPU, T>& X, Tensor<GPU, T>& Y)
 {
-    sigmoid_kernel<<<CUDA_BLOCK_NUM(A.size()), CUDA_THREAD_NUM>>>(A.size(), A.gptr(), B.mutable_gptr());
+    sigmoid_kernel<<<CUDA_BLOCK_NUM(X.size()), CUDA_THREAD_NUM>>>(X.size(), X.gptr(), Y.mutable_gptr());
 }
 
 template <typename T>
-__global__ void sigmoid_grad_kernel(size_t size, const T* A, const T *B, T *C)
+__global__ void sigmoid_grad_kernel(size_t size, const T* Y, const T *DY, T *DX)
 {
     CUDA_FOREACH(size) {
-        C[idx] = B[idx] * A[idx] * (1.0 - A[idx]);
+        DX[idx] = DY[idx] * Y[idx] * (1.0 - Y[idx]);
     }
 }
 
 template <typename T>
-void SigmoidGrad(const Tensor<GPU, T>& A, const Tensor<GPU, T>& B, Tensor<GPU, T>& C)
+void SigmoidGrad(const Tensor<GPU, T>& Y, const Tensor<GPU, T>& DY, Tensor<GPU, T>& DX)
 {
-    sigmoid_grad_kernel<<<CUDA_BLOCK_NUM(A.size()), CUDA_THREAD_NUM>>>(A.size(), A.gptr(), B.gptr(), C.mutable_gptr());
+    sigmoid_grad_kernel<<<CUDA_BLOCK_NUM(Y.size()), CUDA_THREAD_NUM>>>(Y.size(), Y.gptr(), DY.gptr(), DX.mutable_gptr());
 }
 
 // tanh

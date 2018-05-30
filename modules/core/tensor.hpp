@@ -9,11 +9,25 @@ namespace alchemy {
 template<typename Device, typename T>
 Tensor<Device, T>::Tensor(const vector<size_t> &shape)
 {
-    reshape(shape);
+    reset(shape);
 }
 
 template<typename Device, typename T>
 void Tensor<Device, T>::reshape(const vector<size_t> &shape)
+{
+    size_t size = 1;
+    size = 1;
+    for(const auto& i: shape) {
+        size *= i;
+    }
+
+    assert(count_ == size);
+
+    shape_ = shape;
+}
+
+template <typename Device, typename T>
+void Tensor<Device, T>::reset(const vector<size_t> &shape)
 {
     shape_ = shape;
     count_ = 1;
@@ -23,7 +37,6 @@ void Tensor<Device, T>::reshape(const vector<size_t> &shape)
     // 分配内存
     data_.reset(new Memory(count_ * sizeof(T)));
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename Device, typename T>
