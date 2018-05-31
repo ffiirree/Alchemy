@@ -4,7 +4,8 @@
 namespace alchemy {
 
 template <typename T>
-__global__ void max_index_kernel(const int count, const T * ptr, int * index){
+__global__ void max_index_kernel(const int count, const T * ptr, int * index)
+{
     T max_value = 0;
     for(auto j = 0; j < count; ++j) {
         if(max_value < ptr[j]) {
@@ -16,7 +17,7 @@ __global__ void max_index_kernel(const int count, const T * ptr, int * index){
 
 template <typename Device, typename T>
 void AccuracyLayer<Device, T>::ForwardGPU(const vector<container *> &input,
-                                  const vector<container *> &output)
+                                          const vector<container *> &output)
 {
     auto size = input[0]->shape(2) * input[0]->shape(3);
     auto o_ptr = input[0]->data_gptr();

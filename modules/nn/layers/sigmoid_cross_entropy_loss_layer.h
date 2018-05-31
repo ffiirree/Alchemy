@@ -9,7 +9,7 @@ template <typename Device, typename T>
 class SigmoidCrossEntropyLossLayer : public Layer<Device, T> {
 public:
     using container = Blob<Device, T>;
-    
+
     SigmoidCrossEntropyLossLayer() = default;
     explicit SigmoidCrossEntropyLossLayer(const LayerParameter& param)
             : Layer<Device, T>(param), scel_param_(param.sigmoid_cross_entropy_loss_param()) { }
@@ -17,13 +17,8 @@ public:
 
     void setup(const vector<container *>&input, const vector<container *>&output) override;
 
-    void ForwardCPU(const vector<container *>& input, const vector<container *>& output) override;
-    void BackwardCPU(const vector<container *>& input, const vector<container *>& output) override;
-
-#ifdef __CUDACC__
-    void ForwardGPU(const vector<container *>& input, const vector<container *>& output) override;
-    void BackwardGPU(const vector<container *>& input, const vector<container *>& output) override;
-#endif //! __CUDACC__
+    void Forward(const vector<container *>& input, const vector<container *>& output) override;
+    void Backward(const vector<container *>& input, const vector<container *>& output) override;
 
 private:
     SigmoidCrossEntropyLossParameter scel_param_{};
@@ -31,10 +26,43 @@ private:
     shared_ptr<Layer<Device, T>> sigmoid_layers_;
     vector<shared_ptr<Blob<Device, T>>> sigmoid_output_;
 };
+template <typename Device, typename T>
+void SigmoidCrossEntropyLossLayer<Device, T>::setup(const vector<container *> &input,
+                                                    const vector<container *> &output)
+{
+    LOG_IF(FATAL, input.size() < 2) << "input size: " << input.size();
+
+    sigmoid_layers_ = shared_ptr<Layer<Device, T>>(
+            new SigmoidLayer<Device, T>(
+                    LayerParameter()
+                            .name("<<sigmoid_cross_entropy_loss: sigmoid>>")
+                            .type(SIGMOID_LAYER)
+                            .sigmoid_param(
+                                    SigmoidParameter()
+                            )
+            ));
+    sigmoid_output_.push_back(shared_ptr<Blob<Device, T>>(new Blob<Device, T>()));
+    sigmoid_layers_->setup(input, { sigmoid_output_[0].get() });
+
+    output[0]->reset({ 1 });
 }
 
-#include "sigmoid_cross_entropy_loss_layer.hpp"
-#ifdef __CUDACC__
-#include "sigmoid_cross_entropy_loss_layer.cuh"
-#endif //! __CUDACC__
+template <typename Device, typename T>
+void SigmoidCrossEntropyLossLayer<Device, T>::Forward(const vector<container *> &input,
+                                                      const vector<container *> &output)
+{
+    // computes the sigmoid outputs.
+    sigmoid_layers_->Forward(input, { sigmoid_output_[0].get() });
+
+    //TODO: loss
+}
+
+template <typename Device, typename T>
+void  SigmoidCrossEntropyLossLayer<Device, T>::Backward(const vector<container *> &input,
+                                                        const vector<container *> &output)
+{
+    Sub(sigmoid_output_[0]->data(), input[1]->data(), input[0]->diff());
+    Scale((T)1.0/input[0]->shape(0), input[0]->diff());
+}
+}
 #endif //! ALCHEMY_NN_LAYERS_CROSS_ENTROPY_LOSS_LAYER_H

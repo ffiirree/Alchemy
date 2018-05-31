@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <math/math_op.h>
+#include "util/filler.h"
 
 namespace alchemy {
 
@@ -8,7 +9,8 @@ void AccuracyLayer<Device, T>::setup(const vector<container *> &input,
                              const vector<container *> &output)
 {
     output[0]->reset({ 3 });
-    vector_set(output[0]->size(), (T)0., output[0]->mutable_data_cptr());
+    Filler<Device, T>::constant_fill(output[0]->size(), output[0]->mutable_data_cptr(), (T)0);
+//    vector_set(output[0]->size(), (T)0., output[0]->mutable_data_cptr());
 }
 
 template <typename Device, typename T>

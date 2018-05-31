@@ -38,6 +38,11 @@ public:
     inline T * mutable_diff_cptr() const { return diff_.mutable_cptr(); }
     inline T * mutable_diff_gptr() const { return diff_.mutable_gptr(); }
 
+    inline const T * data_ptr() const { return data_.ptr(); }
+    inline const T * diff_ptr() const { return diff_.ptr(); }
+    inline T * mutable_data_ptr() { return data_.mutable_ptr(); }
+    inline T * mutable_diff_ptr() { return diff_.mutable_ptr(); }
+
 private:
     Tensor<Device, T> data_;
     Tensor<Device, T> diff_;

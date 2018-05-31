@@ -18,24 +18,54 @@ public:
 
     void setup(const vector<container *> &input, const vector<container *> &output) override;
 
-    void ForwardCPU(const vector<container *> &input, const vector<container *> &output) override;
-    void BackwardCPU(const vector<container *> &input, const vector<container *> &output) override { }
-
-#ifdef __CUDACC__
-    void ForwardGPU(const vector<container *> &input, const vector<container *> &output) override;
-    void BackwardGPU(const vector<container *> &input, const vector<container *> &output) override { }
-#endif
+    void Forward(const vector<container *> &input, const vector<container *> &output) override;
+    void Backward(const vector<container *> &input, const vector<container *> &output) override { }
 
 private:
     InputParameter input_param_;
-
-    size_t index_ = 0;
-    size_t data_num_{};
 };
-}
 
-#include "input_layer.hpp"
-#ifdef __CUDACC__
-#include "input_layer.cuh"
-#endif //! __CUDACC__
+template <typename Device, typename T>
+void InputLayer<Device, T>::setup(const vector<container *> &input,
+                                  const vector<container *> &output)
+{
+    auto source = input_param_.source();
+
+    output[0]->reset({ input_param_.batch_size(),
+                       source->chs(),
+                       source->rows(),
+                       source->cols()
+                     });
+    output[1]->reset({ input_param_.batch_size(),
+                       1,
+                       source->classification_num(),
+                       1
+                     });
+
+    Scale(static_cast<int>(source->size() * source->image_size()),
+          (T)input_param_.scale(),
+          (T*)source->images().get());
+}
+template <typename Device, typename T>
+void InputLayer<Device, T>::Forward(const vector<container *>& input,
+                                       const vector<container *>& output)
+{
+    auto batch_size = input_param_.batch_size();
+
+    auto source = input_param_.source();
+    if(!source->hasNext(static_cast<int>(batch_size))) source->reset();
+
+    auto data_pair = source->next(static_cast<int>(batch_size));
+
+    // data
+    alchemy_copy(output[0]->mutable_data_ptr(),
+                 data_pair.first,
+                 batch_size * source->image_size() * sizeof(T));
+
+    // label
+    alchemy_copy(output[1]->mutable_data_ptr(),
+                 data_pair.second,
+                 batch_size * source->label_size() * sizeof(T));
+}
+}
 #endif //! ALCHEMY_NN_LAYERS_INPUT_LAYER_H

@@ -44,8 +44,22 @@ public:
     inline T * mutable_cptr() const { return reinterpret_cast<T *>(data_->mutable_cptr()); }
     inline T * mutable_gptr() const { return reinterpret_cast<T *>(data_->mutable_gptr()); }
 
-    inline reference cat(size_t idx) { return mutable_cptr()[idx]; }
-    inline const_reference cat(size_t idx) const { return cptr()[idx]; }
+
+    template <typename Device2 = Device> const T * ptr(typename std::enable_if<std::is_same<Device2, CPU>::value>::type * = nullptr) const{
+        return cptr();
+    }
+    template <typename Device2 = Device> const T * ptr(typename std::enable_if<std::is_same<Device2, GPU>::value>::type * = nullptr) const{
+        return gptr();
+    }
+    template <typename Device2 = Device> T * mutable_ptr(typename std::enable_if<std::is_same<Device2, CPU>::value>::type * = nullptr) const{
+        return mutable_cptr();
+    }
+    template <typename Device2 = Device> T * mutable_ptr(typename std::enable_if<std::is_same<Device2, GPU>::value>::type * = nullptr) const{
+        return mutable_gptr();
+    }
+
+    inline reference at(size_t idx) { return mutable_ptr()[idx]; }
+    inline const_reference at(size_t idx) const { return ptr()[idx]; }
 private:
     shared_ptr<Memory> data_;
     vector<size_t> shape_;

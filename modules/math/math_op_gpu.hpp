@@ -1,6 +1,87 @@
 namespace alchemy {
 
 template <typename T>
+__global__ void add_kernel(size_t size, const T *X1, const T *X2, T *Y)
+{
+    CUDA_FOREACH(size) {
+        Y[idx] = X1[idx] + X2[idx];
+    }
+}
+
+template <typename T>
+void Add(const Tensor<GPU, T>& X1, const Tensor<GPU, T>& X2, Tensor<GPU, T>& Y)
+{
+    add_kernel<<<CUDA_BLOCK_NUM(X1.size()), CUDA_THREAD_NUM>>>(X1.size(), X1.ptr(), X2.ptr(), Y.mutable_ptr());
+}
+template <typename T>
+__global__ void sub_kernel(size_t size, const T *X1, const T *X2, T *Y)
+{
+    CUDA_FOREACH(size) {
+        Y[idx] = X1[idx] - X2[idx];
+    }
+}
+
+template <typename T>
+void Sub(const Tensor<GPU, T>& X1, const Tensor<GPU, T>& X2, Tensor<GPU, T>& Y)
+{
+    sub_kernel<<<CUDA_BLOCK_NUM(X1.size()), CUDA_THREAD_NUM>>>(X1.size(), X1.ptr(), X2.ptr(), Y.mutable_ptr());
+}
+template <typename T>
+__global__ void div_kernel(size_t size, const T *X1, const T *X2, T *Y)
+{
+    CUDA_FOREACH(size) {
+        Y[idx] = X1[idx] / X2[idx];
+    }
+}
+
+template <typename T>
+void Div(const Tensor<GPU, T>& X1, const Tensor<GPU, T>& X2, Tensor<GPU, T>& Y)
+{
+    div_kernel<<<CUDA_BLOCK_NUM(X1.size()), CUDA_THREAD_NUM>>>(X1.size(), X1.ptr(), X2.ptr(), Y.mutable_ptr());
+}
+
+template <typename T>
+__global__ void mul_kernel(size_t size, const T *X1, const T *X2, T *Y)
+{
+    CUDA_FOREACH(size) {
+        Y[idx] = X1[idx] * X2[idx];
+    }
+}
+
+template <typename T>
+void Mul(const Tensor<GPU, T>& X1, const Tensor<GPU, T>& X2, Tensor<GPU, T>& Y)
+{ 
+    mul_kernel<<<CUDA_BLOCK_NUM(X1.size()), CUDA_THREAD_NUM>>>(X1.size(), X1.gptr(), X2.gptr(), Y.mutable_gptr());
+}
+
+template <typename T>
+__global__ void exp_kernel(size_t size, const T *X, T *Y)
+{
+    CUDA_FOREACH(size) {
+        Y[idx] = std::exp(X[idx]);
+    }
+}
+
+template <typename T>
+void Exp(const Tensor<GPU, T>& X, Tensor<GPU, T>& Y)
+{
+    exp_kernel<<<CUDA_BLOCK_NUM(X.size()), CUDA_THREAD_NUM>>>(X.size(), X.gptr(), Y.mutable_gptr());
+}
+
+template <typename T>
+__global__ void sign_kernel(size_t size, const T *X, T *Y)
+{
+    CUDA_FOREACH(size) {
+        Y[idx] = (X[idx] > 0) - (0 > X[idx]);
+    }
+}
+
+template <typename T>
+void Sign(const Tensor<GPU, T>& X, Tensor<GPU, T>& Y)
+{
+    sign_kernel<<<CUDA_BLOCK_NUM(X.size()), CUDA_THREAD_NUM>>>(X.size(), X.gptr(), Y.mutable_gptr());
+}
+template <typename T>
 // simoid
 __global__ void sigmoid_kernel(size_t size, const T *X, T *Y)
 {

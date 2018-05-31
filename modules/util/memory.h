@@ -9,6 +9,8 @@ namespace alchemy {
 template <typename Device> void alchemy_alloc(void **ptr, size_t size);
 template <typename Device> void alchemy_free(void *ptr);
 
+void alchemy_copy(void *dst, void *src, size_t size);
+
 class Memory {
 public:
     enum Status {

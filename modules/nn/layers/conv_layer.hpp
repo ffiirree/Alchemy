@@ -41,7 +41,8 @@ void ConvolutionLayer<Device, T>::setup(const vector<container *> &input,
         this->learnable_params_[1] = std::make_tuple(bias_, conv_param_.blr(), 0.0);
 
         biaser_.reset({ 1, output[0]->size(2, 4) });
-        vector_set(biaser_.size(), (T)1.0, biaser_.mutable_cptr());
+//        vector_set(biaser_.size(), (T)1.0, biaser_.mutable_cptr());
+        Filler<Device, T>::constant_fill(biaser_.size(), biaser_.mutable_cptr(), (T)1.0);
     }
 }
 
@@ -101,15 +102,16 @@ void ConvolutionLayer<Device, T>::BackwardCPU(const vector<container *> &input,
                                     nullptr);
 
     //
-    vector_set(bias_->size(), (T)0.0, bias_->mutable_diff_cptr());
+    Filler<Device, T>::constant_fill(bias_->size(), bias_->mutable_data_cptr(), (T)0.0);
+//    vector_set(bias_->size(), (T)0.0, bias_->mutable_diff_cptr());
 
     auto output_diff = output[0]->diff_cptr();
     auto step = output[0]->size(1, 4);
     for(size_t i = 0; i < batch_size; ++i) {
-        matvec_mul(CblasNoTrans,
+        matvec_mul<Device>(CblasNoTrans,
                    output[0]->shape(1), output[0]->size(2, 4),
-                   (T)1.0, output_diff + i * step, biaser_.cptr(),
-                   (T)1.0, bias_->mutable_diff_cptr());
+                   (T)1.0, output_diff + i * step, biaser_.ptr(),
+                   (T)1.0, bias_->mutable_diff_ptr());
     }
 }
 }

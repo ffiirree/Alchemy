@@ -38,7 +38,14 @@ template<> void alchemy_free<GPU>(void *ptr)
     LOG(FATAL) << "NO GPU!";
 #endif
 }
-
+void alchemy_copy(void *dst, void *src, size_t size)
+{
+#ifdef USE_CUDA
+    cudaMemcpy(dst, src, size, cudaMemcpyDefault);
+#else
+    LOG(FATAL) << "NO GPU!";
+#endif
+}
 
 Memory::Memory(size_t size)
         : size_(size)

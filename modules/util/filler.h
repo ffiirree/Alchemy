@@ -3,6 +3,7 @@
 
 #include <random>
 #include <type_traits>
+#include <memory>
 #include "core/tensor.h"
 #include "util.h"
 
@@ -61,7 +62,14 @@ void Filler<Device, T>::fill(const Tensor<Device, T>& tensor, FillerType type)
 template <typename Device, typename T>
 void Filler<Device, T>::constant_fill(int count, T *ptr, T value)
 {
-    vector_set(count, value, ptr);
+    if(value == 0) {
+        memset(ptr, value, count * sizeof(T));
+        return ;
+    }
+
+    for(auto i = 0; i < count; ++i) {
+        ptr[i] = value;
+    }
 }
 
 template <typename Device, typename T>

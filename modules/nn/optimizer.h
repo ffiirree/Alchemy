@@ -115,47 +115,19 @@ void Optimizer<Device, T>::regularize()
             for(size_t i = 0; i < learnable_params.size(); ++i) {
                 const auto& item = learnable_params[i];
 
-                if(Global::mode() == Global::CPU) {
-                    vector_sign(std::get<0>(item)->size(),
-                                std::get<0>(item)->data_cptr(),
-                                sign_[i].mutable_data_cptr());
-
-                    vector_axpy(std::get<0>(item)->size(),
-                                (T)(std::get<2>(item) * std::get<1>(item)),
-                                sign_[i].data_cptr(),
-                                std::get<0>(item)->mutable_diff_cptr());
-                }
-                else {
-                    vector_sign_gpu(std::get<0>(item)->size(),
-                                    std::get<0>(item)->data_gptr(),
-                                    sign_[i].mutable_data_gptr());
-
-                    vector_axpy_gpu(std::get<0>(item)->size(),
-                                    (T)(std::get<2>(item) * std::get<1>(item)),
-                                    sign_[i].data_gptr(),
-                                    std::get<0>(item)->mutable_diff_gptr());
-                }
+                Sign(std::get<0>(item)->data(), sign_[i].data());
+                axpy((T)(std::get<2>(item) * std::get<1>(item)), sign_[i].data(), std::get<0>(item)->diff());
             }
             break;
 
         case L2:
             for(auto& param : learnable_params) {
-                if(Global::mode() == Global::CPU) {
-                    vector_axpy(std::get<0>(param)->size(),
-                                (T)(std::get<2>(param) * std::get<1>(param)),
-                                std::get<0>(param)->data_cptr(),
-                                std::get<0>(param)->mutable_diff_cptr());
-                }
-                else {
-                    vector_axpy_gpu(std::get<0>(param)->size(),
-                                    (T)(std::get<2>(param) * std::get<1>(param)),
-                                    std::get<0>(param)->data_gptr(),
-                                    std::get<0>(param)->mutable_diff_gptr());
-                }
+                axpy((T)(std::get<2>(param) * std::get<1>(param)),
+                     std::get<0>(param)->data(),
+                     std::get<0>(param)->diff());
             }
             break;
     }
 }
 }
-
 #endif //! ALCHEMY_NN_OPTIMIZE_H

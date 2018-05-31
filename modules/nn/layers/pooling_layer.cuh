@@ -58,11 +58,12 @@ void PoolingLayer<Device, T>::ForwardGPU(const vector<container *> &input,
 {
     auto count = output[0]->size();
     auto input_data = input[0]->data_gptr();
-    auto output_data = output[0]->mutable_data_gptr();
+
     auto max_idx = max_idx_.mutable_gptr();
 
-    vector_set_gpu(output[0]->size(), -std::numeric_limits<T>::max(), output_data);
-
+    Filler<Device, T>::constant_fill(output[0]->size(), output[0]->mutable_data_cptr(), -std::numeric_limits<T>::max());
+//    vector_set_gpu(output[0]->size(), -std::numeric_limits<T>::max(), output_data);
+    auto output_data = output[0]->mutable_data_gptr();
     switch(pooling_param_.type()) {
         case MAX: max_pooling<<<CUDA_BLOCK_NUM(count), CUDA_THREAD_NUM>>>(
                             count,
@@ -85,11 +86,12 @@ void PoolingLayer<Device, T>::BackwardGPU(const vector<container *> &input,
 {
     auto count = output[0]->size();
     auto input_diff = input[0]->mutable_diff_gptr();
-    auto output_diff = output[0]->mutable_diff_gptr();
+
     auto max_idx = max_idx_.gptr();
 
-    vector_set_gpu(input[0]->size(), (T)0.0, input_diff);
-
+    Filler<Device, T>::constant_fill(input[0]->size(), input[0]->mutable_diff_cptr(), (T)0.0);
+//    vector_set_gpu(input[0]->size(), (T)0.0, input_diff);
+    auto output_diff = output[0]->mutable_diff_gptr();
     switch(pooling_param_.type()) {
         case MAX:
             max_pooling_backward<<<CUDA_BLOCK_NUM(count), CUDA_THREAD_NUM>>>(

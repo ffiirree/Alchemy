@@ -39,7 +39,8 @@ void PoolingLayer<Device, T>::ForwardCPU(const vector<container *> &input,
     auto max_idx = max_idx_.mutable_cptr();
 
     //
-    vector_set(output[0]->size(), -std::numeric_limits<T>::max(), output_data);
+//    vector_set(output[0]->size(), -std::numeric_limits<T>::max(), output_data);
+    Filler<Device, T>::constant_fill(output[0]->size(), output_data, -std::numeric_limits<T>::max());
 
     switch(pooling_param_.type()) {
         case MAX:
@@ -96,7 +97,8 @@ void PoolingLayer<Device, T>::BackwardCPU(const vector<container *> &input,
     auto output_diff = output[0]->diff_cptr();
     auto max_idx = max_idx_.cptr();
 
-    vector_set(input[0]->size(), (T)0.0, input[0]->mutable_diff_cptr());
+    Filler<Device, T>::constant_fill(input[0]->size(), input[0]->mutable_diff_cptr(), (T)0.0);
+//    vector_set(input[0]->size(), (T)0.0, input[0]->mutable_diff_cptr());
 
     switch(pooling_param_.type()) {
         case MAX:
