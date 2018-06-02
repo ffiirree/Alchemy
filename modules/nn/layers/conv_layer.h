@@ -7,6 +7,7 @@ namespace alchemy {
 
 template <typename Device, typename T>
 class ConvolutionLayer : public Layer<Device, T> {
+//    static_assert(std::is_same<Device, CPU>::value, "ConvolutionLayer can not be instantiated.");
 public:
     using container = Blob<Device, T>;
     

@@ -34,7 +34,10 @@ mkdir build
 cd build
 cmake ..
 ```
-
+测试
+```
+make runtest
+```
 <br>
 
 ## Todo

@@ -41,8 +41,6 @@ void AccuracyLayer<Device, T>::ForwardGPU(const vector<container *> &input,
     }
 
     /// cpu
-    output[0]->mutable_data_cptr()[1] += result_;
-    output[0]->mutable_data_cptr()[2] += input[0]->shape(0);
-    output[0]->mutable_data_cptr()[0] = output[0]->data_cptr()[1] / output[0]->data_cptr()[2];
+    output[0]->mutable_data_cptr()[0] = (T)result_ / input[0]->shape(0);
 }
 }

@@ -11,7 +11,6 @@ public:
     explicit MomentumOptimizer(const OptimizerParameter &param);
     virtual ~MomentumOptimizer() = default;
 
-    virtual void optimize();
     virtual void update();
 
 protected:
@@ -31,26 +30,6 @@ MomentumOptimizer<Device, T>::MomentumOptimizer(const OptimizerParameter &param)
         Filler<Device, T>::constant_fill(buf.size(), buf.mutable_cptr(), 0.0);
         buf_.push_back(buf);
         buf2_.push_back(buf2);
-    }
-}
-
-template <typename Device, typename T>
-void MomentumOptimizer<Device, T>::optimize()
-{
-    for(auto iter = 0; iter < this->param_.max_iter(); ++iter) {
-        this->net_->Forward();
-        this->net_->Backward();
-
-        update();
-        this->regularize();
-
-        if(iter && iter % this->param_.test_interval() == 0) {
-
-            for(auto test_iter = 0; test_iter < this->param_.test_iter(); ++test_iter) {
-                this->test_net_->Forward();
-            }
-            LOG(INFO) << "Iteration " << std::setw(6) << std::setfill(' ') << iter << " : accuracy=" << this->test_net_->accuracy();
-        }
     }
 }
 

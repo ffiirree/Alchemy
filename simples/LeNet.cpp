@@ -3,15 +3,14 @@
 using namespace alchemy;
 using namespace std;
 
-//// CPU: batch #10, iter #60000, accuracy > 0.9833
-//// GPU: batch #10, iter #40000, accuracy > 0.98
+// 0.975 ~ 0.985
 int main()
 {
     MnistLoader<float> train_loader("/home/ffiirree/Code/Alchemy/resources/mnist/train-images.idx3-ubyte",
-                             "/home/ffiirree/Code/Alchemy/resources/mnist/train-labels.idx1-ubyte");
+                                    "/home/ffiirree/Code/Alchemy/resources/mnist/train-labels.idx1-ubyte");
 
     MnistLoader<float> test_loader("/home/ffiirree/Code/Alchemy/resources/mnist/t10k-images.idx3-ubyte",
-                            "/home/ffiirree/Code/Alchemy/resources/mnist/t10k-labels.idx1-ubyte");
+                                   "/home/ffiirree/Code/Alchemy/resources/mnist/t10k-labels.idx1-ubyte");
 
 
     vector<LayerParameter> params = {
@@ -24,7 +23,7 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(&train_loader)
-                                    .batch_size(10)
+                                    .batch_size(64)
                                     .scale(1./255)
                     ),
             LayerParameter()
@@ -36,7 +35,7 @@ int main()
                     .input_param(
                             InputParameter()
                                     .source(&test_loader)
-                                    .batch_size(100)
+                                    .batch_size(64)
                                     .scale(1./255)
                     ),
             LayerParameter()
@@ -50,7 +49,7 @@ int main()
                                     .kernel_size(5)
                                     .wlr(1)
                                     .blr(2)
-//                                    .weight_decay(0.05)
+                                    .weight_decay(0.0005)
                                     .weight_filler(XAVIER)
                                     .bias_filler(CONSTANT)
                     ),
@@ -76,7 +75,7 @@ int main()
                                     .kernel_size(5)
                                     .wlr(1)
                                     .blr(2)
-//                                    .weight_decay(0.05)
+                                    .weight_decay(0.0005)
                                     .weight_filler(XAVIER)
                                     .bias_filler(CONSTANT)
                     ),
@@ -99,9 +98,9 @@ int main()
                     .ip_param(
                             InnerProductParameter()
                                     .output_size(500)
-                                    .wlr(0.01)
-                                    .blr(0.02)
-//                                    .weight_decay(0.01)
+                                    .wlr(0.2)
+                                    .blr(0.4)
+                                    .weight_decay(0.0005)
                                     .weight_filler(XAVIER)
                                     .bias_filler(CONSTANT)
                     ),
@@ -112,7 +111,7 @@ int main()
                     .output("act_01")
                     .relu_param(
                             ReLuParameter()
-                                    .alpha(-0.1)
+                                    .alpha(-0.2)
                     ),
             LayerParameter()
                     .name("ip_02")
@@ -122,9 +121,9 @@ int main()
                     .ip_param(
                             InnerProductParameter()
                                     .output_size(10)
-                                    .wlr(0.01)
-                                    .blr(0.02)
-//                                    .weight_decay(0.01)
+                                    .wlr(0.2)
+                                    .blr(0.4)
+                                    .weight_decay(0.0005)
                                     .weight_filler(XAVIER)
                                     .bias_filler(CONSTANT)
                     ),
@@ -153,8 +152,8 @@ int main()
     auto optimize_param = OptimizerParameter()
             .mode(Global::GPU)
             .max_iter(50000)
-            .test_iter(100)
-            .test_interval(200)
+            .test_iter(150)
+            .test_interval(500)
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
 

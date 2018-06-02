@@ -23,7 +23,19 @@ public:
     void ForwardGPU(const vector<container *>& input, const vector<container *>& output) override;
     void BackwardGPU(const vector<container *>& input, const vector<container *>& output) override { }
 #endif //! __CUDACC__
+
+private:
+    Tensor<CPU, T> buf_;
 };
+
+template <typename Device, typename T>
+void AccuracyLayer<Device, T>::setup(const vector<container *> &input,
+                                     const vector<container *> &output)
+{
+    output[0]->reset({ 3 });
+    buf_.reset({ 3 });
+    Filler<Device, T>::constant_fill(output[0]->size(), output[0]->mutable_data_cptr(), (T)0);
+}
 }
 
 #include "accuracy_layer.hpp"

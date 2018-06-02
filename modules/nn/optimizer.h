@@ -70,7 +70,7 @@ public:
 
     void regularize();
 
-    virtual void optimize() = 0;
+    void optimize();
     virtual void update() = 0;
 
     void save(string path) { net_->save(path); }
@@ -127,6 +127,31 @@ void Optimizer<Device, T>::regularize()
                      std::get<0>(param)->diff());
             }
             break;
+    }
+}
+
+template <typename Device, typename T>
+void Optimizer<Device, T>::optimize()
+{
+    for(auto iter = 0; iter < this->param_.max_iter(); ++iter) {
+        this->net_->Forward();
+        this->net_->Backward();
+
+        update();
+        this->regularize();
+
+        if(iter && (iter % this->param_.test_interval() == 0)) {
+
+            double test_accuracy = 0;
+
+            for(auto test_iter = 0; test_iter < this->param_.test_iter(); ++test_iter) {
+                this->test_net_->Forward();
+                test_accuracy += this->test_net_->accuracy();
+            }
+            LOG(INFO) << "Iteration " << std::setw(6) << std::setfill(' ') << iter
+                      << " : accuracy=" << std::setw(9) << std::left << std::setfill(' ') << (test_accuracy / this->param_.test_iter())
+                      << " , loss=" << this->net_->loss();
+        }
     }
 }
 }

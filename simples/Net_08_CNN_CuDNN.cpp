@@ -129,7 +129,7 @@ int main()
     auto optimize_param = OptimizerParameter()
             .mode(Global::GPU)
             .max_iter(60000)
-            .test_iter(100)
+            .test_iter(1000)
             .test_interval(500)
             .train_net_param(NetworkParameter().layer_params(params))
             .test_net_param(NetworkParameter().layer_params(params));
