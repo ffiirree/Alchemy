@@ -9,7 +9,7 @@ template <typename Device, typename T>
 class EuclideanLossLayer: public Layer<Device, T> {
 public:
     using container = Blob<Device, T>;
-    
+
     EuclideanLossLayer() = default;
     explicit EuclideanLossLayer(const LayerParameter&parameter) : Layer<Device, T>(parameter) { }
     virtual ~EuclideanLossLayer() = default;
@@ -35,7 +35,7 @@ void EuclideanLossLayer<Device, T>::setup(const vector<container *> &input,
 
 template <typename Device, typename T>
 void EuclideanLossLayer<Device, T>::Forward(const vector<container *>& input,
-                                               const vector<container *>& output)
+                                            const vector<container *>& output)
 {
     //! output - label
     Sub(input[0]->data(), input[1]->data(), diff_);
@@ -48,7 +48,7 @@ void EuclideanLossLayer<Device, T>::Forward(const vector<container *>& input,
 
 template<typename Device, typename T>
 void EuclideanLossLayer<Device, T>::Backward(const vector<container *>& input,
-                                                const vector<container *>& output)
+                                             const vector<container *>& output)
 {
     Copy(diff_, input[0]->diff());
     Scale((T)1.0/input[0]->shape(0), input[0]->diff());

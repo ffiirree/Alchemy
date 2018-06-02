@@ -1,10 +1,10 @@
 # Status report function.
 # Automatically align right column and selects text based on condition.
 # Usage:
-#   xnet_status(<text>)
-#   xnet_status(<heading> <value1> [<value2> ...])
-#   xnet_status(<heading> <condition> THEN <text for TRUE> ELSE <text for FALSE> )
-function(xnet_status text)
+#   alchemy_status(<text>)
+#   alchemy_status(<heading> <value1> [<value2> ...])
+#   alchemy_status(<heading> <condition> THEN <text for TRUE> ELSE <text for FALSE> )
+function(alchemy_status text)
     set(status_cond)
     set(status_then)
     set(status_else)
@@ -58,7 +58,7 @@ endfunction()
 # Can accept condition to control when option is available for user.
 # Usage:
 #   option(<option_variable> "help string describing the option" <initial value or boolean expression> [IF <condition>])
-macro(xnet_option variable description value)
+macro(alchemy_option variable description value)
     set(__value ${value})
     set(__condition "")
     set(__varname "__value")
@@ -98,14 +98,4 @@ macro(xnet_option variable description value)
     endif()
     unset(__condition)
     unset(__value)
-endmacro()
-
-# Usage: ocv_append_build_options(HIGHGUI FFMPEG)
-macro(ocv_append_build_options var_prefix pkg_prefix)
-    foreach(suffix INCLUDE_DIRS LIBRARIES LIBRARY_DIRS)
-        if(${pkg_prefix}_${suffix})
-            list(APPEND ${var_prefix}_${suffix} ${${pkg_prefix}_${suffix}})
-            list(REMOVE_DUPLICATES ${var_prefix}_${suffix})
-        endif()
-    endforeach()
 endmacro()

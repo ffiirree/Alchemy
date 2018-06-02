@@ -163,7 +163,7 @@ void Network<Device, T>::save(string path)
     for(const auto& param : learnable_params_) {
         auto blob = std::get<0>(param);
         auto data = blob->data_cptr();
-        auto total = blob->count();
+        auto total = blob->size();
         file.write(reinterpret_cast<const char*>(data), total * sizeof(T));
     }
     file.close();
@@ -179,7 +179,7 @@ void Network<Device, T>::load(string path)
     for(auto& param : learnable_params_) {
         auto blob = std::get<0>(param);
         auto data = blob->mutable_data_cptr();
-        auto total = blob->count();
+        auto total = blob->size();
         file.read(reinterpret_cast<char*>(data), total * sizeof(T));
     }
     file.close();

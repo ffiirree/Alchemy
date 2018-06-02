@@ -3,50 +3,37 @@
 using namespace alchemy;
 using namespace std;
 
+
 int main()
 {
-    MnistLoader<float> train_loader("../resources/mnist/train-images.idx3-ubyte",
-                                    "../resources/mnist/train-labels.idx1-ubyte");
+    MnistLoader<float> train_loader("/home/ffiirree/Code/Alchemy/resources/mnist/train-images.idx3-ubyte",
+                                    "/home/ffiirree/Code/Alchemy/resources/mnist/train-labels.idx1-ubyte");
 
-    MnistLoader<float> test_loader("../resources/mnist/t10k-images.idx3-ubyte",
-                                   "../resources/mnist/t10k-labels.idx1-ubyte");
 
     vector<LayerParameter> params = {
             LayerParameter()
                     .name("mnist")
                     .type(INPUT_LAYER)
-                    .phase(TRAIN)
                     .output("data")
                     .output("label")
                     .input_param(
                             InputParameter()
                                     .source(&train_loader)
-                                    .batch_size(10)
+                                    .batch_size(64)
                                     .scale(1./255)
                     ),
             LayerParameter()
-                    .name("mnist")
-                    .type(INPUT_LAYER)
-                    .phase(TEST)
-                    .output("data")
-                    .output("label")
-                    .input_param(
-                            InputParameter()
-                                    .source(&test_loader)
-                                    .batch_size(10)
-                                    .scale(1./255)
-                    ),
-            LayerParameter()
-                    .name("conv_01")
+                    .name("cudnn_conv_01")
                     .type(CUDNN_CONV_LAYER)
                     .input("data")
                     .output("conv_01")
                     .conv_param(
                             ConvolutionParameter()
-                                    .output_size(10)
+                                    .output_size(20)
                                     .kernel_size(5)
                                     .wlr(1)
                                     .blr(2)
+                                    .weight_decay(0.0005)
                                     .weight_filler(XAVIER)
                                     .bias_filler(CONSTANT)
                     ),
@@ -62,62 +49,71 @@ int main()
                                     .type(MAX)
                     ),
             LayerParameter()
-                    .name("ip_01")
-                    .type(INNER_PRODUCT_LAYER)
-                    .input("pool_01")
-                    .output("ip_01")
-                    .ip_param(
-                            InnerProductParameter()
-                                    .output_size(30)
-                                    .wlr(0.01)
-                                    .blr(0.02)
+                    .name("cudnn_conv_02")
+                    .type(CUDNN_CONV_LAYER)
+                    .input("data")
+                    .output("conv_02")
+                    .conv_param(
+                            ConvolutionParameter()
+                                    .output_size(50)
+                                    .kernel_size(5)
+                                    .wlr(1)
+                                    .blr(2)
+                                    .weight_decay(0.0005)
                                     .weight_filler(XAVIER)
                                     .bias_filler(CONSTANT)
                     ),
             LayerParameter()
-                    .name("sigmoid_01")
-                    .type(SIGMOID_LAYER)
-                    .input("ip_01")
-                    .output("sigmoid_01")
-                    .sigmoid_param(
-                            SigmoidParameter()
+                    .name("pool_02")
+                    .type(POOLING_LAYER)
+                    .input("conv_02")
+                    .output("pool_02")
+                    .pooling_param(
+                            PoolingParameter()
+                                    .kernel_size(2)
+                                    .stride(2)
+                                    .type(MAX)
                     ),
-
-//            LayerParameter()
-//                    .name("relu_01")
-//                    .type(RELU_LAYER)
-//                    .input("ip_01")
-//                    .output("sigmoid_01")
-//                    .relu_param(
-//                            ReLuParameter().alpha(-0.1)
-//                    ),
+            LayerParameter()
+                    .name("ip_01")
+                    .type(INNER_PRODUCT_LAYER)
+                    .input("pool_02")
+                    .output("ip_01")
+                    .ip_param(
+                            InnerProductParameter()
+                                    .output_size(500)
+                                    .wlr(0.2)
+                                    .blr(0.4)
+                                    .weight_decay(0.0005)
+                                    .weight_filler(XAVIER)
+                                    .bias_filler(CONSTANT)
+                    ),
+            LayerParameter()
+                    .name("relu_01")
+                    .type(RELU_LAYER)
+                    .input("ip_01")
+                    .output("act_01")
+                    .relu_param(
+                            ReLuParameter()
+                                    .alpha(-0.2)
+                    ),
             LayerParameter()
                     .name("ip_02")
                     .type(INNER_PRODUCT_LAYER)
-                    .input("sigmoid_01")
+                    .input("act_01")
                     .output("ip_02")
                     .ip_param(
                             InnerProductParameter()
                                     .output_size(10)
-                                    .wlr(0.01)
-                                    .blr(0.02)
+                                    .wlr(0.2)
+                                    .blr(0.4)
+                                    .weight_decay(0.0005)
                                     .weight_filler(XAVIER)
                                     .bias_filler(CONSTANT)
                     ),
             LayerParameter()
-                    .name("loss")
-                    .type(SOFTMAX_LOSS_LAYER)
-                    .phase(TRAIN)
-                    .input("ip_02")
-                    .input("label")
-                    .output("loss")
-                    .softmax_loss_param(
-                            SoftmaxLossParameter()
-                    ),
-            LayerParameter()
                     .name("accuracy")
                     .type(ACCURACY_LAYER)
-                    .phase(TEST)
                     .input("ip_02")
                     .input("label")
                     .output("accuracy")
@@ -126,17 +122,11 @@ int main()
                     )
     };
 
-    auto optimize_param = OptimizerParameter()
-            .mode(Global::GPU)
-            .max_iter(60000)
-            .test_iter(1000)
-            .test_interval(500)
-            .train_net_param(NetworkParameter().layer_params(params))
-            .test_net_param(NetworkParameter().layer_params(params));
-
-    SgdOptimizer<GPU, float> o(optimize_param);
-
-    o.optimize();
+    Network<GPU, float> net(NetworkParameter().layer_params(params));
+    net.load("LeNet.alc");
+    net.Forward();
+    print_cpu(net.inputs().back()[0]->size(), net.inputs().back()[0]->data_cptr());
+    std::cout << net.accuracy();
 
     return 0;
 }

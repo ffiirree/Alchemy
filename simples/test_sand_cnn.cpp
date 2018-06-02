@@ -6,11 +6,11 @@ using namespace std;
 
 int main()
 {
-    SandLoader<float> train_loader("/home/ffiirree/Code/Alchemy/resources/train_images_20k.ubyte",
-                                   "/home/ffiirree/Code/Alchemy/resources/train_labels_20k.ubyte");
+    SandLoader<float> train_loader("../resources/train_images_20k.ubyte",
+                                   "../resources/train_labels_20k.ubyte");
 
-    SandLoader<float> test_loader("/home/ffiirree/Code/Alchemy/resources/test_images_10k.ubyte",
-                                  "/home/ffiirree/Code/Alchemy/resources/test_labels_10k.ubyte");
+    SandLoader<float> test_loader("../resources/test_images_10k.ubyte",
+                                  "../resources/test_labels_10k.ubyte");
 
     vector<LayerParameter> params = {
             LayerParameter()

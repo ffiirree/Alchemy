@@ -6,11 +6,11 @@ using namespace std;
 
 int main()
 {
-    MnistLoader<float> train_loader("/home/ffiirree/Code/Alchemy/resources/mnist/train-images.idx3-ubyte",
-                                    "/home/ffiirree/Code/Alchemy/resources/mnist/train-labels.idx1-ubyte");
+    MnistLoader<float> train_loader("../resources/mnist/train-images.idx3-ubyte",
+                                    "../resources/mnist/train-labels.idx1-ubyte");
 
-    MnistLoader<float> test_loader("/home/ffiirree/Code/Alchemy/resources/mnist/t10k-images.idx3-ubyte",
-                                   "/home/ffiirree/Code/Alchemy/resources/mnist/t10k-labels.idx1-ubyte");
+    MnistLoader<float> test_loader("../resources/mnist/t10k-images.idx3-ubyte",
+                                   "../resources/mnist/t10k-labels.idx1-ubyte");
 
     vector<LayerParameter> params = {
             LayerParameter()

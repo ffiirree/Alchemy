@@ -38,13 +38,13 @@ TYPED_TEST(TensorTest, TestPointers) {
     EXPECT_TRUE(this->tensor_preshaped_->mutable_gptr());
 }
 
-TYPED_TEST(TensorTest, TestReshape) {
-    this->tensor_->reshape({ 3, 4, 5, 6});
-    EXPECT_EQ(this->tensor_->shape(0), 3);
+TYPED_TEST(TensorTest, TestReset) {
+    this->tensor_->reset({  5, 4, 3 ,2 });
+    EXPECT_EQ(this->tensor_->shape(0), 5);
     EXPECT_EQ(this->tensor_->shape(1), 4);
-    EXPECT_EQ(this->tensor_->shape(2), 5);
-    EXPECT_EQ(this->tensor_->shape(3), 6);
-    EXPECT_EQ(this->tensor_->size(), 360);
+    EXPECT_EQ(this->tensor_->shape(2), 3);
+    EXPECT_EQ(this->tensor_->shape(3), 2);
+    EXPECT_EQ(this->tensor_->size(), 120);
 }
 }
 

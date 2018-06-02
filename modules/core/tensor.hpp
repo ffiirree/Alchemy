@@ -21,7 +21,7 @@ void Tensor<Device, T>::reshape(const vector<size_t> &shape)
         size *= i;
     }
 
-    assert(count_ == size);
+    LOG_IF(FATAL, count_ != size) <<  "Cannot reshape Tensor of size "<< count_ << " into size " << size << ".";
 
     shape_ = shape;
 }

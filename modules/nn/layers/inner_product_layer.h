@@ -66,7 +66,7 @@ void InnerProductLayer<Device, T>::setup(const vector<container *> &input,
 
 template <typename Device, typename T>
 void InnerProductLayer<Device, T>::Forward(const vector<container *>& input,
-                                              const vector<container *>& output)
+                                           const vector<container *>& output)
 {
 
     // w * x
@@ -84,7 +84,7 @@ void InnerProductLayer<Device, T>::Forward(const vector<container *>& input,
 
 template <typename Device, typename T>
 void InnerProductLayer<Device, T>::Backward(const vector<container *> &input,
-                                               const vector<container *> &output)
+                                            const vector<container *> &output)
 {
     // 向前传递误差
     MatMul(CblasNoTrans, CblasNoTrans,

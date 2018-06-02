@@ -7,8 +7,8 @@ using namespace cv;
 
 int main()
 {
-    const string images_path = "/home/ffiirree/Code/Alchemy/resources/train_images_20k.ubyte";
-    const string labels_path = "/home/ffiirree/Code/Alchemy/resources/train_labels_20k.ubyte";
+    const string images_path = "../resources/train_images_20k.ubyte";
+    const string labels_path = "../resources/train_labels_20k.ubyte";
 //    alchemy::SandLoader<uint8_t> a(images_path, labels_path);
     fstream image_file, label_file;
     image_file.open(images_path, ios::in|ios::binary);

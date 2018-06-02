@@ -7,8 +7,8 @@ using namespace alchemy;
 int main()
 {
     fstream image_file, label_file;
-    image_file.open("/home/ffiirree/Code/Alchemy/resources/test_images_10k.ubyte", ios::out|ios::binary);
-    label_file.open("/home/ffiirree/Code/Alchemy/resources/test_labels_10k.ubyte", ios::out|ios::binary);
+    image_file.open("../resources/test_images_10k.ubyte", ios::out|ios::binary);
+    label_file.open("../resources/test_labels_10k.ubyte", ios::out|ios::binary);
     if(!image_file.is_open() || !label_file.is_open()) {
         cout << "Open file failure.";
         return -1;
